@@ -1,0 +1,74 @@
+{
+  "cases": [
+    {
+      "total": 0,
+      "expectStage": "spark",
+      "expectStars": 0
+    },
+    {
+      "total": 99,
+      "expectStage": "spark",
+      "expectStars": 0
+    },
+    {
+      "total": 100,
+      "expectStage": "ember",
+      "expectStars": 0
+    },
+    {
+      "total": 399,
+      "expectStage": "ember",
+      "expectStars": 0
+    },
+    {
+      "total": 400,
+      "expectStage": "glow",
+      "expectStars": 0
+    },
+    {
+      "total": 1199,
+      "expectStage": "glow",
+      "expectStars": 0
+    },
+    {
+      "total": 1200,
+      "expectStage": "radiance",
+      "expectStars": 0
+    },
+    {
+      "total": 2999,
+      "expectStage": "radiance",
+      "expectStars": 0
+    },
+    {
+      "total": 3000,
+      "expectStage": "constellation",
+      "expectStars": 0
+    },
+    {
+      "total": 3499,
+      "expectStage": "constellation",
+      "expectStars": 0
+    },
+    {
+      "total": 3500,
+      "expectStage": "constellation",
+      "expectStars": 1
+    },
+    {
+      "total": 8999,
+      "expectStage": "constellation",
+      "expectStars": 11
+    },
+    {
+      "total": 9000,
+      "expectStage": "constellation",
+      "expectStars": 12
+    },
+    {
+      "total": 20000,
+      "expectStage": "constellation",
+      "expectStars": 12
+    }
+  ]
+}

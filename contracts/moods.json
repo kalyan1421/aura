@@ -1,0 +1,273 @@
+{
+  "_note": "Telugu/Hindi names are DRAFTS — AK to review with native speakers before alpha (Localisation section).",
+  "quadrants": {
+    "storm": {
+      "energy": "high",
+      "pleasant": false,
+      "theme": "lighthouse",
+      "hueDeg": 275
+    },
+    "rain": {
+      "energy": "low",
+      "pleasant": false,
+      "theme": "rain_sanctuary",
+      "hueDeg": 175
+    },
+    "moonlight": {
+      "energy": "low",
+      "pleasant": true,
+      "theme": "midnight_observatory",
+      "hueDeg": 210
+    },
+    "sunrise": {
+      "energy": "high",
+      "pleasant": true,
+      "theme": "sunrise_deck",
+      "hueDeg": 45
+    }
+  },
+  "moods": [
+    {
+      "id": "overwhelmed",
+      "quadrant": "storm",
+      "sort": 0,
+      "names": {
+        "en": "Overwhelmed",
+        "te": "ఉక్కిరిబిక్కిరిగా",
+        "te-Latn": "Ukkiribikkiriga",
+        "hi": "बेहाल",
+        "hi-Latn": "Behaal"
+      }
+    },
+    {
+      "id": "anxious",
+      "quadrant": "storm",
+      "sort": 1,
+      "names": {
+        "en": "Anxious",
+        "te": "ఆందోళనగా",
+        "te-Latn": "Aandolanaga",
+        "hi": "बेचैन",
+        "hi-Latn": "Bechain"
+      }
+    },
+    {
+      "id": "restless",
+      "quadrant": "storm",
+      "sort": 2,
+      "names": {
+        "en": "Restless",
+        "te": "అశాంతిగా",
+        "te-Latn": "Ashaanthiga",
+        "hi": "अशांत",
+        "hi-Latn": "Ashaant"
+      }
+    },
+    {
+      "id": "frustrated",
+      "quadrant": "storm",
+      "sort": 3,
+      "names": {
+        "en": "Frustrated",
+        "te": "విసుగ్గా",
+        "te-Latn": "Visugga",
+        "hi": "झुंझलाहट",
+        "hi-Latn": "Jhunjhlahat"
+      }
+    },
+    {
+      "id": "melancholy",
+      "quadrant": "rain",
+      "sort": 4,
+      "names": {
+        "en": "Melancholy",
+        "te": "దిగులుగా",
+        "te-Latn": "Digulugaa",
+        "hi": "उदास",
+        "hi-Latn": "Udaas"
+      }
+    },
+    {
+      "id": "drained",
+      "quadrant": "rain",
+      "sort": 5,
+      "names": {
+        "en": "Drained",
+        "te": "అలసిపోయినట్టు",
+        "te-Latn": "Alasipoyinattu",
+        "hi": "थकान",
+        "hi-Latn": "Thakaan"
+      }
+    },
+    {
+      "id": "lonely",
+      "quadrant": "rain",
+      "sort": 6,
+      "names": {
+        "en": "Lonely",
+        "te": "ఒంటరిగా",
+        "te-Latn": "Ontariga",
+        "hi": "अकेलापन",
+        "hi-Latn": "Akelapan"
+      }
+    },
+    {
+      "id": "numb",
+      "quadrant": "rain",
+      "sort": 7,
+      "names": {
+        "en": "Numb",
+        "te": "మొద్దుబారినట్టు",
+        "te-Latn": "Moddubaarinattu",
+        "hi": "सुन्न",
+        "hi-Latn": "Sunn"
+      }
+    },
+    {
+      "id": "calm",
+      "quadrant": "moonlight",
+      "sort": 8,
+      "names": {
+        "en": "Calm",
+        "te": "ప్రశాంతంగా",
+        "te-Latn": "Prashaanthanga",
+        "hi": "शांत",
+        "hi-Latn": "Shaant"
+      }
+    },
+    {
+      "id": "content",
+      "quadrant": "moonlight",
+      "sort": 9,
+      "names": {
+        "en": "Content",
+        "te": "తృప్తిగా",
+        "te-Latn": "Trupthiga",
+        "hi": "संतुष्ट",
+        "hi-Latn": "Santusht"
+      }
+    },
+    {
+      "id": "quietly_hopeful",
+      "quadrant": "moonlight",
+      "sort": 10,
+      "names": {
+        "en": "Quietly Hopeful",
+        "te": "మెల్లగా ఆశగా",
+        "te-Latn": "Mellaga aashaga",
+        "hi": "थोड़ी उम्मीद",
+        "hi-Latn": "Thodi ummeed"
+      }
+    },
+    {
+      "id": "grateful",
+      "quadrant": "moonlight",
+      "sort": 11,
+      "names": {
+        "en": "Grateful",
+        "te": "కృతజ్ఞతగా",
+        "te-Latn": "Kruthagnathaga",
+        "hi": "आभारी",
+        "hi-Latn": "Aabhaari"
+      }
+    },
+    {
+      "id": "joyful",
+      "quadrant": "sunrise",
+      "sort": 12,
+      "names": {
+        "en": "Joyful",
+        "te": "ఆనందంగా",
+        "te-Latn": "Aanandanga",
+        "hi": "खुश",
+        "hi-Latn": "Khush"
+      }
+    },
+    {
+      "id": "excited",
+      "quadrant": "sunrise",
+      "sort": 13,
+      "names": {
+        "en": "Excited",
+        "te": "ఉత్సాహంగా",
+        "te-Latn": "Utsaahanga",
+        "hi": "उत्साहित",
+        "hi-Latn": "Utsaahit"
+      }
+    },
+    {
+      "id": "proud",
+      "quadrant": "sunrise",
+      "sort": 14,
+      "names": {
+        "en": "Proud",
+        "te": "గర్వంగా",
+        "te-Latn": "Garvanga",
+        "hi": "गर्व",
+        "hi-Latn": "Garv"
+      }
+    },
+    {
+      "id": "energised",
+      "quadrant": "sunrise",
+      "sort": 15,
+      "names": {
+        "en": "Energised",
+        "te": "హుషారుగా",
+        "te-Latn": "Hushaaruga",
+        "hi": "जोश में",
+        "hi-Latn": "Josh mein"
+      }
+    }
+  ],
+  "presetHabits": [
+    {
+      "key": "hydrate",
+      "names": {
+        "en": "Hydrate"
+      }
+    },
+    {
+      "key": "sleep_on_time",
+      "names": {
+        "en": "Sleep on time"
+      }
+    },
+    {
+      "key": "move",
+      "names": {
+        "en": "Move"
+      }
+    },
+    {
+      "key": "breathe",
+      "names": {
+        "en": "Breathe"
+      }
+    },
+    {
+      "key": "journal",
+      "names": {
+        "en": "Journal"
+      }
+    },
+    {
+      "key": "go_outside",
+      "names": {
+        "en": "Go outside"
+      }
+    }
+  ],
+  "contextTags": [
+    "study",
+    "work",
+    "family",
+    "friends",
+    "sleep",
+    "health",
+    "money",
+    "love",
+    "alone",
+    "commute"
+  ]
+}

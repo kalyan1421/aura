@@ -1,0 +1,176 @@
+{
+  "cases": [
+    {
+      "name": "4 consecutive days earn a rest day",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08"
+      ],
+      "expect": {
+        "glowStreak": 4,
+        "lifetimeGlowDays": 4,
+        "restBank": 2,
+        "earnCounter": 0,
+        "lastActiveDay": "2026-10-08"
+      }
+    },
+    {
+      "name": "REQ-STK-02 gap of 2 covered by bank 2",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 2,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-08"
+      ],
+      "expect": {
+        "glowStreak": 2,
+        "lifetimeGlowDays": 2,
+        "restBank": 0,
+        "earnCounter": 2,
+        "lastActiveDay": "2026-10-08"
+      }
+    },
+    {
+      "name": "gap larger than bank resets, nothing spent",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-09"
+      ],
+      "expect": {
+        "glowStreak": 1,
+        "lifetimeGlowDays": 2,
+        "restBank": 1,
+        "earnCounter": 2,
+        "lastActiveDay": "2026-10-09"
+      }
+    },
+    {
+      "name": "REQ-STK-01 counter 3 + active day fills bank to 3",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 2,
+        "earnCounter": 3,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05"
+      ],
+      "expect": {
+        "glowStreak": 1,
+        "lifetimeGlowDays": 1,
+        "restBank": 3,
+        "earnCounter": 0,
+        "lastActiveDay": "2026-10-05"
+      }
+    },
+    {
+      "name": "full bank pauses the counter",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 3,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-06",
+        "2026-10-07",
+        "2026-10-08"
+      ],
+      "expect": {
+        "glowStreak": 4,
+        "lifetimeGlowDays": 4,
+        "restBank": 3,
+        "earnCounter": 0,
+        "lastActiveDay": "2026-10-08"
+      }
+    },
+    {
+      "name": "duplicate day is a no-op",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-05"
+      ],
+      "expect": {
+        "glowStreak": 1,
+        "lifetimeGlowDays": 1,
+        "restBank": 1,
+        "earnCounter": 1,
+        "lastActiveDay": "2026-10-05"
+      }
+    },
+    {
+      "name": "unsorted input folds in date order",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-07",
+        "2026-10-05",
+        "2026-10-06"
+      ],
+      "expect": {
+        "glowStreak": 3,
+        "lifetimeGlowDays": 3,
+        "restBank": 1,
+        "earnCounter": 3,
+        "lastActiveDay": "2026-10-07"
+      }
+    },
+    {
+      "name": "welcome rest day bridges one missed day",
+      "initial": {
+        "glowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-07"
+      ],
+      "expect": {
+        "glowStreak": 2,
+        "lifetimeGlowDays": 2,
+        "restBank": 0,
+        "earnCounter": 2,
+        "lastActiveDay": "2026-10-07"
+      }
+    }
+  ]
+}

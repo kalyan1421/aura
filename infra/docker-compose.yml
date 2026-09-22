@@ -1,0 +1,9 @@
+# Local infra for Aura. Supabase runs via the Supabase CLI (ports 555xx); this file only adds Redis for BullMQ.
+services:
+  redis:
+    image: redis:7
+    container_name: aura_redis
+    ports:
+      - "6391:6379"   # host 6391 — 6379/6380 are used by other projects
+    volumes:
+      - ./redis-data:/data

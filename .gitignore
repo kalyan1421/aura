@@ -1,0 +1,23 @@
+# Dart / Flutter
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+pubspec_overrides.yaml
+# Node
+node_modules/
+dist/
+coverage/
+# Env
+.env
+.env.*
+!.env.example
+# Supabase
+supabase/.branches/
+supabase/.temp/
+# Infra data
+infra/redis-data/
+# OS
+.DS_Store

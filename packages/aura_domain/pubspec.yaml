@@ -1,0 +1,24 @@
+name: aura_domain
+description: >-
+  Pure Dart domain for Aura: the mood catalogue (generated from
+  contracts/moods.json), the progression rules from contracts/rules/RULES.md
+  (Aura day, eligibility, Starlight, stage, traits, hue, glow streak, Resting
+  Nebula) and the immutable AuraAvatarState the renderer draws. Flutter-free and
+  I/O-free; the same JSON vectors run here and in server/aura-api.
+version: 0.1.0
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  freezed_annotation: ^3.1.0
+  meta: ^1.16.0
+  timezone: ^0.11.1
+
+dev_dependencies:
+  build_runner: ^2.16.1
+  freezed: ^4.0.0
+  lints: ^6.1.0
+  test: ">=1.26.0 <2.0.0"

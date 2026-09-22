@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512"
+     height="512"
+     viewBox="0 0 512 512"
+     fill="none"
+     role="img"
+     aria-labelledby="title description">
+  <title id="title">Aura Equal Orbit mark</title>
+  <desc id="description">Four equal colored orbital arcs surround one starlight circle.</desc>
+  <defs>
+    <path id="orbit-segment"
+          d="M 108.279 229.953 A 150 150 0 0 1 229.953 108.279" />
+  </defs>
+  <g fill="none" stroke-width="50" stroke-linecap="round">
+    <use href="#orbit-segment" stroke="#F3BE67" />
+    <use href="#orbit-segment" stroke="#5ACBBE" transform="rotate(90 256 256)" />
+    <use href="#orbit-segment" stroke="#AE93FA" transform="rotate(180 256 256)" />
+    <use href="#orbit-segment" stroke="#AFC3F0" transform="rotate(270 256 256)" />
+  </g>
+  <circle cx="256" cy="256" r="54" fill="#F7E6B5" />
+</svg>

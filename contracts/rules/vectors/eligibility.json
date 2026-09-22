@@ -1,0 +1,52 @@
+{
+  "cases": [
+    {
+      "name": "live event",
+      "deviceTs": "2026-10-08T10:00:00Z",
+      "serverNow": "2026-10-08T10:00:05Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-08",
+      "expect": true
+    },
+    {
+      "name": "4 min future is clock skew",
+      "deviceTs": "2026-10-08T10:04:00Z",
+      "serverNow": "2026-10-08T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-08",
+      "expect": true
+    },
+    {
+      "name": "6 min future rejected",
+      "deviceTs": "2026-10-08T10:06:00Z",
+      "serverNow": "2026-10-08T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-08",
+      "expect": false
+    },
+    {
+      "name": "synced 29 days later ok",
+      "deviceTs": "2026-10-08T10:00:00Z",
+      "serverNow": "2026-11-06T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-08",
+      "expect": true
+    },
+    {
+      "name": "synced 31 days later stale",
+      "deviceTs": "2026-10-08T10:00:00Z",
+      "serverNow": "2026-11-08T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-08",
+      "expect": false
+    },
+    {
+      "name": "backfill for yesterday earns nothing",
+      "deviceTs": "2026-10-08T10:00:00Z",
+      "serverNow": "2026-10-08T10:00:05Z",
+      "tz": "Asia/Kolkata",
+      "localDay": "2026-10-07",
+      "expect": false
+    }
+  ]
+}

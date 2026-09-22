@@ -1,0 +1,45 @@
+{
+  "name": "@aura/aura-api",
+  "version": "0.1.0",
+  "description": "Aura API — NestJS modular monolith (HTTP API :3310 + BullMQ worker :3311). Raw pg, no ORM.",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "start:worker": "node dist/worker.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
+    "start:worker:dev": "ts-node-dev --respawn --transpile-only src/worker.ts",
+    "test": "jest --config jest.config.js",
+    "test:e2e": "jest --config test/jest-e2e.config.js --runInBand",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.5",
+    "@nestjs/core": "^11.2.5",
+    "@nestjs/platform-express": "^11.2.5",
+    "bullmq": "5.81.5",
+    "ioredis": "5.11.1",
+    "jose": "^5.10.0",
+    "pg": "^8.23.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^11.2.5",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.20.4",
+    "@types/pg": "^8.15.0",
+    "@types/supertest": "^6.0.3",
+    "jest": "^29.7.0",
+    "supertest": "^7.3.0",
+    "ts-jest": "^29.4.12",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "~5.9.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

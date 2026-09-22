@@ -1,0 +1,28 @@
+## Accessibility Requirements
+
+**Target: WCAG 2.1 AA** on every screen, in light and dark themes, for every user 13+. Aura is used on hard days, when concentration, vision and fine motor control may be worse than usual, so nearly all of this is P0.
+
+### Requirements
+
+| ID | Behaviour | Acceptance criteria | Pri |
+|---|---|---|---|
+| REQ-A11Y-01 | **Text scales to 200%** without clipping, overlap or loss of function | Given OS text size at 200%, when the user completes a check-in, joins a room and sends a gesture, then every label is fully readable and every control reachable, in English, Telugu and Hindi. Negative: no string is truncated with "…" in the check-in flow or support sheet; Telugu and Devanagari vowel signs are not clipped | P0 |
+| REQ-A11Y-02 | **Tap targets ≥ 44×44 pt (iOS) / 48×48 dp (Android)** | Flutter `iOSTapTargetGuideline` and `androidTapTargetGuideline` pass in widget tests for the mood grid, gesture tray (all 8 gestures), habit list and "I need help now". Negative: no two targets closer than 8 dp | P0 |
+| REQ-A11Y-03 | **Contrast** 4.5:1 for body text, 3:1 for large text, icons and control boundaries, in light and dark themes | `textContrastGuideline` passes. Negative: text never sits directly on a starfield, shader glow or aura gradient without a scrim | P0 |
+| REQ-A11Y-04 | **Every control has a screen reader label** in the current language | Given VoiceOver or TalkBack, each mood reads name + group ("Anxious, Storm group, high energy, unpleasant"); `labeledTapTargetGuideline` passes. Negative: no control reads as "button" or an asset file name | P0 |
+| REQ-A11Y-05 | **Procedural avatar described in words** | The avatar (`CustomPaint` + shaders) is one semantics node whose label is built from `AuraAvatarState`: stage, state and main traits ("Your Aura, Glow stage, resting in a soft nebula, violet hue"). Stage changes and wake-up are announced once. Negative: particles and shader layers are hidden from the accessibility tree | P0 |
+| REQ-A11Y-06 | **Gestures and presence are announced** | Sending announces "Warm Tea sent to Quiet Comet"; received gestures announce sender pseudonym + gesture; the room header reads "7 people here now, 31 today". Animations always have a text equivalent | P0 |
+| REQ-A11Y-07 | **Breath Ripples accessible mode** | Toggle, auto-on with a screen reader: inhale = rising haptic + tone, exhale = falling haptic + tone; sync shown by tone and haptic strength, not colour; tap-to-switch instead of hold; sync tolerance ±1.5 s `[ASSUMPTION]`. Negative: nothing depends on colour or timing finer than 1 s; still works with sound off or haptics off | P0 |
+| REQ-A11Y-08 | **Reduce motion** honoured from OS and via in-app toggle | Given iOS Reduce Motion or Android "Remove animations" (`MediaQuery.disableAnimations`), parallax, particle drift and camera moves stop; capsule ceremony, evolution and transitions become ≤ 300 ms crossfades; the avatar switches to its Still tier with a slow glow (F2). The in-app toggle works when the OS setting is off | P0 |
+| REQ-A11Y-09 | **No flashing more than 3 times per second** | Star twinkles, shader glow pulses, bioluminescent fish, Lantern Hour event, capsule ceremony and evolution pass a flash check (e.g. PEAT) on recorded video, on both High and Low tiers. Negative: no saturated red flash at any rate | P0 |
+| REQ-A11Y-10 | **Quadrants never encoded by colour alone** | Each quadrant has a name, icon (lighthouse, raindrop, moon, sun) and fixed grid position (energy × pleasantness). Aura Sky (F10) marks days with quadrant icons. Palette verified under protanopia, deuteranopia and tritanopia simulation. Negative: a greyscale screenshot of the mood picker and Aura Sky remains fully understandable | P0 |
+| REQ-A11Y-11 | **Logical focus order; help reachable fast** | "I need help now" is within the first 3 focus stops on home, room and game screens; the support sheet opens with focus on the helpline list. Switch Access and hardware keyboard can complete a check-in | P0 |
+| REQ-A11Y-12 | **No time pressure on user actions** | Check-in, reflection drafts and the 60-second grounding exercise can be paused or left without losing input. Toasts carrying information stay ≥ 5 s or until dismissed | P1 |
+| REQ-A11Y-13 | **Correct language for speech** | Telugu strings carry a `te` locale and Hindi strings `hi` in semantics, so TTS uses a matching voice where the OS has one `[ASSUMPTION: verify an iOS Telugu voice]`. Tenglish (`te-Latn`) and Hinglish (`hi-Latn`) are read by the English voice, which mispronounces some words; accepted limitation at launch `[ASSUMPTION]` | P1 |
+| REQ-A11Y-14 | **Script-aware line height for Telugu and Devanagari** | `te` text uses Noto Sans Telugu and `hi` uses Noto Sans Devanagari, with line height ≥ 1.5 `[ASSUMPTION]` and no fixed-height text boxes. Golden tests at 100%, 150% and 200% in `te` and `hi` show no clipped vowel signs, Telugu subscript conjuncts (vattulu) or overlapping lines on mood labels, buttons, chips and the support sheet. Negative: a fixed-height container that clips a Telugu conjunct fails the test | P0 |
+
+### Verification
+
+- **Automated:** Flutter accessibility guideline matchers (02–04) in widget tests on every PR; golden tests at 100%, 150% and 200% text scale in `en`, `te` and `hi`.
+- **Manual, each milestone:** full VoiceOver (iOS) and TalkBack (Android) pass of onboarding, check-in, room, Breath Ripples and support sheet, in English and Telugu from alpha; Android Accessibility Scanner; Xcode Accessibility Inspector.
+- **People:** ≥ 3 beta testers who use a screen reader or large text daily, at least 1 of them a Telugu reader `[ASSUMPTION]`.

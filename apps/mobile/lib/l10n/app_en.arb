@@ -1,0 +1,802 @@
+{
+  "@@locale": "en",
+  "appTitle": "Aura",
+  "@appTitle": {
+    "description": "App name (brand, never translated)."
+  },
+  "common_continue": "Continue",
+  "@common_continue": {
+    "description": "Primary button to go to the next step. Calm."
+  },
+  "common_back": "Back",
+  "@common_back": {
+    "description": "Back button label."
+  },
+  "common_done": "Done",
+  "@common_done": {
+    "description": "Finish a flow."
+  },
+  "common_notNow": "Not now",
+  "@common_notNow": {
+    "description": "Gentle dismiss."
+  },
+  "common_cancel": "Cancel",
+  "@common_cancel": {
+    "description": "Cancel an action."
+  },
+  "common_close": "Close",
+  "@common_close": {
+    "description": "Close a sheet or screen."
+  },
+  "common_comingSoon": "Coming soon",
+  "@common_comingSoon": {
+    "description": "Label on features not built yet. Warm, not a tease."
+  },
+  "help_button": "I need help now",
+  "@help_button": {
+    "description": "Always-visible help button on Home and other screens. Must feel safe to tap."
+  },
+  "help_title": "Help is here",
+  "@help_title": {
+    "description": "Support sheet title when opened from the help button."
+  },
+  "help_subtitle": "You don't have to carry this alone. Reach out now, or take a minute to breathe.",
+  "@help_subtitle": {
+    "description": "Support sheet subtitle. Warm, never clinical."
+  },
+  "help_crisisTitle": "It sounds like a lot right now.",
+  "@help_crisisTitle": {
+    "description": "Support sheet title after a note matched the crisis lexicon. Never alarming."
+  },
+  "help_crisisSubtitle": "You don't have to carry it alone. Your check-in is saved.",
+  "@help_crisisSubtitle": {
+    "description": "Support sheet subtitle after a crisis-lexicon match."
+  },
+  "help_teleManas": "Tele-MANAS · free, 24×7",
+  "@help_teleManas": {
+    "description": "India national mental-health helpline 14416."
+  },
+  "help_teleManasTollFree": "Tele-MANAS toll-free",
+  "@help_teleManasTollFree": {
+    "description": "India Tele-MANAS toll-free number 1-800-891-4416."
+  },
+  "help_emergency112": "Emergency",
+  "@help_emergency112": {
+    "description": "India emergency number 112 (the number is shown separately)."
+  },
+  "help_childline": "Childline · for under-18s",
+  "@help_childline": {
+    "description": "India Childline 1098, shown to under-18s (number shown separately)."
+  },
+  "help_us988": "Suicide & Crisis Lifeline · call or text",
+  "@help_us988": {
+    "description": "US crisis line 988 (number shown separately)."
+  },
+  "help_otherEmergency": "If you're in danger right now, please call your local emergency number.",
+  "@help_otherEmergency": {
+    "description": "Shown in countries without a listed helpline. Never an empty list."
+  },
+  "help_callSemantic": "Call {name}, {number}",
+  "@help_callSemantic": {
+    "description": "Screen-reader label for a tap-to-call helpline row.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "help_groundingTitle": "Sixty seconds to land",
+  "@help_groundingTitle": {
+    "description": "Title of the 60-second grounding exercise."
+  },
+  "help_groundingBody": "Breathe with the circle. Everything else can wait a minute.",
+  "@help_groundingBody": {
+    "description": "Grounding exercise intro."
+  },
+  "help_groundingStart": "Start",
+  "@help_groundingStart": {
+    "description": "Start grounding."
+  },
+  "help_groundingPause": "Pause",
+  "@help_groundingPause": {
+    "description": "Pause grounding."
+  },
+  "help_groundingResume": "Resume",
+  "@help_groundingResume": {
+    "description": "Resume grounding."
+  },
+  "help_breatheIn": "Breathe in",
+  "@help_breatheIn": {
+    "description": "Grounding pacer, inhale."
+  },
+  "help_breatheOut": "Breathe out",
+  "@help_breatheOut": {
+    "description": "Grounding pacer, exhale."
+  },
+  "help_ground1": "Feel your feet on the ground.",
+  "@help_ground1": {
+    "description": "Grounding prompt 1."
+  },
+  "help_ground2": "Notice five things you can see.",
+  "@help_ground2": {
+    "description": "Grounding prompt 2."
+  },
+  "help_ground3": "Notice three sounds around you.",
+  "@help_ground3": {
+    "description": "Grounding prompt 3."
+  },
+  "help_ground4": "Let your shoulders drop.",
+  "@help_ground4": {
+    "description": "Grounding prompt 4."
+  },
+  "help_ground5": "You're here. That's enough for now.",
+  "@help_ground5": {
+    "description": "Grounding prompt 5."
+  },
+  "help_groundingDone": "Well done. Stay as long as you need.",
+  "@help_groundingDone": {
+    "description": "Grounding finished."
+  },
+  "help_secondsLeft": "{seconds, plural, =1{1 second left} other{{seconds} seconds left}}",
+  "@help_secondsLeft": {
+    "description": "Grounding countdown (also read by screen readers).",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "help_disclaimer": "Aura is not a medical device or an emergency service.",
+  "@help_disclaimer": {
+    "description": "Legal disclaimer (Play health policy, Apple 1.4.1)."
+  },
+  "help_backToCheckin": "Back to my check-in",
+  "@help_backToCheckin": {
+    "description": "Close the crisis sheet after saving."
+  },
+  "welcome_title": "Welcome to Aura",
+  "@welcome_title": {
+    "description": "Welcome screen title."
+  },
+  "welcome_body": "A quiet place to notice how you feel. Your check-ins stay private, and your Aura grows a little each time you show up.",
+  "@welcome_body": {
+    "description": "Welcome screen body. Calm, inviting."
+  },
+  "welcome_begin": "Begin",
+  "@welcome_begin": {
+    "description": "Welcome CTA."
+  },
+  "dob_title": "When's your birthday?",
+  "@dob_title": {
+    "description": "DOB gate title. Neutral; never mentions 13 or 18."
+  },
+  "dob_body": "We ask everyone. It stays private and is never shown to anyone.",
+  "@dob_body": {
+    "description": "DOB gate body."
+  },
+  "dob_day": "Day",
+  "@dob_day": {
+    "description": "DOB picker: day."
+  },
+  "dob_month": "Month",
+  "@dob_month": {
+    "description": "DOB picker: month."
+  },
+  "dob_year": "Year",
+  "@dob_year": {
+    "description": "DOB picker: year."
+  },
+  "dob_invalid": "That date doesn't exist. Could you check it?",
+  "@dob_invalid": {
+    "description": "DOB validation (e.g. 30 Feb)."
+  },
+  "dob_future": "That date hasn't happened yet. Could you check it?",
+  "@dob_future": {
+    "description": "DOB validation (future date)."
+  },
+  "blocked_title": "Aura is made for people 13 and older.",
+  "@blocked_title": {
+    "description": "Under-13 block screen title. Kind."
+  },
+  "blocked_body": "We'd love to see you then.",
+  "@blocked_body": {
+    "description": "Under-13 block screen body."
+  },
+  "blocked_helpIndia": "If you want to talk to someone now, Childline is free on 1098. In an emergency, call 112.",
+  "@blocked_helpIndia": {
+    "description": "Under-13 help line, India."
+  },
+  "blocked_helpOther": "If you want to talk to someone now, please reach out to an adult you trust.",
+  "@blocked_helpOther": {
+    "description": "Under-13 help line, other countries."
+  },
+  "language_title": "Which language feels like home?",
+  "@language_title": {
+    "description": "Language picker title."
+  },
+  "language_body": "You can change this any time in Settings.",
+  "@language_body": {
+    "description": "Language picker body."
+  },
+  "language_teLatnHint": "Telugu in English letters",
+  "@language_teLatnHint": {
+    "description": "Explains Tenglish."
+  },
+  "language_hiLatnHint": "Hindi in English letters",
+  "@language_hiLatnHint": {
+    "description": "Explains Hinglish."
+  },
+  "language_beta": "Beta",
+  "@language_beta": {
+    "description": "Badge on beta languages."
+  },
+  "signin_title": "Keep your Aura safe",
+  "@signin_title": {
+    "description": "Sign-in title."
+  },
+  "signin_body": "Sign in with your email so your Aura can follow you to a new phone. No name, no phone number, no password.",
+  "@signin_body": {
+    "description": "Sign-in body. Reassuring about privacy."
+  },
+  "signin_emailLabel": "Email",
+  "@signin_emailLabel": {
+    "description": "Email field label."
+  },
+  "signin_sendCode": "Email me a code",
+  "@signin_sendCode": {
+    "description": "Send OTP button."
+  },
+  "signin_codeSent": "We sent a 6-digit code to {email}. You can also tap the link in that email.",
+  "@signin_codeSent": {
+    "description": "After sending the OTP.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "signin_codeLabel": "6-digit code",
+  "@signin_codeLabel": {
+    "description": "OTP field label."
+  },
+  "signin_verify": "Continue",
+  "@signin_verify": {
+    "description": "Verify OTP button."
+  },
+  "signin_resend": "Send a fresh code",
+  "@signin_resend": {
+    "description": "Resend OTP."
+  },
+  "signin_changeEmail": "Use a different email",
+  "@signin_changeEmail": {
+    "description": "Go back to the email step."
+  },
+  "signin_error": "That didn't go through. Try again, or sign in another way.",
+  "@signin_error": {
+    "description": "Sign-in failed. No blame, no exclamation."
+  },
+  "signin_codeExpired": "This code has timed out. We'll send a fresh one.",
+  "@signin_codeExpired": {
+    "description": "OTP expired."
+  },
+  "signin_invalidCode": "That code doesn't match. Could you check it?",
+  "@signin_invalidCode": {
+    "description": "Wrong OTP."
+  },
+  "signin_invalidEmail": "That email doesn't look quite right.",
+  "@signin_invalidEmail": {
+    "description": "Invalid email."
+  },
+  "signin_apple": "Continue with Apple",
+  "@signin_apple": {
+    "description": "Sign in with Apple (disabled until enabled by flag)."
+  },
+  "signin_google": "Continue with Google",
+  "@signin_google": {
+    "description": "Sign in with Google (disabled until enabled by flag)."
+  },
+  "signin_offline": "You're offline. Pick your first mood now. We'll finish setting up when you're connected.",
+  "@signin_offline": {
+    "description": "Offline at first launch (PRD States)."
+  },
+  "signin_offlineContinue": "Check in now",
+  "@signin_offlineContinue": {
+    "description": "Continue offline to the first check-in."
+  },
+  "signin_unavailable": "Sign-in isn't set up in this build yet. Your check-ins will stay on this phone for now.",
+  "@signin_unavailable": {
+    "description": "Dev builds without Supabase config."
+  },
+  "signin_continueLocal": "Continue on this phone",
+  "@signin_continueLocal": {
+    "description": "Skip sign-in when unavailable."
+  },
+  "checkin_title": "How are you feeling?",
+  "@checkin_title": {
+    "description": "Check-in screen title."
+  },
+  "checkin_subtitle": "Pick the closest one. There's no wrong answer.",
+  "@checkin_subtitle": {
+    "description": "Check-in subtitle."
+  },
+  "checkin_moreEnergy": "More energy",
+  "@checkin_moreEnergy": {
+    "description": "Grid axis label (top)."
+  },
+  "checkin_lessEnergy": "Less energy",
+  "@checkin_lessEnergy": {
+    "description": "Grid axis label (bottom)."
+  },
+  "checkin_pleasant": "Pleasant",
+  "@checkin_pleasant": {
+    "description": "Grid axis label (right)."
+  },
+  "checkin_unpleasant": "Unpleasant",
+  "@checkin_unpleasant": {
+    "description": "Grid axis label (left)."
+  },
+  "quadrant_storm": "Storm",
+  "@quadrant_storm": {
+    "description": "High energy, unpleasant quadrant. Never 'bad'."
+  },
+  "quadrant_rain": "Rain",
+  "@quadrant_rain": {
+    "description": "Low energy, unpleasant quadrant."
+  },
+  "quadrant_moonlight": "Moonlight",
+  "@quadrant_moonlight": {
+    "description": "Low energy, pleasant quadrant."
+  },
+  "quadrant_sunrise": "Sunrise",
+  "@quadrant_sunrise": {
+    "description": "High energy, pleasant quadrant."
+  },
+  "mood_semantic": "{mood}, {quadrant} group, {energy}, {feel}",
+  "@mood_semantic": {
+    "description": "Screen-reader label for a mood tile (REQ-A11Y-04).",
+    "placeholders": {
+      "mood": {
+        "type": "String"
+      },
+      "quadrant": {
+        "type": "String"
+      },
+      "energy": {
+        "type": "String"
+      },
+      "feel": {
+        "type": "String"
+      }
+    }
+  },
+  "semantic_highEnergy": "high energy",
+  "@semantic_highEnergy": {
+    "description": "Screen-reader part."
+  },
+  "semantic_lowEnergy": "low energy",
+  "@semantic_lowEnergy": {
+    "description": "Screen-reader part."
+  },
+  "semantic_pleasant": "pleasant",
+  "@semantic_pleasant": {
+    "description": "Screen-reader part."
+  },
+  "semantic_unpleasant": "unpleasant",
+  "@semantic_unpleasant": {
+    "description": "Screen-reader part."
+  },
+  "checkin_addDetails": "Add a tag or a few words",
+  "@checkin_addDetails": {
+    "description": "Optional details toggle."
+  },
+  "checkin_tagsTitle": "What's it about?",
+  "@checkin_tagsTitle": {
+    "description": "Tags section title."
+  },
+  "tag_study": "Study",
+  "@tag_study": {
+    "description": "Context tag 'study'."
+  },
+  "tag_work": "Work",
+  "@tag_work": {
+    "description": "Context tag 'work'."
+  },
+  "tag_family": "Family",
+  "@tag_family": {
+    "description": "Context tag 'family'."
+  },
+  "tag_friends": "Friends",
+  "@tag_friends": {
+    "description": "Context tag 'friends'."
+  },
+  "tag_sleep": "Sleep",
+  "@tag_sleep": {
+    "description": "Context tag 'sleep'."
+  },
+  "tag_health": "Health",
+  "@tag_health": {
+    "description": "Context tag 'health'."
+  },
+  "tag_money": "Money",
+  "@tag_money": {
+    "description": "Context tag 'money'."
+  },
+  "tag_love": "Love",
+  "@tag_love": {
+    "description": "Context tag 'love'."
+  },
+  "tag_alone": "Alone",
+  "@tag_alone": {
+    "description": "Context tag 'alone'."
+  },
+  "tag_commute": "Commute",
+  "@tag_commute": {
+    "description": "Context tag 'commute'."
+  },
+  "checkin_customTag": "Your own tag",
+  "@checkin_customTag": {
+    "description": "Custom tag field."
+  },
+  "checkin_customTagAdd": "Add tag",
+  "@checkin_customTagAdd": {
+    "description": "Add custom tag button."
+  },
+  "checkin_noteLabel": "A few words, if you like",
+  "@checkin_noteLabel": {
+    "description": "Note field label."
+  },
+  "checkin_noteHint": "Only you can read this.",
+  "@checkin_noteHint": {
+    "description": "Note privacy hint."
+  },
+  "checkin_save": "Save",
+  "@checkin_save": {
+    "description": "Save check-in (tap 2)."
+  },
+  "checkin_saveFailed": "We couldn't save that. Your phone may be low on space.",
+  "@checkin_saveFailed": {
+    "description": "Local write failed. Selection is kept."
+  },
+  "checkin_savedStarlight": "+{amount} Starlight",
+  "@checkin_savedStarlight": {
+    "description": "Reward moment after saving.",
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "checkin_saved": "Saved",
+  "@checkin_saved": {
+    "description": "Saved confirmation."
+  },
+  "checkin_savedOffline": "Saved on this phone",
+  "@checkin_savedOffline": {
+    "description": "Saved while offline / before sync."
+  },
+  "checkin_savedThanks": "Thank you for checking in.",
+  "@checkin_savedThanks": {
+    "description": "After saving."
+  },
+  "checkin_savedFull": "You've gathered all of today's Starlight. Your check-in still counts.",
+  "@checkin_savedFull": {
+    "description": "When the day's Starlight is already capped."
+  },
+  "checkin_roomButton": "Join a room of people feeling this",
+  "@checkin_roomButton": {
+    "description": "Room prompt after saving (F5, coming soon)."
+  },
+  "home_checkIn": "Check in",
+  "@home_checkIn": {
+    "description": "Primary Home button."
+  },
+  "home_todayStarlight": "{count} Starlight today",
+  "@home_todayStarlight": {
+    "description": "Today's Starlight.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_totalStarlight": "{count} in all",
+  "@home_totalStarlight": {
+    "description": "All-time Starlight.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_empty": "This is your Aura. Check in to give it light.",
+  "@home_empty": {
+    "description": "New user empty state."
+  },
+  "home_resting": "Your Aura has been resting. Say hi when you're ready.",
+  "@home_resting": {
+    "description": "Resting Nebula copy. No guilt."
+  },
+  "home_glowStreak": "{count, plural, =1{Glow streak · 1 day} other{Glow streak · {count} days}}",
+  "@home_glowStreak": {
+    "description": "Current glow streak.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_restDays": "{count, plural, =0{No rest days saved yet} =1{1 rest day saved} other{{count} rest days saved}}",
+  "@home_restDays": {
+    "description": "Rest-day bank.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_restingSafe": "Resting · your glow is safe",
+  "@home_restingSafe": {
+    "description": "Gap covered by rest days (F3). Never a countdown."
+  },
+  "home_glowCarriesOn": "Your glow carries on",
+  "@home_glowCarriesOn": {
+    "description": "Shown once when a new streak starts. No loss words."
+  },
+  "home_lifetimeGlow": "{count, plural, =1{1 glow day in all} other{{count} glow days in all}}",
+  "@home_lifetimeGlow": {
+    "description": "Lifetime glow days.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_habitsTitle": "Small things today",
+  "@home_habitsTitle": {
+    "description": "Habits section title."
+  },
+  "home_habitDone": "{habit}, done today",
+  "@home_habitDone": {
+    "description": "Screen-reader label, habit done.",
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      }
+    }
+  },
+  "home_habitNotYet": "{habit}, not yet today",
+  "@home_habitNotYet": {
+    "description": "Screen-reader label, habit not done (no 'missed').",
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      }
+    }
+  },
+  "home_offline": "You're offline. Your own things still save here.",
+  "@home_offline": {
+    "description": "Offline banner."
+  },
+  "home_finishSetup": "Finish setting up so your Aura is kept safe.",
+  "@home_finishSetup": {
+    "description": "Signed-out banner."
+  },
+  "home_signIn": "Sign in",
+  "@home_signIn": {
+    "description": "Sign-in button."
+  },
+  "home_syncIdle": "All saved",
+  "@home_syncIdle": {
+    "description": "Sync indicator: synced."
+  },
+  "home_syncPending": "{count, plural, =1{1 thing waiting to sync} other{{count} things waiting to sync}}",
+  "@home_syncPending": {
+    "description": "Sync indicator: pending.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_syncLocal": "Saved on this phone",
+  "@home_syncLocal": {
+    "description": "Sync indicator: local only."
+  },
+  "home_settings": "Settings",
+  "@home_settings": {
+    "description": "Settings button."
+  },
+  "home_welcomeBack": "Welcome back. One small thing today is plenty.",
+  "@home_welcomeBack": {
+    "description": "Wake-up moment micro-goal. Never a list of what was missed."
+  },
+  "home_evolved": "Your Aura grew into {stage}.",
+  "@home_evolved": {
+    "description": "Evolution moment.",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "stage_spark": "Spark",
+  "@stage_spark": {
+    "description": "Avatar stage 'spark'."
+  },
+  "stage_ember": "Ember",
+  "@stage_ember": {
+    "description": "Avatar stage 'ember'."
+  },
+  "stage_glow": "Glow",
+  "@stage_glow": {
+    "description": "Avatar stage 'glow'."
+  },
+  "stage_radiance": "Radiance",
+  "@stage_radiance": {
+    "description": "Avatar stage 'radiance'."
+  },
+  "stage_constellation": "Constellation",
+  "@stage_constellation": {
+    "description": "Avatar stage 'constellation'."
+  },
+  "habit_hydrate": "Hydrate",
+  "@habit_hydrate": {
+    "description": "Preset habit 'hydrate'."
+  },
+  "habit_sleep_on_time": "Sleep on time",
+  "@habit_sleep_on_time": {
+    "description": "Preset habit 'sleep_on_time'."
+  },
+  "habit_move": "Move",
+  "@habit_move": {
+    "description": "Preset habit 'move'."
+  },
+  "habit_breathe": "Breathe",
+  "@habit_breathe": {
+    "description": "Preset habit 'breathe'."
+  },
+  "habit_journal": "Journal",
+  "@habit_journal": {
+    "description": "Preset habit 'journal'."
+  },
+  "habit_go_outside": "Go outside",
+  "@habit_go_outside": {
+    "description": "Preset habit 'go_outside'."
+  },
+  "avatar_semantic": "Your Aura, {stage} stage, {hue} glow",
+  "@avatar_semantic": {
+    "description": "Avatar description for screen readers.",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      },
+      "hue": {
+        "type": "String"
+      }
+    }
+  },
+  "avatar_semanticResting": "resting in a soft nebula",
+  "@avatar_semanticResting": {
+    "description": "Appended when resting."
+  },
+  "avatar_semanticRings": "{count, plural, =1{one orbiting light} other{{count} orbiting lights}}",
+  "@avatar_semanticRings": {
+    "description": "Rings trait for screen readers.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "avatar_semanticStars": "{count, plural, =1{one star in its constellation} other{{count} stars in its constellation}}",
+  "@avatar_semanticStars": {
+    "description": "Constellation stars for screen readers.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hue_gold": "golden",
+  "@hue_gold": {
+    "description": "Avatar hue name 'gold'."
+  },
+  "hue_green": "green",
+  "@hue_green": {
+    "description": "Avatar hue name 'green'."
+  },
+  "hue_teal": "teal",
+  "@hue_teal": {
+    "description": "Avatar hue name 'teal'."
+  },
+  "hue_silverBlue": "silver-blue",
+  "@hue_silverBlue": {
+    "description": "Avatar hue name 'silverBlue'."
+  },
+  "hue_violet": "violet",
+  "@hue_violet": {
+    "description": "Avatar hue name 'violet'."
+  },
+  "hue_rose": "rose",
+  "@hue_rose": {
+    "description": "Avatar hue name 'rose'."
+  },
+  "settings_title": "Settings",
+  "@settings_title": {
+    "description": "Settings title."
+  },
+  "settings_language": "Language",
+  "@settings_language": {
+    "description": "Language row."
+  },
+  "settings_account": "Account",
+  "@settings_account": {
+    "description": "Account section."
+  },
+  "settings_signedInAs": "Signed in as {email}",
+  "@settings_signedInAs": {
+    "description": "Account row.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "settings_signOut": "Sign out",
+  "@settings_signOut": {
+    "description": "Sign out."
+  },
+  "settings_signOutPending": "{count, plural, =1{1 thing hasn't synced yet. Stay signed in until it does?} other{{count} things haven't synced yet. Stay signed in until they do?}}",
+  "@settings_signOutPending": {
+    "description": "Unsynced warning on sign-out.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settings_stay": "Stay signed in",
+  "@settings_stay": {
+    "description": "Keep session."
+  },
+  "settings_signOutAnyway": "Sign out anyway",
+  "@settings_signOutAnyway": {
+    "description": "Confirm sign out."
+  },
+  "settings_signIn": "Sign in to keep your Aura safe",
+  "@settings_signIn": {
+    "description": "Signed-out row."
+  },
+  "settings_avatarLab": "Avatar lab",
+  "@settings_avatarLab": {
+    "description": "Debug-only entry."
+  },
+  "settings_about": "About",
+  "@settings_about": {
+    "description": "About section."
+  },
+  "settings_version": "Version {version}",
+  "@settings_version": {
+    "description": "App version.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "push_title": "Want a gentle nudge each evening?",
+  "@push_title": {
+    "description": "Pre-permission explainer title, shown once after the first check-in. PRD copy. Warm, no pressure."
+  },
+  "push_body": "One a day at most, and never about streaks. Nothing on your lock screen will say how you feel.",
+  "@push_body": {
+    "description": "Pre-permission explainer body. Must promise: at most one a day, never streaks, never a mood on the lock screen."
+  },
+  "push_allow": "Allow",
+  "@push_allow": {
+    "description": "Explainer button that opens the system notification prompt."
+  }
+}

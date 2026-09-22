@@ -1,0 +1,291 @@
+{
+  "cases": [
+    {
+      "name": "3 check-ins + 9 habits = 59",
+      "events": [
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "habit",
+          "habitId": "h1"
+        },
+        {
+          "type": "habit",
+          "habitId": "h2"
+        },
+        {
+          "type": "habit",
+          "habitId": "h3"
+        },
+        {
+          "type": "habit",
+          "habitId": "h4"
+        },
+        {
+          "type": "habit",
+          "habitId": "h5"
+        },
+        {
+          "type": "habit",
+          "habitId": "h6"
+        },
+        {
+          "type": "habit",
+          "habitId": "h7"
+        },
+        {
+          "type": "habit",
+          "habitId": "h8"
+        },
+        {
+          "type": "habit",
+          "habitId": "h9"
+        }
+      ],
+      "expectAwards": [
+        10,
+        2,
+        2,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "expectTotal": 59
+    },
+    {
+      "name": "4th check-in earns 0",
+      "events": [
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        }
+      ],
+      "expectAwards": [
+        10,
+        2,
+        2,
+        0
+      ],
+      "expectTotal": 14
+    },
+    {
+      "name": "cap at 60",
+      "events": [
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "habit",
+          "habitId": "h1"
+        },
+        {
+          "type": "habit",
+          "habitId": "h2"
+        },
+        {
+          "type": "habit",
+          "habitId": "h3"
+        },
+        {
+          "type": "habit",
+          "habitId": "h4"
+        },
+        {
+          "type": "habit",
+          "habitId": "h5"
+        },
+        {
+          "type": "habit",
+          "habitId": "h6"
+        },
+        {
+          "type": "habit",
+          "habitId": "h7"
+        },
+        {
+          "type": "habit",
+          "habitId": "h8"
+        },
+        {
+          "type": "habit",
+          "habitId": "h9"
+        },
+        {
+          "type": "habit",
+          "habitId": "h10"
+        },
+        {
+          "type": "habit",
+          "habitId": "h11"
+        },
+        {
+          "type": "habit",
+          "habitId": "h12"
+        }
+      ],
+      "expectAwards": [
+        10,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        0,
+        0
+      ],
+      "expectTotal": 60
+    },
+    {
+      "name": "cap trims a partial award",
+      "events": [
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "habit",
+          "habitId": "h1"
+        },
+        {
+          "type": "habit",
+          "habitId": "h2"
+        },
+        {
+          "type": "habit",
+          "habitId": "h3"
+        },
+        {
+          "type": "habit",
+          "habitId": "h4"
+        },
+        {
+          "type": "habit",
+          "habitId": "h5"
+        },
+        {
+          "type": "habit",
+          "habitId": "h6"
+        },
+        {
+          "type": "habit",
+          "habitId": "h7"
+        },
+        {
+          "type": "habit",
+          "habitId": "h8"
+        },
+        {
+          "type": "habit",
+          "habitId": "h9"
+        },
+        {
+          "type": "habit",
+          "habitId": "h10"
+        }
+      ],
+      "expectAwards": [
+        10,
+        2,
+        2,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        1
+      ],
+      "expectTotal": 60
+    },
+    {
+      "name": "same habit twice earns once",
+      "events": [
+        {
+          "type": "checkin"
+        },
+        {
+          "type": "habit",
+          "habitId": "h1"
+        },
+        {
+          "type": "habit",
+          "habitId": "h1"
+        }
+      ],
+      "expectAwards": [
+        10,
+        5,
+        0
+      ],
+      "expectTotal": 15
+    },
+    {
+      "name": "habit before first check-in",
+      "events": [
+        {
+          "type": "habit",
+          "habitId": "h1"
+        },
+        {
+          "type": "checkin"
+        }
+      ],
+      "expectAwards": [
+        5,
+        10
+      ],
+      "expectTotal": 15
+    },
+    {
+      "name": "ineligible check-in earns 0 and keeps the first-check-in slot",
+      "events": [
+        {
+          "type": "checkin",
+          "eligible": false
+        },
+        {
+          "type": "checkin"
+        }
+      ],
+      "expectAwards": [
+        0,
+        10
+      ],
+      "expectTotal": 10
+    }
+  ]
+}

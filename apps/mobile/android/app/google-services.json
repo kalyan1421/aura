@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956426842892",
+    "project_id": "aura-akvega",
+    "storage_bucket": "aura-akvega.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956426842892:android:20ef7ce4eb781630054f29",
+        "android_client_info": {
+          "package_name": "com.akvega.aura"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKGOd7S4MXxIXYaFe7iElOIGJicdU04e8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

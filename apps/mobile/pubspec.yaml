@@ -1,0 +1,99 @@
+name: aura
+description: >-
+  Aura mobile app (iOS + Android, com.akvega.aura). A calm, pseudonymous mood
+  check-in app. Offline-first: every personal write lands in the encrypted
+  local Drift store + outbox first, then syncs to NestJS (POST /v1/sync/push).
+publish_to: 'none'
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Shared pure-Dart domain (catalogue, rules, AuraAvatarState).
+  aura_domain:
+    path: ../../packages/aura_domain
+
+  # State, routing, models.
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  go_router: ^18.0.1
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.12.0
+
+  # Local store: Drift over SQLite3MultipleCiphers (encrypted; see hooks below).
+  drift: ^2.35.0
+  drift_flutter: ^0.3.1
+  sqlite3: ^3.6.0
+  path_provider: ^2.1.5
+  flutter_secure_storage: ^11.2.0
+
+  # Network.
+  supabase_flutter: ^2.17.2
+  dio: ^5.11.1
+  connectivity_plus: ^7.3.1
+
+  # Utilities.
+  uuid: ^4.6.0
+  cryptography: ^2.9.0
+  intl: ^0.20.2
+  timezone: ^0.11.1
+  flutter_timezone: ^5.1.0
+  flutter_animate: ^4.5.2
+  url_launcher: ^6.3.2
+  firebase_core: ^4.15.0
+  firebase_messaging: ^16.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.16.1
+  freezed: ^4.0.0
+  json_serializable: ^6.14.1
+  drift_dev: ^2.35.0
+  riverpod_generator: ^4.0.9
+
+# Encrypted SQLite for Drift. package:sqlite3 (3.x) bundles SQLite through
+# build hooks; `sqlite3mc` selects the SQLite3MultipleCiphers build (drift's
+# recommended encryption setup; sqlcipher_flutter_libs is end-of-life).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  shaders:
+    - shaders/aura_glow.frag
+    - shaders/aura_nebula.frag
+
+  assets:
+    - assets/avatar/aura_base.webp
+    - assets/avatar/aura_base.png
+    - assets/avatar/manifest.json
+
+  fonts:
+    - family: NotoSansTelugu
+      fonts:
+        - asset: assets/fonts/NotoSansTelugu-Regular.ttf
+        - asset: assets/fonts/NotoSansTelugu-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansTelugu-SemiBold.ttf
+          weight: 600
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansDevanagari-SemiBold.ttf
+          weight: 600

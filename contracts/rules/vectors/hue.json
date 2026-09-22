@@ -1,0 +1,44 @@
+{
+  "toleranceDeg": 0.5,
+  "cases": [
+    {
+      "counts": {},
+      "expect": null
+    },
+    {
+      "counts": {
+        "sunrise": 3
+      },
+      "expect": 45.0
+    },
+    {
+      "counts": {
+        "moonlight": 1,
+        "rain": 1
+      },
+      "expect": 192.5
+    },
+    {
+      "counts": {
+        "storm": 1,
+        "moonlight": 1
+      },
+      "expect": 242.5
+    },
+    {
+      "counts": {
+        "sunrise": 2,
+        "storm": 1
+      },
+      "expect": 15.559
+    },
+    {
+      "counts": {
+        "rain": 5,
+        "sunrise": 1,
+        "storm": 2
+      },
+      "expect": 191.707
+    }
+  ]
+}

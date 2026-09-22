@@ -1,0 +1,40 @@
+{
+  "cases": [
+    {
+      "name": "01:30 IST counts for previous day",
+      "utc": "2026-10-07T20:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": "2026-10-07"
+    },
+    {
+      "name": "04:00 IST exactly rolls over",
+      "utc": "2026-10-07T22:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": "2026-10-08"
+    },
+    {
+      "name": "03:59:59 IST still previous day",
+      "utc": "2026-10-07T22:29:59Z",
+      "tz": "Asia/Kolkata",
+      "expect": "2026-10-07"
+    },
+    {
+      "name": "23:00 New York",
+      "utc": "2026-10-08T03:00:00Z",
+      "tz": "America/New_York",
+      "expect": "2026-10-07"
+    },
+    {
+      "name": "04:30 New York",
+      "utc": "2026-10-08T08:30:00Z",
+      "tz": "America/New_York",
+      "expect": "2026-10-08"
+    },
+    {
+      "name": "midday Dubai",
+      "utc": "2026-10-08T08:00:00Z",
+      "tz": "Asia/Dubai",
+      "expect": "2026-10-08"
+    }
+  ]
+}

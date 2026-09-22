@@ -1,0 +1,36 @@
+## User Journey Map (Riya)
+
+Riya's first four weeks, assuming the post-launch feature set (Milestone C, so F11 and F13 exist) `[ASSUMPTION]`. Day 0 is install day, a weeknight during the semester. Emotion score runs from −2 (low) to +2 (high).
+
+### Journey at a glance
+
+| Stage | What Riya does | Touchpoints | Thinks / feels | Score | Drop-off risk | Design response |
+|---|---|---|---|---|---|---|
+| **Awareness** (Day −7 to 0) | Sees a Telugu Instagram creator's reel on exam stress featuring Aura, then a classmate's avatar card in the college Discord and a Reddit thread; searches the Play Store | Creator content, F13, Discord, Reddit, store listing | "Cute. But can people see who I am?" | 0 | **High.** "Strangers" reads as a chat or dating app | Listing (English and Telugu) leads with: no real name, no DMs, no photos, no follower counts; screenshots show avatars and gestures, not chat |
+| **Install & onboarding** (Day 0, 11:30 pm) | Picks Tenglish first; Google sign-in, neutral DOB, reads "No one can message you"; Telugu+Tenglish room pool | F8, F14 | "Do they want my number?" then "Oh, it talks like my friends" | −1 → +1 | Medium. Long intro, permission walls, phone number demand | Language first; no phone or real name; notification permission after the first check-in, with a time picker; no paywall in the first 24 h |
+| **First check-in** (Day 0) | Taps Drained, tags Study and Alone, skips the note; Starlight flows into her Spark, which brightens and shifts hue | F1, F2 | "That's it? Nice." | +1 | Medium. Feels like every other mood tracker | Avatar reacts instantly; "Join a room of people feeling this" appears right away |
+| **First room** (Day 0, 11:45 pm) | Joins The Rain Sanctuary as "Quiet Comet"; sends Me Too twice; posts "exams valla chala tired, intiki vellali anipistundi"; gets a Hug and You're Not Alone within 10 min; answers "Yes" to "Did you feel less alone?" | F5, F6, F9 | "Other people are awake and feeling this too." | +2 | **High.** Empty room at midnight, a held reflection, or one unkind reflection | Cold-start merge and "N people have been here today"; gestures persist 24 h; held items say "a person is checking this"; next Lantern Hour shown; report/block on every item |
+| **Habit forming** (Days 1–7) | Checks in at her 10:30 pm reminder; adds Hydrate and Sleep on time; visits Lantern Hour (9–11 pm her time) 3 evenings; earns her first rest day; on Day 6, after a good viva, seals a capsule "open the next time I feel Overwhelmed" | F1, F2, F3, F4, F5, F10, F14 | "I look forward to 9 pm now." | +1 | **High.** Novelty fades around Days 3–5 | One reminder at her chosen time; first evolution (Spark → Ember) within week 1 `[ASSUMPTION: Starlight tuning]`; Aura Sky fills with colour |
+| **First bad week** (Days 9–15, mid-sems) | Misses Days 9–11. Two rest days cover 9–10; avatar enters Resting Nebula. At 1:40 am on Day 12 she checks in Numb and writes "inka naa valla kaadu"; support sheet appears; she does the grounding exercise | F2, F3, F9 | "I failed that paper. Everyone expects too much." Then "It waited for me." | −2 → 0 | **Highest.** Guilt at a broken streak, or a preachy crisis response | Rest days applied silently; Nebula, not decline; "Your glow carries on" with 10 lifetime glow days; calm, dismissible support sheet; no one notified |
+| **Weeks 3–4** (Days 16–28) | Day 18: checks in Overwhelmed before her lab exam; Day 6 capsule fires. Day 20: joins "Breathe together" at Lantern Hour (2 people + 1 echo). Day 24: hits the free limit of 3 mood-trigger capsules, sees Aura Plus (first month free, then ₹49/month or ₹399/year) and starts the trial | F4, F7, F12 | "Past me was right." "That was oddly calming." "Free for a month, I'll decide before it charges." | +2, +1, 0 | Medium. Capsule lands badly; echo feels fake; trial feels like a trap | Open-now / keep-for-later choice; echoes clearly labelled; trial shows end date and price after, reminder before renewal `[ASSUMPTION]`; no offer right after a Storm or Rain check-in |
+
+### Stage notes
+
+**Awareness.** Riya never searches for "mental health". She arrives online (creator, Discord, Reddit), so the store listing must answer "will anyone know it's me?" before it explains features. Share cards carry the avatar only, never mood data.
+
+**Install & onboarding.** Tenglish copy is the first sign Aura is made for her. The DOB screen is neutral (no pre-filled year), so she has no reason to lie. Goal: first check-in inside onboarding (≥ 90% of completers).
+
+**First check-in.** Two taps and a visible avatar change; the avatar is procedural (drawn in code on the phone), so it responds at once, even offline. The room offer is the moment Aura stops being a diary. If this check-in is her last, Aura has only beaten Daylio on animation.
+
+**First room.** Lantern Hour is over and only 3 people are online, but async presence and 24-hour gestures mean her reflection still gets two gestures within minutes. Tenglish reflections are held for review more often than English; hers passed, but a hold must read as care, not rejection. The micro-survey feeds the "felt less alone" ≥ 60% target. One harsh reflection would undo everything, so moderation and one-tap block matter most on night one.
+
+**Habit forming.** The reminder is at her time and about her, never about the streak. Lantern Hour becomes an appointment. Her first rest day arrives with "banked for a busy day", which sets up the next stage. Sealing a capsule on a good day plants the Week 3 payoff.
+
+**First bad week.** This is where solitary trackers lose people to guilt (research doc). Rest days cover two of her three missed days, so the streak still ends; the product must make that feel like nothing. The on-device lexicon catches her Tenglish note. The sheet shows Tele-MANAS 14416 and the grounding exercise, can be closed, and holds the welcome-back animation until afterwards `[ASSUMPTION]`. It may be exam stress rather than risk, so the tone is caring, not alarmed.
+
+**Weeks 3–4.** The capsule fires on the kind of day it was written for. Breath Ripples fills a seat with a labelled echo. The Plus offer comes at a neutral moment, with the free path visible and the trial's end date plain; she decides around Day 54, outside this map. She now counts as a Weekly Supported User.
+
+### The 3 moments that most decide retention
+1. **First gesture received (Day 0).** If her first room gives her nothing back, Riya files Aura as another mood tracker. Drives D1 and "felt less alone".
+2. **The return after the first missed stretch (Days 11–12).** Resting Nebula, silent rest days and "Your glow carries on" have to beat the guilt that ends most tracking habits. Drives D30.
+3. **The first mood-trigger capsule opening (Day 18).** Her own words arriving on the kind of day she wrote them for turns Aura from a tracker into something personal and gives her a reason to seal the next one. Drives D30 and the Plus trial decision.
