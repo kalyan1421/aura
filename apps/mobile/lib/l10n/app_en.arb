@@ -798,5 +798,17 @@
   "push_allow": "Allow",
   "@push_allow": {
     "description": "Explainer button that opens the system notification prompt."
+  },
+  "legal_privacy": "Privacy policy",
+  "@legal_privacy": {
+    "description": "Link to the privacy policy (opens the browser)."
+  },
+  "legal_terms": "Terms of use",
+  "@legal_terms": {
+    "description": "Link to the terms of use (opens the browser)."
+  },
+  "legal_opensInBrowser": "Opens in your browser",
+  "@legal_opensInBrowser": {
+    "description": "Screen-reader hint on legal links."
   }
 }

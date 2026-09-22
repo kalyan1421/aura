@@ -1132,6 +1132,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Allow'**
   String get push_allow;
+
+  /// Link to the privacy policy (opens the browser).
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get legal_privacy;
+
+  /// Link to the terms of use (opens the browser).
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get legal_terms;
+
+  /// Screen-reader hint on legal links.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens in your browser'**
+  String get legal_opensInBrowser;
 }
 
 class _AppLocalizationsDelegate

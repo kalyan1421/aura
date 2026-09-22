@@ -638,6 +638,15 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get push_allow => 'అనుమతించండి';
+
+  @override
+  String get legal_privacy => 'గోప్యతా విధానం';
+
+  @override
+  String get legal_terms => 'వినియోగ నిబంధనలు';
+
+  @override
+  String get legal_opensInBrowser => 'మీ బ్రౌజర్‌లో తెరుచుకుంటుంది';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -1278,4 +1287,13 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get push_allow => 'Allow cheyandi';
+
+  @override
+  String get legal_privacy => 'Privacy policy';
+
+  @override
+  String get legal_terms => 'Terms of use';
+
+  @override
+  String get legal_opensInBrowser => 'Mee browser lo open avutundi';
 }

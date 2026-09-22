@@ -232,6 +232,35 @@ s("push_title", "Want a gentle nudge each evening?", "Pre-permission explainer t
 s("push_body", "One a day at most, and never about streaks. Nothing on your lock screen will say how you feel.", "Pre-permission explainer body. Must promise: at most one a day, never streaks, never a mood on the lock screen.", "రోజుకు ఒక్కటి మాత్రమే, streaks గురించి ఎప్పుడూ కాదు. మీరు ఎలా ఫీల్ అవుతున్నారో మీ లాక్ స్క్రీన్ ఎప్పుడూ చెప్పదు.", "Rojuki okkate, streaks gurinchi eppudu kaadu. Meeru ela feel avutunnaro mee lock screen eppudu cheppadu.")
 s("push_allow", "Allow", "Explainer button that opens the system notification prompt.", "అనుమతించండి", "Allow cheyandi")
 
+# ---- feature fragments (tool/l10n/*.py) -------------------------------------
+# Each fragment holds one feature's copy so features can add strings without
+# editing this file. Fragments call the same helpers:
+#   s(key, en, desc, te, te_Latn, ph=None)   new key (a duplicate is an error)
+#   edit(key, en=None, te=None, tl=None, desc=None)   change an existing key
+def _frag_s(key, en, desc, te, tl, ph=None):
+    if key in S:
+        raise SystemExit(f"l10n: duplicate key '{key}' in a fragment")
+    s(key, en, desc, te, tl, ph)
+
+
+def _edit(key, en=None, te=None, tl=None, desc=None):
+    if key not in S:
+        raise SystemExit(f"l10n: edit() of unknown key '{key}'")
+    old_en, old_desc, ph, old_te, old_tl = S[key]
+    S[key] = (en or old_en, desc or old_desc, ph, te or old_te, tl or old_tl)
+
+
+FRAGMENTS = os.path.join(HERE, "l10n")
+if os.path.isdir(FRAGMENTS):
+    for name in sorted(os.listdir(FRAGMENTS)):
+        if not name.endswith(".py"):
+            continue
+        path = os.path.join(FRAGMENTS, name)
+        with open(path, encoding="utf-8") as f:
+            code = compile(f.read(), path, "exec")
+        exec(code, {"s": _frag_s, "edit": _edit, "INT": INT, "STR": STR})
+
+
 def arb(locale, idx):
     out = {"@@locale": locale}
     for key, (en, desc, ph, te, tl) in S.items():

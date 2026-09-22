@@ -59,6 +59,48 @@ abstract final class Env {
   static bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseKey.isNotEmpty;
   static bool get hasApi => apiUrl.isNotEmpty;
 
+  // ---- Legal & support (onboarding trust step, Settings → Help & Safety) --
+  // Release builds MUST pass real values (lawyer-approved pages, the
+  // Grievance Officer named in the privacy notice; F9, IT Rules). Local
+  // builds get obvious placeholders so the rows can be exercised; release
+  // builds hide a row whose value is missing (see [missingLegalConfig]).
+  static const String _privacyUrl = String.fromEnvironment('AURA_PRIVACY_URL');
+  static const String _termsUrl = String.fromEnvironment('AURA_TERMS_URL');
+  static const String _supportEmail = String.fromEnvironment(
+    'AURA_SUPPORT_EMAIL',
+  );
+  static const String _grievanceName = String.fromEnvironment(
+    'AURA_GRIEVANCE_NAME',
+  );
+  static const String _grievanceEmail = String.fromEnvironment(
+    'AURA_GRIEVANCE_EMAIL',
+  );
+
+  static String _orLocal(String value, String placeholder) =>
+      value.isNotEmpty ? value : (_isLocalBuild ? placeholder : '');
+
+  static String get privacyPolicyUrl =>
+      _orLocal(_privacyUrl, 'https://example.com/aura/privacy');
+  static String get termsUrl =>
+      _orLocal(_termsUrl, 'https://example.com/aura/terms');
+
+  /// Support inbox (wrong date of birth, account questions).
+  static String get supportEmail =>
+      _orLocal(_supportEmail, 'support@example.com');
+  static String get grievanceOfficerName =>
+      _orLocal(_grievanceName, 'Grievance Officer (placeholder)');
+  static String get grievanceOfficerEmail =>
+      _orLocal(_grievanceEmail, 'grievance@example.com');
+
+  /// Legal/support defines a release build is missing (checked in CI).
+  static List<String> get missingLegalConfig => [
+    if (_privacyUrl.isEmpty) 'AURA_PRIVACY_URL',
+    if (_termsUrl.isEmpty) 'AURA_TERMS_URL',
+    if (_supportEmail.isEmpty) 'AURA_SUPPORT_EMAIL',
+    if (_grievanceName.isEmpty) 'AURA_GRIEVANCE_NAME',
+    if (_grievanceEmail.isEmpty) 'AURA_GRIEVANCE_EMAIL',
+  ];
+
   /// Shown in Settings; keep in step with pubspec `version`.
   static const String appVersion = '0.1.0 (1)';
 

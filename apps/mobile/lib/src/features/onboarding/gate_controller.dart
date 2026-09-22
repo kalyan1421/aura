@@ -8,10 +8,18 @@ import 'age_gate.dart';
 
 part 'gate_controller.g.dart';
 
-/// Onboarding order (F8): welcome → DOB → (under 13: block) → language →
-/// sign in → first check-in. DOB comes first so Aura never receives an
-/// under-13's email.
-enum OnboardingStage { welcome, dob, language, signIn, firstCheckIn, done }
+/// Onboarding order (F8): welcome → trust (privacy & boundaries) → DOB →
+/// (under 13: block) → language → sign in → first check-in. DOB comes before
+/// sign-in so Aura never receives an under-13's email.
+enum OnboardingStage {
+  welcome,
+  trust,
+  dob,
+  language,
+  signIn,
+  firstCheckIn,
+  done,
+}
 
 @immutable
 class GateState {

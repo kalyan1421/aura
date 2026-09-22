@@ -131,6 +131,7 @@ void main() {
       (KvKeys.locale, 'te-Latn'),
       (KvKeys.deviceId, 'device-1'),
       (KvKeys.pushDeleteOwed, '1'),
+      (KvKeys.comfort, '{"reduceMotion":true}'),
     ]) {
       await kv.set(k, v);
     }

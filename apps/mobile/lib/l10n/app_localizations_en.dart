@@ -638,4 +638,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get push_allow => 'Allow';
+
+  @override
+  String get legal_privacy => 'Privacy policy';
+
+  @override
+  String get legal_terms => 'Terms of use';
+
+  @override
+  String get legal_opensInBrowser => 'Opens in your browser';
 }

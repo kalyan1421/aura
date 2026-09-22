@@ -41,10 +41,19 @@ abstract final class KvKeys {
   /// Device-scoped, so it survives the sign-out wipe.
   static const String pushDeleteOwed = 'push.delete_owed';
 
+  /// Comfort preferences (`ComfortPrefs` JSON): reduce motion, haptics,
+  /// hide streak number. A property of this phone, not of the account.
+  static const String comfort = 'comfort.prefs';
+
   /// The only keys kept when an account signs out. Everything else in the
   /// table belongs to the signed-in person and is wiped (shared phones).
   /// The under-13 lock and the DB key live in secure storage and stay too.
-  static const Set<String> deviceScoped = {locale, deviceId, pushDeleteOwed};
+  static const Set<String> deviceScoped = {
+    locale,
+    deviceId,
+    pushDeleteOwed,
+    comfort,
+  };
 }
 
 /// Typed helpers over the key/value table.

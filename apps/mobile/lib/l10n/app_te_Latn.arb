@@ -170,5 +170,8 @@
   "settings_version": "Version {version}",
   "push_title": "Prati saayantram oka gentle nudge kaavaalaa?",
   "push_body": "Rojuki okkate, streaks gurinchi eppudu kaadu. Meeru ela feel avutunnaro mee lock screen eppudu cheppadu.",
-  "push_allow": "Allow cheyandi"
+  "push_allow": "Allow cheyandi",
+  "legal_privacy": "Privacy policy",
+  "legal_terms": "Terms of use",
+  "legal_opensInBrowser": "Mee browser lo open avutundi"
 }

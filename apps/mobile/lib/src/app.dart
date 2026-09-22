@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
+import 'core/a11y/haptics.dart';
 import 'core/l10n/locale_controller.dart';
+import 'core/prefs/comfort_prefs.dart';
 import 'core/providers.dart';
 import 'core/router/router.dart';
 import 'core/theme/app_theme.dart';
@@ -53,6 +55,8 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     ref.watch(pushServiceProvider);
     ref.watch(momentsControllerProvider);
     final router = ref.watch(routerProvider);
+    final comfort = ref.watch(comfortControllerProvider);
+    AuraHaptics.enabled = comfort.haptics;
 
     final theme = buildAuraTheme(locale);
     return MaterialApp.router(
@@ -68,6 +72,16 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
         ...systemLocalizationDelegates,
       ],
       routerConfig: router,
+      // In-app Reduce Motion joins the OS setting (REQ-A11Y-08): every
+      // `reduceMotionOf(context)` / `disableAnimations` check sees both.
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        if (!comfort.reduceMotion || mq.disableAnimations) return child!;
+        return MediaQuery(
+          data: mq.copyWith(disableAnimations: true),
+          child: child!,
+        );
+      },
     );
   }
 }
