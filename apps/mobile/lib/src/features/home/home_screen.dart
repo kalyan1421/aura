@@ -18,9 +18,11 @@ import '../../core/widgets/cosmic_background.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../avatar/aura_avatar.dart';
+import '../capsules/capsule_ready_card.dart';
 import '../avatar/moments_controller.dart';
 import '../habits/habits_section.dart';
 import '../progress/progress_view.dart';
+import '../rooms/your_rooms_strip.dart';
 import '../support/support_sheet.dart';
 import 'rest_days_sheet.dart';
 import 'sync_status_sheet.dart';
@@ -111,6 +113,8 @@ class HomeScreen extends ConsumerWidget {
                         const DeletionPendingCard(),
                         const SizedBox(height: AuraSpace.s),
                       ],
+                      // F4: a date capsule is ready (nothing when none is).
+                      const CapsuleReadyCard(),
                       _HeroFit(
                         viewport: box.maxHeight,
                         floor: compact
@@ -137,6 +141,8 @@ class HomeScreen extends ConsumerWidget {
                             ),
                             _StarlightRow(view: view),
                             const _HistoryLine(),
+                            // F5: rooms to return to (nothing when none).
+                            const YourRoomsStrip(),
                             const SizedBox(height: AuraSpace.xs),
                             _GlowCard(view: view, compact: compact),
                             SizedBox(
