@@ -21,7 +21,9 @@ enum ProfileFlush {
   /// retried with backoff): sync carries on.
   failed,
 
-  /// Still pending, but backing off after a refusal: sync carries on.
+  /// Still pending, but backing off after a refusal — or held while the
+  /// account's deletion is pending (`403 account_deletion_pending`, see
+  /// [ProfileService.releaseDeletionHold]): sync carries on.
   deferred,
 }
 
@@ -37,7 +39,13 @@ class ProfileService {
     required this._progress,
     required this._country,
     this._clock = const Clock(),
+    this._onDeletionPending,
   });
+
+  /// The server refused the profile with `403 account_deletion_pending`: the
+  /// account is in its 7-day deletion grace. Reported like sync's refused
+  /// push (the UI asks "Keep my account?"); called once per hold.
+  final void Function()? _onDeletionPending;
 
   final KvStore _kv;
 
@@ -54,8 +62,26 @@ class ProfileService {
   DateTime? _retryAt;
   static const Duration _maxBackoff = Duration(hours: 1);
 
+  /// Set by `403 account_deletion_pending`: the profile stays pending but is
+  /// not sent (every retry would be refused) until [releaseDeletionHold].
+  bool _heldForDeletion = false;
+
+  /// True while a pending profile waits for the "Keep my account?" choice.
+  bool get isHeldForDeletion => _heldForDeletion;
+
+  /// "Keep my account" succeeded, or the account signed out / changed: a
+  /// pending profile goes on the next flush, without backoff.
+  void releaseDeletionHold() {
+    if (!_heldForDeletion) return;
+    _heldForDeletion = false;
+    _refusals = 0;
+    _retryAt = null;
+  }
+
   /// Stores the DOB and queues the first profile POST.
   Future<void> queue({required LocalDay birthDate}) async {
+    // A new onboarding is never held for an earlier account's deletion.
+    releaseDeletionHold();
     await _kv.set(KvKeys.birthDate, birthDate.toIso());
     // Only used to add Childline (1098) on the India help sheet.
     await _kv.set(
@@ -93,6 +119,7 @@ class ProfileService {
       await _kv.set(KvKeys.pendingProfile, null);
       return ProfileFlush.nothingPending;
     }
+    if (_heldForDeletion) return ProfileFlush.deferred;
     final retryAt = _retryAt;
     if (retryAt != null && _clock.now().isBefore(retryAt)) {
       return ProfileFlush.deferred;
@@ -122,6 +149,14 @@ class ProfileService {
       }
     } on ApiException catch (e) {
       if (e.isRetryable) return ProfileFlush.retryLater;
+      if (e.isDeletionPending) {
+        // The account is in its deletion grace period: every POST would be
+        // refused. Keep the profile pending, no backoff, send nothing more
+        // until the person decides ("Keep my account" releases the hold).
+        _heldForDeletion = true;
+        _onDeletionPending?.call();
+        return ProfileFlush.deferred;
+      }
       if (e.code == 'birth_date_locked') {
         // The server keeps the onboarding DOB (support-only change): the
         // profile exists, so stop re-sending this one.

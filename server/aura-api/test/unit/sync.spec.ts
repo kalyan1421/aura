@@ -7,10 +7,18 @@ import { Logger } from '@nestjs/common';
 import { ApiError } from '../../src/common/api-error';
 import { uuidv7 } from '../../src/common/uuid';
 import { computeSnapshot } from '../../src/progression/snapshot';
-import { addDays, auraDay } from '../../src/rules';
+import { addDays, auraDay, MAX_FUTURE_SKEW_MS } from '../../src/rules';
 import { MutationRejected, rejectionReason } from '../../src/sync/mutation-rejected';
-import { habitCreditId, SyncService } from '../../src/sync/sync.service';
-import { checkInPayloadSchema, habitPayloadSchema } from '../../src/sync/sync.schema';
+import { MediaStoreError } from '../../src/account/private-media';
+import {
+  CHECK_IN_EDIT_WINDOW_MS,
+  EDIT_MAX_FUTURE_SKEW_MS,
+  habitCreditId,
+  SyncService,
+  VOICE_CLEANUP_TIMEOUT_MS,
+} from '../../src/sync/sync.service';
+import { checkInPayloadSchema, habitPayloadSchema, MAX_HABIT_NAME_CHARS, MAX_TAG_CHARS } from '../../src/sync/sync.schema';
+import { fitsChars, graphemeCount, MAX_UTF16_UNITS_PER_CHAR } from '../../src/sync/text-limits';
 
 const USER = '0192f0c2-7a4e-7c1a-9b3d-5e6f7a8b9c0d';
 const OTHER = '0192f0c2-7a4e-7c1a-9b3d-000000000001';
@@ -20,8 +28,11 @@ const TODAY = auraDay(NOW, TZ);
 
 class MemRepo {
   mutations = new Map<string, { status: 'applied' | 'rejected'; reason: string | null }>();
-  checkIns = new Map<string, { user: string; moodId: string; localDay: string; backfill: boolean }>();
-  habits = new Map<string, { user: string; kind: string; presetKey: string | null; active: boolean }>();
+  checkIns = new Map<
+    string,
+    { user: string; moodId: string; tags: string[]; localDay: string; deviceTs: string; backfill: boolean; voicePath: string | null }
+  >();
+  habits = new Map<string, { user: string; kind: string; presetKey: string | null; name: string | null; active: boolean }>();
   logs = new Map<string, { user: string; habitId: string; localDay: string }>();
   ledger: { user: string; amount: number; reason: string; sourceId: string; habitKey: string | null; localDay: string }[] = [];
   active = new Set<string>();
@@ -34,23 +45,69 @@ class MemRepo {
     const k = `${m.userId}:${m.mutationId}`;
     if (!this.mutations.has(k)) this.mutations.set(k, { status: m.status, reason: m.reason });
   }
-  async checkInOwner(_: unknown, id: string) {
-    return this.checkIns.get(id)?.user ?? null;
+  async lockCheckIn(_: unknown, id: string) {
+    const c = this.checkIns.get(id);
+    return c ? { userId: c.user, deviceTs: new Date(c.deviceTs), voicePath: c.voicePath } : null;
   }
-  async insertCheckIn(_: unknown, c: { userId: string; p: { id: string; moodId: string }; localDay: string; backfill: boolean }) {
-    this.checkIns.set(c.p.id, { user: c.userId, moodId: c.p.moodId, localDay: c.localDay, backfill: c.backfill });
+  async insertCheckIn(
+    _: unknown,
+    c: {
+      userId: string;
+      p: { id: string; moodId: string; tags: string[] };
+      localDay: string;
+      deviceTs: string;
+      backfill: boolean;
+      voicePath: string | null;
+    },
+  ) {
+    this.checkIns.set(c.p.id, {
+      user: c.userId,
+      moodId: c.p.moodId,
+      tags: c.p.tags,
+      localDay: c.localDay,
+      deviceTs: c.deviceTs,
+      backfill: c.backfill,
+      voicePath: c.voicePath,
+    });
   }
-  async updateCheckIn(_: unknown, u: string, p: { id: string; moodId: string }) {
+  async updateCheckIn(
+    _: unknown,
+    u: string,
+    p: { id: string; moodId: string; tags: string[] },
+    _q: unknown,
+    voicePath: string | null | undefined,
+  ) {
     const c = this.checkIns.get(p.id);
-    if (c && c.user === u) c.moodId = p.moodId;
+    if (c && c.user === u) {
+      c.moodId = p.moodId;
+      c.tags = p.tags;
+      if (voicePath !== undefined) c.voicePath = voicePath;
+    }
   }
   async deleteCheckIn(_: unknown, u: string, id: string) {
-    if (this.checkIns.get(id)?.user === u) this.checkIns.delete(id);
+    const c = this.checkIns.get(id);
+    if (c?.user !== u) return undefined;
+    this.checkIns.delete(id);
+    return { voicePath: c.voicePath };
   }
-  async upsertHabit(_: unknown, u: string, h: { id: string; kind: string; presetKey?: string | null; active: boolean }) {
+  async referencedVoicePaths(_: unknown, u: string, paths: string[]) {
+    const used = [...this.checkIns.values()].filter((c) => c.user === u && c.voicePath).map((c) => c.voicePath);
+    return new Set(paths.filter((p) => used.includes(p)));
+  }
+  async upsertHabit(
+    _: unknown,
+    u: string,
+    h: { id: string; kind: string; presetKey?: string | null; name: string | null; active: boolean },
+  ) {
     const cur = this.habits.get(h.id);
     if (cur && cur.user !== u) return false;
-    this.habits.set(h.id, { user: u, kind: h.kind, presetKey: h.kind === 'preset' ? (h.presetKey ?? null) : null, active: h.active });
+    this.habits.set(h.id, {
+      user: u,
+      kind: h.kind,
+      presetKey: h.kind === 'preset' ? (h.presetKey ?? null) : null,
+      name: h.name,
+      active: h.active,
+    });
     return true;
   }
   async presetHabitTaken(_: unknown, u: string, presetKey: string, exceptId: string) {
@@ -95,7 +152,27 @@ class MemRepo {
   }
 }
 
-function makeService(repo: MemRepo, hasProfile = true): SyncService {
+/** PrivateMediaStore stand-in: records removals; can be unconfigured or failing. */
+class FakeMedia {
+  removed: string[][] = [];
+  constructor(
+    public configured = true,
+    private readonly failWith?: Error,
+  ) {}
+  async remove(names: string[], opts?: { timeoutMs?: number }): Promise<number> {
+    expect(opts?.timeoutMs).toBe(VOICE_CLEANUP_TIMEOUT_MS);
+    if (this.failWith) throw this.failWith;
+    this.removed.push(names);
+    return names.length;
+  }
+}
+
+function makeService(
+  repo: MemRepo,
+  hasProfile = true,
+  media: FakeMedia = new FakeMedia(),
+  over: { recompute?: () => Promise<never> } = {},
+): SyncService {
   const tx = { savepoint: <T>(fn: () => Promise<T>) => fn() };
   const db = { withTx: <T>(fn: (t: typeof tx) => Promise<T>) => fn(tx) };
   const profiles = {
@@ -110,7 +187,9 @@ function makeService(repo: MemRepo, hasProfile = true): SyncService {
     isPresetHabit: async (k: string) => ['breathe', 'sleep_on_time', 'hydrate', 'move', 'journal', 'go_outside'].includes(k),
   };
   const progression = {
-    recompute: async (_: unknown, u: string, tz: string, now: Date) =>
+    recompute:
+      over.recompute ??
+      (async (_: unknown, u: string, tz: string, now: Date) =>
       computeSnapshot(
         {
           totalStarlight: repo.total(u),
@@ -123,9 +202,9 @@ function makeService(repo: MemRepo, hasProfile = true): SyncService {
         },
         now,
         tz,
-      ),
+      )),
   };
-  return new SyncService(db as never, repo as never, profiles as never, catalogue as never, progression as never);
+  return new SyncService(db as never, repo as never, profiles as never, catalogue as never, progression as never, media as never);
 }
 
 const ts = NOW.toISOString();
@@ -365,9 +444,388 @@ describe('sync helpers', () => {
     expect(checkInPayloadSchema.parse({ id: uuidv7(), moodId: 'calm' })).toMatchObject({ tags: [], noteCt: null, source: 'app' });
     expect(checkInPayloadSchema.safeParse({ id: uuidv7(), moodId: 'calm', noteCt: 'not base64!' }).success).toBe(false);
     expect(checkInPayloadSchema.safeParse({ id: uuidv7(), moodId: 'calm', tags: Array(11).fill('x') }).success).toBe(false);
+    expect(checkInPayloadSchema.safeParse({ id: uuidv7(), moodId: 'calm', tags: ['  '] }).success).toBe(false);
     expect(habitPayloadSchema.safeParse({ id: uuidv7(), kind: 'custom', name: '' }).success).toBe(false);
-    expect(habitPayloadSchema.safeParse({ id: uuidv7(), kind: 'custom', name: 'x'.repeat(41) }).success).toBe(false);
+    // lengths are counted in grapheme clusters by SyncService (tag_too_long / habit_name_too_long), not by zod
+    expect(habitPayloadSchema.safeParse({ id: uuidv7(), kind: 'custom', name: 'x'.repeat(41) }).success).toBe(true);
     expect(habitPayloadSchema.safeParse({ id: uuidv7(), kind: 'custom', presetKey: 'breathe', name: 'x' }).success).toBe(false);
     expect(habitPayloadSchema.safeParse({ id: uuidv7(), kind: 'preset' }).success).toBe(false);
+  });
+});
+
+describe('SyncService voice notes (F1)', () => {
+  beforeAll(() => Logger.overrideLogger(false));
+  afterEach(() => jest.restoreAllMocks());
+
+  const voiceOf = (id: string, user = USER) => `${user}/voice/${id}`;
+  const withVoice = (voicePath: unknown, moodId = 'calm') => {
+    const m = checkIn(moodId);
+    return { ...m, payload: { ...m.payload, voicePath: voicePath === '<own>' ? voiceOf(m.payload.id) : voicePath } };
+  };
+  const edit = (m: ReturnType<typeof checkIn>, payload: Record<string, unknown>) => ({
+    ...m,
+    id: uuidv7(),
+    payload: { ...m.payload, ...payload },
+  });
+
+  it('stores <user_id>/voice/<id> on insert (canonical lower-case); absent → null', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const a = withVoice('<own>');
+    const b = checkIn();
+    const upper = withVoice(null);
+    upper.payload.voicePath = voiceOf(upper.payload.id).toUpperCase();
+    const r = await push(s, [a, b, upper]);
+    expect(r.results.map((x) => x.status)).toEqual(['applied', 'applied', 'applied']);
+    expect(repo.checkIns.get(a.payload.id)?.voicePath).toBe(voiceOf(a.payload.id));
+    expect(repo.checkIns.get(b.payload.id)?.voicePath).toBeNull();
+    expect(repo.checkIns.get(upper.payload.id)?.voicePath).toBe(voiceOf(upper.payload.id));
+    expect(media.removed).toEqual([]);
+  });
+
+  it.each<[string, (id: string) => unknown]>([
+    ["another user's prefix", (id) => voiceOf(id, OTHER)],
+    ['another check-in id', () => voiceOf(uuidv7())],
+    ['another folder', (id) => `${USER}/capsules/${id}`],
+    ['a file extension', (id) => `${voiceOf(id)}.m4a`],
+    ['path traversal', (id) => `${USER}/voice/../${OTHER}/voice/${id}`],
+    ['a leading slash', (id) => `/${voiceOf(id)}`],
+    ['an empty string', () => ''],
+    ['a number', () => 42],
+    ['an object', (id) => ({ path: voiceOf(id) })],
+  ])('rejects %s → invalid_voice_path (nothing stored, stays rejected on replay)', async (_, make) => {
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const m = checkIn();
+    const bad = { ...m, payload: { ...m.payload, voicePath: make(m.payload.id) } };
+    const r = await push(s, [bad]);
+    expect(r.results[0]).toEqual({ id: bad.id, status: 'rejected', reason: 'invalid_voice_path' });
+    expect(repo.checkIns.size).toBe(0);
+    expect(repo.ledger).toHaveLength(0);
+    expect((await push(s, [bad])).results[0]).toMatchObject({ status: 'rejected', reason: 'invalid_voice_path' });
+  });
+
+  it('an invalid voicePath on an edit leaves the stored check-in untouched', async () => {
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const c = withVoice('<own>');
+    await push(s, [c]);
+    const r = await push(s, [edit(c, { moodId: 'joyful', voicePath: voiceOf(c.payload.id, OTHER) })]);
+    expect(r.results[0]).toMatchObject({ status: 'rejected', reason: 'invalid_voice_path' });
+    expect(repo.checkIns.get(c.payload.id)).toMatchObject({ moodId: 'calm', voicePath: voiceOf(c.payload.id) });
+  });
+
+  it('edits: absent keeps the voice note, the same path keeps it, a later edit can add it — no deletes', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const c = withVoice('<own>');
+    const plain = checkIn();
+    await push(s, [c, plain]);
+    const { voicePath: _drop, ...noVoice } = c.payload;
+    const r = await push(s, [
+      { ...c, id: uuidv7(), payload: { ...noVoice, moodId: 'joyful' } },
+      edit(c, { voicePath: voiceOf(c.payload.id) }),
+      edit(plain, { voicePath: voiceOf(plain.payload.id) }), // upload finished after the first push
+    ]);
+    expect(r.results.map((x) => x.status)).toEqual(['applied', 'applied', 'applied']);
+    expect(repo.checkIns.get(c.payload.id)?.voicePath).toBe(voiceOf(c.payload.id));
+    expect(repo.checkIns.get(plain.payload.id)?.voicePath).toBe(voiceOf(plain.payload.id));
+    expect(media.removed).toEqual([]);
+    expect(repo.ledger).toHaveLength(2); // edits never re-credit
+  });
+
+  it('an edit to null clears the reference and deletes the object after commit', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const c = withVoice('<own>');
+    const other = withVoice('<own>');
+    await push(s, [c, other]);
+    const r = await push(s, [edit(c, { voicePath: null })]);
+    expect(r.results[0].status).toBe('applied');
+    expect(repo.checkIns.get(c.payload.id)?.voicePath).toBeNull();
+    expect(media.removed).toEqual([[voiceOf(c.payload.id)]]);
+    // null again (nothing referenced) → no second storage call
+    await push(s, [edit(c, { voicePath: null })]);
+    expect(media.removed).toHaveLength(1);
+    expect(repo.checkIns.get(other.payload.id)?.voicePath).toBe(voiceOf(other.payload.id));
+  });
+
+  it('op: delete removes the voice object; deleting a check-in without voice (or not ours) calls nothing', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const c = withVoice('<own>');
+    const plain = checkIn();
+    await push(s, [c, plain]);
+    const theirs = await push(s, [del('check_in', c.payload.id)], OTHER);
+    expect(theirs.results[0].status).toBe('applied'); // scoped by user_id → silent no-op
+    expect(media.removed).toEqual([]);
+    const r = await push(s, [del('check_in', c.payload.id), del('check_in', plain.payload.id), del('check_in', uuidv7())]);
+    expect(r.results.map((x) => x.status)).toEqual(['applied', 'applied', 'applied']);
+    expect(media.removed).toEqual([[voiceOf(c.payload.id)]]);
+    expect(repo.total()).toBe(12); // Starlight is never removed
+  });
+
+  it('a later mutation in the same push that references the path again cancels the delete', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const c = withVoice('<own>');
+    await push(s, [c]);
+    const r = await push(s, [edit(c, { voicePath: null }), edit(c, { voicePath: voiceOf(c.payload.id) })]);
+    expect(r.results.map((x) => x.status)).toEqual(['applied', 'applied']);
+    expect(repo.checkIns.get(c.payload.id)?.voicePath).toBe(voiceOf(c.payload.id));
+    expect(media.removed).toEqual([]);
+  });
+
+  it('a push that fails (rolled back) never deletes objects', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const c = withVoice('<own>');
+    await push(makeService(repo, true, media), [c]);
+    const failing = makeService(repo, true, media, { recompute: () => Promise.reject(new Error('db down')) });
+    await expect(push(failing, [del('check_in', c.payload.id)])).rejects.toThrow('db down');
+    expect(media.removed).toEqual([]);
+  });
+
+  it('no service key: voicePath is still stored, cleanup is skipped with a warning (no ids)', async () => {
+    const warn = jest.spyOn(Logger.prototype, 'warn');
+    const repo = new MemRepo();
+    const media = new FakeMedia(false);
+    const s = makeService(repo, true, media);
+    const c = withVoice('<own>');
+    expect((await push(s, [c])).results[0].status).toBe('applied');
+    expect(repo.checkIns.get(c.payload.id)?.voicePath).toBe(voiceOf(c.payload.id));
+    const r = await push(s, [del('check_in', c.payload.id)]);
+    expect(r.results[0].status).toBe('applied');
+    expect(media.removed).toEqual([]);
+    const lines = warn.mock.calls.map((a) => String(a[0]));
+    expect(lines).toEqual([expect.stringContaining('voice cleanup skipped for 1 object(s)')]);
+    expect(lines.join('\n')).not.toContain(USER);
+    expect(lines.join('\n')).not.toContain(c.payload.id);
+  });
+
+  it.each([
+    ['a Storage error reply', new MediaStoreError(500)],
+    ['a network failure', new TypeError('fetch failed')],
+  ])('%s never fails the push; the warning carries no path', async (_, failure) => {
+    const warn = jest.spyOn(Logger.prototype, 'warn');
+    const repo = new MemRepo();
+    const s = makeService(repo, true, new FakeMedia(true, failure));
+    const c = withVoice('<own>');
+    await push(s, [c]);
+    const r = await push(s, [del('check_in', c.payload.id)]);
+    expect(r.results[0].status).toBe('applied');
+    expect(repo.checkIns.size).toBe(0);
+    const lines = warn.mock.calls.map((a) => String(a[0]));
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatch(/^voice cleanup failed for 1 object\(s\): (storage delete failed: HTTP 500|TypeError)$/);
+  });
+
+  it('payload schema passes voicePath through untouched (the path rule needs the caller)', () => {
+    const id = uuidv7();
+    expect(checkInPayloadSchema.parse({ id, moodId: 'calm' }).voicePath).toBeUndefined();
+    expect(checkInPayloadSchema.parse({ id, moodId: 'calm', voicePath: null }).voicePath).toBeNull();
+    expect(checkInPayloadSchema.parse({ id, moodId: 'calm', voicePath: 'x' }).voicePath).toBe('x');
+  });
+});
+
+describe('SyncService text limits (grapheme clusters) and the 24 h edit window', () => {
+  beforeAll(() => Logger.overrideLogger(false));
+
+  const TELUGU = 'స్త్రీ'; // one character (grapheme cluster), 6 UTF-16 units
+  const FAMILY = '👨🏻‍👩🏻‍👧🏻‍👦🏻'; // one character, 19 UTF-16 units
+  const withTags = (tags: string[]) => {
+    const m = checkIn('calm');
+    return { ...m, payload: { ...m.payload, tags } };
+  };
+  const named = (name: string, kind: 'custom' | 'preset' = 'custom') => {
+    const id = uuidv7();
+    const m = habit(id, kind === 'preset' ? 'breathe' : null);
+    return { ...m, payload: { ...m.payload, name } };
+  };
+
+  it('graphemeCount / fitsChars count what people see, with a UTF-16 safety cap', () => {
+    expect(graphemeCount(TELUGU.repeat(20))).toBe(20);
+    expect(graphemeCount(FAMILY.repeat(3))).toBe(3);
+    expect(fitsChars('x'.repeat(20), 20)).toBe(true);
+    expect(fitsChars('x'.repeat(21), 20)).toBe(false);
+    expect(fitsChars(TELUGU.repeat(20), 20)).toBe(true);
+    expect(fitsChars(FAMILY.repeat(16), 20)).toBe(true); // 304 units
+    expect(fitsChars(`a${'́'.repeat(400)}`, 20)).toBe(false); // one "character", 401 units
+    expect(MAX_UTF16_UNITS_PER_CHAR).toBe(16);
+  });
+
+  it('tags: ≤ 20 characters each (Telugu / emoji count as one) → else tag_too_long; still ≤ 10 tags', async () => {
+    expect(MAX_TAG_CHARS).toBe(20);
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const ok = [withTags(['x'.repeat(20)]), withTags([TELUGU.repeat(20)]), withTags([FAMILY.repeat(10), 'study'])];
+    const bad = [withTags(['x'.repeat(21)]), withTags(['ok', TELUGU.repeat(21)]), withTags([`a${'́'.repeat(400)}`])];
+    const r = await push(s, [...ok, ...bad, withTags(Array.from({ length: 11 }, (_, i) => `t${i}`))]);
+    expect(r.results.map((x) => x.reason ?? x.status)).toEqual([
+      'applied',
+      'applied',
+      'applied',
+      'tag_too_long',
+      'tag_too_long',
+      'tag_too_long',
+      'invalid_payload',
+    ]);
+    expect(repo.checkIns.get(ok[1].payload.id)?.tags).toEqual([TELUGU.repeat(20)]);
+  });
+
+  it('a too-long tag on an edit is rejected and leaves the check-in untouched', async () => {
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const c = checkIn('calm');
+    await push(s, [c]);
+    const r = await push(s, [{ ...c, id: uuidv7(), payload: { ...c.payload, moodId: 'joyful', tags: ['y'.repeat(21)] } }]);
+    expect(r.results[0]).toMatchObject({ status: 'rejected', reason: 'tag_too_long' });
+    expect(repo.checkIns.get(c.payload.id)).toMatchObject({ moodId: 'calm', tags: ['study'] });
+  });
+
+  it('habit names: ≤ 30 characters (custom and preset) → else habit_name_too_long', async () => {
+    expect(MAX_HABIT_NAME_CHARS).toBe(30);
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const telugu30 = named(TELUGU.repeat(30)); // 180 UTF-16 units: the app accepts it
+    const r = await push(s, [
+      named('x'.repeat(30)),
+      telugu30,
+      named('x'.repeat(31)),
+      named(TELUGU.repeat(31)),
+      named('y'.repeat(31), 'preset'),
+    ]);
+    expect(r.results.map((x) => x.reason ?? x.status)).toEqual([
+      'applied',
+      'applied',
+      'habit_name_too_long',
+      'habit_name_too_long',
+      'habit_name_too_long',
+    ]);
+    expect(repo.habits.get((telugu30.payload as { id: string }).id)?.name).toBe(TELUGU.repeat(30));
+  });
+
+  // ---- edit window: judged by the edit's own deviceTs against the stored device_ts
+  const H = 3600_000;
+  const at = (ms: number) => new Date(NOW.getTime() + ms);
+  const pushAt = (s: SyncService, mutations: unknown[], now: Date) =>
+    s.push(USER, { deviceId: '0192f0c2-7a4e-7c1a-9b3d-5e6f7a8b9caa', mutations }, now);
+  const editAt = (c: ReturnType<typeof checkIn>, deviceTs: Date | undefined, payload: Record<string, unknown> = { moodId: 'joyful' }) => ({
+    ...c,
+    id: uuidv7(),
+    deviceTs: deviceTs?.toISOString(),
+    payload: { ...c.payload, ...payload },
+  });
+  const seeded = async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const c = checkIn('calm'); // deviceTs = NOW
+    await push(s, [c]);
+    return { repo, media, s, c };
+  };
+
+  it('an edit made offline at 23 h and synced at 30 h still applies (no re-credit)', async () => {
+    expect(CHECK_IN_EDIT_WINDOW_MS).toBe(24 * H);
+    const { repo, s, c } = await seeded();
+    const r = await pushAt(s, [editAt(c, at(23 * H))], at(30 * H));
+    expect(r.results[0].status).toBe('applied');
+    expect(repo.checkIns.get(c.payload.id)?.moodId).toBe('joyful');
+    expect(repo.ledger).toHaveLength(1);
+  });
+
+  it('exactly 24 h is still inside; 24 h + 1 ms (either side) → edit_window_closed, row untouched', async () => {
+    const { repo, s, c } = await seeded();
+    expect((await pushAt(s, [editAt(c, at(24 * H))], at(24 * H))).results[0].status).toBe('applied');
+    const late = await pushAt(s, [editAt(c, at(24 * H + 1), { moodId: 'anxious' })], at(24 * H + 1));
+    expect(late.results[0]).toMatchObject({ status: 'rejected', reason: 'edit_window_closed' });
+    const early = await pushAt(s, [editAt(c, at(-24 * H - 1), { moodId: 'anxious' })], NOW);
+    expect(early.results[0]).toMatchObject({ status: 'rejected', reason: 'edit_window_closed' });
+    expect(repo.checkIns.get(c.payload.id)?.moodId).toBe('joyful');
+  });
+
+  it('an edit stamped > 5 min ahead of server time (the ledger bound) → edit_window_closed; 4 min ahead is fine', async () => {
+    expect(EDIT_MAX_FUTURE_SKEW_MS).toBe(5 * 60_000);
+    expect(EDIT_MAX_FUTURE_SKEW_MS).toBe(MAX_FUTURE_SKEW_MS);
+    const { s, c } = await seeded();
+    expect((await pushAt(s, [editAt(c, at(6 * 60_000))], NOW)).results[0]).toMatchObject({ reason: 'edit_window_closed' });
+    expect((await pushAt(s, [editAt(c, at(4 * 60_000))], NOW)).results[0].status).toBe('applied');
+  });
+
+  // ---- payload.editedAt: the app keeps deviceTs = the original check-in time and sends when the edit was made
+  /** An edit as the app sends it: deviceTs = the ORIGINAL time (NOW), editedAt = when the user edited. */
+  const editedAt = (c: ReturnType<typeof checkIn>, when: unknown, moodId = 'joyful') => ({
+    ...c,
+    id: uuidv7(),
+    payload: { ...c.payload, moodId, editedAt: when instanceof Date ? when.toISOString() : when },
+  });
+
+  it('editedAt decides the window: 23 h → applied, 25 h → edit_window_closed (deviceTs stays the original)', async () => {
+    const { repo, s, c } = await seeded();
+    const ok = await pushAt(s, [editedAt(c, at(23 * H))], at(30 * H));
+    expect(ok.results[0].status).toBe('applied');
+    expect(repo.checkIns.get(c.payload.id)).toMatchObject({ moodId: 'joyful', deviceTs: c.deviceTs });
+    const late = await pushAt(s, [editedAt(c, at(25 * H), 'anxious')], at(25 * H));
+    expect(late.results[0]).toMatchObject({ status: 'rejected', reason: 'edit_window_closed' });
+    expect(repo.checkIns.get(c.payload.id)?.moodId).toBe('joyful');
+    expect(repo.ledger).toHaveLength(1);
+  });
+
+  it('editedAt more than 5 min ahead of server time → edit_window_closed', async () => {
+    const { s, c } = await seeded();
+    expect((await pushAt(s, [editedAt(c, at(6 * 60_000))], NOW)).results[0]).toMatchObject({ reason: 'edit_window_closed' });
+    expect((await pushAt(s, [editedAt(c, at(4 * 60_000))], NOW)).results[0].status).toBe('applied');
+  });
+
+  it('editedAt must be an ISO timestamp (else invalid_payload); null / absent fall back to deviceTs', async () => {
+    const { s, c } = await seeded();
+    for (const bad of ['yesterday', '2026-10-08', 42, '2026-10-08T10:00:00']) {
+      expect((await push(s, [editedAt(c, bad)])).results[0]).toMatchObject({ status: 'rejected', reason: 'invalid_payload' });
+    }
+    expect((await pushAt(s, [editedAt(c, null)], at(30 * H))).results[0].status).toBe('applied'); // deviceTs = original
+    expect(checkInPayloadSchema.parse({ id: uuidv7(), moodId: 'calm', editedAt: null }).editedAt).toBeUndefined();
+  });
+
+  it('an "edit" that arrives as the first insert ignores editedAt: stored and credited as the original event', async () => {
+    const repo = new MemRepo();
+    const s = makeService(repo);
+    const c = checkIn('calm'); // deviceTs = NOW, localDay = TODAY: the original event
+    const firstSeen = editedAt(c, at(-48 * H)); // even an absurd editedAt is ignored on insert
+    const r = await pushAt(s, [firstSeen], at(H));
+    expect(r.results[0].status).toBe('applied');
+    expect(repo.checkIns.get(c.payload.id)).toMatchObject({ moodId: 'joyful', deviceTs: c.deviceTs, localDay: TODAY, backfill: false });
+    expect(repo.ledger).toEqual([expect.objectContaining({ reason: 'checkin', amount: 10, localDay: TODAY })]);
+  });
+
+  it('an edit without deviceTs → invalid_payload; a rejected edit stays rejected on replay', async () => {
+    const { s, c } = await seeded();
+    expect((await push(s, [editAt(c, undefined)])).results[0]).toMatchObject({ reason: 'invalid_payload' });
+    const late = editAt(c, at(25 * H));
+    expect((await pushAt(s, [late], at(25 * H))).results[0]).toMatchObject({ reason: 'edit_window_closed' });
+    expect((await pushAt(s, [late], at(25 * H))).results[0]).toMatchObject({ status: 'rejected', reason: 'edit_window_closed' });
+  });
+
+  it('a closed window also blocks voice changes (no cleanup); deletes work any time; inserts are unaffected', async () => {
+    const repo = new MemRepo();
+    const media = new FakeMedia();
+    const s = makeService(repo, true, media);
+    const m = checkIn('calm');
+    const c = { ...m, payload: { ...m.payload, voicePath: `${USER}/voice/${m.payload.id}` } };
+    await push(s, [c]);
+    const clear = await pushAt(s, [editAt(c, at(48 * H), { voicePath: null })], at(48 * H));
+    expect(clear.results[0]).toMatchObject({ reason: 'edit_window_closed' });
+    expect(repo.checkIns.get(c.payload.id)?.voicePath).toBe(`${USER}/voice/${c.payload.id}`);
+    expect(media.removed).toEqual([]);
+    const d = await pushAt(s, [del('check_in', c.payload.id)], at(30 * 24 * H));
+    expect(d.results[0].status).toBe('applied');
+    expect(media.removed).toEqual([[`${USER}/voice/${c.payload.id}`]]);
+    // a first insert of an old event is still judged by the backfill rules, not the edit window
+    const old = checkIn('calm', { deviceTs: at(-3 * 24 * H).toISOString(), localDay: addDays(TODAY, -3) });
+    expect((await push(s, [old])).results[0].status).toBe('applied');
   });
 });

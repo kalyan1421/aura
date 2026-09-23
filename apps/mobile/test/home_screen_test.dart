@@ -139,8 +139,11 @@ Future<void> _close(WidgetTester tester) async {
 
 void main() {
   group('layout (item 1)', () {
-    test('avatar height follows the viewport, clamped 200–340', () {
-      expect(homeAvatarHeight(300), 200);
+    test('avatar height follows the viewport (≈ 40%), keeps the fold '
+        'reserve on short screens, clamped 140–340', () {
+      expect(homeAvatarHeight(300), 140);
+      // 375×667: the reserve below the avatar wins over 40%.
+      expect(homeAvatarHeight(529), closeTo(529 - homeFoldReserve, 0.01));
       expect(homeAvatarHeight(704), closeTo(281.6, 0.01));
       expect(homeAvatarHeight(2000), 340);
     });
@@ -156,45 +159,93 @@ void main() {
 
         expect(tester.takeException(), isNull);
         final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
-        expect(avatar.height, inInclusiveRange(200, 340));
+        expect(avatar.height, inInclusiveRange(140, 340));
         await _close(tester);
       });
     }
 
-    testWidgets('390×844: stats row, glow card and first habit row are above '
-        'the fold', (tester) async {
-      _setSize(tester, const Size(390, 844));
-      final db = memoryDb();
-      await _checkIn(tester, db);
-      await tester.pumpWidget(_app(testOverrides(db: db)));
-      await settleIo(tester);
+    for (final (size, minAvatar) in const [
+      (Size(375, 667), 140.0),
+      (Size(390, 844), 250.0),
+    ]) {
+      final name = '${size.width.toInt()}×${size.height.toInt()}';
+      for (final newUser in [false, true]) {
+        testWidgets('$name${newUser ? ' (new user)' : ''}: stats row, glow '
+            'card and the whole first habit row sit above the check-in bar '
+            'without scrolling', (tester) async {
+          _setSize(tester, size);
+          final db = memoryDb();
+          if (!newUser) await _checkIn(tester, db);
+          await tester.pumpWidget(_app(testOverrides(db: db)));
+          await settleIo(tester);
+          expect(tester.takeException(), isNull);
 
-      final fold = tester.getRect(find.byType(ListView)).bottom;
-      for (final key in ['home-stage-progress', 'home-glow-card', 'habit-hydrate']) {
-        final rect = tester.getRect(find.byKey(ValueKey(key)));
-        expect(rect.bottom, lessThanOrEqualTo(fold), reason: key);
+          final fold = tester.getRect(find.byType(ListView)).bottom;
+          final bar = tester.getRect(find.byKey(const ValueKey('home-checkin')));
+          expect(fold, lessThanOrEqualTo(bar.top));
+          final keys = [
+            'home-stage-progress',
+            if (!newUser) 'home-glow-card',
+            'habits-edit',
+            // Every chip in the first row, not just the first one.
+            for (final p in presetHabits)
+              if (tester.getRect(find.byKey(ValueKey('habit-${p.key}'))).top ==
+                  tester.getRect(find.byKey(const ValueKey('habit-hydrate'))).top)
+                'habit-${p.key}',
+          ];
+          expect(keys, contains('habit-hydrate'));
+          for (final key in keys) {
+            final rect = tester.getRect(find.byKey(ValueKey(key)));
+            expect(rect.bottom, lessThanOrEqualTo(fold), reason: key);
+          }
+          // The avatar stays the hero: smaller only on short screens.
+          final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
+          expect(avatar.height, greaterThanOrEqualTo(minAvatar));
+          await _close(tester);
+        });
       }
-      await _close(tester);
-    });
+    }
 
-    testWidgets('200% text: nothing overflows and Home still scrolls to the '
-        'habits', (tester) async {
-      _setSize(tester, const Size(375, 667));
-      tester.platformDispatcher.textScaleFactorTestValue = 2;
-      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    for (final size in const [Size(375, 667), Size(390, 844)]) {
+      testWidgets('200% text at ${size.width.toInt()}×${size.height.toInt()}: '
+          'nothing overflows and Home still scrolls to the habits',
+          (tester) async {
+        _setSize(tester, size);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        final db = memoryDb();
+        await _checkIn(tester, db);
+        await tester.pumpWidget(_app(testOverrides(db: db)));
+        await settleIo(tester);
+        expect(tester.takeException(), isNull);
+
+        await tester.scrollUntilVisible(
+          find.byKey(const ValueKey('habit-go_outside')),
+          200,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        await _close(tester);
+      });
+    }
+
+    testWidgets('the decorative wordmark shows when "I need help now" fits '
+        'beside it, and steps aside when the label would wrap',
+        (tester) async {
+      // Wide enough for both on one line (the test font is wide).
+      _setSize(tester, const Size(700, 900));
       final db = memoryDb();
-      await _checkIn(tester, db);
       await tester.pumpWidget(_app(testOverrides(db: db)));
       await settleIo(tester);
-      expect(tester.takeException(), isNull);
+      expect(find.byKey(const ValueKey('home-wordmark')), findsOneWidget);
+      await _close(tester);
 
-      await tester.scrollUntilVisible(
-        find.byKey(const ValueKey('habit-go_outside')),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pump();
-      expect(tester.takeException(), isNull);
+      _setSize(tester, const Size(375, 667));
+      await tester.pumpWidget(_app(testOverrides(db: memoryDb())));
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('home-wordmark')), findsNothing);
+      expect(find.text('I need help now'), findsOneWidget);
       await _close(tester);
     });
   });

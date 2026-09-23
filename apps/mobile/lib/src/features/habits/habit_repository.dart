@@ -81,18 +81,16 @@ class HabitRepository {
   /// (server: `duplicate_preset_habit`).
   static const int maxActiveCustomHabits = 3;
 
-  /// Custom names: ≤ 30 characters (PRD F2) and, because the server counts
-  /// UTF-16 units (`name.max(40)`), ≤ 40 of those, so a long Telugu name is
-  /// refused here instead of being rejected on sync.
+  /// Custom names: ≤ 30 characters (PRD F2), counted as grapheme clusters
+  /// (what a person sees as one letter, so a Telugu conjunct is one). The
+  /// server counts the same way; the editor's field enforces it as you type.
   static const int maxCustomNameChars = 30;
-  static const int maxCustomNameUnits = 40;
 
   /// The name as it will be saved, or `null` when it is empty or too long.
   static String? cleanCustomName(String raw) {
     final name = raw.trim().replaceAll(RegExp(r'\s+'), ' ');
     if (name.isEmpty) return null;
     if (name.characters.length > maxCustomNameChars) return null;
-    if (name.length > maxCustomNameUnits) return null;
     return name;
   }
 

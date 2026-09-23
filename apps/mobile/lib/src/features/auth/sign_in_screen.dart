@@ -10,6 +10,7 @@ import '../../core/env/env.dart';
 import '../../core/providers.dart';
 import '../../core/router/router.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../../core/widgets/busy_button_label.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
@@ -17,7 +18,6 @@ import '../onboarding/gate_controller.dart';
 import '../onboarding/onboarding_frame.dart';
 import '../support/support_sheet.dart';
 import 'auth_repository.dart';
-import 'busy_button_label.dart';
 
 /// Sign in with an email code (Supabase OTP) or the magic link in the same
 /// email (F8 REQ-ACC-01). No name, phone or password. Apple and Google are

@@ -148,6 +148,39 @@ class $CheckInsTable extends CheckIns
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _voiceFileMeta = const VerificationMeta(
+    'voiceFile',
+  );
+  @override
+  late final GeneratedColumn<String> voiceFile = GeneratedColumn<String>(
+    'voice_file',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _voiceMsMeta = const VerificationMeta(
+    'voiceMs',
+  );
+  @override
+  late final GeneratedColumn<int> voiceMs = GeneratedColumn<int>(
+    'voice_ms',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _voicePathMeta = const VerificationMeta(
+    'voicePath',
+  );
+  @override
+  late final GeneratedColumn<String> voicePath = GeneratedColumn<String>(
+    'voice_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -163,6 +196,9 @@ class $CheckInsTable extends CheckIns
     deletedAt,
     synced,
     noteLocked,
+    voiceFile,
+    voiceMs,
+    voicePath,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -257,6 +293,24 @@ class $CheckInsTable extends CheckIns
         noteLocked.isAcceptableOrUnknown(data['note_locked']!, _noteLockedMeta),
       );
     }
+    if (data.containsKey('voice_file')) {
+      context.handle(
+        _voiceFileMeta,
+        voiceFile.isAcceptableOrUnknown(data['voice_file']!, _voiceFileMeta),
+      );
+    }
+    if (data.containsKey('voice_ms')) {
+      context.handle(
+        _voiceMsMeta,
+        voiceMs.isAcceptableOrUnknown(data['voice_ms']!, _voiceMsMeta),
+      );
+    }
+    if (data.containsKey('voice_path')) {
+      context.handle(
+        _voicePathMeta,
+        voicePath.isAcceptableOrUnknown(data['voice_path']!, _voicePathMeta),
+      );
+    }
     return context;
   }
 
@@ -320,6 +374,18 @@ class $CheckInsTable extends CheckIns
         DriftSqlType.bool,
         data['${effectivePrefix}note_locked'],
       )!,
+      voiceFile: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}voice_file'],
+      ),
+      voiceMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}voice_ms'],
+      ),
+      voicePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}voice_path'],
+      ),
     );
   }
 
@@ -360,6 +426,23 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
   /// server's note, so editing waits until the note is readable here
   /// (schema v3).
   final bool noteLocked;
+
+  /// This phone's copy of the voice note: a file name inside the app's
+  /// private, backup-excluded voice directory (`VoiceStore`). `<rec>.enc` is
+  /// sealed with the per-user data key (DS-1); `<rec>.m4a` is raw and only
+  /// exists until a data key is on this phone. `null` when there is no local
+  /// copy (none, or pulled from the server: played by downloading).
+  final String? voiceFile;
+
+  /// Recorded length in milliseconds, for display (`null` when unknown, e.g.
+  /// a pulled voice note that hasn't been played here).
+  final int? voiceMs;
+
+  /// The server object holding the current recording
+  /// (`<user_id>/voice/<id>`, the upload's `path` verbatim): set once the
+  /// upload succeeded, or by a pull. `null` while the current local
+  /// recording is not uploaded yet (or there is no voice note).
+  final String? voicePath;
   const CheckInRow({
     required this.id,
     required this.moodId,
@@ -374,6 +457,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     this.deletedAt,
     required this.synced,
     required this.noteLocked,
+    this.voiceFile,
+    this.voiceMs,
+    this.voicePath,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -399,6 +485,15 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     }
     map['synced'] = Variable<bool>(synced);
     map['note_locked'] = Variable<bool>(noteLocked);
+    if (!nullToAbsent || voiceFile != null) {
+      map['voice_file'] = Variable<String>(voiceFile);
+    }
+    if (!nullToAbsent || voiceMs != null) {
+      map['voice_ms'] = Variable<int>(voiceMs);
+    }
+    if (!nullToAbsent || voicePath != null) {
+      map['voice_path'] = Variable<String>(voicePath);
+    }
     return map;
   }
 
@@ -419,6 +514,15 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           : Value(deletedAt),
       synced: Value(synced),
       noteLocked: Value(noteLocked),
+      voiceFile: voiceFile == null && nullToAbsent
+          ? const Value.absent()
+          : Value(voiceFile),
+      voiceMs: voiceMs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(voiceMs),
+      voicePath: voicePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(voicePath),
     );
   }
 
@@ -441,6 +545,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       synced: serializer.fromJson<bool>(json['synced']),
       noteLocked: serializer.fromJson<bool>(json['noteLocked']),
+      voiceFile: serializer.fromJson<String?>(json['voiceFile']),
+      voiceMs: serializer.fromJson<int?>(json['voiceMs']),
+      voicePath: serializer.fromJson<String?>(json['voicePath']),
     );
   }
   @override
@@ -460,6 +567,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'synced': serializer.toJson<bool>(synced),
       'noteLocked': serializer.toJson<bool>(noteLocked),
+      'voiceFile': serializer.toJson<String?>(voiceFile),
+      'voiceMs': serializer.toJson<int?>(voiceMs),
+      'voicePath': serializer.toJson<String?>(voicePath),
     };
   }
 
@@ -477,6 +587,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     Value<DateTime?> deletedAt = const Value.absent(),
     bool? synced,
     bool? noteLocked,
+    Value<String?> voiceFile = const Value.absent(),
+    Value<int?> voiceMs = const Value.absent(),
+    Value<String?> voicePath = const Value.absent(),
   }) => CheckInRow(
     id: id ?? this.id,
     moodId: moodId ?? this.moodId,
@@ -491,6 +604,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     synced: synced ?? this.synced,
     noteLocked: noteLocked ?? this.noteLocked,
+    voiceFile: voiceFile.present ? voiceFile.value : this.voiceFile,
+    voiceMs: voiceMs.present ? voiceMs.value : this.voiceMs,
+    voicePath: voicePath.present ? voicePath.value : this.voicePath,
   );
   CheckInRow copyWithCompanion(CheckInsCompanion data) {
     return CheckInRow(
@@ -511,6 +627,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       noteLocked: data.noteLocked.present
           ? data.noteLocked.value
           : this.noteLocked,
+      voiceFile: data.voiceFile.present ? data.voiceFile.value : this.voiceFile,
+      voiceMs: data.voiceMs.present ? data.voiceMs.value : this.voiceMs,
+      voicePath: data.voicePath.present ? data.voicePath.value : this.voicePath,
     );
   }
 
@@ -529,7 +648,10 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           ..write('source: $source, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('synced: $synced, ')
-          ..write('noteLocked: $noteLocked')
+          ..write('noteLocked: $noteLocked, ')
+          ..write('voiceFile: $voiceFile, ')
+          ..write('voiceMs: $voiceMs, ')
+          ..write('voicePath: $voicePath')
           ..write(')'))
         .toString();
   }
@@ -549,6 +671,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     deletedAt,
     synced,
     noteLocked,
+    voiceFile,
+    voiceMs,
+    voicePath,
   );
   @override
   bool operator ==(Object other) =>
@@ -566,7 +691,10 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           other.source == this.source &&
           other.deletedAt == this.deletedAt &&
           other.synced == this.synced &&
-          other.noteLocked == this.noteLocked);
+          other.noteLocked == this.noteLocked &&
+          other.voiceFile == this.voiceFile &&
+          other.voiceMs == this.voiceMs &&
+          other.voicePath == this.voicePath);
 }
 
 class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
@@ -583,6 +711,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
   final Value<DateTime?> deletedAt;
   final Value<bool> synced;
   final Value<bool> noteLocked;
+  final Value<String?> voiceFile;
+  final Value<int?> voiceMs;
+  final Value<String?> voicePath;
   final Value<int> rowid;
   const CheckInsCompanion({
     this.id = const Value.absent(),
@@ -598,6 +729,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     this.deletedAt = const Value.absent(),
     this.synced = const Value.absent(),
     this.noteLocked = const Value.absent(),
+    this.voiceFile = const Value.absent(),
+    this.voiceMs = const Value.absent(),
+    this.voicePath = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CheckInsCompanion.insert({
@@ -614,6 +748,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     this.deletedAt = const Value.absent(),
     this.synced = const Value.absent(),
     this.noteLocked = const Value.absent(),
+    this.voiceFile = const Value.absent(),
+    this.voiceMs = const Value.absent(),
+    this.voicePath = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        moodId = Value(moodId),
@@ -635,6 +772,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     Expression<DateTime>? deletedAt,
     Expression<bool>? synced,
     Expression<bool>? noteLocked,
+    Expression<String>? voiceFile,
+    Expression<int>? voiceMs,
+    Expression<String>? voicePath,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -651,6 +791,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (synced != null) 'synced': synced,
       if (noteLocked != null) 'note_locked': noteLocked,
+      if (voiceFile != null) 'voice_file': voiceFile,
+      if (voiceMs != null) 'voice_ms': voiceMs,
+      if (voicePath != null) 'voice_path': voicePath,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -669,6 +812,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     Value<DateTime?>? deletedAt,
     Value<bool>? synced,
     Value<bool>? noteLocked,
+    Value<String?>? voiceFile,
+    Value<int?>? voiceMs,
+    Value<String?>? voicePath,
     Value<int>? rowid,
   }) {
     return CheckInsCompanion(
@@ -685,6 +831,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
       deletedAt: deletedAt ?? this.deletedAt,
       synced: synced ?? this.synced,
       noteLocked: noteLocked ?? this.noteLocked,
+      voiceFile: voiceFile ?? this.voiceFile,
+      voiceMs: voiceMs ?? this.voiceMs,
+      voicePath: voicePath ?? this.voicePath,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -733,6 +882,15 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     if (noteLocked.present) {
       map['note_locked'] = Variable<bool>(noteLocked.value);
     }
+    if (voiceFile.present) {
+      map['voice_file'] = Variable<String>(voiceFile.value);
+    }
+    if (voiceMs.present) {
+      map['voice_ms'] = Variable<int>(voiceMs.value);
+    }
+    if (voicePath.present) {
+      map['voice_path'] = Variable<String>(voicePath.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -755,6 +913,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
           ..write('deletedAt: $deletedAt, ')
           ..write('synced: $synced, ')
           ..write('noteLocked: $noteLocked, ')
+          ..write('voiceFile: $voiceFile, ')
+          ..write('voiceMs: $voiceMs, ')
+          ..write('voicePath: $voicePath, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1870,6 +2031,33 @@ class $OutboxTable extends Outbox with TableInfo<$OutboxTable, OutboxRow> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _needsMediaMeta = const VerificationMeta(
+    'needsMedia',
+  );
+  @override
+  late final GeneratedColumn<bool> needsMedia = GeneratedColumn<bool>(
+    'needs_media',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("needs_media" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _mediaAttemptsMeta = const VerificationMeta(
+    'mediaAttempts',
+  );
+  @override
+  late final GeneratedColumn<int> mediaAttempts = GeneratedColumn<int>(
+    'media_attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     seq,
@@ -1885,6 +2073,8 @@ class $OutboxTable extends Outbox with TableInfo<$OutboxTable, OutboxRow> {
     attempts,
     nextAttemptAt,
     createdAt,
+    needsMedia,
+    mediaAttempts,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1989,6 +2179,21 @@ class $OutboxTable extends Outbox with TableInfo<$OutboxTable, OutboxRow> {
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('needs_media')) {
+      context.handle(
+        _needsMediaMeta,
+        needsMedia.isAcceptableOrUnknown(data['needs_media']!, _needsMediaMeta),
+      );
+    }
+    if (data.containsKey('media_attempts')) {
+      context.handle(
+        _mediaAttemptsMeta,
+        mediaAttempts.isAcceptableOrUnknown(
+          data['media_attempts']!,
+          _mediaAttemptsMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2050,6 +2255,14 @@ class $OutboxTable extends Outbox with TableInfo<$OutboxTable, OutboxRow> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      needsMedia: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}needs_media'],
+      )!,
+      mediaAttempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}media_attempts'],
+      )!,
     );
   }
 
@@ -2075,6 +2288,15 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
   final int attempts;
   final DateTime? nextAttemptAt;
   final DateTime createdAt;
+
+  /// A `check_in` upsert that goes out only after its voice note is uploaded
+  /// (schema v4, like [needsNote]): `voicePath` is filled in right before
+  /// sending. Cleared when the outbox gives up on the upload — the check-in
+  /// then goes without it (never blocked by media).
+  final bool needsMedia;
+
+  /// Failed upload attempts of this row's voice note (schema v4).
+  final int mediaAttempts;
   const OutboxRow({
     required this.seq,
     required this.mutationId,
@@ -2089,6 +2311,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
     required this.attempts,
     this.nextAttemptAt,
     required this.createdAt,
+    required this.needsMedia,
+    required this.mediaAttempts,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2110,6 +2334,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
       map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
+    map['needs_media'] = Variable<bool>(needsMedia);
+    map['media_attempts'] = Variable<int>(mediaAttempts);
     return map;
   }
 
@@ -2130,6 +2356,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
           ? const Value.absent()
           : Value(nextAttemptAt),
       createdAt: Value(createdAt),
+      needsMedia: Value(needsMedia),
+      mediaAttempts: Value(mediaAttempts),
     );
   }
 
@@ -2152,6 +2380,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
       attempts: serializer.fromJson<int>(json['attempts']),
       nextAttemptAt: serializer.fromJson<DateTime?>(json['nextAttemptAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      needsMedia: serializer.fromJson<bool>(json['needsMedia']),
+      mediaAttempts: serializer.fromJson<int>(json['mediaAttempts']),
     );
   }
   @override
@@ -2171,6 +2401,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
       'attempts': serializer.toJson<int>(attempts),
       'nextAttemptAt': serializer.toJson<DateTime?>(nextAttemptAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'needsMedia': serializer.toJson<bool>(needsMedia),
+      'mediaAttempts': serializer.toJson<int>(mediaAttempts),
     };
   }
 
@@ -2188,6 +2420,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
     int? attempts,
     Value<DateTime?> nextAttemptAt = const Value.absent(),
     DateTime? createdAt,
+    bool? needsMedia,
+    int? mediaAttempts,
   }) => OutboxRow(
     seq: seq ?? this.seq,
     mutationId: mutationId ?? this.mutationId,
@@ -2204,6 +2438,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
         ? nextAttemptAt.value
         : this.nextAttemptAt,
     createdAt: createdAt ?? this.createdAt,
+    needsMedia: needsMedia ?? this.needsMedia,
+    mediaAttempts: mediaAttempts ?? this.mediaAttempts,
   );
   OutboxRow copyWithCompanion(OutboxCompanion data) {
     return OutboxRow(
@@ -2224,6 +2460,12 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
           ? data.nextAttemptAt.value
           : this.nextAttemptAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      needsMedia: data.needsMedia.present
+          ? data.needsMedia.value
+          : this.needsMedia,
+      mediaAttempts: data.mediaAttempts.present
+          ? data.mediaAttempts.value
+          : this.mediaAttempts,
     );
   }
 
@@ -2242,7 +2484,9 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
           ..write('needsNote: $needsNote, ')
           ..write('attempts: $attempts, ')
           ..write('nextAttemptAt: $nextAttemptAt, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('needsMedia: $needsMedia, ')
+          ..write('mediaAttempts: $mediaAttempts')
           ..write(')'))
         .toString();
   }
@@ -2262,6 +2506,8 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
     attempts,
     nextAttemptAt,
     createdAt,
+    needsMedia,
+    mediaAttempts,
   );
   @override
   bool operator ==(Object other) =>
@@ -2279,7 +2525,9 @@ class OutboxRow extends DataClass implements Insertable<OutboxRow> {
           other.needsNote == this.needsNote &&
           other.attempts == this.attempts &&
           other.nextAttemptAt == this.nextAttemptAt &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.needsMedia == this.needsMedia &&
+          other.mediaAttempts == this.mediaAttempts);
 }
 
 class OutboxCompanion extends UpdateCompanion<OutboxRow> {
@@ -2296,6 +2544,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
   final Value<int> attempts;
   final Value<DateTime?> nextAttemptAt;
   final Value<DateTime> createdAt;
+  final Value<bool> needsMedia;
+  final Value<int> mediaAttempts;
   const OutboxCompanion({
     this.seq = const Value.absent(),
     this.mutationId = const Value.absent(),
@@ -2310,6 +2560,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
     this.attempts = const Value.absent(),
     this.nextAttemptAt = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.needsMedia = const Value.absent(),
+    this.mediaAttempts = const Value.absent(),
   });
   OutboxCompanion.insert({
     this.seq = const Value.absent(),
@@ -2325,6 +2577,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
     this.attempts = const Value.absent(),
     this.nextAttemptAt = const Value.absent(),
     required DateTime createdAt,
+    this.needsMedia = const Value.absent(),
+    this.mediaAttempts = const Value.absent(),
   }) : mutationId = Value(mutationId),
        entity = Value(entity),
        op = Value(op),
@@ -2347,6 +2601,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
     Expression<int>? attempts,
     Expression<DateTime>? nextAttemptAt,
     Expression<DateTime>? createdAt,
+    Expression<bool>? needsMedia,
+    Expression<int>? mediaAttempts,
   }) {
     return RawValuesInsertable({
       if (seq != null) 'seq': seq,
@@ -2362,6 +2618,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
       if (attempts != null) 'attempts': attempts,
       if (nextAttemptAt != null) 'next_attempt_at': nextAttemptAt,
       if (createdAt != null) 'created_at': createdAt,
+      if (needsMedia != null) 'needs_media': needsMedia,
+      if (mediaAttempts != null) 'media_attempts': mediaAttempts,
     });
   }
 
@@ -2379,6 +2637,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
     Value<int>? attempts,
     Value<DateTime?>? nextAttemptAt,
     Value<DateTime>? createdAt,
+    Value<bool>? needsMedia,
+    Value<int>? mediaAttempts,
   }) {
     return OutboxCompanion(
       seq: seq ?? this.seq,
@@ -2394,6 +2654,8 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
       attempts: attempts ?? this.attempts,
       nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
       createdAt: createdAt ?? this.createdAt,
+      needsMedia: needsMedia ?? this.needsMedia,
+      mediaAttempts: mediaAttempts ?? this.mediaAttempts,
     );
   }
 
@@ -2439,6 +2701,12 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (needsMedia.present) {
+      map['needs_media'] = Variable<bool>(needsMedia.value);
+    }
+    if (mediaAttempts.present) {
+      map['media_attempts'] = Variable<int>(mediaAttempts.value);
+    }
     return map;
   }
 
@@ -2457,7 +2725,9 @@ class OutboxCompanion extends UpdateCompanion<OutboxRow> {
           ..write('needsNote: $needsNote, ')
           ..write('attempts: $attempts, ')
           ..write('nextAttemptAt: $nextAttemptAt, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('needsMedia: $needsMedia, ')
+          ..write('mediaAttempts: $mediaAttempts')
           ..write(')'))
         .toString();
   }
@@ -3349,6 +3619,9 @@ typedef $$CheckInsTableCreateCompanionBuilder = CheckInsCompanion Function({
   Value<DateTime?> deletedAt,
   Value<bool> synced,
   Value<bool> noteLocked,
+  Value<String?> voiceFile,
+  Value<int?> voiceMs,
+  Value<String?> voicePath,
   Value<int> rowid,
 });
 typedef $$CheckInsTableUpdateCompanionBuilder = CheckInsCompanion Function({
@@ -3365,6 +3638,9 @@ typedef $$CheckInsTableUpdateCompanionBuilder = CheckInsCompanion Function({
   Value<DateTime?> deletedAt,
   Value<bool> synced,
   Value<bool> noteLocked,
+  Value<String?> voiceFile,
+  Value<int?> voiceMs,
+  Value<String?> voicePath,
   Value<int> rowid,
 });
 
@@ -3442,6 +3718,21 @@ class $$CheckInsTableFilterComposer
     column: $table.noteLocked,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<String> get voiceFile => $composableBuilder(
+    column: $table.voiceFile,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get voiceMs => $composableBuilder(
+    column: $table.voiceMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get voicePath => $composableBuilder(
+    column: $table.voicePath,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$CheckInsTableOrderingComposer
@@ -3517,6 +3808,21 @@ class $$CheckInsTableOrderingComposer
     column: $table.noteLocked,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get voiceFile => $composableBuilder(
+    column: $table.voiceFile,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get voiceMs => $composableBuilder(
+    column: $table.voiceMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get voicePath => $composableBuilder(
+    column: $table.voicePath,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CheckInsTableAnnotationComposer
@@ -3570,6 +3876,15 @@ class $$CheckInsTableAnnotationComposer
     column: $table.noteLocked,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get voiceFile =>
+      $composableBuilder(column: $table.voiceFile, builder: (column) => column);
+
+  GeneratedColumn<int> get voiceMs =>
+      $composableBuilder(column: $table.voiceMs, builder: (column) => column);
+
+  GeneratedColumn<String> get voicePath =>
+      $composableBuilder(column: $table.voicePath, builder: (column) => column);
 }
 
 class $$CheckInsTableTableManager
@@ -3616,6 +3931,9 @@ class $$CheckInsTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
                 Value<bool> noteLocked = const Value.absent(),
+                Value<String?> voiceFile = const Value.absent(),
+                Value<int?> voiceMs = const Value.absent(),
+                Value<String?> voicePath = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CheckInsCompanion(
                 id: id,
@@ -3631,6 +3949,9 @@ class $$CheckInsTableTableManager
                 deletedAt: deletedAt,
                 synced: synced,
                 noteLocked: noteLocked,
+                voiceFile: voiceFile,
+                voiceMs: voiceMs,
+                voicePath: voicePath,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3648,6 +3969,9 @@ class $$CheckInsTableTableManager
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
                 Value<bool> noteLocked = const Value.absent(),
+                Value<String?> voiceFile = const Value.absent(),
+                Value<int?> voiceMs = const Value.absent(),
+                Value<String?> voicePath = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CheckInsCompanion.insert(
                 id: id,
@@ -3663,6 +3987,9 @@ class $$CheckInsTableTableManager
                 deletedAt: deletedAt,
                 synced: synced,
                 noteLocked: noteLocked,
+                voiceFile: voiceFile,
+                voiceMs: voiceMs,
+                voicePath: voicePath,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -4213,6 +4540,8 @@ typedef $$OutboxTableCreateCompanionBuilder = OutboxCompanion Function({
   Value<int> attempts,
   Value<DateTime?> nextAttemptAt,
   required DateTime createdAt,
+  Value<bool> needsMedia,
+  Value<int> mediaAttempts,
 });
 typedef $$OutboxTableUpdateCompanionBuilder = OutboxCompanion Function({
   Value<int> seq,
@@ -4228,6 +4557,8 @@ typedef $$OutboxTableUpdateCompanionBuilder = OutboxCompanion Function({
   Value<int> attempts,
   Value<DateTime?> nextAttemptAt,
   Value<DateTime> createdAt,
+  Value<bool> needsMedia,
+  Value<int> mediaAttempts,
 });
 
 class $$OutboxTableFilterComposer
@@ -4301,6 +4632,16 @@ class $$OutboxTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get needsMedia => $composableBuilder(
+    column: $table.needsMedia,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get mediaAttempts => $composableBuilder(
+    column: $table.mediaAttempts,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4378,6 +4719,16 @@ class $$OutboxTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get needsMedia => $composableBuilder(
+    column: $table.needsMedia,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get mediaAttempts => $composableBuilder(
+    column: $table.mediaAttempts,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$OutboxTableAnnotationComposer
@@ -4431,6 +4782,16 @@ class $$OutboxTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get needsMedia => $composableBuilder(
+    column: $table.needsMedia,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get mediaAttempts => $composableBuilder(
+    column: $table.mediaAttempts,
+    builder: (column) => column,
+  );
 }
 
 class $$OutboxTableTableManager
@@ -4474,6 +4835,8 @@ class $$OutboxTableTableManager
                 Value<int> attempts = const Value.absent(),
                 Value<DateTime?> nextAttemptAt = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<bool> needsMedia = const Value.absent(),
+                Value<int> mediaAttempts = const Value.absent(),
               }) => OutboxCompanion(
                 seq: seq,
                 mutationId: mutationId,
@@ -4488,6 +4851,8 @@ class $$OutboxTableTableManager
                 attempts: attempts,
                 nextAttemptAt: nextAttemptAt,
                 createdAt: createdAt,
+                needsMedia: needsMedia,
+                mediaAttempts: mediaAttempts,
               ),
           createCompanionCallback:
               ({
@@ -4504,6 +4869,8 @@ class $$OutboxTableTableManager
                 Value<int> attempts = const Value.absent(),
                 Value<DateTime?> nextAttemptAt = const Value.absent(),
                 required DateTime createdAt,
+                Value<bool> needsMedia = const Value.absent(),
+                Value<int> mediaAttempts = const Value.absent(),
               }) => OutboxCompanion.insert(
                 seq: seq,
                 mutationId: mutationId,
@@ -4518,6 +4885,8 @@ class $$OutboxTableTableManager
                 attempts: attempts,
                 nextAttemptAt: nextAttemptAt,
                 createdAt: createdAt,
+                needsMedia: needsMedia,
+                mediaAttempts: mediaAttempts,
               ),
           withReferenceMapper: (p0) => p0
               .map(

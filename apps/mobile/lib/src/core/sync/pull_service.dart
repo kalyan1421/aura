@@ -51,7 +51,7 @@ class PullService {
     final checkIns = await _all(
       client,
       'check_ins',
-      'id,mood_id,quadrant,tags,note_ct,local_day,device_ts,source',
+      'id,mood_id,quadrant,tags,note_ct,voice_path,local_day,device_ts,source',
     );
     final habits = await _all(
       client,
@@ -87,16 +87,27 @@ class PullService {
           _db.checkIns,
         )..where((t) => t.id.equals(id))).getSingleOrNull();
         final serverHasNote = c['note_ct'] != null;
+        // Voice notes are fetched lazily when played (download-url → GET →
+        // decrypt); only the server object's path is kept here.
+        final voicePath = c['voice_path'] as String?;
         if (existing != null) {
+          if (voicePath != null &&
+              existing.voicePath == null &&
+              existing.voiceFile == null &&
+              existing.synced) {
+            await (_db.update(_db.checkIns)..where((t) => t.id.equals(id)))
+                .write(CheckInsCompanion(voicePath: Value(voicePath)));
+          }
           // A later pull may bring a note the first one could not decrypt.
           if (existing.note == null && notes[id] != null) {
-            await (_db.update(_db.checkIns)..where((t) => t.id.equals(id)))
-                .write(
-                  CheckInsCompanion(
-                    note: Value(notes[id]),
-                    noteLocked: const Value(false),
-                  ),
-                );
+            await (_db.update(
+              _db.checkIns,
+            )..where((t) => t.id.equals(id))).write(
+              CheckInsCompanion(
+                note: Value(notes[id]),
+                noteLocked: const Value(false),
+              ),
+            );
           } else if (existing.note == null &&
               serverHasNote &&
               !existing.noteLocked) {
@@ -122,6 +133,7 @@ class PullService {
                 tzOffsetMinutes: 0,
                 source: Value((c['source'] as String?) ?? 'app'),
                 synced: const Value(true),
+                voicePath: Value(voicePath),
               ),
               mode: InsertMode.insertOrIgnore,
             );
@@ -234,8 +246,7 @@ class PullService {
                 _db.outbox,
               )..where((t) => t.entityId.equals(l.id))).go();
             } else {
-              await (_db.update(_db.habitLogs)
-                    ..where((t) => t.id.equals(l.id)))
+              await (_db.update(_db.habitLogs)..where((t) => t.id.equals(l.id)))
                   .write(HabitLogsCompanion(habitId: Value(serverId)));
             }
           }
@@ -247,13 +258,14 @@ class PullService {
             final payload = jsonDecode(p.payload) as Map<String, dynamic>;
             if (payload['habitId'] != d.id) continue;
             payload['habitId'] = serverId;
-            await (_db.update(_db.outbox)..where((t) => t.seq.equals(p.seq)))
-                .write(
-                  OutboxCompanion(
-                    payload: Value(jsonEncode(payload)),
-                    nextAttemptAt: const Value(null),
-                  ),
-                );
+            await (_db.update(
+              _db.outbox,
+            )..where((t) => t.seq.equals(p.seq))).write(
+              OutboxCompanion(
+                payload: Value(jsonEncode(payload)),
+                nextAttemptAt: const Value(null),
+              ),
+            );
           }
 
           final dead = await (_db.select(
@@ -292,16 +304,16 @@ class PullService {
           }
 
           await (_db.delete(_db.outbox)..where(
-                (t) => t.entity.equals(Entities.habit) & t.entityId.equals(d.id),
+                (t) =>
+                    t.entity.equals(Entities.habit) & t.entityId.equals(d.id),
               ))
               .go();
           await (_db.delete(_db.deadLetters)..where(
-                (t) => t.entity.equals(Entities.habit) & t.entityId.equals(d.id),
+                (t) =>
+                    t.entity.equals(Entities.habit) & t.entityId.equals(d.id),
               ))
               .go();
-          await (_db.delete(
-            _db.habits,
-          )..where((t) => t.id.equals(d.id))).go();
+          await (_db.delete(_db.habits)..where((t) => t.id.equals(d.id))).go();
         }
       }
       return merged;

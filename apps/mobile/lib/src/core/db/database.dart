@@ -13,7 +13,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -41,6 +41,15 @@ class AppDatabase extends _$AppDatabase {
         // v3: a pulled note this phone can't read yet blocks edits.
         await m.addColumn(checkIns, checkIns.noteLocked);
       }
+      if (from < 4) {
+        // v4: voice notes (F1) — the local file, its length, the server
+        // object, and outbox rows that wait for their upload.
+        await m.addColumn(checkIns, checkIns.voiceFile);
+        await m.addColumn(checkIns, checkIns.voiceMs);
+        await m.addColumn(checkIns, checkIns.voicePath);
+        await m.addColumn(outbox, outbox.needsMedia);
+        await m.addColumn(outbox, outbox.mediaAttempts);
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
@@ -58,9 +67,7 @@ class AppDatabase extends _$AppDatabase {
           if (table is $KeyValuesTable) continue;
           await delete(table).go();
         }
-        await (delete(
-          keyValues,
-        )..where((t) => t.key.isNotIn(keepKeys))).go();
+        await (delete(keyValues)..where((t) => t.key.isNotIn(keepKeys))).go();
       });
 
   // ---- key/value ---------------------------------------------------------
@@ -72,18 +79,17 @@ class AppDatabase extends _$AppDatabase {
     return row?.value;
   }
 
-  Stream<String?> watchValue(String key) =>
-      (select(keyValues)..where((t) => t.key.equals(key)))
-          .watchSingleOrNull()
-          .map((r) => r?.value);
+  Stream<String?> watchValue(String key) => (select(
+    keyValues,
+  )..where((t) => t.key.equals(key))).watchSingleOrNull().map((r) => r?.value);
 
   Future<void> setValue(String key, String? value) async {
     if (value == null) {
       await (delete(keyValues)..where((t) => t.key.equals(key))).go();
     } else {
-      await into(
-        keyValues,
-      ).insertOnConflictUpdate(KeyValuesCompanion.insert(key: key, value: value));
+      await into(keyValues).insertOnConflictUpdate(
+        KeyValuesCompanion.insert(key: key, value: value),
+      );
     }
   }
 }

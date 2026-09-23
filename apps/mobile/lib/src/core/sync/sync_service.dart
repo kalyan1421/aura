@@ -14,6 +14,7 @@ import '../net/api_models.dart';
 import '../net/aura_api.dart';
 import '../security/note_cipher.dart';
 import '../time/clock.dart';
+import 'media_sync.dart';
 import 'outbox_repository.dart';
 
 enum SyncPhase {
@@ -49,6 +50,13 @@ abstract interface class SyncTrigger {
 /// grace, F8 REQ-ACC-11) holds sync for that account: nothing is dead-lettered
 /// or retried until the person chooses "Keep my account" ([releaseDeletionHold])
 /// or signs out / another account signs in.
+///
+/// One record's mutations always go in the order they were made: a row
+/// waits while an earlier row for the same record is still pending (e.g.
+/// backing off). A check-in with a voice note (`needsMedia`) is pushed only
+/// after its upload succeeded ([MediaSync]), and always at the head of its
+/// batch, so an earlier push that clears the record's `voicePath` has
+/// committed before the new recording is uploaded (contracts/api/v1.md).
 class SyncService implements SyncTrigger {
   SyncService({
     required this._auth,
@@ -67,7 +75,12 @@ class SyncService implements SyncTrigger {
     required this._onUnder13,
     this._reconcileHabits,
     this._onDeletionPending,
+    this._media,
   });
+
+  /// Voice uploads (F1). Without it, a check-in waiting for media is sent
+  /// without `voicePath`.
+  final MediaSync? _media;
 
   /// The server refused a push with `403 account_deletion_pending`: the UI
   /// asks "Keep my account?" (features/account). Called once per hold.
@@ -295,26 +308,78 @@ class SyncService implements SyncTrigger {
       if (rows.isEmpty) break;
 
       final ready = <OutboxRow>[];
+      final readySeqs = <int>{};
       final mutations = <SyncMutation>[];
+      final pendingByRecord = await _outbox.seqsByEntity();
       NoteCipher? cipher;
       var cipherTried = false;
+      Future<NoteCipher?> key() async {
+        if (!cipherTried) {
+          cipher = await _dataKeys.cipherFor(user.id, api: api);
+          cipherTried = true;
+        }
+        return cipher;
+      }
+
       for (final r in rows) {
+        // An earlier mutation of this record is still pending outside this
+        // batch (backing off, waiting for its key or media): wait for it.
+        final earlier = pendingByRecord[r.entityId] ?? const <int>[];
+        if (earlier.any((s) => s < r.seq && !readySeqs.contains(s))) {
+          skipped.add(r.seq);
+          continue;
+        }
         final payload = jsonDecode(r.payload) as Map<String, dynamic>;
         if (r.needsNote) {
-          if (!cipherTried) {
-            cipher = await _dataKeys.cipherFor(user.id, api: api);
-            cipherTried = true;
-          }
-          if (cipher == null) {
+          final c = await key();
+          if (c == null) {
             skipped.add(r.seq); // wait for the data key; never send plaintext
             continue;
           }
           final note = await _checkIns.noteOf(r.entityId);
           payload['noteCt'] = note == null
               ? null
-              : await cipher.encrypt(note, recordId: r.entityId);
+              : await c.encrypt(note, recordId: r.entityId);
+        }
+        final media = _media;
+        if (r.needsMedia && media != null) {
+          // Push what came before first: it may clear this record's voice.
+          if (ready.isNotEmpty) break;
+          final step = await media.prepare(
+            r,
+            api: api,
+            cipher: await key(),
+            isCurrent: current,
+          );
+          if (!current()) return;
+          switch (step.kind) {
+            case MediaStepKind.attach:
+              payload['voicePath'] = step.path;
+            case MediaStepKind.omit:
+              break;
+            case MediaStepKind.giveUp:
+              await _outbox.dropMedia(r);
+            case MediaStepKind.waitKey:
+              skipped.add(r.seq);
+              continue;
+            case MediaStepKind.retry:
+              // Never blocks the check-in for long: after the outbox's max
+              // attempts it goes without `voicePath` (the file stays here).
+              if (!await _outbox.mediaFailed(r, _clock.now())) {
+                skipped.add(r.seq);
+                continue;
+              }
+            case MediaStepKind.held:
+              _hold(user.id);
+              return;
+            case MediaStepKind.abort:
+              return;
+          }
+        } else if (r.needsMedia) {
+          await _outbox.dropMedia(r);
         }
         ready.add(r);
+        readySeqs.add(r.seq);
         mutations.add(
           SyncMutation(
             id: r.mutationId,
@@ -338,10 +403,7 @@ class SyncService implements SyncTrigger {
           // The account is in its deletion grace period: keep every row as
           // it is (no backoff, no dead letter) and stop until the person
           // decides. Retrying would only be refused again.
-          _heldFor = user.id;
-          _retry?.cancel();
-          _setPhase(SyncPhase.waiting);
-          _onDeletionPending?.call();
+          _hold(user.id);
           return;
         }
         // A request-level error says nothing about the rows: they are never
@@ -409,6 +471,15 @@ class SyncService implements SyncTrigger {
       _setPhase(SyncPhase.waiting);
       await _scheduleNextRetry();
     }
+  }
+
+  /// `403 account_deletion_pending`: nothing more is sent for [userId]
+  /// until "Keep my account" ([releaseDeletionHold]) or a sign-out.
+  void _hold(String userId) {
+    _heldFor = userId;
+    _retry?.cancel();
+    _setPhase(SyncPhase.waiting);
+    _onDeletionPending?.call();
   }
 
   Future<String> _deviceId() async {

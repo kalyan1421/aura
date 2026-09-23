@@ -5,10 +5,20 @@
     <!-- Android 13+ notifications. Requested only after the first check-in,
          behind the in-app explainer (PRD 15-permissions); never at launch. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- F1 voice notes: requested on the first mic tap, after the in-app
+         explainer (PRD 15-permissions). Foreground recording only: no
+         foreground service, no background audio. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- Nothing leaves the phone through OS backup (PRD 16-offline: the
+         encrypted DB and voice files are restored from the server, never from
+         a backup). allowBackup=false stops cloud backup, but on Android 12+
+         it no longer stops device-to-device transfer; the data-extraction
+         rules exclude every domain from both. -->
     <application
         android:label="Aura"
         android:allowBackup="false"
         android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

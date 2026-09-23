@@ -40,6 +40,7 @@ class OutboxRepository {
     required Map<String, Object?> payload,
     required String tz,
     bool needsNote = false,
+    bool needsMedia = false,
   }) async {
     await _db
         .into(_db.outbox)
@@ -54,6 +55,7 @@ class OutboxRepository {
             tz: Value(tz),
             payload: jsonEncode(payload),
             needsNote: Value(needsNote),
+            needsMedia: Value(needsMedia),
             createdAt: DateTime.now().toUtc(),
           ),
         );
@@ -86,6 +88,58 @@ class OutboxRepository {
     return r.read(count) ?? 0;
   }
 
+  /// Sequence numbers of every pending row, per record id (ascending), for
+  /// keeping one record's mutations in order across batches and backoff.
+  Future<Map<String, List<int>>> seqsByEntity() async {
+    final rows =
+        await (_db.selectOnly(_db.outbox)
+              ..addColumns([_db.outbox.seq, _db.outbox.entityId])
+              ..orderBy([OrderingTerm.asc(_db.outbox.seq)]))
+            .get();
+    final out = <String, List<int>>{};
+    for (final r in rows) {
+      final String entityId = r.read(_db.outbox.entityId)!;
+      final int seq = r.read(_db.outbox.seq)!;
+      (out[entityId] ??= <int>[]).add(seq);
+    }
+    return out;
+  }
+
+  /// A voice upload for [row] failed (network, `503 media_unavailable`…).
+  /// Backs the row off like a failed push. After [maxAttempts] failed uploads
+  /// the outbox gives up on the media: the row no longer waits for it and
+  /// goes out without `voicePath` (the recording stays on the phone for a
+  /// later edit). Returns true when it gave up.
+  Future<bool> mediaFailed(OutboxRow row, DateTime now) async {
+    final attempts = row.mediaAttempts + 1;
+    if (attempts >= maxAttempts) {
+      await (_db.update(_db.outbox)..where((t) => t.seq.equals(row.seq))).write(
+        OutboxCompanion(
+          mediaAttempts: Value(attempts),
+          needsMedia: const Value(false),
+        ),
+      );
+      return true;
+    }
+    final base = Duration(seconds: 2 << min(attempts, 11));
+    final wait = base > maxBackoff ? maxBackoff : base;
+    final jitter = Duration(milliseconds: Random().nextInt(1000));
+    await (_db.update(_db.outbox)..where((t) => t.seq.equals(row.seq))).write(
+      OutboxCompanion(
+        mediaAttempts: Value(attempts),
+        nextAttemptAt: Value(now.toUtc().add(wait + jitter)),
+      ),
+    );
+    return false;
+  }
+
+  /// The row no longer waits for media (nothing to upload, or it can never
+  /// be uploaded, e.g. `media_too_large`).
+  Future<void> dropMedia(OutboxRow row) =>
+      (_db.update(_db.outbox)..where((t) => t.seq.equals(row.seq))).write(
+        const OutboxCompanion(needsMedia: Value(false)),
+      );
+
   /// Earliest scheduled retry, if any row is waiting on backoff.
   Future<DateTime?> nextRetryAt() async {
     final row =
@@ -103,9 +157,7 @@ class OutboxRepository {
     if (rows.isEmpty) return;
     await _db.transaction(() async {
       for (final r in rows) {
-        await (_db.delete(
-          _db.outbox,
-        )..where((t) => t.seq.equals(r.seq))).go();
+        await (_db.delete(_db.outbox)..where((t) => t.seq.equals(r.seq))).go();
         if (r.op != Ops.upsert) continue;
         switch (r.entity) {
           case Entities.checkIn:
@@ -113,7 +165,8 @@ class OutboxRepository {
                   ..where((t) => t.id.equals(r.entityId)))
                 .write(const CheckInsCompanion(synced: Value(true)));
           case Entities.habit:
-            await (_db.update(_db.habits)..where((t) => t.id.equals(r.entityId)))
+            await (_db.update(_db.habits)
+                  ..where((t) => t.id.equals(r.entityId)))
                 .write(const HabitsCompanion(synced: Value(true)));
           case Entities.habitLog:
             await (_db.update(_db.habitLogs)

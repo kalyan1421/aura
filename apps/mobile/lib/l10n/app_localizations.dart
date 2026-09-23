@@ -1565,6 +1565,24 @@ abstract class AppLocalizations {
   /// **'Opens in your browser'**
   String get legal_opensInBrowser;
 
+  /// Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over?'**
+  String get flows_startOverTitle;
+
+  /// Body of the start-over dialog on the first check-in: what 'Start over' clears. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'This clears what you\'ve picked and written so far.'**
+  String get flows_startOverBody;
+
+  /// Start-over dialog on the first check-in: clears the mood, tags and words and stays on the check-in. The default choice is 'Keep editing'.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get flows_startOver;
+
   /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
   ///
   /// In en, this message translates to:
@@ -1739,12 +1757,6 @@ abstract class AppLocalizations {
   /// **'You have {count} custom habits. Swap one to add another.'**
   String habits_limit(int count);
 
-  /// Custom-habit name over the server limit. No blame.
-  ///
-  /// In en, this message translates to:
-  /// **'That name is a little long. Could you try a shorter one?'**
-  String get habits_tooLong;
-
   /// A habit change failed to save locally.
   ///
   /// In en, this message translates to:
@@ -1900,6 +1912,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t open an email app. You can write to us at {email}.'**
   String onb_blockedMailFailed(String email);
+
+  /// Calm inline note under the Privacy policy / Terms links when no browser could open the page. {url} is the public page address (not personal data). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Your browser didn\'t open. The page is at {url}.'**
+  String polish_legalOpenFailed(String url);
+
+  /// Button next to the note above: copies the page address.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get polish_legalCopyLink;
+
+  /// Shown and announced after the page address was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get polish_legalLinkCopied;
+
+  /// Calm inline note under a helpline when the device can't dial (iPad, simulator). {number} is the helpline number as shown. Never alarming.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone can\'t place the call. The number is {number}.'**
+  String polish_helpCallFailed(String number);
+
+  /// Button next to the note above: copies the helpline number.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy number'**
+  String get polish_helpCopyNumber;
+
+  /// Shown and announced after the helpline number was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Number copied'**
+  String get polish_helpNumberCopied;
+
+  /// Button in the check-in details that starts recording a voice note (also its screen-reader label).
+  ///
+  /// In en, this message translates to:
+  /// **'Record a voice note'**
+  String get voice_record;
+
+  /// Hint under the record button: the 60-second limit and that it is private. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to a minute. Only you can hear it.'**
+  String get voice_recordHint;
+
+  /// Title of the explainer shown before the microphone permission prompt (first mic tap).
+  ///
+  /// In en, this message translates to:
+  /// **'Add your voice?'**
+  String get voice_rationaleTitle;
+
+  /// Microphone explainer before the OS prompt (PRD 15-permissions wording).
+  ///
+  /// In en, this message translates to:
+  /// **'To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.'**
+  String get voice_rationaleBody;
+
+  /// Microphone explainer button: shows the OS permission prompt. 'Not now' never does.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get voice_rationaleAllow;
+
+  /// Shown when the microphone permission is denied (PRD states 'Edge: mic denied'). Typing still works. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice is off. Type instead, or turn it on in Settings.'**
+  String get voice_denied;
+
+  /// Link next to 'Voice is off' that opens this app's page in the phone's Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get voice_openSettings;
+
+  /// Status while a voice note is being recorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get voice_recording;
+
+  /// Elapsed recording time next to the limit, e.g. '0:12 · up to 1:00'. Calm, not a countdown.
+  ///
+  /// In en, this message translates to:
+  /// **'{time} · up to {limit}'**
+  String voice_elapsed(String time, String limit);
+
+  /// Screen-reader text for the recording time.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{Recording, 1 second} other{Recording, {seconds} seconds}}'**
+  String voice_recordingFor(int seconds);
+
+  /// Button that stops recording (also its screen-reader label).
+  ///
+  /// In en, this message translates to:
+  /// **'Stop recording'**
+  String get voice_stop;
+
+  /// Screen-reader announcement when recording starts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording started'**
+  String get voice_started;
+
+  /// Screen-reader announcement when recording stops.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{Voice note recorded, 1 second} other{Voice note recorded, {seconds} seconds}}'**
+  String voice_recorded(int seconds);
+
+  /// Calm note after recording stopped by itself at 60 seconds. No alarm.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s the full minute, so recording stopped. Your voice note is ready.'**
+  String get voice_limitReached;
+
+  /// Recording could not start or finish (e.g. the phone is out of space). Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice couldn\'t be recorded just now. Your words still save.'**
+  String get voice_recordFailed;
+
+  /// Label of a recorded voice note (in the check-in and on a history entry).
+  ///
+  /// In en, this message translates to:
+  /// **'Voice note'**
+  String get voice_note;
+
+  /// Screen-reader length of a voice note.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{1 second} other{{seconds} seconds}}'**
+  String voice_length(int seconds);
+
+  /// Play button (screen-reader label).
+  ///
+  /// In en, this message translates to:
+  /// **'Play voice note'**
+  String get voice_play;
+
+  /// Pause button (screen-reader label).
+  ///
+  /// In en, this message translates to:
+  /// **'Pause voice note'**
+  String get voice_pause;
+
+  /// Replace the voice note with a new recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Record again'**
+  String get voice_reRecord;
+
+  /// Remove the voice note from this check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get voice_remove;
+
+  /// Screen-reader label of the Remove button.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove voice note'**
+  String get voice_removeSemantic;
+
+  /// After saving when the voice file could not be stored (PRD F1 'Storage full: text saves; voice is dropped with a notice'). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-in is saved. The voice note couldn\'t be kept, as your phone may be low on space.'**
+  String get voice_dropped;
+
+  /// While a voice note is fetched or opened for playback.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting your voice note…'**
+  String get voice_loading;
+
+  /// A voice note that is only on the server, while offline. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'The voice note plays when you\'re back online.'**
+  String get voice_offline;
+
+  /// Playback failed (download or file problem). Calm; the play button retries.
+  ///
+  /// In en, this message translates to:
+  /// **'This voice note couldn\'t be played just now. Try again in a moment.'**
+  String get voice_failed;
+
+  /// Section header for the voice note on a check-in's page.
+  ///
+  /// In en, this message translates to:
+  /// **'Your voice'**
+  String get voice_section;
+
+  /// Screen-reader label for the voice icon on a history row.
+  ///
+  /// In en, this message translates to:
+  /// **'Has a voice note'**
+  String get voice_hasVoice;
 }
 
 class _AppLocalizationsDelegate

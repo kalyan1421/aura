@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../../core/widgets/busy_button_label.dart';
 import '../../core/widgets/inline_notice.dart';
-import '../auth/busy_button_label.dart';
 import 'account_providers.dart';
 
 /// "Your account is set to be deleted on {date}. Keep it?" with

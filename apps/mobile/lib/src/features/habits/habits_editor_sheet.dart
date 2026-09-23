@@ -100,12 +100,12 @@ class _HabitsEditorSheetState extends ConsumerState<HabitsEditorSheet> {
   });
 
   Future<void> _add() async {
-    final raw = _name.text;
-    if (raw.trim().isEmpty || _busy) return;
+    // The field already stops at 30 characters (the app's and the server's
+    // rule), so a cleaned name is only missing when it is blank.
+    final name = HabitRepository.cleanCustomName(_name.text);
+    if (name == null || _busy) return;
     var crisis = false;
     await _write((l) async {
-      final name = HabitRepository.cleanCustomName(raw);
-      if (name == null) return l.habits_tooLong;
       final r = await _repo.addCustom(name);
       switch (r) {
         case CustomHabitResult.saved:
@@ -118,7 +118,8 @@ class _HabitsEditorSheetState extends ConsumerState<HabitsEditorSheet> {
         case CustomHabitResult.tooMany:
           return l.habits_limit(HabitRepository.maxActiveCustomHabits);
         case CustomHabitResult.invalid:
-          return l.habits_tooLong;
+          // Not reachable: [name] was cleaned above.
+          return null;
       }
     });
     if (crisis && mounted) await showSupportSheet(context);

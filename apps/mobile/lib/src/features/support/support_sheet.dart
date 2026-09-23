@@ -12,6 +12,7 @@ import '../../core/a11y/motion.dart';
 import '../../core/db/kv_store.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../../core/widgets/copy_fallback_notice.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../onboarding/gate_controller.dart';
 import 'helplines.dart';
@@ -28,14 +29,63 @@ Future<void> showSupportSheet(BuildContext context, {bool crisis = false}) {
 
 /// "I need help now" — always visible (Home, and every screen where it
 /// normally appears). Warm lantern tone, never alarm red.
+///
+/// A pill while the label fits on one line. When it wraps (a narrow top
+/// bar, 200% text, a longer language) it becomes a rounded rectangle
+/// ([AuraRadius.m]), so a tall button never turns into a near-circle that
+/// clips its label. The label is never cut to a line count.
 class HelpNowButton extends StatelessWidget {
   const HelpNowButton({super.key, this.compact = false});
 
   final bool compact;
 
+  static const double _iconSize = 18;
+  static const double _minHeight = 44; // 48 dp tap target (padded)
+  static const double _vPad = 10;
+
+  /// From this text scale the sides get more room.
+  static const double _largeText = 1.3;
+
+  static double _hPad(BuildContext context, {required bool compact}) {
+    final large =
+        MediaQuery.textScalerOf(context).scale(100) / 100 >= _largeText;
+    return compact ? (large ? 16 : 12) : (large ? 20 : 16);
+  }
+
+  static TextStyle? _labelStyle(BuildContext context) =>
+      Theme.of(context).textTheme.labelLarge;
+
+  /// The width this button needs to keep its label on one line, so a top
+  /// bar can decide what else still fits beside it.
+  static double oneLineWidth(BuildContext context, {bool compact = false}) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: AppLocalizations.of(context).help_button,
+        style: _labelStyle(context),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final label = painter.width;
+    painter.dispose();
+    // Label, icon and its gap, side padding and the 1 dp border.
+    return label +
+        _iconSize +
+        AuraSpace.s +
+        2 * _hPad(context, compact: compact) +
+        2;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final style = _labelStyle(context);
+    final line =
+        MediaQuery.textScalerOf(context).scale(style?.fontSize ?? 14) *
+        (style?.height ?? 1.4);
+    // One line (with a little slack) is a pill; anything taller has wrapped.
+    final pillUpTo = math.max(_minHeight, line + 2 * _vPad) + line / 2;
     // One node: the button's own label, flag and tap action plus the early
     // sort key (REQ-A11Y-11). A bare `button: true` wrapper here used to add
     // an empty, action-less "button" stop before the real one.
@@ -44,23 +94,87 @@ class HelpNowButton extends StatelessWidget {
         sortKey: const OrdinalSortKey(1),
         child: OutlinedButton.icon(
           onPressed: () => showSupportSheet(context),
-          icon: const Icon(Icons.favorite_rounded, size: 18),
-          label: Text(l.help_button, maxLines: 3, softWrap: true),
+          icon: const Icon(Icons.favorite_rounded, size: _iconSize),
+          // Wrapped lines hug the longest one, so the button stays compact.
+          label: Text(
+            l.help_button,
+            softWrap: true,
+            textWidthBasis: TextWidthBasis.longestLine,
+          ),
           style: OutlinedButton.styleFrom(
             foregroundColor: AuraColors.lantern,
             side: BorderSide(color: AuraColors.lantern.withValues(alpha: 0.6)),
             backgroundColor: AuraColors.lantern.withValues(alpha: 0.08),
-            minimumSize: const Size(48, 44),
+            minimumSize: const Size(48, _minHeight),
             padding: EdgeInsets.symmetric(
-              horizontal: compact ? 12 : 16,
-              vertical: 10,
+              horizontal: _hPad(context, compact: compact),
+              vertical: _vPad,
             ),
-            textStyle: Theme.of(context).textTheme.labelLarge,
+            textStyle: style,
+            shape: _HelpShape(pillUpTo: pillUpTo),
           ),
         ),
       ),
     );
   }
+}
+
+/// A pill up to [pillUpTo] dp tall; a rounded rectangle ([AuraRadius.m])
+/// once the label has wrapped.
+class _HelpShape extends OutlinedBorder {
+  const _HelpShape({super.side, required this.pillUpTo});
+
+  final double pillUpTo;
+
+  RoundedRectangleBorder _at(Rect rect) => RoundedRectangleBorder(
+    side: side,
+    borderRadius: BorderRadius.circular(
+      rect.height <= pillUpTo ? rect.shortestSide / 2 : AuraRadius.m,
+    ),
+  );
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.all(side.strokeInset);
+
+  @override
+  ShapeBorder scale(double t) =>
+      _HelpShape(side: side.scale(t), pillUpTo: pillUpTo * t);
+
+  @override
+  _HelpShape copyWith({BorderSide? side}) =>
+      _HelpShape(side: side ?? this.side, pillUpTo: pillUpTo);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      _at(rect).getInnerPath(rect, textDirection: textDirection);
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) =>
+      _at(rect).getOuterPath(rect, textDirection: textDirection);
+
+  @override
+  bool get preferPaintInterior => true;
+
+  @override
+  void paintInterior(
+    Canvas canvas,
+    Rect rect,
+    Paint paint, {
+    TextDirection? textDirection,
+  }) =>
+      _at(rect)
+          .paintInterior(canvas, rect, paint, textDirection: textDirection);
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) =>
+      _at(rect).paint(canvas, rect, textDirection: textDirection);
+
+  @override
+  bool operator ==(Object other) =>
+      other is _HelpShape && other.side == side && other.pillUpTo == pillUpTo;
+
+  @override
+  int get hashCode => Object.hash(side, pillUpTo);
 }
 
 class SupportSheet extends ConsumerStatefulWidget {
@@ -78,19 +192,40 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
   /// Set when the finished minute ticked off today's Breathe habit.
   bool _breatheLogged = false;
 
+  /// The helpline this device couldn't dial (an iPad, a simulator): its
+  /// number shows under it with a Copy action until closed.
+  Helpline? _couldNotCall;
+
   @override
   void initState() {
     super.initState();
     unawaited(_loadMinor());
   }
 
+  /// Childline (India) is listed until the 18th birthday, judged on the
+  /// app's shared clock and Aura day (04:00 rollover in the person's zone),
+  /// like every other day in the app. Around midnight that can list it a
+  /// few hours longer, never shorter.
   Future<void> _loadMinor() async {
     final raw = await ref.read(kvStoreProvider).get(KvKeys.minorUntil);
     final until = LocalDay.tryParse(raw);
     if (until == null || !mounted) return;
-    final now = DateTime.now();
-    final today = LocalDay(now.year, now.month, now.day);
+    final today = ref.read(timeContextProvider).today();
     setState(() => _isMinor = today.isBefore(until));
+  }
+
+  /// Dials at once (nothing is checked first, so a phone that can call is
+  /// never slowed down). If the device can't place calls, the number shows
+  /// under the row with a Copy action.
+  Future<void> _call(Helpline line) async {
+    var placed = false;
+    try {
+      placed = await launchUrl(Uri(scheme: 'tel', path: line.dial));
+    } on Object {
+      placed = false;
+    }
+    if (!mounted) return;
+    setState(() => _couldNotCall = placed ? null : line);
   }
 
   /// F2: finishing the 60 s exercise auto-completes today's Breathe habit,
@@ -174,11 +309,28 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
               ),
             )
           else
-            for (var i = 0; i < lines.length; i++)
+            for (var i = 0; i < lines.length; i++) ...[
               Padding(
                 padding: const EdgeInsets.only(bottom: AuraSpace.s),
-                child: _HelplineTile(line: lines[i], autofocus: i == 0),
+                child: _HelplineTile(
+                  line: lines[i],
+                  autofocus: i == 0,
+                  onCall: () => unawaited(_call(lines[i])),
+                ),
               ),
+              if (_couldNotCall?.dial == lines[i].dial)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AuraSpace.s),
+                  child: CopyFallbackNotice(
+                    key: ValueKey('support-call-failed-${lines[i].dial}'),
+                    message: l.polish_helpCallFailed(lines[i].number),
+                    copyText: lines[i].number,
+                    copyLabel: l.polish_helpCopyNumber,
+                    copiedLabel: l.polish_helpNumberCopied,
+                    onClose: () => setState(() => _couldNotCall = null),
+                  ),
+                ),
+            ],
           if (lines.isNotEmpty) ...[
             const SizedBox(height: AuraSpace.s),
             Text(l.help_otherEmergency, style: theme.textTheme.bodySmall),
@@ -236,30 +388,35 @@ class _Card extends StatelessWidget {
 }
 
 class _HelplineTile extends StatelessWidget {
-  const _HelplineTile({required this.line, this.autofocus = false});
+  const _HelplineTile({
+    required this.line,
+    required this.onCall,
+    this.autofocus = false,
+  });
 
   final Helpline line;
+  final VoidCallback onCall;
   final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    void call() => launchUrl(Uri(scheme: 'tel', path: line.dial));
     // The InkWell's semantics are replaced, so the tap action is restored
     // here: a screen-reader double-tap must place the call.
     return Semantics(
       button: true,
       label: l.help_callSemantic(line.name, line.number),
-      onTap: call,
+      onTap: onCall,
       excludeSemantics: true,
       child: Material(
         color: AuraColors.surface,
         borderRadius: BorderRadius.circular(AuraRadius.m),
         child: InkWell(
+          key: ValueKey('support-call-${line.dial}'),
           autofocus: autofocus,
           borderRadius: BorderRadius.circular(AuraRadius.m),
-          onTap: call,
+          onTap: onCall,
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AuraSpace.l,

@@ -1,6 +1,5 @@
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -37,6 +36,11 @@ Color checkInSaveColor(Quadrant q) =>
 ///
 /// Unsaved input is never dropped silently: ✕ and the system back gesture
 /// ask "Leave without saving?" first.
+///
+/// The first check-in ends onboarding and is the only route, so the system
+/// back gesture never leaves the app or skips it: with nothing picked back
+/// does nothing; with input it offers "Keep editing" (default) or "Start
+/// over", which clears the picker and stays here.
 class CheckInScreen extends ConsumerStatefulWidget {
   const CheckInScreen({super.key, this.first = false});
 
@@ -56,6 +60,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   bool _saving = false;
   bool _saved = false;
   bool _failed = false;
+
+  /// Saved, but the voice note couldn't be kept (storage full).
+  bool _voiceDropped = false;
 
   /// The person chose to leave (Discard): popping is allowed again.
   bool _leaving = false;
@@ -80,15 +87,27 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   Future<void> _save() async {
     final mood = _draft.mood;
     if (mood == null || _saving || _saved) return;
-    final note = _draft.note.text;
     setState(() {
       _saving = true;
       _failed = false;
     });
+    // Save is never blocked by voice: a recording in progress is finished
+    // and saved with the check-in.
+    await _draft.finishVoice();
+    final note = _draft.note.text;
+    var dropped = false;
     try {
       await ref
           .read(checkInRepositoryProvider)
-          .save(id: _id, mood: mood, tags: _draft.tags.toList(), note: note);
+          .save(
+            id: _id,
+            mood: mood,
+            tags: _draft.tags.toList(),
+            note: note,
+            voice: _draft.newVoice,
+            onVoiceDropped: () => dropped = true,
+          );
+      _voiceDropped = dropped;
       ref.read(syncControllerProvider).notifyLocalWrite();
     } catch (_) {
       // Selection and text are kept; the user can retry.
@@ -132,16 +151,28 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     await _finish();
   }
 
-  /// System back while there is unsaved input.
+  /// System back that was held: unsaved input here, or any back on the
+  /// first check-in.
   Future<void> _onBlockedPop() async {
-    if (!await confirmDiscard(context) || !mounted) return;
-    setState(() => _leaving = true);
     if (widget.first) {
-      // The onboarding check-in is the only route: back leaves the app.
-      await SystemNavigator.pop();
+      // Never leaves the app or skips onboarding. Nothing picked (or already
+      // saved: Done is right there): back simply does nothing.
+      if (!_hasInput || _saving) return;
+      if (await _confirmStartOver(context) && mounted) _startOver();
       return;
     }
+    if (!await confirmDiscard(context) || !mounted) return;
+    setState(() => _leaving = true);
     await _finish();
+  }
+
+  /// "Start over" on the first check-in: empty picker, same screen.
+  void _startOver() {
+    setState(() {
+      _details = false;
+      _failed = false;
+    });
+    _draft.clear();
   }
 
   @override
@@ -150,7 +181,8 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     final mood = _draft.mood;
     final tint = mood == null ? null : AuraColors.quadrant(mood.quadrant);
     return PopScope(
-      canPop: !_hasInput,
+      // The first check-in is the only route: back is always held there.
+      canPop: !widget.first && !_hasInput,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _onBlockedPop();
       },
@@ -166,6 +198,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                   ? _SavedMoment(
                       key: const ValueKey('saved'),
                       checkInId: _id,
+                      voiceDropped: _voiceDropped,
                       onDone: _finish,
                     )
                   : _buildPicker(context, l),
@@ -294,6 +327,34 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   }
 }
 
+/// "Start over?" on the first check-in (the system back gesture with input).
+/// "Keep editing" comes first and holds focus, so a stray confirm keeps the
+/// input. Returns true only for "Start over".
+Future<bool> _confirmStartOver(BuildContext context) async {
+  final l = AppLocalizations.of(context);
+  final startOver = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l.flows_startOverTitle),
+      content: Text(l.flows_startOverBody),
+      actions: [
+        TextButton(
+          key: const ValueKey('startover-keep'),
+          autofocus: true,
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(l.checkin_discardKeep),
+        ),
+        TextButton(
+          key: const ValueKey('startover-confirm'),
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l.flows_startOver),
+        ),
+      ],
+    ),
+  );
+  return startOver ?? false;
+}
+
 /// "+10 Starlight" and a calm "Saved" line. Help stays one tap away.
 /// (The room prompt returns when F5 Mood Rooms exist.)
 class _SavedMoment extends ConsumerWidget {
@@ -301,10 +362,14 @@ class _SavedMoment extends ConsumerWidget {
     super.key,
     required this.checkInId,
     required this.onDone,
+    this.voiceDropped = false,
   });
 
   final String checkInId;
   final VoidCallback onDone;
+
+  /// The check-in saved without its voice note (PRD F1 "Storage full").
+  final bool voiceDropped;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -418,6 +483,14 @@ class _SavedMoment extends ConsumerWidget {
                       style: theme.textTheme.bodyLarge,
                       textAlign: TextAlign.center,
                     ),
+                    if (voiceDropped) ...[
+                      const SizedBox(height: AuraSpace.m),
+                      InlineNotice(
+                        l.voice_dropped,
+                        key: const ValueKey('checkin-voice-dropped'),
+                        icon: Icons.mic_off_outlined,
+                      ),
+                    ],
                     const Spacer(),
                     const SizedBox(height: AuraSpace.l),
                     SizedBox(

@@ -40,11 +40,21 @@ int checkInsToday(Ref ref) {
       .length;
 }
 
+/// Room kept below the avatar for the stats, history line, glow card,
+/// habits title and first habit row, so they sit above the check-in bar
+/// without scrolling on small phones (375×667, 1.0 text).
+const double homeFoldReserve = 380;
+
 /// The avatar's height for a scroll viewport [available] dp tall: ≈ 40% of
-/// it, within 200–340 dp, so the stats, glow card and first habits stay above
-/// the fold on common phones (375×667, 390×844).
+/// it, but never eating into [homeFoldReserve], within 140–340 dp. Common
+/// phones (390×844) keep the full 40%; short ones (375×667) get a smaller
+/// avatar so the first habits stay above the fold.
 double homeAvatarHeight(double available) =>
-    (available * 0.40).clamp(200.0, 340.0);
+    math.min(available * 0.40, available - homeFoldReserve).clamp(140.0, 340.0);
+
+/// Screens shorter than this (iPhone SE, small Android phones) get tighter
+/// spacing and a slimmer check-in bar.
+const double _shortScreen = 700;
 
 /// Painter aspect (width / height) the avatar art was composed for.
 const double _avatarAspect = 340 / 330;
@@ -60,6 +70,7 @@ class HomeScreen extends ConsumerWidget {
     // A scheduled account deletion (sync saw `account_deletion_pending`):
     // "Keep my account?" right on Home, first in the scroll (REQ-ACC-11).
     final deletionHeld = ref.watch(deletionHoldProvider) != null;
+    final compact = MediaQuery.sizeOf(context).height < _shortScreen;
 
     return Scaffold(
       body: CosmicBackground(
@@ -103,19 +114,22 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ),
                         _StatusLine(view: view, moment: moment),
-                        const SizedBox(height: AuraSpace.s),
+                        SizedBox(height: compact ? AuraSpace.xs : AuraSpace.s),
                         _StarlightRow(view: view),
                         const _HistoryLine(),
                         const SizedBox(height: AuraSpace.xs),
-                        _GlowCard(view: view),
-                        const SizedBox(height: AuraSpace.l),
+                        _GlowCard(view: view, compact: compact),
+                        SizedBox(height: compact ? AuraSpace.s : AuraSpace.l),
                         const HabitsSection(),
                       ],
                     );
                   },
                 ),
               ),
-              _CheckInBar(pulse: view.loaded && !view.hasActivity),
+              _CheckInBar(
+                pulse: view.loaded && !view.hasActivity,
+                compact: compact,
+              ),
             ],
           ),
         ),
@@ -127,39 +141,66 @@ class HomeScreen extends ConsumerWidget {
 class _TopBar extends ConsumerWidget {
   const _TopBar();
 
+  /// The sync and settings icon buttons.
+  static const double _icons = 2 * kMinInteractiveDimension;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
+    final wordmarkStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
+      letterSpacing: 2,
+      fontWeight: FontWeight.w300,
+      color: AuraColors.lavender,
+    );
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(AuraSpace.gutter, 6, 6, 0),
-      child: Row(
-        children: [
-          ExcludeSemantics(
-            child: Text(
-              'Aura',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                letterSpacing: 2,
-                fontWeight: FontWeight.w300,
-                color: AuraColors.lavender,
+      child: LayoutBuilder(
+        builder: (context, box) {
+          // The wordmark is decorative: it steps aside whenever "I need
+          // help now" would otherwise have to wrap next to it (small
+          // phones, large text, longer languages).
+          final wordmark = TextPainter(
+            text: TextSpan(text: 'Aura', style: wordmarkStyle),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+            maxLines: 1,
+          )..layout();
+          final showWordmark =
+              wordmark.width +
+                  AuraSpace.s +
+                  HelpNowButton.oneLineWidth(context, compact: true) +
+                  _icons <=
+              box.maxWidth;
+          wordmark.dispose();
+          return Row(
+            children: [
+              if (showWordmark) ...[
+                ExcludeSemantics(
+                  child: Text(
+                    'Aura',
+                    key: const ValueKey('home-wordmark'),
+                    style: wordmarkStyle,
+                  ),
+                ),
+                const SizedBox(width: AuraSpace.s),
+              ],
+              // Within the first focus stops (REQ-A11Y-11). Flexible so
+              // large text wraps the label instead of overflowing the bar.
+              const Flexible(
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: HelpNowButton(compact: true),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(width: AuraSpace.s),
-          // Within the first focus stops (REQ-A11Y-11). Flexible so large
-          // text wraps the label instead of overflowing the bar.
-          const Flexible(
-            child: Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: HelpNowButton(compact: true),
-            ),
-          ),
-          const SyncIndicator(),
-          IconButton(
-            tooltip: l.home_settings,
-            onPressed: () => context.push(Routes.settings),
-            icon: const Icon(Icons.tune_rounded),
-          ),
-        ],
+              const SyncIndicator(),
+              IconButton(
+                tooltip: l.home_settings,
+                onPressed: () => context.push(Routes.settings),
+                icon: const Icon(Icons.tune_rounded),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -450,9 +491,12 @@ class _HistoryLine extends ConsumerWidget {
 /// Settings → Hide streak number (F3): the number goes, lifetime glow days
 /// and rest days stay. The rest-day row opens a short explainer.
 class _GlowCard extends ConsumerWidget {
-  const _GlowCard({required this.view});
+  const _GlowCard({required this.view, this.compact = false});
 
   final ProgressView view;
+
+  /// Short screens: tighter top and bottom padding.
+  final bool compact;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -478,11 +522,11 @@ class _GlowCard extends ConsumerWidget {
 
     return Container(
       key: const ValueKey('home-glow-card'),
-      padding: const EdgeInsetsDirectional.fromSTEB(
+      padding: EdgeInsetsDirectional.fromSTEB(
         AuraSpace.l,
-        AuraSpace.m,
+        compact ? AuraSpace.s : AuraSpace.m,
         AuraSpace.l,
-        AuraSpace.m,
+        compact ? AuraSpace.s : AuraSpace.m,
       ),
       decoration: BoxDecoration(
         color: AuraColors.surface.withValues(alpha: 0.72),
@@ -575,17 +619,21 @@ class _GlowCard extends ConsumerWidget {
 }
 
 class _CheckInBar extends StatelessWidget {
-  const _CheckInBar({required this.pulse});
+  const _CheckInBar({required this.pulse, this.compact = false});
 
   final bool pulse;
+
+  /// Short screens: the filled-button minimum (56) and tighter padding.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final pad = compact ? AuraSpace.s : AuraSpace.m;
     Widget button = ConstrainedBox(
       // Grows with large text instead of clipping the label.
-      constraints: const BoxConstraints(
-        minHeight: 60,
+      constraints: BoxConstraints(
+        minHeight: compact ? 56 : 60,
         minWidth: double.infinity,
       ),
       child: FilledButton.icon(
@@ -616,9 +664,9 @@ class _CheckInBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(
         AuraSpace.gutter,
-        AuraSpace.m,
+        pad,
         AuraSpace.gutter,
-        AuraSpace.m + MediaQuery.paddingOf(context).bottom,
+        pad + MediaQuery.paddingOf(context).bottom,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(

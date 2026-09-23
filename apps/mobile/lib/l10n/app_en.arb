@@ -1133,6 +1133,18 @@
   "@legal_opensInBrowser": {
     "description": "Screen-reader hint on legal links."
   },
+  "flows_startOverTitle": "Start over?",
+  "@flows_startOverTitle": {
+    "description": "Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame."
+  },
+  "flows_startOverBody": "This clears what you've picked and written so far.",
+  "@flows_startOverBody": {
+    "description": "Body of the start-over dialog on the first check-in: what 'Start over' clears. Calm."
+  },
+  "flows_startOver": "Start over",
+  "@flows_startOver": {
+    "description": "Start-over dialog on the first check-in: clears the mood, tags and words and stays on the check-in. The default choice is 'Keep editing'."
+  },
   "home_stageProgress": "{stage}, {count} of {target} Starlight toward {next}",
   "@home_stageProgress": {
     "description": "Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.",
@@ -1292,10 +1304,6 @@
       }
     }
   },
-  "habits_tooLong": "That name is a little long. Could you try a shorter one?",
-  "@habits_tooLong": {
-    "description": "Custom-habit name over the server limit. No blame."
-  },
   "habits_saveFailed": "That didn't save. Could you try again?",
   "@habits_saveFailed": {
     "description": "A habit change failed to save locally."
@@ -1424,5 +1432,174 @@
         "type": "String"
       }
     }
+  },
+  "polish_legalOpenFailed": "Your browser didn't open. The page is at {url}.",
+  "@polish_legalOpenFailed": {
+    "description": "Calm inline note under the Privacy policy / Terms links when no browser could open the page. {url} is the public page address (not personal data). No blame.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "polish_legalCopyLink": "Copy link",
+  "@polish_legalCopyLink": {
+    "description": "Button next to the note above: copies the page address."
+  },
+  "polish_legalLinkCopied": "Link copied",
+  "@polish_legalLinkCopied": {
+    "description": "Shown and announced after the page address was copied."
+  },
+  "polish_helpCallFailed": "This phone can't place the call. The number is {number}.",
+  "@polish_helpCallFailed": {
+    "description": "Calm inline note under a helpline when the device can't dial (iPad, simulator). {number} is the helpline number as shown. Never alarming.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "polish_helpCopyNumber": "Copy number",
+  "@polish_helpCopyNumber": {
+    "description": "Button next to the note above: copies the helpline number."
+  },
+  "polish_helpNumberCopied": "Number copied",
+  "@polish_helpNumberCopied": {
+    "description": "Shown and announced after the helpline number was copied."
+  },
+  "voice_record": "Record a voice note",
+  "@voice_record": {
+    "description": "Button in the check-in details that starts recording a voice note (also its screen-reader label)."
+  },
+  "voice_recordHint": "Up to a minute. Only you can hear it.",
+  "@voice_recordHint": {
+    "description": "Hint under the record button: the 60-second limit and that it is private. Calm."
+  },
+  "voice_rationaleTitle": "Add your voice?",
+  "@voice_rationaleTitle": {
+    "description": "Title of the explainer shown before the microphone permission prompt (first mic tap)."
+  },
+  "voice_rationaleBody": "To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.",
+  "@voice_rationaleBody": {
+    "description": "Microphone explainer before the OS prompt (PRD 15-permissions wording)."
+  },
+  "voice_rationaleAllow": "Allow",
+  "@voice_rationaleAllow": {
+    "description": "Microphone explainer button: shows the OS permission prompt. 'Not now' never does."
+  },
+  "voice_denied": "Voice is off. Type instead, or turn it on in Settings.",
+  "@voice_denied": {
+    "description": "Shown when the microphone permission is denied (PRD states 'Edge: mic denied'). Typing still works. Calm, no blame."
+  },
+  "voice_openSettings": "Settings",
+  "@voice_openSettings": {
+    "description": "Link next to 'Voice is off' that opens this app's page in the phone's Settings."
+  },
+  "voice_recording": "Recording",
+  "@voice_recording": {
+    "description": "Status while a voice note is being recorded."
+  },
+  "voice_elapsed": "{time} · up to {limit}",
+  "@voice_elapsed": {
+    "description": "Elapsed recording time next to the limit, e.g. '0:12 · up to 1:00'. Calm, not a countdown.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "limit": {
+        "type": "String"
+      }
+    }
+  },
+  "voice_recordingFor": "{seconds, plural, =1{Recording, 1 second} other{Recording, {seconds} seconds}}",
+  "@voice_recordingFor": {
+    "description": "Screen-reader text for the recording time.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "voice_stop": "Stop recording",
+  "@voice_stop": {
+    "description": "Button that stops recording (also its screen-reader label)."
+  },
+  "voice_started": "Recording started",
+  "@voice_started": {
+    "description": "Screen-reader announcement when recording starts."
+  },
+  "voice_recorded": "{seconds, plural, =1{Voice note recorded, 1 second} other{Voice note recorded, {seconds} seconds}}",
+  "@voice_recorded": {
+    "description": "Screen-reader announcement when recording stops.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "voice_limitReached": "That's the full minute, so recording stopped. Your voice note is ready.",
+  "@voice_limitReached": {
+    "description": "Calm note after recording stopped by itself at 60 seconds. No alarm."
+  },
+  "voice_recordFailed": "Voice couldn't be recorded just now. Your words still save.",
+  "@voice_recordFailed": {
+    "description": "Recording could not start or finish (e.g. the phone is out of space). Calm."
+  },
+  "voice_note": "Voice note",
+  "@voice_note": {
+    "description": "Label of a recorded voice note (in the check-in and on a history entry)."
+  },
+  "voice_length": "{seconds, plural, =1{1 second} other{{seconds} seconds}}",
+  "@voice_length": {
+    "description": "Screen-reader length of a voice note.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "voice_play": "Play voice note",
+  "@voice_play": {
+    "description": "Play button (screen-reader label)."
+  },
+  "voice_pause": "Pause voice note",
+  "@voice_pause": {
+    "description": "Pause button (screen-reader label)."
+  },
+  "voice_reRecord": "Record again",
+  "@voice_reRecord": {
+    "description": "Replace the voice note with a new recording."
+  },
+  "voice_remove": "Remove",
+  "@voice_remove": {
+    "description": "Remove the voice note from this check-in."
+  },
+  "voice_removeSemantic": "Remove voice note",
+  "@voice_removeSemantic": {
+    "description": "Screen-reader label of the Remove button."
+  },
+  "voice_dropped": "Your check-in is saved. The voice note couldn't be kept, as your phone may be low on space.",
+  "@voice_dropped": {
+    "description": "After saving when the voice file could not be stored (PRD F1 'Storage full: text saves; voice is dropped with a notice'). Calm, no blame."
+  },
+  "voice_loading": "Getting your voice note…",
+  "@voice_loading": {
+    "description": "While a voice note is fetched or opened for playback."
+  },
+  "voice_offline": "The voice note plays when you're back online.",
+  "@voice_offline": {
+    "description": "A voice note that is only on the server, while offline. Calm."
+  },
+  "voice_failed": "This voice note couldn't be played just now. Try again in a moment.",
+  "@voice_failed": {
+    "description": "Playback failed (download or file problem). Calm; the play button retries."
+  },
+  "voice_section": "Your voice",
+  "@voice_section": {
+    "description": "Section header for the voice note on a check-in's page."
+  },
+  "voice_hasVoice": "Has a voice note",
+  "@voice_hasVoice": {
+    "description": "Screen-reader label for the voice icon on a history row."
   }
 }

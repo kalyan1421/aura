@@ -45,7 +45,6 @@ s("habits_addLabel", "Add your own", "Label of the custom-habit name field.", "�
 s("habits_addHint", "For example, water the plants", "Hint in the custom-habit name field.", "ఉదాహరణకు, మొక్కలకు నీళ్ళు", "Udaaharanaki, mokkalaki neellu")
 s("habits_add", "Add", "Adds the typed custom habit.", "జోడించండి", "Add cheyandi")
 s("habits_limit", "You have {count} custom habits. Swap one to add another.", "Shown at the custom-habit limit (PRD States: Habits).", "మీకు {count} సొంత అలవాట్లు ఉన్నాయి. ఇంకొకటి జోడించడానికి ఒకదాన్ని మార్చండి.", "Meeku {count} custom habits unnaayi. Inkokati add cheyadaaniki okadaanni swap cheyandi.", INT("count"))
-s("habits_tooLong", "That name is a little long. Could you try a shorter one?", "Custom-habit name over the server limit. No blame.", "ఆ పేరు కొంచెం పొడవుగా ఉంది. ఇంకొంచెం చిన్నది ప్రయత్నిస్తారా?", "Aa peru konchem podavuga undi. Inkonchem chinnadi try chestaara?")
 s("habits_saveFailed", "That didn't save. Could you try again?", "A habit change failed to save locally.", "అది సేవ్ కాలేదు. మళ్ళీ ప్రయత్నిస్తారా?", "Adi save avvaledu. Malli try chestaara?")
 s("habits_remove", "Remove {name}", "Tooltip / screen-reader label of a custom habit's remove button.", "{name} తీసేయండి", "{name} teeseyandi", STR("name"))
 s("habits_removeTitle", "Remove {name}?", "Confirm dialog title before removing a custom habit.", "{name} తీసేయాలా?", "{name} teeseyaalaa?", STR("name"))

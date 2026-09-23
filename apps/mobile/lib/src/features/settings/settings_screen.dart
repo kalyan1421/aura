@@ -75,18 +75,24 @@ class SettingsScreen extends ConsumerWidget {
     final grievanceEmail = Env.grievanceOfficerEmail;
     final supportEmail = Env.supportEmail;
 
+    // The app bar is a fixed 56 dp: at large text "I need help now" wraps
+    // and would be cut off there, so it moves to the top of the page (still
+    // right after Back and the title in focus order, REQ-A11Y-11).
+    final helpInBar = MediaQuery.textScalerOf(context).scale(1) <= 1.3;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l.settings_title),
         backgroundColor: AuraColors.sky,
         actions: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: AuraSpace.s),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 230),
-              child: const HelpNowButton(compact: true),
+          if (helpInBar)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: AuraSpace.s),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 230),
+                child: const HelpNowButton(compact: true),
+              ),
             ),
-          ),
         ],
       ),
       body: CosmicBackground(
@@ -98,6 +104,11 @@ class SettingsScreen extends ConsumerWidget {
             AuraSpace.xxl,
           ),
           children: [
+            if (!helpInBar)
+              const Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: HelpNowButton(key: ValueKey('settings-help-body')),
+              ),
             const DeletionPendingCard(),
 
             // ---- Language -------------------------------------------------

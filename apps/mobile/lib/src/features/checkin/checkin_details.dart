@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,22 +7,98 @@ import 'package:flutter/material.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/haptics.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../voice/voice_note_field.dart';
+import '../voice/voice_store.dart';
 import 'checkin_repository.dart';
 import 'quadrant_glyph.dart';
 
-/// What the person has picked for one check-in: mood, tags and note. Shared
-/// by the picker (F1) and the history edit (within 24 h), so both keep the
-/// same limits and the same "unsaved input" rule.
+/// What the person has picked for one check-in: mood, tags, note and voice
+/// note. Shared by the picker (F1) and the history edit (within 24 h), so
+/// both keep the same limits and the same "unsaved input" rule.
 class CheckInDraft extends ChangeNotifier {
-  CheckInDraft({Mood? mood, Iterable<String> tags = const [], String? note})
-    : _mood = mood,
-      _initialMoodId = mood?.id,
-      tags = {...tags},
-      _initialTags = {...tags},
-      _initialNote = note?.trim() ?? '',
-      note = TextEditingController(text: note ?? '') {
+  CheckInDraft({
+    Mood? mood,
+    Iterable<String> tags = const [],
+    String? note,
+    this.savedVoice,
+  }) : _mood = mood,
+       _initialMoodId = mood?.id,
+       tags = {...tags},
+       _initialTags = {...tags},
+       _initialNote = note?.trim() ?? '',
+       note = TextEditingController(text: note ?? '') {
     this.note.addListener(notifyListeners);
     customTag.addListener(notifyListeners);
+  }
+
+  // ---- voice note ------------------------------------------------------------
+
+  /// The voice note this check-in already has (edit), or `null`.
+  final SavedVoice? savedVoice;
+  bool _savedVoiceKept = true;
+  VoiceClip? _newVoice;
+  bool _recording = false;
+  Future<void> Function()? _finishRecording;
+
+  /// A new recording (replaces [savedVoice] when saved).
+  VoiceClip? get newVoice => _newVoice;
+
+  /// The saved voice note stays as it is.
+  bool get keepsSavedVoice =>
+      savedVoice != null && _savedVoiceKept && _newVoice == null;
+
+  /// Saving removes the saved voice note.
+  bool get removesVoice =>
+      savedVoice != null && !_savedVoiceKept && _newVoice == null;
+
+  /// True while the microphone is recording.
+  bool get isRecording => _recording;
+
+  set isRecording(bool value) {
+    if (value == _recording) return;
+    _recording = value;
+    notifyListeners();
+  }
+
+  /// The voice field went away mid-recording (its recording is dropped).
+  /// Silent: it happens while the tree is being torn down.
+  void recordingDropped() => _recording = false;
+
+  /// A finished recording: replaces any earlier one of this draft.
+  void setNewVoice(VoiceClip clip) {
+    if (_newVoice?.path != clip.path) _discard(_newVoice);
+    _newVoice = clip;
+    notifyListeners();
+  }
+
+  /// No voice note at all (the new recording and a saved one).
+  void removeVoice() {
+    _discard(_newVoice);
+    _newVoice = null;
+    _savedVoiceKept = false;
+    notifyListeners();
+  }
+
+  /// The voice field registers how to finish a recording in progress, so
+  /// Save never waits on (or loses) it.
+  void attachRecorder(Future<void> Function()? finish) =>
+      _finishRecording = finish;
+
+  /// Stops a recording in progress and keeps it (Save calls this first).
+  Future<void> finishVoice() async => _finishRecording?.call();
+
+  bool get _voiceChanged =>
+      _newVoice != null || (savedVoice != null && !_savedVoiceKept);
+
+  /// A draft recording that won't be saved: its file goes (the saved copy,
+  /// once moved into the voice store, is no longer at this path).
+  static void _discard(VoiceClip? clip) {
+    if (clip == null) return;
+    try {
+      File(clip.path).deleteSync();
+    } on FileSystemException {
+      // Already moved or gone.
+    }
   }
 
   Mood? _mood;
@@ -53,10 +131,26 @@ class CheckInDraft extends ChangeNotifier {
       _mood?.id != _initialMoodId ||
       !setEquals(tags, _initialTags) ||
       note.text.trim() != _initialNote ||
-      customTag.text.trim().isNotEmpty;
+      customTag.text.trim().isNotEmpty ||
+      _voiceChanged ||
+      _recording;
 
   /// The note differs from the one the draft started with.
   bool get noteChanged => note.text.trim() != _initialNote;
+
+  /// Empties a new check-in ("Start over" on the onboarding check-in): no
+  /// mood, tags, words or half-typed tag.
+  void clear() {
+    _mood = null;
+    tags.clear();
+    addedTags.clear();
+    _discard(_newVoice);
+    _newVoice = null;
+    _recording = false;
+    note.clear();
+    customTag.clear();
+    notifyListeners();
+  }
 
   void toggleTag(String tag) {
     if (!tags.remove(tag)) {
@@ -94,6 +188,7 @@ class CheckInDraft extends ChangeNotifier {
 
   @override
   void dispose() {
+    _discard(_newVoice); // never saved (a saved one was moved away)
     note.dispose();
     customTag.dispose();
     super.dispose();
@@ -101,7 +196,8 @@ class CheckInDraft extends ChangeNotifier {
 }
 
 /// Optional details of a check-in: tag chips (context tags, the person's
-/// recent custom tags, new ones), a custom-tag field and the private note.
+/// recent custom tags, new ones), a custom-tag field, the private note and
+/// an optional voice note (≤ 60 s).
 class CheckInDetailsEditor extends StatelessWidget {
   const CheckInDetailsEditor({
     super.key,
@@ -230,6 +326,8 @@ class CheckInDetailsEditor extends StatelessWidget {
                 alignLabelWithHint: true,
               ),
             ),
+            const SizedBox(height: AuraSpace.l),
+            VoiceNoteField(draft: draft),
           ],
         );
       },

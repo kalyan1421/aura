@@ -39,33 +39,74 @@ export class SyncRepository {
   }
 
   // ---------- check_ins ----------
-  async checkInOwner(q: Queryable, id: string): Promise<string | null> {
-    const r = await q.query<{ user_id: string }>('select user_id from public.check_ins where id = $1 for update', [id]);
-    return r.rows[0]?.user_id ?? null;
+  /** Locks the row (if any) for this mutation; returns its owner, original device time and voice path. */
+  async lockCheckIn(
+    q: Queryable,
+    id: string,
+  ): Promise<{ userId: string; deviceTs: Date; voicePath: string | null } | null> {
+    const r = await q.query<{ user_id: string; device_ts: Date; voice_path: string | null }>(
+      'select user_id, device_ts, voice_path from public.check_ins where id = $1 for update',
+      [id],
+    );
+    const row = r.rows[0];
+    return row ? { userId: row.user_id, deviceTs: row.device_ts, voicePath: row.voice_path } : null;
   }
 
   async insertCheckIn(
     q: Queryable,
-    c: { userId: string; p: CheckInPayload; quadrant: Quadrant; localDay: string; deviceTs: string; backfill: boolean },
+    c: {
+      userId: string;
+      p: CheckInPayload;
+      quadrant: Quadrant;
+      localDay: string;
+      deviceTs: string;
+      backfill: boolean;
+      voicePath: string | null;
+    },
   ): Promise<void> {
     await q.query(
-      `insert into public.check_ins (id, user_id, mood_id, quadrant, tags, note_ct, local_day, device_ts, source, backfill)
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-      [c.p.id, c.userId, c.p.moodId, c.quadrant, c.p.tags, c.p.noteCt, c.localDay, c.deviceTs, c.p.source, c.backfill],
+      `insert into public.check_ins (id, user_id, mood_id, quadrant, tags, note_ct, voice_path, local_day, device_ts, source, backfill)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [c.p.id, c.userId, c.p.moodId, c.quadrant, c.p.tags, c.p.noteCt, c.voicePath, c.localDay, c.deviceTs, c.p.source, c.backfill],
     );
   }
 
-  /** Edit: mood/tags/note/source only — the original aura day, timestamps and credit never change. */
-  async updateCheckIn(q: Queryable, userId: string, p: CheckInPayload, quadrant: Quadrant): Promise<void> {
+  /**
+   * Edit: mood/tags/note/source (+ voice path when `voicePath !== undefined`; `null` clears it) — the
+   * original aura day, timestamps and credit never change.
+   */
+  async updateCheckIn(
+    q: Queryable,
+    userId: string,
+    p: CheckInPayload,
+    quadrant: Quadrant,
+    voicePath: string | null | undefined,
+  ): Promise<void> {
     await q.query(
-      `update public.check_ins set mood_id = $3, quadrant = $4, tags = $5, note_ct = $6, source = $7, updated_at = now()
+      `update public.check_ins set mood_id = $3, quadrant = $4, tags = $5, note_ct = $6, source = $7,
+              voice_path = case when $8::boolean then $9::text else voice_path end, updated_at = now()
         where id = $1 and user_id = $2`,
-      [p.id, userId, p.moodId, quadrant, p.tags, p.noteCt, p.source],
+      [p.id, userId, p.moodId, quadrant, p.tags, p.noteCt, p.source, voicePath !== undefined, voicePath ?? null],
     );
   }
 
-  async deleteCheckIn(q: Queryable, userId: string, id: string): Promise<void> {
-    await q.query('delete from public.check_ins where id = $1 and user_id = $2', [id, userId]);
+  /** Returns the deleted row's voice path (null if it had none), or undefined when nothing was deleted. */
+  async deleteCheckIn(q: Queryable, userId: string, id: string): Promise<{ voicePath: string | null } | undefined> {
+    const r = await q.query<{ voice_path: string | null }>(
+      'delete from public.check_ins where id = $1 and user_id = $2 returning voice_path',
+      [id, userId],
+    );
+    return r.rows[0] ? { voicePath: r.rows[0].voice_path } : undefined;
+  }
+
+  /** The subset of `paths` still referenced by one of the user's check-ins. */
+  async referencedVoicePaths(q: Queryable, userId: string, paths: string[]): Promise<Set<string>> {
+    if (paths.length === 0) return new Set();
+    const r = await q.query<{ voice_path: string }>(
+      'select voice_path from public.check_ins where user_id = $1 and voice_path = any($2::text[])',
+      [userId, paths],
+    );
+    return new Set(r.rows.map((x) => x.voice_path));
   }
 
   // ---------- habits ----------

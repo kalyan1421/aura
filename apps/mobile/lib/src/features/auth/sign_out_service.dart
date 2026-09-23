@@ -9,7 +9,7 @@ import 'auth_repository.dart';
 /// Signing out leaves nothing personal on the phone (shared and borrowed
 /// phones, PRD Notifications/Privacy). The next person starts at Welcome and
 /// goes through the DOB gate again; none of the previous account's check-ins,
-/// notes, DOB or pending outbox can reach them or their account.
+/// notes, voice notes, DOB or pending outbox can reach them or their account.
 ///
 /// Kept (device-scoped): the under-13 device lock and the database key
 /// (secure storage), the device id, the language choice and an owed FCM
@@ -24,7 +24,14 @@ class SignOutService {
     required this._pauseSync,
     required this._resumeSync,
     required this._afterWipe,
+    this._wipeFiles,
   });
+
+  /// Deletes the account's files outside the database (voice notes: saved,
+  /// raw, drafts and decrypted temp copies). Best effort: a failure never
+  /// stops the reset (the voice store also sweeps unreferenced files at the
+  /// next start, and sealed files are useless without the deleted key).
+  final Future<void> Function()? _wipeFiles;
 
   final AuthRepository _auth;
   final AppDatabase _db;
@@ -68,6 +75,12 @@ class SignOutService {
       }
       // 3 + 4. Every personal row and user-scoped key, in one transaction.
       await _db.wipeUserData(keepKeys: KvKeys.deviceScoped);
+      // Voice-note files (the rows pointing at them are gone).
+      try {
+        await _wipeFiles?.call();
+      } catch (e) {
+        debugPrint('sign-out: files ${e.runtimeType}');
+      }
       // The per-user note key (Keychain/Keystore + memory).
       _dataKeys.forget();
       if (userId != null) await _secure.delete(SecureKeys.dataKey(userId));

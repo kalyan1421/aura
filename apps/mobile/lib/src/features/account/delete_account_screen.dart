@@ -8,8 +8,8 @@ import '../../core/net/aura_api.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/busy_button_label.dart';
 import '../../core/widgets/inline_notice.dart';
-import '../auth/busy_button_label.dart';
 import '../support/support_sheet.dart';
 import 'account_providers.dart';
 

@@ -169,3 +169,30 @@ abstract class AccountStatus with _$AccountStatus {
     return raw == null ? null : DateTime.tryParse(raw);
   }
 }
+
+/// `POST /v1/media/upload-url` → where to `PUT` one encrypted media object
+/// (contracts/api/v1.md "Media: voice notes"). [path] is used verbatim as
+/// the check-in's `voicePath` and for downloads.
+@freezed
+abstract class MediaUploadUrl with _$MediaUploadUrl {
+  const factory MediaUploadUrl({
+    required String path,
+    required String uploadUrl,
+    String? expiresAt,
+  }) = _MediaUploadUrl;
+
+  factory MediaUploadUrl.fromJson(Map<String, dynamic> json) =>
+      _$MediaUploadUrlFromJson(json);
+}
+
+/// `POST /v1/media/download-url` → a short-lived URL for the ciphertext.
+@freezed
+abstract class MediaDownloadUrl with _$MediaDownloadUrl {
+  const factory MediaDownloadUrl({
+    required String downloadUrl,
+    String? expiresAt,
+  }) = _MediaDownloadUrl;
+
+  factory MediaDownloadUrl.fromJson(Map<String, dynamic> json) =>
+      _$MediaDownloadUrlFromJson(json);
+}

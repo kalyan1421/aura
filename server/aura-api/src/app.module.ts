@@ -7,6 +7,7 @@ import { DbModule } from './db/db.module';
 import { DevicesModule } from './devices/devices.module';
 import { HealthModule } from './health/health.module';
 import { KeysModule } from './keys/keys.module';
+import { MediaModule } from './media/media.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProgressionModule } from './progression/progression.module';
 import { QueuesModule } from './queues/queues.module';
@@ -27,6 +28,7 @@ import { SyncModule } from './sync/sync.module';
     KeysModule,
     DevicesModule,
     AccountModule,
+    MediaModule,
   ],
 })
 export class AppModule {}

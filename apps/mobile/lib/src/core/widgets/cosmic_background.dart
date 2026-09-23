@@ -30,7 +30,9 @@ class CosmicBackground extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           RepaintBoundary(
-            child: CustomPaint(painter: _SkyPainter(tint ?? AuraColors.lavender)),
+            child: CustomPaint(
+              painter: _SkyPainter(tint ?? AuraColors.lavender),
+            ),
           ),
           child,
         ],
@@ -52,15 +54,26 @@ class _SkyPainter extends CustomPainter {
         r,
         Paint()
           ..shader = RadialGradient(
-            colors: [color.withValues(alpha: a), color.withValues(alpha: 0)],
+            colors: [
+              color.withValues(alpha: a),
+              color.withValues(alpha: 0),
+            ],
           ).createShader(Rect.fromCircle(center: c, radius: r)),
       );
     }
 
-    wash(Offset(size.width * 0.15, size.height * 0.12), size.width * 0.7,
-        tint, 0.10);
-    wash(Offset(size.width * 0.95, size.height * 0.55), size.width * 0.8,
-        const Color(0xFF3B6FB6), 0.08);
+    wash(
+      Offset(size.width * 0.15, size.height * 0.12),
+      size.width * 0.7,
+      tint,
+      0.10,
+    );
+    wash(
+      Offset(size.width * 0.95, size.height * 0.55),
+      size.width * 0.8,
+      const Color(0xFF3B6FB6),
+      0.08,
+    );
 
     final star = Paint();
     const n = 70;

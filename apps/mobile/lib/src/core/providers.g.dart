@@ -629,7 +629,254 @@ final class CheckInRepositoryProvider
   }
 }
 
-String _$checkInRepositoryHash() => r'9af7e71faf8026f7137073d5dc770118e88e16d6';
+String _$checkInRepositoryHash() => r'141da8af8f19073be47cae8ecdf1f3828d5f0025';
+
+/// App ↔ OS glue: Settings deep link, iOS backup exclusion.
+
+@ProviderFor(auraPlatform)
+final auraPlatformProvider = AuraPlatformProvider._();
+
+/// App ↔ OS glue: Settings deep link, iOS backup exclusion.
+
+final class AuraPlatformProvider
+    extends $FunctionalProvider<AuraPlatform, AuraPlatform, AuraPlatform>
+    with $Provider<AuraPlatform> {
+  /// App ↔ OS glue: Settings deep link, iOS backup exclusion.
+  AuraPlatformProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'auraPlatformProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$auraPlatformHash();
+
+  @$internal
+  @override
+  $ProviderElement<AuraPlatform> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AuraPlatform create(Ref ref) {
+    return auraPlatform(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AuraPlatform value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AuraPlatform>(value),
+    );
+  }
+}
+
+String _$auraPlatformHash() => r'9883a32aee3545a20e94a0bdc00cc8a99d8d1827';
+
+/// Voice files in the app's private, backup-excluded directory. Nothing
+/// touches the disk until the first voice operation.
+
+@ProviderFor(voiceStore)
+final voiceStoreProvider = VoiceStoreProvider._();
+
+/// Voice files in the app's private, backup-excluded directory. Nothing
+/// touches the disk until the first voice operation.
+
+final class VoiceStoreProvider
+    extends $FunctionalProvider<VoiceStore, VoiceStore, VoiceStore>
+    with $Provider<VoiceStore> {
+  /// Voice files in the app's private, backup-excluded directory. Nothing
+  /// touches the disk until the first voice operation.
+  VoiceStoreProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'voiceStoreProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$voiceStoreHash();
+
+  @$internal
+  @override
+  $ProviderElement<VoiceStore> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  VoiceStore create(Ref ref) {
+    return voiceStore(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VoiceStore value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VoiceStore>(value),
+    );
+  }
+}
+
+String _$voiceStoreHash() => r'e8485050e342832b7234c951548c12b69feae65e';
+
+/// Creates the microphone recorder (the plugin starts on the first mic tap).
+
+@ProviderFor(voiceRecorderFactory)
+final voiceRecorderFactoryProvider = VoiceRecorderFactoryProvider._();
+
+/// Creates the microphone recorder (the plugin starts on the first mic tap).
+
+final class VoiceRecorderFactoryProvider
+    extends
+        $FunctionalProvider<
+          VoiceRecorder Function(),
+          VoiceRecorder Function(),
+          VoiceRecorder Function()
+        >
+    with $Provider<VoiceRecorder Function()> {
+  /// Creates the microphone recorder (the plugin starts on the first mic tap).
+  VoiceRecorderFactoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'voiceRecorderFactoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$voiceRecorderFactoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<VoiceRecorder Function()> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  VoiceRecorder Function() create(Ref ref) {
+    return voiceRecorderFactory(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VoiceRecorder Function() value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VoiceRecorder Function()>(value),
+    );
+  }
+}
+
+String _$voiceRecorderFactoryHash() =>
+    r'301decc320adb60f2b927b8c3994495ddb3d5b32';
+
+/// Creates an audio player (the plugin starts on the first play).
+
+@ProviderFor(voicePlayerFactory)
+final voicePlayerFactoryProvider = VoicePlayerFactoryProvider._();
+
+/// Creates an audio player (the plugin starts on the first play).
+
+final class VoicePlayerFactoryProvider
+    extends
+        $FunctionalProvider<
+          VoicePlayer Function(),
+          VoicePlayer Function(),
+          VoicePlayer Function()
+        >
+    with $Provider<VoicePlayer Function()> {
+  /// Creates an audio player (the plugin starts on the first play).
+  VoicePlayerFactoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'voicePlayerFactoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$voicePlayerFactoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<VoicePlayer Function()> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  VoicePlayer Function() create(Ref ref) {
+    return voicePlayerFactory(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VoicePlayer Function() value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VoicePlayer Function()>(value),
+    );
+  }
+}
+
+String _$voicePlayerFactoryHash() =>
+    r'7f5a6b3d7ed7ff0afc07e73268fb4e65a779955a';
+
+/// Finds a check-in's voice note for playback (local copy or lazy download).
+
+@ProviderFor(voiceLoader)
+final voiceLoaderProvider = VoiceLoaderProvider._();
+
+/// Finds a check-in's voice note for playback (local copy or lazy download).
+
+final class VoiceLoaderProvider
+    extends $FunctionalProvider<VoiceLoader, VoiceLoader, VoiceLoader>
+    with $Provider<VoiceLoader> {
+  /// Finds a check-in's voice note for playback (local copy or lazy download).
+  VoiceLoaderProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'voiceLoaderProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$voiceLoaderHash();
+
+  @$internal
+  @override
+  $ProviderElement<VoiceLoader> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  VoiceLoader create(Ref ref) {
+    return voiceLoader(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(VoiceLoader value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<VoiceLoader>(value),
+    );
+  }
+}
+
+String _$voiceLoaderHash() => r'b5dd0aa6282a71576d063fd998e1e4675b97ea3f';
 
 @ProviderFor(habitRepository)
 final habitRepositoryProvider = HabitRepositoryProvider._();
@@ -807,7 +1054,7 @@ final class ProfileServiceProvider
   }
 }
 
-String _$profileServiceHash() => r'f7c0d300b8e31a23aa5166981bee98149f03e39c';
+String _$profileServiceHash() => r'67b8d9f3a375f26f730b602646b52685ac5713bc';
 
 @ProviderFor(auraApi)
 final auraApiProvider = AuraApiProvider._();
@@ -848,7 +1095,7 @@ final class AuraApiProvider
   }
 }
 
-String _$auraApiHash() => r'f9458f110722b1461976f368e15def4bcf3bcca7';
+String _$auraApiHash() => r'7e146beb5e82b68c5a511ba02b789a5dc3d3702b';
 
 @ProviderFor(syncController)
 final syncControllerProvider = SyncControllerProvider._();
@@ -889,7 +1136,7 @@ final class SyncControllerProvider
   }
 }
 
-String _$syncControllerHash() => r'f9f72d6579a206eebdc8d575f72860f7c96782b1';
+String _$syncControllerHash() => r'8d2646f7626ff3328380fa8d0aacbb6a4d8f7243';
 
 /// The FCM adapter, or `null` when Firebase did not initialise (main.dart
 /// overrides it). Push is then simply off; the app works fully without it.
@@ -1020,7 +1267,7 @@ final class SignOutServiceProvider
   }
 }
 
-String _$signOutServiceHash() => r'198785b6b013f7f3046c8587168ec9bc1fc5d061';
+String _$signOutServiceHash() => r'7c8ba35147dddb8be57b2175e239b9197cbdc827';
 
 @ProviderFor(pendingCount)
 final pendingCountProvider = PendingCountProvider._();

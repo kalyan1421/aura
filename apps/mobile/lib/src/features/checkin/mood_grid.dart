@@ -161,6 +161,15 @@ MoodGridFit resolveMoodGridFit({
       for (var i = 0; i < 8 && (w = widest(size)) > labelWidth; i++) {
         size *= 0.97;
       }
+      // The 3 % steps can overshoot below the floor for a near-miss word
+      // (it fits at the floor itself): take the floor then.
+      if (size < moodLabelMinFontSize) {
+        final atFloor = widest(moodLabelMinFontSize);
+        if (atFloor <= labelWidth) {
+          size = moodLabelMinFontSize;
+          w = atFloor;
+        }
+      }
     }
     if (size >= moodLabelMinFontSize && w <= labelWidth) {
       return fit(layout, size, labelWidth);

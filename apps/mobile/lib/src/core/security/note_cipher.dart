@@ -6,23 +6,43 @@ import 'package:cryptography/cryptography.dart';
 import '../net/aura_api.dart';
 import 'secure_store.dart';
 
-/// AES-256-GCM for notes with the per-user data key (DS-1 envelope; the
-/// server only ever stores the ciphertext).
+/// AES-256-GCM with the per-user data key (DS-1 envelope; the server only
+/// ever stores the ciphertext): notes as text, voice notes as bytes.
 ///
-/// Wire format (base64): `0x01 | nonce(12) | ciphertext | tag(16)`.
-/// The record id is bound as associated data, so a ciphertext cannot be moved
-/// onto another check-in.
+/// Envelope: `0x01 | nonce(12) | ciphertext | tag(16)` — base64 for notes,
+/// raw bytes for media files. The record id is bound as associated data, so
+/// a ciphertext cannot be moved onto another check-in.
 class NoteCipher {
   NoteCipher(this._key);
 
   static const int _version = 1;
+  static const int _nonceLength = 12;
+  static const int _tagLength = 16;
+
+  /// Bytes the envelope adds to the plaintext (version + nonce + tag).
+  static const int overhead = 1 + _nonceLength + _tagLength;
+
   static final AesGcm _algo = AesGcm.with256bits();
 
   final SecretKey _key;
 
-  Future<String> encrypt(String plaintext, {required String recordId}) async {
+  Future<String> encrypt(String plaintext, {required String recordId}) async =>
+      base64.encode(
+        await encryptBytes(utf8.encode(plaintext), recordId: recordId),
+      );
+
+  Future<String> decrypt(String ciphertext, {required String recordId}) async =>
+      utf8.decode(
+        await decryptBytes(base64.decode(ciphertext), recordId: recordId),
+      );
+
+  /// Seals [clear] (e.g. a voice recording) for the record [recordId].
+  Future<Uint8List> encryptBytes(
+    List<int> clear, {
+    required String recordId,
+  }) async {
     final box = await _algo.encrypt(
-      utf8.encode(plaintext),
+      clear,
       secretKey: _key,
       nonce: _algo.newNonce(),
       aad: utf8.encode(recordId),
@@ -32,23 +52,28 @@ class NoteCipher {
       ..add(box.nonce)
       ..add(box.cipherText)
       ..add(box.mac.bytes);
-    return base64.encode(out.toBytes());
+    return out.toBytes();
   }
 
-  Future<String> decrypt(String ciphertext, {required String recordId}) async {
-    final bytes = base64.decode(ciphertext);
-    if (bytes.isEmpty || bytes[0] != _version || bytes.length < 1 + 12 + 16) {
-      throw const FormatException('Unknown note ciphertext format');
+  /// Opens an envelope made by [encryptBytes] for the same [recordId]. Throws
+  /// on another key, another record id, a tampered or unknown envelope.
+  Future<Uint8List> decryptBytes(
+    List<int> sealed, {
+    required String recordId,
+  }) async {
+    if (sealed.length < overhead || sealed[0] != _version) {
+      throw const FormatException('Unknown ciphertext format');
     }
-    final nonce = bytes.sublist(1, 13);
-    final mac = Mac(bytes.sublist(bytes.length - 16));
-    final ct = bytes.sublist(13, bytes.length - 16);
+    final bytes = sealed is Uint8List ? sealed : Uint8List.fromList(sealed);
+    final nonce = bytes.sublist(1, 1 + _nonceLength);
+    final mac = Mac(bytes.sublist(bytes.length - _tagLength));
+    final ct = bytes.sublist(1 + _nonceLength, bytes.length - _tagLength);
     final clear = await _algo.decrypt(
       SecretBox(ct, nonce: nonce, mac: mac),
       secretKey: _key,
       aad: utf8.encode(recordId),
     );
-    return utf8.decode(clear);
+    return clear is Uint8List ? clear : Uint8List.fromList(clear);
   }
 }
 
@@ -68,7 +93,8 @@ class DataKeyRepository {
     final stored = await _secure.read(SecureKeys.dataKey(userId));
     String? keyB64;
     if (stored != null) {
-      keyB64 = (jsonDecode(stored) as Map<String, dynamic>)['dataKey'] as String?;
+      keyB64 =
+          (jsonDecode(stored) as Map<String, dynamic>)['dataKey'] as String?;
     } else if (api != null) {
       try {
         final res = await api.dataKey();

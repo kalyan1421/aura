@@ -87,16 +87,31 @@ void main() {
       expect(m.first, containsPair('active', true));
     });
 
-    test('names: trimmed, ≤ 30 characters and within the server\'s 40 units',
-        () {
+    test('names: trimmed, ≤ 30 characters counted as grapheme clusters '
+        '(no UTF-16 cap)', () {
       expect(HabitRepository.cleanCustomName('  Walk   the dog '), 'Walk the dog');
       expect(HabitRepository.cleanCustomName('   '), isNull);
       expect(HabitRepository.cleanCustomName('a' * 30), 'a' * 30);
       expect(HabitRepository.cleanCustomName('a' * 31), isNull);
-      // A Telugu name within 30 characters but over 40 UTF-16 units.
+      // A Telugu name within 30 characters but over 40 UTF-16 units saves:
+      // the server counts grapheme clusters too.
       final conjuncts = 'క్ష' * 14;
+      expect(conjuncts.length, greaterThan(40));
       expect(conjuncts.characters.length, lessThanOrEqualTo(30));
-      expect(HabitRepository.cleanCustomName(conjuncts), isNull);
+      expect(HabitRepository.cleanCustomName(conjuncts), conjuncts);
+      // Emoji with modifiers are one character each.
+      final waves = '👋🏽' * 30;
+      expect(HabitRepository.cleanCustomName(waves), waves);
+      expect(HabitRepository.cleanCustomName('👋🏽' * 31), isNull);
+      expect(HabitRepository.cleanCustomName('క్ష' * 31), isNull);
+    });
+
+    test('a long Telugu name within 30 characters is added and synced as is',
+        () async {
+      final name = 'క్ష' * 14;
+      expect(await repo.addCustom(name), CustomHabitResult.saved);
+      final m = await _mutations(db);
+      expect(m.single, containsPair('name', name));
     });
 
     test('hiding a custom habit frees a slot; showing it at the limit is '
@@ -261,6 +276,28 @@ void main() {
       );
       expect(limit, findsOneWidget);
       expect(find.byKey(const ValueKey('habits-add-field')), findsNothing);
+      await end(tester);
+    });
+
+    testWidgets('the field stops at 30 characters (grapheme clusters); a '
+        'long Telugu name saves with no "too long" note', (tester) async {
+      final db = memoryDb();
+      await pumpSection(tester, db);
+      await openEditor(tester);
+      final field = find.byKey(const ValueKey('habits-add-field'));
+      await tester.enterText(field, 'a' * 35);
+      await tester.pump();
+      expect(tester.widget<TextField>(field).controller!.text, 'a' * 30);
+
+      final telugu = 'క్ష' * 14; // > 40 UTF-16 units, ≤ 30 characters
+      await tester.enterText(field, telugu);
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('habits-add')));
+      await settleIo(tester);
+
+      expect(find.byKey(const ValueKey('habits-notice')), findsNothing);
+      final rows = await io(tester, () => db.select(db.habits).get());
+      expect(rows.single.name, telugu);
       await end(tester);
     });
 

@@ -907,6 +907,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legal_opensInBrowser => 'Opens in your browser';
 
   @override
+  String get flows_startOverTitle => 'Start over?';
+
+  @override
+  String get flows_startOverBody =>
+      'This clears what you\'ve picked and written so far.';
+
+  @override
+  String get flows_startOver => 'Start over';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $count of $target Starlight toward $next';
   }
@@ -1017,10 +1027,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get habits_tooLong =>
-      'That name is a little long. Could you try a shorter one?';
-
-  @override
   String get habits_saveFailed => 'That didn\'t save. Could you try again?';
 
   @override
@@ -1112,4 +1118,142 @@ class AppLocalizationsEn extends AppLocalizations {
   String onb_blockedMailFailed(String email) {
     return 'We couldn\'t open an email app. You can write to us at $email.';
   }
+
+  @override
+  String polish_legalOpenFailed(String url) {
+    return 'Your browser didn\'t open. The page is at $url.';
+  }
+
+  @override
+  String get polish_legalCopyLink => 'Copy link';
+
+  @override
+  String get polish_legalLinkCopied => 'Link copied';
+
+  @override
+  String polish_helpCallFailed(String number) {
+    return 'This phone can\'t place the call. The number is $number.';
+  }
+
+  @override
+  String get polish_helpCopyNumber => 'Copy number';
+
+  @override
+  String get polish_helpNumberCopied => 'Number copied';
+
+  @override
+  String get voice_record => 'Record a voice note';
+
+  @override
+  String get voice_recordHint => 'Up to a minute. Only you can hear it.';
+
+  @override
+  String get voice_rationaleTitle => 'Add your voice?';
+
+  @override
+  String get voice_rationaleBody =>
+      'To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.';
+
+  @override
+  String get voice_rationaleAllow => 'Allow';
+
+  @override
+  String get voice_denied =>
+      'Voice is off. Type instead, or turn it on in Settings.';
+
+  @override
+  String get voice_openSettings => 'Settings';
+
+  @override
+  String get voice_recording => 'Recording';
+
+  @override
+  String voice_elapsed(String time, String limit) {
+    return '$time · up to $limit';
+  }
+
+  @override
+  String voice_recordingFor(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Recording, $seconds seconds',
+      one: 'Recording, 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_stop => 'Stop recording';
+
+  @override
+  String get voice_started => 'Recording started';
+
+  @override
+  String voice_recorded(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Voice note recorded, $seconds seconds',
+      one: 'Voice note recorded, 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_limitReached =>
+      'That\'s the full minute, so recording stopped. Your voice note is ready.';
+
+  @override
+  String get voice_recordFailed =>
+      'Voice couldn\'t be recorded just now. Your words still save.';
+
+  @override
+  String get voice_note => 'Voice note';
+
+  @override
+  String voice_length(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds seconds',
+      one: '1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_play => 'Play voice note';
+
+  @override
+  String get voice_pause => 'Pause voice note';
+
+  @override
+  String get voice_reRecord => 'Record again';
+
+  @override
+  String get voice_remove => 'Remove';
+
+  @override
+  String get voice_removeSemantic => 'Remove voice note';
+
+  @override
+  String get voice_dropped =>
+      'Your check-in is saved. The voice note couldn\'t be kept, as your phone may be low on space.';
+
+  @override
+  String get voice_loading => 'Getting your voice note…';
+
+  @override
+  String get voice_offline => 'The voice note plays when you\'re back online.';
+
+  @override
+  String get voice_failed =>
+      'This voice note couldn\'t be played just now. Try again in a moment.';
+
+  @override
+  String get voice_section => 'Your voice';
+
+  @override
+  String get voice_hasVoice => 'Has a voice note';
 }

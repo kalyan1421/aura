@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
@@ -16,6 +17,9 @@ import '../features/profile/profile_service.dart';
 import '../features/progress/progress_repository.dart';
 import '../features/push/push_messaging.dart';
 import '../features/push/push_service.dart';
+import '../features/voice/voice_devices.dart';
+import '../features/voice/voice_loader.dart';
+import '../features/voice/voice_store.dart';
 import 'db/database.dart';
 import 'db/kv_store.dart';
 import 'env/env.dart';
@@ -23,6 +27,7 @@ import 'ids/ids.dart';
 import 'net/aura_api.dart';
 import 'security/note_cipher.dart';
 import 'security/secure_store.dart';
+import 'sync/media_sync.dart';
 import 'sync/outbox_repository.dart';
 import 'sync/pull_service.dart';
 import 'sync/sync_service.dart';
@@ -116,7 +121,61 @@ CheckInRepository checkInRepository(Ref ref) => CheckInRepository(
   ref.watch(appDatabaseProvider),
   ref.watch(outboxRepositoryProvider),
   ref.watch(timeContextProvider),
+  voice: ref.watch(voiceStoreProvider),
+  // Seal a new recording at once when the key is already on this phone.
+  cipher: () => _signedInCipher(ref),
 );
+
+/// The signed-in person's data key. Without [api] only a key already in
+/// Keychain/Keystore is used (no network).
+Future<NoteCipher?> _signedInCipher(Ref ref, {AuraApi? api}) async {
+  final user = ref.read(authRepositoryProvider).currentUser;
+  if (user == null) return null;
+  return ref.read(dataKeyRepositoryProvider).cipherFor(user.id, api: api);
+}
+
+// ---- voice notes (F1) --------------------------------------------------------
+
+/// App ↔ OS glue: Settings deep link, iOS backup exclusion.
+@Riverpod(keepAlive: true)
+AuraPlatform auraPlatform(Ref ref) => const ChannelAuraPlatform();
+
+/// Voice files in the app's private, backup-excluded directory. Nothing
+/// touches the disk until the first voice operation.
+@Riverpod(keepAlive: true)
+VoiceStore voiceStore(Ref ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final platform = ref.watch(auraPlatformProvider);
+  return VoiceStore(
+    root: getApplicationSupportDirectory,
+    temp: getTemporaryDirectory,
+    excludeFromBackup: platform.excludeFromBackup,
+    referenced: () => referencedVoiceFiles(db),
+  );
+}
+
+/// Creates the microphone recorder (the plugin starts on the first mic tap).
+@Riverpod(keepAlive: true)
+VoiceRecorder Function() voiceRecorderFactory(Ref ref) =>
+    RecordVoiceRecorder.new;
+
+/// Creates an audio player (the plugin starts on the first play).
+@Riverpod(keepAlive: true)
+VoicePlayer Function() voicePlayerFactory(Ref ref) =>
+    AudioplayersVoicePlayer.new;
+
+/// Finds a check-in's voice note for playback (local copy or lazy download).
+@Riverpod(keepAlive: true)
+VoiceLoader voiceLoader(Ref ref) {
+  final api = ref.watch(auraApiProvider);
+  return VoiceLoader(
+    store: ref.watch(voiceStoreProvider),
+    api: api,
+    cipher: ({bool fetch = false}) =>
+        _signedInCipher(ref, api: fetch ? api : null),
+    online: () => ref.read(syncControllerProvider).online.value,
+  );
+}
 
 @Riverpod(keepAlive: true)
 HabitRepository habitRepository(Ref ref) => HabitRepository(
@@ -127,26 +186,44 @@ HabitRepository habitRepository(Ref ref) => HabitRepository(
 );
 
 @Riverpod(keepAlive: true)
-ProgressRepository progressRepository(Ref ref) =>
-    ProgressRepository(ref.watch(appDatabaseProvider), ref.watch(kvStoreProvider));
+ProgressRepository progressRepository(Ref ref) => ProgressRepository(
+  ref.watch(appDatabaseProvider),
+  ref.watch(kvStoreProvider),
+);
 
 @Riverpod(keepAlive: true)
 DataKeyRepository dataKeyRepository(Ref ref) =>
     DataKeyRepository(ref.watch(secureStoreProvider));
 
 @Riverpod(keepAlive: true)
-ProfileService profileService(Ref ref) => ProfileService(
-  kv: ref.watch(kvStoreProvider),
-  timezone: () => ref.read(timeContextProvider).timezone,
-  progress: ref.watch(progressRepositoryProvider),
-  country: () => ref.read(deviceRegionProvider),
-);
+ProfileService profileService(Ref ref) {
+  final service = ProfileService(
+    kv: ref.watch(kvStoreProvider),
+    timezone: () => ref.read(timeContextProvider).timezone,
+    progress: ref.watch(progressRepositoryProvider),
+    country: () => ref.read(deviceRegionProvider),
+    // 403 account_deletion_pending on POST /v1/profile: hold, ask
+    // "Keep my account?" (same hold as sync).
+    onDeletionPending: () =>
+        unawaited(ref.read(deletionHoldProvider.notifier).reportFromSync()),
+  );
+  ref.listen(deletionHoldProvider, (prev, next) {
+    if (prev != null && next == null) service.releaseDeletionHold();
+  });
+  return service;
+}
 
 @Riverpod(keepAlive: true)
 AuraApi? auraApi(Ref ref) {
   if (!Env.hasApi) return null;
   final auth = ref.watch(authRepositoryProvider);
-  return AuraApi(baseUrl: Env.apiUrl, accessToken: auth.accessToken);
+  return AuraApi(
+    baseUrl: Env.apiUrl,
+    accessToken: auth.accessToken,
+    // Signed Storage URLs are rewritten to this build's Supabase host when
+    // the API signed a loopback one (Android emulator / LAN device).
+    supabaseUrl: Env.supabaseUrl,
+  );
 }
 
 // ---- sync --------------------------------------------------------------------
@@ -205,6 +282,7 @@ SyncController syncController(Ref ref) {
     if (v != null) connectivity.add(v);
   }, fireImmediately: true);
 
+  final db = ref.watch(appDatabaseProvider);
   final service = SyncService(
     auth: auth,
     api: api,
@@ -239,10 +317,20 @@ SyncController syncController(Ref ref) {
     // 403 account_deletion_pending: hold, and ask "Keep my account?".
     onDeletionPending: () =>
         unawaited(ref.read(deletionHoldProvider.notifier).reportFromSync()),
+    // Voice notes upload before their check-in is pushed.
+    media: MediaSync(
+      db: db,
+      checkIns: ref.read(checkInRepositoryProvider),
+      store: ref.watch(voiceStoreProvider),
+    ),
   )..start();
   // "Keep my account" (or a sign-out) clears the hold: push again.
   ref.listen(deletionHoldProvider, (prev, next) {
-    if (prev != null && next == null) service.releaseDeletionHold();
+    if (prev != null && next == null) {
+      service.releaseDeletionHold();
+      // A held profile goes out now too, even when no push was held.
+      unawaited(service.kick());
+    }
   });
   ref.onDispose(() {
     unawaited(service.dispose());
@@ -301,6 +389,8 @@ SignOutService signOutService(Ref ref) => SignOutService(
   unregisterPush: () => ref.read(pushServiceProvider).unregister(),
   pauseSync: () => ref.read(syncControllerProvider).pause(),
   resumeSync: () => ref.read(syncControllerProvider).resume(),
+  // Every voice file (saved, raw, drafts, decrypted temp copies).
+  wipeFiles: () => ref.read(voiceStoreProvider).wipe(),
   afterWipe: () async {
     await ref
         .read(gateControllerProvider.notifier)

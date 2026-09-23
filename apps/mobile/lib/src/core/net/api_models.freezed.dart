@@ -2896,4 +2896,553 @@ as String?,
 
 }
 
+
+/// @nodoc
+mixin _$MediaUploadUrl {
+
+ String get path; String get uploadUrl; String? get expiresAt;
+/// Create a copy of MediaUploadUrl
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MediaUploadUrlCopyWith<MediaUploadUrl> get copyWith => _$MediaUploadUrlCopyWithImpl<MediaUploadUrl>(this as MediaUploadUrl, _$identity);
+
+  /// Serializes this MediaUploadUrl to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as MediaUploadUrl;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaUploadUrl&&(identical(other.path, _this.path) || other.path == _this.path)&&(identical(other.uploadUrl, _this.uploadUrl) || other.uploadUrl == _this.uploadUrl)&&(identical(other.expiresAt, _this.expiresAt) || other.expiresAt == _this.expiresAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as MediaUploadUrl;
+  return Object.hash(runtimeType,_this.path,_this.uploadUrl,_this.expiresAt);
+}
+
+@override
+String toString() {
+  final _this = this as MediaUploadUrl;
+  return 'MediaUploadUrl(path: ${_this.path}, uploadUrl: ${_this.uploadUrl}, expiresAt: ${_this.expiresAt})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MediaUploadUrlCopyWith<$Res>  {
+  factory $MediaUploadUrlCopyWith(MediaUploadUrl value, $Res Function(MediaUploadUrl) _then) = _$MediaUploadUrlCopyWithImpl;
+@useResult
+$Res call({
+ String path, String uploadUrl, String? expiresAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$MediaUploadUrlCopyWithImpl<$Res>
+    implements $MediaUploadUrlCopyWith<$Res> {
+  _$MediaUploadUrlCopyWithImpl(this._self, this._then);
+
+  final MediaUploadUrl _self;
+  final $Res Function(MediaUploadUrl) _then;
+
+/// Create a copy of MediaUploadUrl
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? uploadUrl = null,Object? expiresAt = freezed,}) {
+  return _then(MediaUploadUrl(
+path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as String,uploadUrl: null == uploadUrl ? _self.uploadUrl : uploadUrl // ignore: cast_nullable_to_non_nullable
+as String,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MediaUploadUrl].
+extension MediaUploadUrlPatterns on MediaUploadUrl {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MediaUploadUrl value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MediaUploadUrl() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MediaUploadUrl value)  $default,){
+final _that = this;
+switch (_that) {
+case _MediaUploadUrl():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MediaUploadUrl value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MediaUploadUrl() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String path,  String uploadUrl,  String? expiresAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MediaUploadUrl() when $default != null:
+return $default(_that.path,_that.uploadUrl,_that.expiresAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String path,  String uploadUrl,  String? expiresAt)  $default,) {final _that = this;
+switch (_that) {
+case _MediaUploadUrl():
+return $default(_that.path,_that.uploadUrl,_that.expiresAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String path,  String uploadUrl,  String? expiresAt)?  $default,) {final _that = this;
+switch (_that) {
+case _MediaUploadUrl() when $default != null:
+return $default(_that.path,_that.uploadUrl,_that.expiresAt);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _MediaUploadUrl implements MediaUploadUrl {
+  const _MediaUploadUrl({required this.path, required this.uploadUrl, this.expiresAt});
+  factory _MediaUploadUrl.fromJson(Map<String, dynamic> json) => _$MediaUploadUrlFromJson(json);
+
+@override final  String path;
+@override final  String uploadUrl;
+@override final  String? expiresAt;
+
+/// Create a copy of MediaUploadUrl
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MediaUploadUrlCopyWith<_MediaUploadUrl> get copyWith => __$MediaUploadUrlCopyWithImpl<_MediaUploadUrl>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$MediaUploadUrlToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaUploadUrl&&(identical(other.path, path) || other.path == path)&&(identical(other.uploadUrl, uploadUrl) || other.uploadUrl == uploadUrl)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,path,uploadUrl,expiresAt);
+}
+
+@override
+String toString() {
+    return 'MediaUploadUrl(path: $path, uploadUrl: $uploadUrl, expiresAt: $expiresAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MediaUploadUrlCopyWith<$Res> implements $MediaUploadUrlCopyWith<$Res> {
+  factory _$MediaUploadUrlCopyWith(_MediaUploadUrl value, $Res Function(_MediaUploadUrl) _then) = __$MediaUploadUrlCopyWithImpl;
+@override @useResult
+$Res call({
+ String path, String uploadUrl, String? expiresAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$MediaUploadUrlCopyWithImpl<$Res>
+    implements _$MediaUploadUrlCopyWith<$Res> {
+  __$MediaUploadUrlCopyWithImpl(this._self, this._then);
+
+  final _MediaUploadUrl _self;
+  final $Res Function(_MediaUploadUrl) _then;
+
+/// Create a copy of MediaUploadUrl
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? path = null,Object? uploadUrl = null,Object? expiresAt = freezed,}) {
+  return _then(_MediaUploadUrl(
+path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
+as String,uploadUrl: null == uploadUrl ? _self.uploadUrl : uploadUrl // ignore: cast_nullable_to_non_nullable
+as String,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$MediaDownloadUrl {
+
+ String get downloadUrl; String? get expiresAt;
+/// Create a copy of MediaDownloadUrl
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MediaDownloadUrlCopyWith<MediaDownloadUrl> get copyWith => _$MediaDownloadUrlCopyWithImpl<MediaDownloadUrl>(this as MediaDownloadUrl, _$identity);
+
+  /// Serializes this MediaDownloadUrl to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as MediaDownloadUrl;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MediaDownloadUrl&&(identical(other.downloadUrl, _this.downloadUrl) || other.downloadUrl == _this.downloadUrl)&&(identical(other.expiresAt, _this.expiresAt) || other.expiresAt == _this.expiresAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as MediaDownloadUrl;
+  return Object.hash(runtimeType,_this.downloadUrl,_this.expiresAt);
+}
+
+@override
+String toString() {
+  final _this = this as MediaDownloadUrl;
+  return 'MediaDownloadUrl(downloadUrl: ${_this.downloadUrl}, expiresAt: ${_this.expiresAt})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $MediaDownloadUrlCopyWith<$Res>  {
+  factory $MediaDownloadUrlCopyWith(MediaDownloadUrl value, $Res Function(MediaDownloadUrl) _then) = _$MediaDownloadUrlCopyWithImpl;
+@useResult
+$Res call({
+ String downloadUrl, String? expiresAt
+});
+
+
+
+
+}
+/// @nodoc
+class _$MediaDownloadUrlCopyWithImpl<$Res>
+    implements $MediaDownloadUrlCopyWith<$Res> {
+  _$MediaDownloadUrlCopyWithImpl(this._self, this._then);
+
+  final MediaDownloadUrl _self;
+  final $Res Function(MediaDownloadUrl) _then;
+
+/// Create a copy of MediaDownloadUrl
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? downloadUrl = null,Object? expiresAt = freezed,}) {
+  return _then(MediaDownloadUrl(
+downloadUrl: null == downloadUrl ? _self.downloadUrl : downloadUrl // ignore: cast_nullable_to_non_nullable
+as String,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [MediaDownloadUrl].
+extension MediaDownloadUrlPatterns on MediaDownloadUrl {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _MediaDownloadUrl value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _MediaDownloadUrl() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _MediaDownloadUrl value)  $default,){
+final _that = this;
+switch (_that) {
+case _MediaDownloadUrl():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _MediaDownloadUrl value)?  $default,){
+final _that = this;
+switch (_that) {
+case _MediaDownloadUrl() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String downloadUrl,  String? expiresAt)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _MediaDownloadUrl() when $default != null:
+return $default(_that.downloadUrl,_that.expiresAt);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String downloadUrl,  String? expiresAt)  $default,) {final _that = this;
+switch (_that) {
+case _MediaDownloadUrl():
+return $default(_that.downloadUrl,_that.expiresAt);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String downloadUrl,  String? expiresAt)?  $default,) {final _that = this;
+switch (_that) {
+case _MediaDownloadUrl() when $default != null:
+return $default(_that.downloadUrl,_that.expiresAt);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _MediaDownloadUrl implements MediaDownloadUrl {
+  const _MediaDownloadUrl({required this.downloadUrl, this.expiresAt});
+  factory _MediaDownloadUrl.fromJson(Map<String, dynamic> json) => _$MediaDownloadUrlFromJson(json);
+
+@override final  String downloadUrl;
+@override final  String? expiresAt;
+
+/// Create a copy of MediaDownloadUrl
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MediaDownloadUrlCopyWith<_MediaDownloadUrl> get copyWith => __$MediaDownloadUrlCopyWithImpl<_MediaDownloadUrl>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$MediaDownloadUrlToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MediaDownloadUrl&&(identical(other.downloadUrl, downloadUrl) || other.downloadUrl == downloadUrl)&&(identical(other.expiresAt, expiresAt) || other.expiresAt == expiresAt));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,downloadUrl,expiresAt);
+}
+
+@override
+String toString() {
+    return 'MediaDownloadUrl(downloadUrl: $downloadUrl, expiresAt: $expiresAt)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$MediaDownloadUrlCopyWith<$Res> implements $MediaDownloadUrlCopyWith<$Res> {
+  factory _$MediaDownloadUrlCopyWith(_MediaDownloadUrl value, $Res Function(_MediaDownloadUrl) _then) = __$MediaDownloadUrlCopyWithImpl;
+@override @useResult
+$Res call({
+ String downloadUrl, String? expiresAt
+});
+
+
+
+
+}
+/// @nodoc
+class __$MediaDownloadUrlCopyWithImpl<$Res>
+    implements _$MediaDownloadUrlCopyWith<$Res> {
+  __$MediaDownloadUrlCopyWithImpl(this._self, this._then);
+
+  final _MediaDownloadUrl _self;
+  final $Res Function(_MediaDownloadUrl) _then;
+
+/// Create a copy of MediaDownloadUrl
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? downloadUrl = null,Object? expiresAt = freezed,}) {
+  return _then(_MediaDownloadUrl(
+downloadUrl: null == downloadUrl ? _self.downloadUrl : downloadUrl // ignore: cast_nullable_to_non_nullable
+as String,expiresAt: freezed == expiresAt ? _self.expiresAt : expiresAt // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+
+}
+
 // dart format on

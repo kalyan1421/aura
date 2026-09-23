@@ -20,12 +20,16 @@ import '../checkin/mood_grid.dart';
 import '../checkin/quadrant_glyph.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
+import '../voice/voice_note_field.dart';
+import '../voice/voice_playback.dart';
+import '../voice/voice_store.dart';
 import 'history_format.dart';
 import 'history_providers.dart';
 
-/// One check-in (`/history/:id`): mood, time, tags, the private note and
-/// its sync status. Edit within 24 h of making it (same id, never re-earns);
-/// delete any time — a tombstone that keeps Starlight and glow days (F1).
+/// One check-in (`/history/:id`): mood, time, tags, the private note, the
+/// voice note and its sync status. Edit within 24 h of making it (same id,
+/// never re-earns; voice can be added, replaced or removed); delete any
+/// time — a tombstone that keeps Starlight and glow days (F1).
 class CheckInDetailScreen extends ConsumerStatefulWidget {
   const CheckInDetailScreen({super.key, required this.id});
 
@@ -45,12 +49,52 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
   /// The person chose to leave (Discard / after delete).
   bool _leaving = false;
 
+  /// The last edit saved without its new voice note (storage full).
+  bool _voiceDropped = false;
+
+  /// Plays the saved voice note (loaded lazily on the first play).
+  VoicePlaybackController? _playback;
+  String? _playbackKey;
+
   bool get _hasInput => !_leaving && (_draft?.isDirty ?? false);
 
   @override
   void dispose() {
     _draft?.dispose();
+    _playback?.dispose();
     super.dispose();
+  }
+
+  /// The controller for [row]'s voice note, rebuilt when it changes.
+  VoicePlaybackController? _playbackFor(CheckInRow row) {
+    final file = row.voiceFile;
+    final path = row.voicePath;
+    if (file == null && path == null) {
+      _dropPlayback();
+      return null;
+    }
+    final key = '$file|$path';
+    if (key == _playbackKey && _playback != null) return _playback;
+    _dropPlayback();
+    final ms = row.voiceMs;
+    _playbackKey = key;
+    return _playback = VoicePlaybackController(
+      createPlayer: ref.read(voicePlayerFactoryProvider),
+      load: () => ref
+          .read(voiceLoaderProvider)
+          .load(checkInId: row.id, file: file, path: path),
+      deleteTemp: ref.read(voiceStoreProvider).deleteTemp,
+      duration: ms == null ? null : Duration(milliseconds: ms),
+    );
+  }
+
+  void _dropPlayback() {
+    final c = _playback;
+    _playback = null;
+    _playbackKey = null;
+    if (c != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => c.dispose());
+    }
   }
 
   void _onDraft() => setState(() {});
@@ -59,14 +103,30 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     // Read the note directly: editing must start from the stored words.
     final note = await ref.read(checkInRepositoryProvider).noteOf(row.id);
     if (!mounted) return;
+    final hasVoice = row.voiceFile != null || row.voicePath != null;
+    final ms = row.voiceMs;
     final draft = CheckInDraft(
       mood: moodById(row.moodId),
       tags: row.tags,
       note: note,
+      savedVoice: hasVoice
+          ? SavedVoice(
+              checkInId: row.id,
+              file: row.voiceFile,
+              path: row.voicePath,
+              duration: ms == null ? null : Duration(milliseconds: ms),
+            )
+          : null,
     )..addListener(_onDraft);
+    await _playback?.stop();
+    if (!mounted) {
+      draft.dispose();
+      return;
+    }
     setState(() {
       _draft = draft;
       _failed = false;
+      _voiceDropped = false;
     });
   }
 
@@ -89,12 +149,15 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     final draft = _draft;
     final mood = draft?.mood;
     if (draft == null || mood == null || _saving) return;
-    final note = draft.note.text;
-    final noteEdited = draft.noteChanged;
     setState(() {
       _saving = true;
       _failed = false;
     });
+    // A recording in progress is finished and saved with the edit.
+    await draft.finishVoice();
+    final note = draft.note.text;
+    final noteEdited = draft.noteChanged;
+    var dropped = false;
     try {
       await ref
           .read(checkInRepositoryProvider)
@@ -103,7 +166,11 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
             mood: mood,
             tags: draft.tags.toList(),
             note: note,
+            voice: draft.newVoice,
+            removeVoice: draft.removesVoice,
+            onVoiceDropped: () => dropped = true,
           );
+      _voiceDropped = dropped;
       ref.read(syncControllerProvider).notifyLocalWrite();
     } catch (_) {
       // The edit stays on screen; Save can be tried again.
@@ -234,6 +301,7 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     final mood = moodById(row.moodId);
     final quadrant = mood?.quadrant ?? quadrantByName(row.quadrant);
     final hasNote = note != null && note.trim().isNotEmpty;
+    final playback = _playbackFor(row);
 
     Widget section(String title) => Padding(
       padding: const EdgeInsets.only(top: AuraSpace.xl, bottom: AuraSpace.s),
@@ -323,6 +391,27 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
           ),
           const SizedBox(height: AuraSpace.s),
           _Line(icon: Icons.lock_outline_rounded, text: l.checkin_noteHint),
+        ],
+        if (playback != null) ...[
+          section(l.voice_section),
+          Container(
+            key: const ValueKey('history-voice'),
+            padding: const EdgeInsets.all(AuraSpace.m),
+            decoration: BoxDecoration(
+              color: AuraColors.surface.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(AuraRadius.m),
+              border: Border.all(color: AuraColors.hairline),
+            ),
+            child: VoicePlaybackRow(controller: playback),
+          ),
+        ],
+        if (_voiceDropped) ...[
+          const SizedBox(height: AuraSpace.m),
+          InlineNotice(
+            l.voice_dropped,
+            key: const ValueKey('history-voice-dropped'),
+            icon: Icons.mic_off_outlined,
+          ),
         ],
         const SizedBox(height: AuraSpace.xl),
         Semantics(

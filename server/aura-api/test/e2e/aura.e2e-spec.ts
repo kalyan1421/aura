@@ -96,6 +96,8 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       ['get', '/v1/account'],
       ['post', '/v1/account/deletion'],
       ['delete', '/v1/account/deletion'],
+      ['post', '/v1/media/upload-url'],
+      ['post', '/v1/media/download-url'],
     ] as const) {
       const r = await http()[method](path).expect(401);
       expect(r.body).toEqual({ code: 'unauthorized', message: expect.any(String) });
@@ -543,6 +545,300 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       const d = await deleteDevice(u, {}).expect(400);
       expect(d.body.code).toBe('invalid_request');
       expect(await count('device_tokens', u.id)).toBe(0);
+    });
+  });
+
+  // ---------------------------------------------------------------- text limits + 24 h edit window
+  describe('text limits (grapheme clusters) and the 24 h check-in edit window', () => {
+    const TELUGU = 'స్త్రీ'; // one character, 6 UTF-16 units
+    const H = 3600_000;
+    const ago = (ms: number) => new Date(Date.now() - ms);
+    const reasons = (r: request.Response) => r.body.results.map((x: { status: string; reason?: string }) => x.reason ?? x.status);
+    const moodOf = async (id: string) =>
+      (await db.query<{ mood_id: string }>('select mood_id from public.check_ins where id = $1', [id])).rows[0]?.mood_id;
+    let u: TestUser;
+    beforeAll(async () => {
+      u = await newUser('limits');
+      await onboard(u).expect(200);
+    });
+
+    it('tags ≤ 20 and habit names ≤ 30 characters, counted as people see them (Telugu stored intact)', async () => {
+      const tagged = (tags: string[]) => {
+        const c = checkIn('calm');
+        return { ...c, payload: { ...c.payload, tags } };
+      };
+      const custom = (name: string) => {
+        const id = uuidv7();
+        return { ...habit(id, null), payload: { id, kind: 'custom', name, active: true } };
+      };
+      const okTag = tagged([TELUGU.repeat(20)]);
+      const okName = custom(TELUGU.repeat(30)); // 180 code points: the old DB CHECK (<= 40) refused this
+      const r = await pushAs(u, [okTag, tagged(['x'.repeat(21)]), okName, custom('x'.repeat(31))]).expect(200);
+      expect(reasons(r)).toEqual(['applied', 'tag_too_long', 'applied', 'habit_name_too_long']);
+      const tags = (await db.query<{ tags: string[] }>('select tags from public.check_ins where id = $1', [okTag.payload.id])).rows[0];
+      expect(tags.tags).toEqual([TELUGU.repeat(20)]);
+      const name = (await db.query<{ name: string }>('select name from public.habits where id = $1', [okName.payload.id])).rows[0];
+      expect(name.name).toBe(TELUGU.repeat(30));
+    });
+
+    const made = (msAgo: number) => {
+      const t = ago(msAgo);
+      return checkIn('calm', { deviceTs: t.toISOString(), localDay: auraDay(t, TZ) });
+    };
+
+    it("without editedAt, edits are judged by the mutation's deviceTs: ≤ 24 h after the check-in, ≤ 5 min ahead", async () => {
+      const editAt = (c: ReturnType<typeof checkIn>, t: Date, moodId: string) => ({
+        ...c,
+        id: uuidv7(),
+        deviceTs: t.toISOString(),
+        payload: { ...c.payload, moodId },
+      });
+      const recent = made(23 * H);
+      const old = made(30 * H);
+      expect(reasons(await pushAs(u, [recent, old]).expect(200))).toEqual(['applied', 'applied']);
+
+      const r = await pushAs(u, [
+        editAt(recent, new Date(), 'joyful'), // 23 h after it was made
+        editAt(old, new Date(), 'joyful'), // 30 h after → closed
+        editAt(recent, new Date(Date.now() + 6 * 60_000), 'anxious'), // future-stamped beyond 5 min
+      ]).expect(200);
+      expect(reasons(r)).toEqual(['applied', 'edit_window_closed', 'edit_window_closed']);
+      expect(await moodOf(recent.payload.id)).toBe('joyful');
+      expect(await moodOf(old.payload.id)).toBe('calm');
+
+      // made offline 7 h ago (23 h after the check-in), synced only now (30 h after) → still applies
+      const offline = await pushAs(u, [editAt(old, ago(7 * H), 'anxious')]).expect(200);
+      expect(reasons(offline)).toEqual(['applied']);
+      expect(await moodOf(old.payload.id)).toBe('anxious');
+
+      // deletes are allowed any time
+      expect(reasons(await pushAs(u, [del('check_in', old.payload.id)]).expect(200))).toEqual(['applied']);
+      expect(await moodOf(old.payload.id)).toBeUndefined();
+    });
+
+    it('payload.editedAt (deviceTs stays the original time) decides the window; ignored on a first insert', async () => {
+      /** How the app sends an edit: same deviceTs/localDay as the original, editedAt = when the user edited. */
+      const edited = (c: ReturnType<typeof checkIn>, at: Date, moodId: string) => ({
+        ...c,
+        id: uuidv7(),
+        payload: { ...c.payload, moodId, editedAt: at.toISOString() },
+      });
+      const deviceTsOf = async (id: string) =>
+        (await db.query<{ device_ts: Date }>('select device_ts from public.check_ins where id = $1', [id])).rows[0]?.device_ts;
+      const old = made(30 * H);
+      const fresh = made(H);
+      expect(reasons(await pushAs(u, [old, fresh]).expect(200))).toEqual(['applied', 'applied']);
+
+      const r = await pushAs(u, [
+        edited(old, ago(5 * H), 'joyful'), // 25 h after the check-in → closed
+        edited(old, ago(7 * H), 'anxious'), // 23 h after (made offline, synced at 30 h) → applied
+        edited(fresh, new Date(Date.now() + 6 * 60_000), 'joyful'), // > 5 min ahead of the server → closed
+        { ...edited(old, ago(6 * H), 'joyful'), payload: { ...old.payload, editedAt: 'yesterday' } },
+      ]).expect(200);
+      expect(reasons(r)).toEqual(['edit_window_closed', 'applied', 'edit_window_closed', 'invalid_payload']);
+      expect(await moodOf(old.payload.id)).toBe('anxious');
+      expect(await moodOf(fresh.payload.id)).toBe('calm');
+      expect((await deviceTsOf(old.payload.id))?.toISOString()).toBe(new Date(old.deviceTs).toISOString());
+
+      // an edit whose original upsert never reached the server arrives as the insert: judged as the original event
+      const unsynced = checkIn('calm');
+      const first = await pushAs(u, [edited(unsynced, ago(48 * H), 'joyful')]).expect(200);
+      expect(reasons(first)).toEqual(['applied']);
+      expect(await moodOf(unsynced.payload.id)).toBe('joyful');
+      expect((await deviceTsOf(unsynced.payload.id))?.toISOString()).toBe(new Date(unsynced.deviceTs).toISOString());
+      const ledger = await db.query(
+        `select local_day from public.starlight_ledger where reason = 'checkin' and source_id = $1`,
+        [unsynced.payload.id],
+      );
+      expect(ledger.rows).toEqual([{ local_day: unsynced.localDay }]); // credited as the live original event
+    });
+  });
+
+  // ---------------------------------------------------------------- media: voice notes (F1)
+  describe('media: voice notes', () => {
+    const as = (u: TestUser, r: request.Test) => r.set('Authorization', `Bearer ${u.token}`);
+    const uploadUrl = (u: TestUser, body: Record<string, unknown>) => as(u, http().post('/v1/media/upload-url')).send(body);
+    const downloadUrl = (u: TestUser, path: unknown) => as(u, http().post('/v1/media/download-url')).send({ path });
+    const svc = () => ({ apikey: localServiceKey(), Authorization: `Bearer ${localServiceKey()}` });
+    /** What the app does: PUT the ciphertext to the signed URL (no auth header — the token is in the URL). */
+    const putBytes = (url: string, bytes: Buffer, extra: Record<string, string> = {}) =>
+      fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/octet-stream', ...extra }, body: bytes });
+    const objectRow = async (path: string) =>
+      (
+        await db.query<{ size: string; mimetype: string }>(
+          `select metadata->>'size' as size, metadata->>'mimetype' as mimetype
+             from storage.objects where bucket_id = 'private-media' and name = $1`,
+          [path],
+        )
+      ).rows[0] ?? null;
+    /** The blob itself, read with the service key (null when Storage no longer has it). */
+    const blob = async (path: string): Promise<Buffer | null> => {
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/private-media/${path}`, { headers: svc() });
+      const body = Buffer.from(await res.arrayBuffer());
+      return res.status === 200 ? body : null;
+    };
+    const voicePathOf = async (id: string): Promise<string | null | undefined> =>
+      (await db.query<{ voice_path: string | null }>('select voice_path from public.check_ins where id = $1', [id])).rows[0]
+        ?.voice_path;
+    /** Request an upload URL for `recordId` and PUT `bytes` to it; returns the object path. */
+    const recordVoice = async (u: TestUser, recordId: string, bytes: Buffer): Promise<string> => {
+      const r = await uploadUrl(u, { kind: 'voice', recordId, bytes: bytes.length }).expect(200);
+      const put = await putBytes(r.body.uploadUrl, bytes);
+      expect(put.status).toBe(200);
+      await put.arrayBuffer();
+      return r.body.path;
+    };
+    const withVoice = (id: string, voicePath: unknown, moodId = 'calm') => {
+      const m = checkIn(moodId);
+      return { ...m, payload: { ...m.payload, id, voicePath } };
+    };
+    const editOf = (m: ReturnType<typeof withVoice>, payload: Record<string, unknown>) => ({
+      ...m,
+      id: uuidv7(),
+      payload: { ...m.payload, ...payload },
+    });
+
+    let owner: TestUser;
+    let stranger: TestUser;
+    beforeAll(async () => {
+      owner = await newUser('voice-owner');
+      stranger = await newUser('voice-stranger');
+      await onboard(owner).expect(200);
+      await onboard(stranger).expect(200);
+    });
+    afterAll(async () => {
+      // Test users are deleted via the Auth admin API, which leaves Storage alone: clear their prefixes.
+      const media = app.get(PrivateMediaStore);
+      for (const u of [owner, stranger]) if (u) await media.remove(await media.listUserObjects(db, u.id));
+    });
+
+    it('upload URL → PUT ciphertext → push check_in with voicePath → download URL serves the same bytes', async () => {
+      const id = uuidv7();
+      const t0 = Date.now();
+      const up = await uploadUrl(owner, { kind: 'voice', recordId: id, bytes: 4096 }).expect(200);
+      expect(up.headers['cache-control']).toBe('no-store');
+      expect(up.body).toEqual({ path: `${owner.id}/voice/${id}`, uploadUrl: expect.any(String), expiresAt: expect.any(String) });
+      expect(up.body.uploadUrl.startsWith(`${SUPABASE_URL}/storage/v1/object/upload/sign/private-media/${owner.id}/voice/${id}?token=`)).toBe(true);
+      expect(Math.abs(new Date(up.body.expiresAt).getTime() - (t0 + 600_000))).toBeLessThan(15_000);
+
+      const ciphertext = randomBytes(4096);
+      const put = await putBytes(up.body.uploadUrl, ciphertext);
+      expect(put.status).toBe(200);
+      await put.arrayBuffer();
+      expect(await objectRow(up.body.path)).toEqual({ size: '4096', mimetype: 'application/octet-stream' });
+
+      const r = await pushAs(owner, [withVoice(id, up.body.path)]).expect(200);
+      expect(r.body.results[0].status).toBe('applied');
+      expect(await voicePathOf(id)).toBe(up.body.path);
+
+      const down = await downloadUrl(owner, up.body.path).expect(200);
+      expect(down.headers['cache-control']).toBe('no-store');
+      expect(down.body).toEqual({ downloadUrl: expect.any(String), expiresAt: expect.any(String) });
+      expect(Math.abs(new Date(down.body.expiresAt).getTime() - (Date.now() + 300_000))).toBeLessThan(15_000);
+      const got = await fetch(down.body.downloadUrl);
+      expect(got.status).toBe(200);
+      expect(Buffer.from(await got.arrayBuffer()).equals(ciphertext)).toBe(true);
+    });
+
+    it('a retried upload overwrites the same object (upsert); the signed PUT needs no auth header', async () => {
+      const id = uuidv7();
+      const first = await recordVoice(owner, id, randomBytes(100));
+      const again = await uploadUrl(owner, { kind: 'voice', recordId: id, bytes: 200 }).expect(200);
+      expect(again.body.path).toBe(first);
+      const second = randomBytes(200);
+      const put = await putBytes(again.body.uploadUrl, second, { 'x-upsert': 'true' });
+      expect(put.status).toBe(200);
+      await put.arrayBuffer();
+      expect((await blob(first))?.equals(second)).toBe(true);
+      expect((await objectRow(first))?.size).toBe('200');
+    });
+
+    it("another user gets 404 for the owner's path; malformed paths are 404 too; bad bodies 400", async () => {
+      const id = uuidv7();
+      const path = await recordVoice(owner, id, randomBytes(64));
+      for (const p of [path, `${stranger.id}/../${owner.id}/voice/${id}`, `${stranger.id}/voice/..`]) {
+        const r = await downloadUrl(stranger, p).expect(404);
+        expect(r.body).toEqual({ code: 'not_found', message: expect.any(String) });
+      }
+      // an own path that does not exist looks exactly the same
+      const missing = await downloadUrl(stranger, `${stranger.id}/voice/${id}`).expect(404);
+      expect(missing.body.code).toBe('not_found');
+      // the stranger's upload URL for the same record id lands in the stranger's own prefix
+      const theirs = await uploadUrl(stranger, { kind: 'voice', recordId: id, bytes: 10 }).expect(200);
+      expect(theirs.body.path).toBe(`${stranger.id}/voice/${id}`);
+      // …and can never be attached to a check-in as the owner's path
+      const r = await pushAs(stranger, [withVoice(uuidv7(), path)]).expect(200);
+      expect(r.body.results[0]).toMatchObject({ status: 'rejected', reason: 'invalid_voice_path' });
+
+      expect((await downloadUrl(owner, 42).expect(400)).body.code).toBe('invalid_request');
+      const big = await uploadUrl(owner, { kind: 'voice', recordId: uuidv7(), bytes: 1_048_577 }).expect(400);
+      expect(big.body).toEqual({ code: 'media_too_large', message: expect.any(String) });
+      await uploadUrl(owner, { kind: 'voice', recordId: uuidv7(), bytes: 1_048_576 }).expect(200);
+      expect((await uploadUrl(owner, { kind: 'photo', recordId: uuidv7(), bytes: 10 }).expect(400)).body.code).toBe('invalid_request');
+      expect((await uploadUrl(owner, { kind: 'voice', recordId: 'x', bytes: 10 }).expect(400)).body.code).toBe('invalid_request');
+    });
+
+    it('voicePath must be <user_id>/voice/<check-in id> → otherwise rejected: invalid_voice_path', async () => {
+      const id = uuidv7();
+      const r = await pushAs(owner, [
+        withVoice(id, `${stranger.id}/voice/${id}`),
+        withVoice(uuidv7(), `${owner.id}/voice/${id}`),
+        withVoice(uuidv7(), `${owner.id}/voice/../x`),
+        withVoice(uuidv7(), 7),
+      ]).expect(200);
+      expect(r.body.results.map((x: { reason?: string }) => x.reason)).toEqual(Array(4).fill('invalid_voice_path'));
+      expect(await voicePathOf(id)).toBeUndefined();
+    });
+
+    it('an edit without voicePath keeps it; an edit to null clears it and deletes the object', async () => {
+      const id = uuidv7();
+      const path = await recordVoice(owner, id, randomBytes(128));
+      const c = withVoice(id, path);
+      await pushAs(owner, [c]).expect(200);
+      const { voicePath: _keep, ...noVoice } = c.payload;
+      const keep = await pushAs(owner, [{ ...c, id: uuidv7(), payload: { ...noVoice, moodId: 'joyful' } }]).expect(200);
+      expect(keep.body.results[0].status).toBe('applied');
+      expect(await voicePathOf(id)).toBe(path);
+      expect(await blob(path)).not.toBeNull();
+
+      const cleared = await pushAs(owner, [editOf(c, { voicePath: null })]).expect(200);
+      expect(cleared.body.results[0].status).toBe('applied');
+      expect(await voicePathOf(id)).toBeNull();
+      expect(await objectRow(path)).toBeNull();
+      expect(await blob(path)).toBeNull();
+      await downloadUrl(owner, path).expect(404);
+    });
+
+    it('deleting the check-in removes its voice object (Starlight stays)', async () => {
+      const id = uuidv7();
+      const path = await recordVoice(owner, id, randomBytes(256));
+      await pushAs(owner, [withVoice(id, path)]).expect(200);
+      const starlight = Number((await as(owner, http().get('/v1/me/snapshot')).expect(200)).body.starlight.total);
+      expect(await objectRow(path)).not.toBeNull();
+
+      const r = await pushAs(owner, [del('check_in', id)]).expect(200);
+      expect(r.body.results[0].status).toBe('applied');
+      expect(r.body.snapshot.starlight.total).toBe(starlight);
+      expect(await voicePathOf(id)).toBeUndefined();
+      expect(await objectRow(path)).toBeNull();
+      expect(await blob(path)).toBeNull();
+    });
+
+    it('media routes are 403 account_deletion_pending during the grace period', async () => {
+      const u = await newUser('voice-pending');
+      await onboard(u).expect(200);
+      const id = uuidv7();
+      await uploadUrl(u, { kind: 'voice', recordId: id, bytes: 10 }).expect(200);
+      await as(u, http().post('/v1/account/deletion')).expect(202);
+      for (const call of [
+        () => uploadUrl(u, { kind: 'voice', recordId: id, bytes: 10 }),
+        () => downloadUrl(u, `${u.id}/voice/${id}`),
+      ]) {
+        const r = await call().expect(403);
+        expect(r.body).toEqual({ code: 'account_deletion_pending', message: expect.any(String) });
+      }
+      await as(u, http().delete('/v1/account/deletion')).expect(200);
+      await uploadUrl(u, { kind: 'voice', recordId: id, bytes: 10 }).expect(200);
     });
   });
 

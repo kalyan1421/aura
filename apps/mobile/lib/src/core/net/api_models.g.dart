@@ -163,3 +163,29 @@ _AccountStatus _$AccountStatusFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$AccountStatusToJson(_AccountStatus instance) =>
     <String, dynamic>{'deletionScheduledFor': instance.deletionScheduledFor};
+
+_MediaUploadUrl _$MediaUploadUrlFromJson(Map<String, dynamic> json) =>
+    _MediaUploadUrl(
+      path: json['path'] as String,
+      uploadUrl: json['uploadUrl'] as String,
+      expiresAt: json['expiresAt'] as String?,
+    );
+
+Map<String, dynamic> _$MediaUploadUrlToJson(_MediaUploadUrl instance) =>
+    <String, dynamic>{
+      'path': instance.path,
+      'uploadUrl': instance.uploadUrl,
+      'expiresAt': instance.expiresAt,
+    };
+
+_MediaDownloadUrl _$MediaDownloadUrlFromJson(Map<String, dynamic> json) =>
+    _MediaDownloadUrl(
+      downloadUrl: json['downloadUrl'] as String,
+      expiresAt: json['expiresAt'] as String?,
+    );
+
+Map<String, dynamic> _$MediaDownloadUrlToJson(_MediaDownloadUrl instance) =>
+    <String, dynamic>{
+      'downloadUrl': instance.downloadUrl,
+      'expiresAt': instance.expiresAt,
+    };

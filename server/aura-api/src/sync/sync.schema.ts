@@ -5,6 +5,10 @@ import { isLocalDay, isValidTimeZone } from '../rules';
 export const MAX_MUTATIONS = 200;
 export const MAX_NOTE_CT_CHARS = 16_384;
 export const MAX_TAGS = 10;
+/** PRD F1: custom tags ≤ 20 characters (grapheme clusters, see text-limits.ts) → else `tag_too_long`. */
+export const MAX_TAG_CHARS = 20;
+/** PRD F2: habit names ≤ 30 characters (grapheme clusters) → else `habit_name_too_long`. */
+export const MAX_HABIT_NAME_CHARS = 30;
 
 export const ENTITIES = ['check_in', 'habit', 'habit_log'] as const;
 export type Entity = (typeof ENTITIES)[number];
@@ -41,8 +45,9 @@ export const deletePayloadSchema = z.object({ id: uuid });
 export const checkInPayloadSchema = z.object({
   id: uuid,
   moodId: z.string().min(1).max(64),
+  // Length is counted in grapheme clusters by SyncService (`tag_too_long`), not by zod's UTF-16 `.max()`.
   tags: z
-    .array(z.string().trim().min(1).max(32))
+    .array(z.string().trim().min(1))
     .max(MAX_TAGS)
     .default([])
     .transform((t) => [...new Set(t)]),
@@ -53,14 +58,26 @@ export const checkInPayloadSchema = z.object({
     .nullish()
     .transform((v) => v ?? null),
   source: z.enum(['app', 'widget']).default('app'),
+  /**
+   * F1 voice note: `"<user_id>/voice/<id>"` sets it, `null` clears it (the object is deleted best-effort),
+   * absent keeps the stored value (an older build never drops a voice note). The path rule needs the
+   * caller's id, so SyncService checks it (`invalid_voice_path` for anything else, whatever its type).
+   */
+  voicePath: z.unknown().optional(),
+  /**
+   * When the user made this edit (device clock). The mutation's `deviceTs` stays the ORIGINAL check-in time
+   * (if the first upsert never reached the server, the edit is applied as the insert and judged as the
+   * original event); `editedAt` is what the 24 h edit window is judged by. Ignored on inserts.
+   */
+  editedAt: deviceTs.nullish().transform((v) => v ?? undefined),
 });
 export type CheckInPayload = z.infer<typeof checkInPayloadSchema>;
 
+// Habit name length is counted in grapheme clusters by SyncService (`habit_name_too_long`).
 const optionalName = z
   .string()
   .trim()
   .min(1)
-  .max(40)
   .nullish()
   .transform((v) => v ?? null);
 
@@ -76,7 +93,7 @@ export const habitPayloadSchema = z.discriminatedUnion('kind', [
     id: uuid,
     kind: z.literal('custom'),
     presetKey: z.null().optional(),
-    name: z.string().trim().min(1).max(40),
+    name: z.string().trim().min(1),
     active: z.boolean().default(true),
   }),
 ]);

@@ -49,16 +49,24 @@ class InlineNotice extends StatelessWidget {
               child: Icon(icon, size: 18, color: AuraColors.lavender),
             ),
             const SizedBox(width: AuraSpace.s),
+            // The action sits under the text, not beside it, so long copy
+            // (Telugu at 200%) never squeezes it off the edge.
             Expanded(
-              child: Text(
-                text,
-                style: t.bodyMedium?.copyWith(color: AuraColors.text),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: t.bodyMedium?.copyWith(color: AuraColors.text),
+                  ),
+                  if (action != null)
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: action,
+                    ),
+                ],
               ),
             ),
-            if (action != null) ...[
-              const SizedBox(width: AuraSpace.s),
-              action!,
-            ],
           ],
         ),
       ),

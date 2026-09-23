@@ -1,9 +1,15 @@
+import 'dart:async';
+
 import 'package:aura_domain/aura_domain.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/db/database.dart';
+import '../../core/security/note_cipher.dart';
 import '../../core/sync/outbox_repository.dart';
 import '../../core/time/clock.dart';
+import '../voice/voice_store.dart';
 
 /// Max note length (F1).
 const int maxNoteLength = 500;
@@ -27,6 +33,17 @@ bool canEditCheckIn(CheckInRow row, DateTime now) =>
     !row.noteLocked &&
     now.toUtc().difference(row.deviceTs.toUtc()) < checkInEditWindow;
 
+/// File names of every voice note check-ins on this phone reference (the
+/// voice store deletes anything else at start: orphans).
+Future<Set<String>> referencedVoiceFiles(AppDatabase db) async {
+  final rows =
+      await (db.selectOnly(db.checkIns)
+            ..addColumns([db.checkIns.voiceFile])
+            ..where(db.checkIns.voiceFile.isNotNull()))
+          .get();
+  return {for (final r in rows) r.read(db.checkIns.voiceFile)!};
+}
+
 /// [CheckInRepository.edit] on a check-in that is deleted, missing or past
 /// [checkInEditWindow].
 class CheckInNotEditable implements Exception {
@@ -35,119 +52,224 @@ class CheckInNotEditable implements Exception {
 
 /// Local-first check-ins: the row and its outbox mutation are written in one
 /// transaction, before any network call (REQ-CHK-02).
+///
+/// Voice notes (F1): a recording is moved from the drafts directory into
+/// [VoiceStore] (a rename), then sealed with the per-user data key as soon
+/// as one is on the phone ([sealVoice]). Its upsert waits in the outbox
+/// until the upload succeeded (`needsMedia`). Saving never waits on voice:
+/// when the file can't be kept (storage full, write failed) the check-in
+/// saves without it and `onVoiceDropped` tells the screen (PRD F1 "Storage
+/// full: text saves; voice is dropped with a notice").
 class CheckInRepository {
-  CheckInRepository(this._db, this._outbox, this._time);
+  CheckInRepository(
+    this._db,
+    this._outbox,
+    this._time, {
+    this._voice,
+    this._cipher,
+  });
 
   final AppDatabase _db;
   final OutboxRepository _outbox;
   final TimeContext _time;
+  final VoiceStore? _voice;
+
+  /// The signed-in person's data key if it is already on this phone (no
+  /// network). `null` → a recording stays raw until sync fetches the key.
+  final Future<NoteCipher?> Function()? _cipher;
 
   /// Saves a check-in with the client id [id]. Saving the same id twice is a
   /// no-op (double-tap on Save → one entry).
+  ///
+  /// [voice] is a finished draft recording (≤ 60 s). It is moved into the
+  /// voice store; if that fails the check-in still saves, without voice, and
+  /// [onVoiceDropped] runs.
   Future<CheckInRow> save({
     required String id,
     required Mood mood,
     List<String> tags = const [],
     String? note,
+    VoiceClip? voice,
+    void Function()? onVoiceDropped,
   }) async {
     final now = _time.now();
     final day = _time.dayOf(now);
     final text = note?.trim();
     final hasNote = text != null && text.isNotEmpty;
     final cleanTags = _cleanTags(tags);
+    final stored = await _adopt(voice, onVoiceDropped);
+    var keptVoice = false;
 
-    return _db.transaction(() async {
-      final inserted = await _db
-          .into(_db.checkIns)
-          .insert(
-            CheckInsCompanion.insert(
-              id: id,
-              moodId: mood.id,
-              quadrant: mood.quadrant.name,
-              tags: Value(cleanTags),
-              note: Value(hasNote ? _clampNote(text) : null),
-              localDay: day.toIso(),
-              deviceTs: now,
-              tzOffsetMinutes: _time.offsetMinutes(now),
-              tz: Value(_time.timezone),
-            ),
-            mode: InsertMode.insertOrIgnore,
+    final CheckInRow saved;
+    try {
+      saved = await _db.transaction(() async {
+        final inserted = await _db
+            .into(_db.checkIns)
+            .insert(
+              CheckInsCompanion.insert(
+                id: id,
+                moodId: mood.id,
+                quadrant: mood.quadrant.name,
+                tags: Value(cleanTags),
+                note: Value(hasNote ? _clampNote(text) : null),
+                localDay: day.toIso(),
+                deviceTs: now,
+                tzOffsetMinutes: _time.offsetMinutes(now),
+                tz: Value(_time.timezone),
+                voiceFile: Value(stored),
+                voiceMs: Value(
+                  stored == null ? null : _voiceMs(voice!.duration),
+                ),
+              ),
+              mode: InsertMode.insertOrIgnore,
+            );
+        if (inserted > 0) {
+          keptVoice = stored != null;
+          await _outbox.enqueue(
+            entity: Entities.checkIn,
+            op: Ops.upsert,
+            entityId: id,
+            deviceTs: now,
+            localDay: day,
+            tz: _time.timezone,
+            needsNote: hasNote,
+            // `voicePath` is added once the recording is uploaded; without
+            // a voice note it is simply absent (a new check-in has none).
+            needsMedia: stored != null,
+            payload: {
+              'id': id,
+              'moodId': mood.id,
+              'tags': cleanTags,
+              'noteCt': null, // filled with ciphertext at push time
+              'source': 'app',
+            },
           );
-      if (inserted > 0) {
-        await _outbox.enqueue(
-          entity: Entities.checkIn,
-          op: Ops.upsert,
-          entityId: id,
-          deviceTs: now,
-          localDay: day,
-          tz: _time.timezone,
-          needsNote: hasNote,
-          payload: {
-            'id': id,
-            'moodId': mood.id,
-            'tags': cleanTags,
-            'noteCt': null, // filled with ciphertext at push time
-            'source': 'app',
-          },
-        );
+        }
+        return (_db.select(
+          _db.checkIns,
+        )..where((t) => t.id.equals(id))).getSingle();
+      });
+    } catch (_) {
+      // The row wasn't written: the draft keeps its recording for a retry.
+      if (stored != null) await _voice?.unadopt(stored, voice!.path);
+      rethrow;
+    }
+    if (stored != null) {
+      if (keptVoice) {
+        unawaited(_sealQuietly(id));
+      } else {
+        await _voice?.delete(stored); // the id was already saved (double tap)
       }
-      return (_db.select(
-        _db.checkIns,
-      )..where((t) => t.id.equals(id))).getSingle();
-    });
+    }
+    return saved;
   }
 
-  /// Edits mood, tags and note of an existing check-in (within
+  /// Edits mood, tags, note and voice of an existing check-in (within
   /// [checkInEditWindow]). Keeps the id, day and time, and queues an upsert
   /// of the same id: the server treats it as an edit and never re-earns
   /// (contracts/api/v1.md "Edits"). Throws [CheckInNotEditable] otherwise.
+  ///
+  /// Voice: [voice] replaces the voice note with a new recording (uploaded
+  /// to the same server object, then `voicePath` is sent), [removeVoice]
+  /// removes it (`voicePath: null`; the server deletes the object). Neither
+  /// keeps it: `voicePath` is left out of the payload, which keeps the
+  /// server's value — unless this phone's recording never got uploaded, then
+  /// this edit tries again to attach it.
   Future<CheckInRow> edit({
     required String id,
     required Mood mood,
     List<String> tags = const [],
     String? note,
-  }) {
+    VoiceClip? voice,
+    bool removeVoice = false,
+    void Function()? onVoiceDropped,
+  }) async {
     final text = note?.trim();
     final hasNote = text != null && text.isNotEmpty;
     final cleanTags = _cleanTags(tags);
-    return _db.transaction(() async {
-      final row = await (_db.select(
-        _db.checkIns,
-      )..where((t) => t.id.equals(id))).getSingleOrNull();
-      if (row == null || !canEditCheckIn(row, _time.now())) {
-        throw const CheckInNotEditable();
-      }
-      await (_db.update(_db.checkIns)..where((t) => t.id.equals(id))).write(
-        CheckInsCompanion(
-          moodId: Value(mood.id),
-          quadrant: Value(mood.quadrant.name),
-          tags: Value(cleanTags),
-          note: Value(hasNote ? _clampNote(text) : null),
-          synced: const Value(false),
-        ),
-      );
-      // Stamped like the original, so if the first upsert never reached the
-      // server this one is judged as the same event.
-      await _outbox.enqueue(
-        entity: Entities.checkIn,
-        op: Ops.upsert,
-        entityId: id,
-        deviceTs: row.deviceTs,
-        localDay: LocalDay.parse(row.localDay),
-        tz: row.tz ?? _time.timezone,
-        needsNote: hasNote,
-        payload: {
-          'id': id,
-          'moodId': mood.id,
-          'tags': cleanTags,
-          'noteCt': null, // filled with ciphertext at push time
-          'source': row.source,
-        },
-      );
-      return (_db.select(
-        _db.checkIns,
-      )..where((t) => t.id.equals(id))).getSingle();
-    });
+    final existing = await (_db.select(
+      _db.checkIns,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
+    if (existing == null || !canEditCheckIn(existing, _time.now())) {
+      throw const CheckInNotEditable();
+    }
+    final stored = await _adopt(voice, onVoiceDropped);
+    String? oldFile;
+
+    final CheckInRow edited;
+    try {
+      edited = await _db.transaction(() async {
+        final row = await (_db.select(
+          _db.checkIns,
+        )..where((t) => t.id.equals(id))).getSingleOrNull();
+        if (row == null || !canEditCheckIn(row, _time.now())) {
+          throw const CheckInNotEditable();
+        }
+        final replace = stored != null;
+        final remove =
+            !replace &&
+            removeVoice &&
+            (row.voiceFile != null || row.voicePath != null);
+        if (replace || remove) oldFile = row.voiceFile;
+        await (_db.update(_db.checkIns)..where((t) => t.id.equals(id))).write(
+          CheckInsCompanion(
+            moodId: Value(mood.id),
+            quadrant: Value(mood.quadrant.name),
+            tags: Value(cleanTags),
+            note: Value(hasNote ? _clampNote(text) : null),
+            synced: const Value(false),
+            voiceFile: replace || remove ? Value(stored) : const Value.absent(),
+            voiceMs: replace
+                ? Value(_voiceMs(voice!.duration))
+                : remove
+                ? const Value(null)
+                : const Value.absent(),
+            voicePath: replace || remove
+                ? const Value(null)
+                : const Value.absent(),
+          ),
+        );
+        // A recording on this phone that the server doesn't have yet (new,
+        // or an earlier upload that gave up) goes with this edit.
+        final needsMedia =
+            replace ||
+            (!remove && row.voiceFile != null && row.voicePath == null);
+        // Stamped like the original, so if the first upsert never reached
+        // the server this one is judged as the same event. `editedAt` is
+        // when the edit happened: the server judges the 24 h edit window by
+        // it.
+        await _outbox.enqueue(
+          entity: Entities.checkIn,
+          op: Ops.upsert,
+          entityId: id,
+          deviceTs: row.deviceTs,
+          localDay: LocalDay.parse(row.localDay),
+          tz: row.tz ?? _time.timezone,
+          needsNote: hasNote,
+          needsMedia: needsMedia,
+          payload: {
+            'id': id,
+            'moodId': mood.id,
+            'tags': cleanTags,
+            'noteCt': null, // filled with ciphertext at push time
+            'source': row.source,
+            // Only a removal sends `voicePath` now (null); an upload fills
+            // it in at push time; otherwise it is left out (kept).
+            if (remove) 'voicePath': null,
+            'editedAt': _time.now().toUtc().toIso8601String(),
+          },
+        );
+        return (_db.select(
+          _db.checkIns,
+        )..where((t) => t.id.equals(id))).getSingle();
+      });
+    } catch (_) {
+      if (stored != null) await _voice?.unadopt(stored, voice!.path);
+      rethrow;
+    }
+    await _voice?.delete(oldFile);
+    if (stored != null) unawaited(_sealQuietly(id));
+    return edited;
   }
 
   /// Deletes a check-in (any time) as a tombstone plus a `delete` mutation
@@ -155,32 +277,101 @@ class CheckInRepository {
   ///
   /// The row stays with `deletedAt` so the local projection keeps its
   /// Starlight and glow days (F1; `ProgressRepository.watchEvents` reads
-  /// tombstones). Its note and tags are cleared: only what progression needs
-  /// is kept. A still-queued upsert stays queued, so the server credits the
-  /// same Starlight before it applies the delete.
-  Future<void> delete(String id) => _db.transaction(() async {
-    final row = await (_db.select(
-      _db.checkIns,
-    )..where((t) => t.id.equals(id))).getSingleOrNull();
-    if (row == null || row.deletedAt != null) return;
-    final now = _time.now();
-    await (_db.update(_db.checkIns)..where((t) => t.id.equals(id))).write(
-      CheckInsCompanion(
-        deletedAt: Value(now),
-        note: const Value(null),
-        tags: const Value([]),
-      ),
-    );
-    await _outbox.enqueue(
-      entity: Entities.checkIn,
-      op: Ops.delete,
-      entityId: id,
-      deviceTs: now,
-      localDay: _time.dayOf(now),
-      tz: _time.timezone,
-      payload: {'id': id},
-    );
-  });
+  /// tombstones). Its note, tags and voice note are cleared (the local file
+  /// is deleted; the server deletes its object on the `delete`): only what
+  /// progression needs is kept. A still-queued upsert stays queued, so the
+  /// server credits the same Starlight before it applies the delete.
+  Future<void> delete(String id) async {
+    String? file;
+    await _db.transaction(() async {
+      final row = await (_db.select(
+        _db.checkIns,
+      )..where((t) => t.id.equals(id))).getSingleOrNull();
+      if (row == null || row.deletedAt != null) return;
+      file = row.voiceFile;
+      final now = _time.now();
+      await (_db.update(_db.checkIns)..where((t) => t.id.equals(id))).write(
+        CheckInsCompanion(
+          deletedAt: Value(now),
+          note: const Value(null),
+          tags: const Value([]),
+          voiceFile: const Value(null),
+          voiceMs: const Value(null),
+          voicePath: const Value(null),
+        ),
+      );
+      await _outbox.enqueue(
+        entity: Entities.checkIn,
+        op: Ops.delete,
+        entityId: id,
+        deviceTs: now,
+        localDay: _time.dayOf(now),
+        tz: _time.timezone,
+        payload: {'id': id},
+      );
+    });
+    await _voice?.delete(file);
+  }
+
+  // ---- voice ---------------------------------------------------------------
+
+  /// Seals the check-in's raw recording with the data key ([cipher], or the
+  /// one already on this phone) and points the row at the sealed file. A
+  /// no-op when it is sealed already, gone, or no key is available yet.
+  /// Throws [VoiceStoreException] when the sealed file can't be written.
+  Future<void> sealVoice(String id, {NoteCipher? cipher}) async {
+    final store = _voice;
+    if (store == null) return;
+    await store.guard('seal:$id', () async {
+      final row = await (_db.select(
+        _db.checkIns,
+      )..where((t) => t.id.equals(id))).getSingleOrNull();
+      final name = row?.voiceFile;
+      if (name == null || VoiceStore.isSealed(name)) return;
+      final key = cipher ?? await _cipher?.call();
+      if (key == null) return;
+      final sealed = await store.seal(name, recordId: id, cipher: key);
+      if (sealed == null) return;
+      // Only if the row still points at this recording (an edit may have
+      // replaced or removed it meanwhile).
+      final moved =
+          await (_db.update(_db.checkIns)
+                ..where((t) => t.id.equals(id) & t.voiceFile.equals(name)))
+              .write(CheckInsCompanion(voiceFile: Value(sealed)));
+      if (moved == 0) await store.delete(sealed);
+      await store.delete(name);
+    });
+  }
+
+  Future<void> _sealQuietly(String id) async {
+    try {
+      await sealVoice(id);
+    } catch (e) {
+      // Stays raw in the private, backup-excluded directory; sync seals it
+      // before uploading.
+      debugPrint('voice: seal ${e.runtimeType}');
+    }
+  }
+
+  /// Moves [clip] into the store; `null` (and [onDropped]) when it can't.
+  Future<String?> _adopt(VoiceClip? clip, void Function()? onDropped) async {
+    if (clip == null) return null;
+    final store = _voice;
+    if (store == null) {
+      onDropped?.call();
+      return null;
+    }
+    try {
+      return await store.adopt(clip.path);
+    } catch (e) {
+      debugPrint('voice: not kept (${e.runtimeType})');
+      onDropped?.call();
+      return null;
+    }
+  }
+
+  static int _voiceMs(Duration d) =>
+      (d > maxVoiceDuration ? maxVoiceDuration : d).inMilliseconds;
 
   /// Private history: live check-ins, newest Aura day first, newest first
   /// within a day. Tombstones are left out.
@@ -248,13 +439,19 @@ class CheckInRepository {
     _db.checkIns,
   )..orderBy([(t) => OrderingTerm.desc(t.deviceTs)])).watch();
 
+  /// Trimmed, de-duplicated, ≤ [maxTagsPerCheckIn] tags of ≤
+  /// [maxCustomTagLength] characters each. Characters are grapheme clusters
+  /// (a Telugu syllable or an emoji is one), the unit the server counts, so
+  /// nothing the app saves is later rejected as `tag_too_long`.
   static List<String> _cleanTags(List<String> tags) => tags
-      .map((t) => t.trim())
+      .map((t) => t.trim().characters.take(maxCustomTagLength).toString())
       .where((t) => t.isNotEmpty)
       .toSet()
       .take(maxTagsPerCheckIn)
       .toList();
 
+  /// ≤ [maxNoteLength] characters, cut between grapheme clusters so an emoji
+  /// or a Telugu conjunct is never split.
   static String _clampNote(String text) =>
-      text.substring(0, text.length.clamp(0, maxNoteLength));
+      text.characters.take(maxNoteLength).toString();
 }

@@ -24,6 +24,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:aura/src/features/support/support_sheet.dart';
+
 import 'helpers.dart';
 
 /// Settings: Language · Comfort · Account · Help & Safety · About
@@ -342,6 +344,34 @@ void main() {
     await settleIo(tester);
     expect(account.cancels, 1);
     expect(find.byKey(const ValueKey('acct-pending-card')), findsNothing);
+    await _unmount(tester);
+  });
+
+  testWidgets('"I need help now" leaves the 56 dp app bar at large text so '
+      'it is never cut off', (tester) async {
+    await _pump(tester, db: memoryDb());
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byType(HelpNowButton),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('settings-help-body')), findsNothing);
+    await _unmount(tester);
+
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await _pump(tester, db: memoryDb());
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byType(HelpNowButton),
+      ),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey('settings-help-body')), findsOneWidget);
+    expect(tester.takeException(), isNull);
     await _unmount(tester);
   });
 }

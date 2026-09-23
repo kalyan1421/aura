@@ -51,6 +51,10 @@ dependencies:
   firebase_core: ^4.15.0
   firebase_messaging: ^16.7.0
 
+  # Voice notes (F1): capture (AAC/m4a) and playback of local files.
+  record: ^7.1.1
+  audioplayers: ^6.8.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

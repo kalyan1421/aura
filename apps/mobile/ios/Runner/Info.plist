@@ -17,6 +17,10 @@
 	<array>
 		<string>tel</string>
 	</array>
+	<!-- F1 voice notes: asked on the first mic tap, after the in-app explainer
+	     (PRD 15-permissions wording). Foreground recording only. -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<!-- Local dev stack over http (localhost:3310 / :55521). -->

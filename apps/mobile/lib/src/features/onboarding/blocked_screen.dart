@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/env/env.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../../core/widgets/copy_fallback_notice.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../support/helplines.dart';
 import '../support/support_sheet.dart';
@@ -143,18 +146,39 @@ class _BlockedScreenState extends ConsumerState<BlockedScreen> {
 /// Tap-to-call row. Screen readers hear the helpline's name with its number
 /// ("Call Childline · for under-18s, 1098"), not the bare digits. The label
 /// replaces the button's own semantics, so the call action is declared here
-/// too, or a screen-reader double-tap would do nothing.
-class _HelplineButton extends StatelessWidget {
+/// too, or a screen-reader double-tap would do nothing. On a device that
+/// can't dial (iPad, simulator) the number is shown with a Copy action.
+class _HelplineButton extends StatefulWidget {
   const _HelplineButton(this.line);
 
   final Helpline line;
 
   @override
+  State<_HelplineButton> createState() => _HelplineButtonState();
+}
+
+class _HelplineButtonState extends State<_HelplineButton> {
+  bool _couldNotCall = false;
+
+  Helpline get line => widget.line;
+
+  /// Dials at once; only a failed launch shows the fallback.
+  Future<void> _call() async {
+    var opened = false;
+    try {
+      opened = await launchUrl(Uri(scheme: 'tel', path: line.dial));
+    } on Object catch (e) {
+      debugPrint('blocked: call failed (${e.runtimeType})');
+    }
+    if (!opened && mounted) setState(() => _couldNotCall = true);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    void call() => launchUrl(Uri(scheme: 'tel', path: line.dial));
-    return Semantics(
+    void call() => unawaited(_call());
+    final button = Semantics(
       button: true,
       label: l.help_callSemantic(line.name, line.number),
       onTap: call,
@@ -191,6 +215,22 @@ class _HelplineButton extends StatelessWidget {
           ],
         ),
       ),
+    );
+    if (!_couldNotCall) return button;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        button,
+        const SizedBox(height: AuraSpace.s),
+        CopyFallbackNotice(
+          key: ValueKey('blocked-call-failed-${line.dial}'),
+          message: l.polish_helpCallFailed(line.number),
+          copyText: line.number,
+          copyLabel: l.polish_helpCopyNumber,
+          copiedLabel: l.polish_helpNumberCopied,
+          onClose: () => setState(() => _couldNotCall = false),
+        ),
+      ],
     );
   }
 }

@@ -22,9 +22,9 @@ class CheckIns extends Table {
   TextColumn get id => text()();
   TextColumn get moodId => text()();
   TextColumn get quadrant => text()();
-  TextColumn get tags => text().map(const StringListConverter()).withDefault(
-    const Constant('[]'),
-  )();
+  TextColumn get tags => text()
+      .map(const StringListConverter())
+      .withDefault(const Constant('[]'))();
   TextColumn get note => text().nullable()();
 
   /// Aura day (`YYYY-MM-DD`, 04:00 rollover), set on device, never recomputed.
@@ -48,6 +48,25 @@ class CheckIns extends Table {
   /// server's note, so editing waits until the note is readable here
   /// (schema v3).
   BoolColumn get noteLocked => boolean().withDefault(const Constant(false))();
+
+  // ---- voice note (F1, schema v4) ------------------------------------------
+
+  /// This phone's copy of the voice note: a file name inside the app's
+  /// private, backup-excluded voice directory (`VoiceStore`). `<rec>.enc` is
+  /// sealed with the per-user data key (DS-1); `<rec>.m4a` is raw and only
+  /// exists until a data key is on this phone. `null` when there is no local
+  /// copy (none, or pulled from the server: played by downloading).
+  TextColumn get voiceFile => text().nullable()();
+
+  /// Recorded length in milliseconds, for display (`null` when unknown, e.g.
+  /// a pulled voice note that hasn't been played here).
+  IntColumn get voiceMs => integer().nullable()();
+
+  /// The server object holding the current recording
+  /// (`<user_id>/voice/<id>`, the upload's `path` verbatim): set once the
+  /// upload succeeded, or by a pull. `null` while the current local
+  /// recording is not uploaded yet (or there is no voice note).
+  TextColumn get voicePath => text().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -86,7 +105,8 @@ class HabitLogs extends Table {
 
 /// Pending mutations for `POST /v1/sync/push`, drained oldest-first.
 /// The payload never holds note plaintext: `needsNote` rows get their
-/// `noteCt` filled in (encrypted) right before sending.
+/// `noteCt` filled in (encrypted) right before sending; `needsMedia` rows get
+/// their `voicePath` after the upload.
 @DataClassName('OutboxRow')
 class Outbox extends Table {
   IntColumn get seq => integer().autoIncrement()();
@@ -104,6 +124,15 @@ class Outbox extends Table {
   IntColumn get attempts => integer().withDefault(const Constant(0))();
   DateTimeColumn get nextAttemptAt => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();
+
+  /// A `check_in` upsert that goes out only after its voice note is uploaded
+  /// (schema v4, like [needsNote]): `voicePath` is filled in right before
+  /// sending. Cleared when the outbox gives up on the upload — the check-in
+  /// then goes without it (never blocked by media).
+  BoolColumn get needsMedia => boolean().withDefault(const Constant(false))();
+
+  /// Failed upload attempts of this row's voice note (schema v4).
+  IntColumn get mediaAttempts => integer().withDefault(const Constant(0))();
 }
 
 /// Mutations the server rejected (4xx) or that failed 10 times. Kept so they

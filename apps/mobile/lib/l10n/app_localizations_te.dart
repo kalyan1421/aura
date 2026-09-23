@@ -906,6 +906,16 @@ class AppLocalizationsTe extends AppLocalizations {
   String get legal_opensInBrowser => 'మీ బ్రౌజర్‌లో తెరుచుకుంటుంది';
 
   @override
+  String get flows_startOverTitle => 'మళ్ళీ మొదటి నుంచి మొదలుపెడదామా?';
+
+  @override
+  String get flows_startOverBody =>
+      'ఇప్పటివరకు మీరు ఎంచుకున్నవి, రాసినవి క్లియర్ అవుతాయి.';
+
+  @override
+  String get flows_startOver => 'మళ్ళీ మొదలుపెడదాం';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $next వైపు $targetలో $count Starlight';
   }
@@ -1017,10 +1027,6 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
-  String get habits_tooLong =>
-      'ఆ పేరు కొంచెం పొడవుగా ఉంది. ఇంకొంచెం చిన్నది ప్రయత్నిస్తారా?';
-
-  @override
   String get habits_saveFailed => 'అది సేవ్ కాలేదు. మళ్ళీ ప్రయత్నిస్తారా?';
 
   @override
@@ -1111,6 +1117,146 @@ class AppLocalizationsTe extends AppLocalizations {
   String onb_blockedMailFailed(String email) {
     return 'ఈమెయిల్ యాప్ తెరవలేకపోయాం. $emailకి మాకు రాయవచ్చు.';
   }
+
+  @override
+  String polish_legalOpenFailed(String url) {
+    return 'మీ బ్రౌజర్ తెరుచుకోలేదు. ఆ పేజీ $url లో ఉంది.';
+  }
+
+  @override
+  String get polish_legalCopyLink => 'లింక్ కాపీ చేయండి';
+
+  @override
+  String get polish_legalLinkCopied => 'లింక్ కాపీ అయింది';
+
+  @override
+  String polish_helpCallFailed(String number) {
+    return 'ఈ ఫోన్ నుంచి కాల్ చేయడం కుదరడం లేదు. నంబర్ $number.';
+  }
+
+  @override
+  String get polish_helpCopyNumber => 'నంబర్ కాపీ చేయండి';
+
+  @override
+  String get polish_helpNumberCopied => 'నంబర్ కాపీ అయింది';
+
+  @override
+  String get voice_record => 'వాయిస్ నోట్ రికార్డ్ చేయండి';
+
+  @override
+  String get voice_recordHint =>
+      'ఒక నిమిషం వరకు. ఇది మీకు మాత్రమే వినిపిస్తుంది.';
+
+  @override
+  String get voice_rationaleTitle => 'మీ గొంతు కూడా జోడిస్తారా?';
+
+  @override
+  String get voice_rationaleBody =>
+      'వాయిస్ నోట్ రికార్డ్ చేయడానికి Auraకి మీ మైక్రోఫోన్ కావాలి. రికార్డింగ్‌లు మీకు మాత్రమే ఉంటాయి, రూమ్‌లలో ఎప్పుడూ షేర్ కావు.';
+
+  @override
+  String get voice_rationaleAllow => 'అనుమతించండి';
+
+  @override
+  String get voice_denied =>
+      'వాయిస్ ఆఫ్‌లో ఉంది. బదులుగా టైప్ చేయండి, లేదా సెట్టింగ్‌లలో ఆన్ చేయండి.';
+
+  @override
+  String get voice_openSettings => 'సెట్టింగ్‌లు';
+
+  @override
+  String get voice_recording => 'రికార్డ్ అవుతోంది';
+
+  @override
+  String voice_elapsed(String time, String limit) {
+    return '$time · $limit వరకు';
+  }
+
+  @override
+  String voice_recordingFor(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'రికార్డ్ అవుతోంది, $seconds సెకన్లు',
+      one: 'రికార్డ్ అవుతోంది, 1 సెకను',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_stop => 'రికార్డింగ్ ఆపండి';
+
+  @override
+  String get voice_started => 'రికార్డింగ్ మొదలైంది';
+
+  @override
+  String voice_recorded(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'వాయిస్ నోట్ రికార్డ్ అయింది, $seconds సెకన్లు',
+      one: 'వాయిస్ నోట్ రికార్డ్ అయింది, 1 సెకను',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_limitReached =>
+      'ఒక నిమిషం పూర్తయింది, అందుకే రికార్డింగ్ ఆగింది. మీ వాయిస్ నోట్ సిద్ధంగా ఉంది.';
+
+  @override
+  String get voice_recordFailed =>
+      'ఇప్పుడు వాయిస్ రికార్డ్ కాలేదు. మీ మాటలు మాత్రం సేవ్ అవుతాయి.';
+
+  @override
+  String get voice_note => 'వాయిస్ నోట్';
+
+  @override
+  String voice_length(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds సెకన్లు',
+      one: '1 సెకను',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_play => 'వాయిస్ నోట్ ప్లే చేయండి';
+
+  @override
+  String get voice_pause => 'వాయిస్ నోట్ ఆపండి';
+
+  @override
+  String get voice_reRecord => 'మళ్ళీ రికార్డ్ చేయండి';
+
+  @override
+  String get voice_remove => 'తీసేయండి';
+
+  @override
+  String get voice_removeSemantic => 'వాయిస్ నోట్ తీసేయండి';
+
+  @override
+  String get voice_dropped =>
+      'మీ చెక్-ఇన్ సేవ్ అయింది. ఫోన్‌లో స్థలం తక్కువగా ఉండటం వల్ల వాయిస్ నోట్ ఉంచలేకపోయాం.';
+
+  @override
+  String get voice_loading => 'మీ వాయిస్ నోట్ తెస్తున్నాం…';
+
+  @override
+  String get voice_offline =>
+      'మీరు మళ్ళీ ఆన్‌లైన్‌కి వచ్చాక వాయిస్ నోట్ ప్లే అవుతుంది.';
+
+  @override
+  String get voice_failed =>
+      'ఈ వాయిస్ నోట్ ఇప్పుడు ప్లే కాలేదు. కాసేపాగి మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get voice_section => 'మీ గొంతు';
+
+  @override
+  String get voice_hasVoice => 'ఒక వాయిస్ నోట్ ఉంది';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -2022,6 +2168,16 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get legal_opensInBrowser => 'Mee browser lo open avutundi';
 
   @override
+  String get flows_startOverTitle => 'Malli modati nunchi modalupedadaamaa?';
+
+  @override
+  String get flows_startOverBody =>
+      'Ippativaraku meeru select chesinavi, raasinavi clear avutaayi.';
+
+  @override
+  String get flows_startOver => 'Malli modalupedadaam';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $next vaipu $target lo $count Starlight';
   }
@@ -2133,10 +2289,6 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   }
 
   @override
-  String get habits_tooLong =>
-      'Aa peru konchem podavuga undi. Inkonchem chinnadi try chestaara?';
-
-  @override
   String get habits_saveFailed => 'Adi save avvaledu. Malli try chestaara?';
 
   @override
@@ -2229,4 +2381,144 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String onb_blockedMailFailed(String email) {
     return 'Email app open cheyyalekapoyaam. $email ki maaku raayochu.';
   }
+
+  @override
+  String polish_legalOpenFailed(String url) {
+    return 'Mee browser open avvaledu. Aa page $url lo undi.';
+  }
+
+  @override
+  String get polish_legalCopyLink => 'Link copy cheyandi';
+
+  @override
+  String get polish_legalLinkCopied => 'Link copy ayyindi';
+
+  @override
+  String polish_helpCallFailed(String number) {
+    return 'Ee phone nundi call cheyyadam kudaratledu. Number $number.';
+  }
+
+  @override
+  String get polish_helpCopyNumber => 'Number copy cheyandi';
+
+  @override
+  String get polish_helpNumberCopied => 'Number copy ayyindi';
+
+  @override
+  String get voice_record => 'Voice note record cheyandi';
+
+  @override
+  String get voice_recordHint =>
+      'Oka nimisham varaku. Idi meeku maatrame vinipistundi.';
+
+  @override
+  String get voice_rationaleTitle => 'Mee gonthu kooda jodistaara?';
+
+  @override
+  String get voice_rationaleBody =>
+      'Voice note record cheyadaaniki Aura ki mee microphone kaavaali. Recordings meeku maatrame untaayi, rooms lo eppudu share kaavu.';
+
+  @override
+  String get voice_rationaleAllow => 'Allow cheyandi';
+
+  @override
+  String get voice_denied =>
+      'Voice off lo undi. Badulu ga type cheyandi, leda Settings lo on cheyandi.';
+
+  @override
+  String get voice_openSettings => 'Settings';
+
+  @override
+  String get voice_recording => 'Record avutondi';
+
+  @override
+  String voice_elapsed(String time, String limit) {
+    return '$time · $limit varaku';
+  }
+
+  @override
+  String voice_recordingFor(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Record avutondi, $seconds seconds',
+      one: 'Record avutondi, 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_stop => 'Recording aapandi';
+
+  @override
+  String get voice_started => 'Recording modalaindi';
+
+  @override
+  String voice_recorded(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'Voice note record ayyindi, $seconds seconds',
+      one: 'Voice note record ayyindi, 1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_limitReached =>
+      'Oka nimisham purthayyindi, anduke recording aagindi. Mee voice note ready ga undi.';
+
+  @override
+  String get voice_recordFailed =>
+      'Ippudu voice record avvaledu. Mee maatalu maatram save avutaayi.';
+
+  @override
+  String get voice_note => 'Voice note';
+
+  @override
+  String voice_length(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds seconds',
+      one: '1 second',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get voice_play => 'Voice note play cheyandi';
+
+  @override
+  String get voice_pause => 'Voice note pause cheyandi';
+
+  @override
+  String get voice_reRecord => 'Malli record cheyandi';
+
+  @override
+  String get voice_remove => 'Teeseyandi';
+
+  @override
+  String get voice_removeSemantic => 'Voice note teeseyandi';
+
+  @override
+  String get voice_dropped =>
+      'Mee check-in save ayyindi. Phone lo space takkuva ga undatam valla voice note unchalekapoyaam.';
+
+  @override
+  String get voice_loading => 'Mee voice note testunnaam…';
+
+  @override
+  String get voice_offline =>
+      'Meeru malli online ki vachaaka voice note play avutundi.';
+
+  @override
+  String get voice_failed =>
+      'Ee voice note ippudu play avvaledu. Kaasepaagi malli try cheyandi.';
+
+  @override
+  String get voice_section => 'Mee gonthu';
+
+  @override
+  String get voice_hasVoice => 'Oka voice note undi';
 }

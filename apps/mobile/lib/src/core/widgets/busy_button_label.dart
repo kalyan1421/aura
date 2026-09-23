@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../core/theme/aura_tokens.dart';
+import '../theme/aura_tokens.dart';
 
 /// A button label that stays put while work runs: a small progress ring
 /// appears in a slot that is always reserved (mirrored on the other side so

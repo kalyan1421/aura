@@ -16,7 +16,8 @@ import 'history_format.dart';
 import 'history_providers.dart';
 
 /// Private check-in history (`/history`): newest first, grouped by Aura day.
-/// Rows show the mood, time and discreet markers only — never note text.
+/// Rows show the mood, time and discreet markers (tags, note, voice) only —
+/// never note text.
 /// Read from Drift, so it works offline (PRD F10 "history is never gated").
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -211,6 +212,7 @@ class _Row extends StatelessWidget {
     final mood = moodById(row.moodId);
     final quadrant = mood?.quadrant ?? quadrantByName(row.quadrant);
     final hasNote = row.note?.trim().isNotEmpty ?? false;
+    final hasVoice = row.voiceFile != null || row.voicePath != null;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AuraSpace.s),
@@ -277,6 +279,19 @@ class _Row extends StatelessWidget {
                         child: const Icon(
                           Icons.notes_rounded,
                           key: ValueKey('history-note-icon'),
+                          size: 18,
+                          color: AuraColors.textMuted,
+                        ),
+                      ),
+                      const SizedBox(width: AuraSpace.s),
+                    ],
+                    if (hasVoice) ...[
+                      Semantics(
+                        label: l.voice_hasVoice,
+                        excludeSemantics: true,
+                        child: const Icon(
+                          Icons.mic_none_rounded,
+                          key: ValueKey('history-voice-icon'),
                           size: 18,
                           color: AuraColors.textMuted,
                         ),

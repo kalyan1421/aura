@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 
 import 'api_models.dart';
@@ -56,24 +58,60 @@ class ProfileUnder13 extends ProfileResult {
   const ProfileUnder13();
 }
 
+/// Signed Storage URLs are absolute URLs on the API's own `SUPABASE_URL`
+/// (`http://127.0.0.1:55521/…` locally). A local build that reaches Supabase
+/// under another host — the Android emulator's `10.0.2.2`, a LAN address on
+/// a phone — swaps in its own scheme, host and port; path and query (the
+/// token) stay as they are. Only loopback hosts are ever rewritten, so a
+/// real project URL is used exactly as signed.
+Uri mediaUrlFor(String signed, {String? supabaseUrl}) {
+  final url = Uri.parse(signed);
+  final own = supabaseUrl == null || supabaseUrl.isEmpty
+      ? null
+      : Uri.tryParse(supabaseUrl);
+  if (own == null || own.host.isEmpty) return url;
+  const loopback = {'127.0.0.1', 'localhost', '::1', '[::1]'};
+  if (!loopback.contains(url.host) || url.host == own.host) return url;
+  return url.replace(scheme: own.scheme, host: own.host, port: own.port);
+}
+
 /// Thin client for NestJS `server/aura-api` (contracts/api/v1.md).
 class AuraApi {
-  AuraApi({required String baseUrl, required this._accessToken, Dio? dio})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
-              baseUrl: baseUrl,
-              connectTimeout: const Duration(seconds: 6),
-              sendTimeout: const Duration(seconds: 15),
-              receiveTimeout: const Duration(seconds: 20),
-              contentType: Headers.jsonContentType,
-              responseType: ResponseType.json,
-            ),
-          );
+  AuraApi({
+    required String baseUrl,
+    required this._accessToken,
+    Dio? dio,
+    Dio? mediaDio,
+    this._supabaseUrl,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               baseUrl: baseUrl,
+               connectTimeout: const Duration(seconds: 6),
+               sendTimeout: const Duration(seconds: 15),
+               receiveTimeout: const Duration(seconds: 20),
+               contentType: Headers.jsonContentType,
+               responseType: ResponseType.json,
+             ),
+           ),
+       // Signed Storage URLs: no base URL, never an auth header.
+       _mediaDio =
+           mediaDio ??
+           Dio(
+             BaseOptions(
+               connectTimeout: const Duration(seconds: 10),
+               sendTimeout: const Duration(seconds: 60),
+               receiveTimeout: const Duration(seconds: 60),
+             ),
+           );
 
   final Dio _dio;
+  final Dio _mediaDio;
   final Future<String?> Function() _accessToken;
+
+  /// This build's Supabase URL, for [mediaUrlFor].
+  final String? _supabaseUrl;
 
   Future<Options> _auth() async {
     final token = await _accessToken();
@@ -216,6 +254,76 @@ class AuraApi {
         options: await _auth(),
       );
       return AccountStatus.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  // ---- media: voice notes (F1 · DS-1, contracts/api/v1.md) ------------------
+
+  /// `POST /v1/media/upload-url`. [bytes] is the exact ciphertext length
+  /// that will be uploaded (never more). `503 media_unavailable` and network
+  /// errors are retryable ([ApiException.isRetryable]).
+  Future<MediaUploadUrl> mediaUploadUrl({
+    required String recordId,
+    required int bytes,
+    String kind = 'voice',
+  }) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/v1/media/upload-url',
+        data: {'kind': kind, 'recordId': recordId, 'bytes': bytes},
+        options: await _auth(),
+      );
+      return MediaUploadUrl.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `POST /v1/media/download-url` for an own object ([path] as stored).
+  /// Anything else, or a missing object → `404 not_found`.
+  Future<MediaDownloadUrl> mediaDownloadUrl(String path) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/v1/media/download-url',
+        data: {'path': path},
+        options: await _auth(),
+      );
+      return MediaDownloadUrl.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// One `PUT` of the raw ciphertext to a signed upload URL: no
+  /// `Authorization`/`apikey` header (the token is in the URL's query).
+  /// Success is a 2xx; anything else throws (ask for a fresh URL, retry).
+  Future<void> putMedia(String uploadUrl, Uint8List ciphertext) async {
+    try {
+      await _mediaDio.putUri<void>(
+        mediaUrlFor(uploadUrl, supabaseUrl: _supabaseUrl),
+        data: ciphertext,
+        options: Options(
+          contentType: 'application/octet-stream',
+          responseType: ResponseType.plain,
+          headers: {Headers.contentLengthHeader: ciphertext.length},
+        ),
+      );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `GET` of a signed download URL (no headers) → the ciphertext bytes.
+  Future<Uint8List> getMedia(String downloadUrl) async {
+    try {
+      final res = await _mediaDio.getUri<List<int>>(
+        mediaUrlFor(downloadUrl, supabaseUrl: _supabaseUrl),
+        options: Options(responseType: ResponseType.bytes),
+      );
+      final data = res.data ?? const <int>[];
+      return data is Uint8List ? data : Uint8List.fromList(data);
     } on DioException catch (e) {
       throw _map(e);
     }

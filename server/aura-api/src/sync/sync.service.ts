@@ -1,25 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { MediaStoreError, PrivateMediaStore } from '../account/private-media';
 import { ApiError } from '../common/api-error';
 import { describeZodError } from '../common/zod';
 import { isUuid, uuidv5 } from '../common/uuid';
 import { CatalogueService } from '../catalogue/catalogue.service';
 import type { Tx } from '../db/db';
 import { DbService } from '../db/db.service';
+import { voiceObjectPath } from '../media/media-paths';
 import { ProfileService } from '../profile/profile.service';
 import type { Snapshot } from '../progression/snapshot';
 import { ProgressionService } from '../progression/progression.service';
-import { auraDay, awardFor, daysBetween, isEligible, type StarlightEvent } from '../rules';
+import { auraDay, awardFor, daysBetween, isEligible, MAX_FUTURE_SKEW_MS, type StarlightEvent } from '../rules';
 import { reject, rejectionReason } from './mutation-rejected';
+import { fitsChars } from './text-limits';
 import { SyncRepository, type LedgerReason } from './sync.repository';
 import {
   checkInPayloadSchema,
   deletePayloadSchema,
   habitLogPayloadSchema,
   habitPayloadSchema,
+  MAX_HABIT_NAME_CHARS,
   MAX_MUTATIONS,
+  MAX_TAG_CHARS,
   mutationSchema,
   pushRequestSchema,
   timedSchema,
+  type CheckInPayload,
   type Mutation,
   type MutationResult,
 } from './sync.schema';
@@ -40,11 +46,21 @@ export const HABIT_CREDIT_NS = '6f1f5a4e-2c1b-4d7e-9a53-0b8f3c2d9e71';
 export const habitCreditId = (habitId: string, localDay: string): string =>
   uuidv5(`${habitId}:${localDay}`, HABIT_CREDIT_NS);
 
+/** PRD F1 "Edit for 24 h, delete anytime": an edit's deviceTs must be within 24 h of the check-in's. */
+export const CHECK_IN_EDIT_WINDOW_MS = 24 * 3600_000;
+/** An edit stamped further than this ahead of server time is refused: the ledger's clock-tamper bound (RULES.md §2). */
+export const EDIT_MAX_FUTURE_SKEW_MS = MAX_FUTURE_SKEW_MS;
+
+/** Post-commit voice-object cleanup must never hold a push hostage for long. */
+export const VOICE_CLEANUP_TIMEOUT_MS = 5_000;
+
 interface Ctx {
   tx: Tx;
   userId: string;
   tz: string;
   now: Date;
+  /** Voice objects whose reference an applied mutation removed (edit to null / delete); deleted after commit. */
+  voiceCleanup: string[];
 }
 
 interface Timing {
@@ -69,6 +85,8 @@ export class SyncService {
     private readonly profiles: ProfileService,
     private readonly catalogue: CatalogueService,
     private readonly progression: ProgressionService,
+    /** Storage API client (global QueuesModule) — best-effort voice-object cleanup. */
+    private readonly media: PrivateMediaStore,
   ) {}
 
   async push(userId: string, body: unknown, now = new Date()): Promise<PushResponse> {
@@ -80,14 +98,47 @@ export class SyncService {
     if (!parsed.success) throw ApiError.badRequest('invalid_request', describeZodError(parsed.error));
     const { timezone: tz } = await this.profiles.require(userId);
 
-    return this.db.withTx(async (tx) => {
+    const { results, snapshot, orphans } = await this.db.withTx(async (tx) => {
       await this.repo.lockUser(tx, userId);
-      const ctx: Ctx = { tx, userId, tz, now };
+      const ctx: Ctx = { tx, userId, tz, now, voiceCleanup: [] };
       const results: MutationResult[] = [];
       for (const raw of parsed.data.mutations) results.push(await this.applyOne(ctx, raw));
       const snapshot = await this.progression.recompute(tx, userId, tz, now);
-      return { results, snapshot };
+      return { results, snapshot, orphans: await this.unreferenced(ctx) };
     });
+    await this.removeVoiceObjects(orphans); // only after commit: a rolled-back push never loses a recording
+    return { results, snapshot };
+  }
+
+  /**
+   * Candidates no check-in of the user references any more at the end of the push (a later mutation in
+   * the same batch may have set the path again), restricted to the caller's own voice prefix.
+   */
+  private async unreferenced(ctx: Ctx): Promise<string[]> {
+    const prefix = voiceObjectPath(ctx.userId, '');
+    const candidates = [...new Set(ctx.voiceCleanup)].filter((p) => p.startsWith(prefix));
+    if (candidates.length === 0) return [];
+    const stillUsed = await this.repo.referencedVoicePaths(ctx.tx, ctx.userId, candidates);
+    return candidates.filter((p) => !stillUsed.has(p));
+  }
+
+  /**
+   * Best-effort: failures are logged (counts and error kinds only — never paths or ids) and never fail the
+   * push; whatever is left under the user's prefix goes with the account purge.
+   */
+  private async removeVoiceObjects(paths: string[]): Promise<void> {
+    if (paths.length === 0) return;
+    if (!this.media.configured) {
+      this.logger.warn(`voice cleanup skipped for ${paths.length} object(s): SUPABASE_SERVICE_ROLE_KEY is not set`);
+      return;
+    }
+    try {
+      await this.media.remove(paths, { timeoutMs: VOICE_CLEANUP_TIMEOUT_MS });
+    } catch (err) {
+      // MediaStoreError carries only the HTTP status; other errors are reduced to their name.
+      const kind = err instanceof MediaStoreError ? err.message : err instanceof Error ? err.name : 'error';
+      this.logger.warn(`voice cleanup failed for ${paths.length} object(s): ${kind}`);
+    }
   }
 
   /** Idempotent, isolated application of one mutation (its own savepoint). */
@@ -109,9 +160,11 @@ export class SyncService {
     }
 
     let reason: string | null = null;
+    const cleanupMark = ctx.voiceCleanup.length;
     try {
       await ctx.tx.savepoint(() => this.dispatch(ctx, raw));
     } catch (err) {
+      ctx.voiceCleanup.length = cleanupMark; // the savepoint rolled back: nothing of this mutation stays
       const r = rejectionReason(err);
       if (r === undefined) throw err; // infrastructure failure → whole push fails, client retries
       reason = r;
@@ -142,7 +195,7 @@ export class SyncService {
       case 'check_in:upsert':
         return this.upsertCheckIn(ctx, m);
       case 'check_in:delete':
-        return this.repo.deleteCheckIn(ctx.tx, ctx.userId, this.payload(deletePayloadSchema, m).id);
+        return this.deleteCheckIn(ctx, m);
       case 'habit:upsert':
         return this.upsertHabit(ctx, m);
       case 'habit:delete':
@@ -180,15 +233,31 @@ export class SyncService {
     };
   }
 
+  /**
+   * `voicePath` of a check-in upsert: absent → undefined (keep), null → null (clear), otherwise it must be
+   * `<caller user_id>/voice/<check-in id>` (returned canonical, lower-case) or the mutation is rejected.
+   */
+  private voicePathOf(ctx: Ctx, p: CheckInPayload): string | null | undefined {
+    const v = p.voicePath;
+    if (v === undefined || v === null) return v;
+    const expected = voiceObjectPath(ctx.userId, p.id);
+    if (typeof v === 'string' && v.toLowerCase() === expected) return expected;
+    return reject('invalid_voice_path');
+  }
+
   private async upsertCheckIn(ctx: Ctx, m: Mutation): Promise<void> {
     const p = this.payload(checkInPayloadSchema, m);
+    if (p.tags.some((t) => !fitsChars(t, MAX_TAG_CHARS))) reject('tag_too_long');
+    const voicePath = this.voicePathOf(ctx, p);
     const quadrant = await this.catalogue.moodQuadrant(p.moodId);
     if (!quadrant) return reject('unknown_mood');
 
-    const owner = await this.repo.checkInOwner(ctx.tx, p.id);
-    if (owner && owner !== ctx.userId) return reject('id_conflict');
-    if (owner) {
-      await this.repo.updateCheckIn(ctx.tx, ctx.userId, p, quadrant); // edit: no new credit
+    const existing = await this.repo.lockCheckIn(ctx.tx, p.id);
+    if (existing && existing.userId !== ctx.userId) return reject('id_conflict');
+    if (existing) {
+      this.checkEditWindow(ctx, p.editedAt ?? m.deviceTs, existing.deviceTs);
+      await this.repo.updateCheckIn(ctx.tx, ctx.userId, p, quadrant, voicePath); // edit: no new credit
+      if (voicePath === null && existing.voicePath) ctx.voiceCleanup.push(existing.voicePath);
       return;
     }
     const t = this.timing(ctx, m);
@@ -199,12 +268,34 @@ export class SyncService {
       localDay: t.localDay,
       deviceTs: t.deviceTs,
       backfill: t.backfill,
+      voicePath: voicePath ?? null,
     });
     if (t.eligible) await this.credit(ctx, 'checkin', p.id, null, t.localDay, { type: 'checkin' });
   }
 
+  /**
+   * Edits (upsert of an existing id) are judged by when the edit was made — `payload.editedAt`, else the
+   * mutation's `deviceTs` — never by receive time, so an edit made offline at 23 h and synced at 30 h still
+   * applies: it must lie within 24 h of the check-in's stored `device_ts` and not more than 5 min (the
+   * ledger's clock-skew bound) ahead of server time → else `edit_window_closed`. Neither timestamp →
+   * `invalid_payload`. Deletes are allowed any time; inserts never look at `editedAt`.
+   */
+  private checkEditWindow(ctx: Ctx, editedAt: string | undefined, storedDeviceTs: Date): void {
+    if (!editedAt) return reject('invalid_payload');
+    const editTs = Date.parse(editedAt);
+    if (editTs > ctx.now.getTime() + EDIT_MAX_FUTURE_SKEW_MS) reject('edit_window_closed');
+    if (Math.abs(editTs - storedDeviceTs.getTime()) > CHECK_IN_EDIT_WINDOW_MS) reject('edit_window_closed');
+  }
+
+  /** Scoped by user_id (someone else's id is a silent no-op); its voice object follows after commit. */
+  private async deleteCheckIn(ctx: Ctx, m: Mutation): Promise<void> {
+    const deleted = await this.repo.deleteCheckIn(ctx.tx, ctx.userId, this.payload(deletePayloadSchema, m).id);
+    if (deleted?.voicePath) ctx.voiceCleanup.push(deleted.voicePath);
+  }
+
   private async upsertHabit(ctx: Ctx, m: Mutation): Promise<void> {
     const p = this.payload(habitPayloadSchema, m);
+    if (p.name !== null && !fitsChars(p.name, MAX_HABIT_NAME_CHARS)) reject('habit_name_too_long');
     if (p.kind === 'preset') {
       if (!(await this.catalogue.isPresetHabit(p.presetKey))) reject('unknown_preset_habit');
       if (await this.repo.presetHabitTaken(ctx.tx, ctx.userId, p.presetKey, p.id)) reject('duplicate_preset_habit');
