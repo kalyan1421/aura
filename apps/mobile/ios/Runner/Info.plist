@@ -12,6 +12,20 @@
 				<string>aura</string>
 			</array>
 		</dict>
+		<!-- Sign in with Google returns through the reversed iOS OAuth client id
+		     (com.googleusercontent.apps.…). Set in the gitignored
+		     Flutter/Secrets.xcconfig; a harmless placeholder otherwise
+		     (Flutter/Debug.xcconfig, docs/setup/social-sign-in.md). -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.akvega.aura.google</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(AURA_GOOGLE_REVERSED_CLIENT_ID)</string>
+			</array>
+		</dict>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
@@ -21,6 +35,12 @@
 	     (PRD 15-permissions wording). Foreground recording only. -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.</string>
+	<!-- F4 capsule photos come from PHPicker with requestFullMetadata: false,
+	     which never asks for library access (PRD 15-permissions). The key is
+	     here only because App Store review requires it of any binary that
+	     links image_picker (its README); the prompt is never shown. -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aura only sees the photos you choose to add to a capsule. They stay private to you.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<!-- Local dev stack over http (localhost:3310 / :55521). -->

@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// OS notification permission, platform-neutral.
 enum PushPermission {
@@ -52,6 +53,12 @@ abstract interface class PushMessaging {
   Stream<String?> get onOpenedType;
 }
 
+/// Push types the app handles (contracts/api/v1-notifications.md).
+abstract final class PushTypes {
+  static const String dailyReminder = 'daily_reminder';
+  static const String capsuleUnlocked = 'capsule_unlocked';
+}
+
 /// Payloads are content-free by design (`{type, id?}`, PRD Notifications
 /// rule 3). Only a short machine `type` is ever read; anything else is
 /// ignored, so nothing personal can reach a log.
@@ -61,7 +68,71 @@ String? pushType(Map<String, dynamic> data) {
   return RegExp(r'^[a-z0-9_.-]{1,40}$').hasMatch(t) ? t : 'unrecognised';
 }
 
-class FirebasePushMessaging implements PushMessaging {
+final RegExp _uuid = RegExp(
+  r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+);
+final RegExp _noticeTag = RegExp(r'^[0-9]{1,10}$');
+
+/// A push as the app may see it: its machine [type], the opaque record [id]
+/// (a UUID, e.g. the capsule) and the Android notification [tag] the server
+/// set (for a capsule: this phone's local notice id for that date). Nothing
+/// else from a payload is ever kept.
+@immutable
+class PushEnvelope {
+  const PushEnvelope({required this.type, this.id, this.tag});
+
+  final String type;
+  final String? id;
+  final String? tag;
+
+  @override
+  bool operator ==(Object other) =>
+      other is PushEnvelope &&
+      other.type == type &&
+      other.id == id &&
+      other.tag == tag;
+
+  @override
+  int get hashCode => Object.hash(type, id, tag);
+
+  @override
+  String toString() => 'PushEnvelope($type)'; // never the id
+}
+
+/// Reduces a payload to a [PushEnvelope] (null without a usable `type`).
+PushEnvelope? pushEnvelope(Map<String, dynamic> data, {String? tag}) {
+  final type = pushType(data);
+  if (type == null) return null;
+  final id = data['id'];
+  return PushEnvelope(
+    type: type,
+    id: id is String && _uuid.hasMatch(id) ? id.toLowerCase() : null,
+    tag: tag != null && _noticeTag.hasMatch(tag) ? tag : null,
+  );
+}
+
+PushEnvelope? _envelopeOf(RemoteMessage m) =>
+    pushEnvelope(m.data, tag: m.notification?.android?.tag);
+
+/// Where the app hears about pushes for routing and in-app banners
+/// ([PushInbox]). Separate from [PushMessaging] so the registration fakes
+/// stay as they are.
+abstract interface class PushInboxSource {
+  /// Pushes that arrive while Aura is open (no system notification shows).
+  Stream<PushEnvelope> get foreground;
+
+  /// A tapped notification brought Aura back from the background.
+  Stream<PushEnvelope> get opened;
+
+  /// The tapped notification that launched Aura, if any (once).
+  Future<PushEnvelope?> initial();
+
+  /// iOS: never present a system banner while Aura is open (Android never
+  /// does for FCM notifications): the app shows its own in-app notice.
+  Future<void> quietWhileOpen();
+}
+
+class FirebasePushMessaging implements PushMessaging, PushInboxSource {
   FirebasePushMessaging([FirebaseMessaging? messaging])
     : _m = messaging ?? FirebaseMessaging.instance;
 
@@ -113,6 +184,32 @@ class FirebasePushMessaging implements PushMessaging {
   Stream<String?> get onOpenedType =>
       FirebaseMessaging.onMessageOpenedApp.map((m) => pushType(m.data));
 
+  @override
+  Stream<PushEnvelope> get foreground => FirebaseMessaging.onMessage
+      .map(_envelopeOf)
+      .where((e) => e != null)
+      .cast<PushEnvelope>();
+
+  @override
+  Stream<PushEnvelope> get opened => FirebaseMessaging.onMessageOpenedApp
+      .map(_envelopeOf)
+      .where((e) => e != null)
+      .cast<PushEnvelope>();
+
+  @override
+  Future<PushEnvelope?> initial() async {
+    final m = await _m.getInitialMessage();
+    return m == null ? null : _envelopeOf(m);
+  }
+
+  @override
+  Future<void> quietWhileOpen() =>
+      _m.setForegroundNotificationPresentationOptions(
+        alert: false,
+        badge: false,
+        sound: false,
+      );
+
   static PushPermission _map(AuthorizationStatus s) => switch (s) {
     AuthorizationStatus.authorized => PushPermission.authorized,
     AuthorizationStatus.provisional => PushPermission.provisional,
@@ -122,10 +219,46 @@ class FirebasePushMessaging implements PushMessaging {
   };
 }
 
+/// The capsule notice id a `capsule_unlocked` push stands for: its Android
+/// `tag` is this phone's local "ready to open" notice id for the unlock date
+/// (contracts/api/v1-notifications.md §2).
+int? capsuleNoticeIdOf(PushEnvelope e) =>
+    e.type == PushTypes.capsuleUnlocked ? int.tryParse(e.tag ?? '') : null;
+
+/// Cancels one local notification (the capsules feature's offline notice).
+typedef LocalNoticeCancel = Future<void> Function(int id);
+
+Future<void> _cancelLocalNotice(int id) =>
+    FlutterLocalNotificationsPlugin().cancel(id: id);
+
+/// Android: the OS already shows the server's capsule push, so this phone's
+/// own offline notice for the same date (pending or shown) would be a
+/// duplicate — cancel it; the person sees the capsule once. (iOS replaces
+/// the notice by its identifier: the push's collapse id is the same.)
+@visibleForTesting
+Future<bool> dropDuplicateCapsuleNotice(
+  PushEnvelope e, {
+  LocalNoticeCancel cancel = _cancelLocalNotice,
+}) async {
+  final id = capsuleNoticeIdOf(e);
+  if (id == null) return false;
+  try {
+    await cancel(id);
+    return true;
+  } catch (e) {
+    debugPrint('push: notice cleanup ${e.runtimeType}');
+    return false;
+  }
+}
+
 /// Messages received while the app is in the background or terminated
-/// (Android runs this in its own isolate). Routing comes with F14; for now
-/// only the `type` is logged, in debug builds.
+/// (Android runs this in its own isolate for every message; iOS only for
+/// silent ones). The OS shows the notification itself; here only the
+/// duplicate local capsule notice goes. Only the `type` is logged, in debug.
 @pragma('vm:entry-point')
 Future<void> auraPushBackgroundHandler(RemoteMessage message) async {
-  if (kDebugMode) debugPrint('push: background type=${pushType(message.data)}');
+  final e = _envelopeOf(message);
+  if (kDebugMode) debugPrint('push: background type=${e?.type}');
+  if (e == null || defaultTargetPlatform != TargetPlatform.android) return;
+  await dropDuplicateCapsuleNotice(e);
 }

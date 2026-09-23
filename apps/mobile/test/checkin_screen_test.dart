@@ -97,7 +97,8 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('checkin-done')));
     await settleIo(tester);
 
-    expect(find.byKey(const ValueKey('home-checkin')), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-avatar')), findsOneWidget);
+    expect(find.byKey(const ValueKey('shell-checkin')), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });
@@ -141,7 +142,8 @@ void main() {
     await settleIo(tester);
 
     expect(messaging.requests, [false]); // the one real OS prompt
-    expect(find.byKey(const ValueKey('home-checkin')), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-avatar')), findsOneWidget);
+    expect(find.byKey(const ValueKey('shell-checkin')), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });

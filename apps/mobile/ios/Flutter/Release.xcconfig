@@ -1,1 +1,9 @@
 #include "Generated.xcconfig"
+
+// Sign in with Google (iOS): GIDSignIn returns through the reversed iOS OAuth
+// client id, registered as a URL scheme in Runner/Info.plist. The real value
+// lives in the gitignored Secrets.xcconfig (template: Secrets.xcconfig.example,
+// docs/setup/social-sign-in.md). This placeholder keeps the build and
+// Info.plist valid when it's missing; Google then reports "not ready".
+AURA_GOOGLE_REVERSED_CLIENT_ID = com.akvega.aura.google-not-configured
+#include? "Secrets.xcconfig"

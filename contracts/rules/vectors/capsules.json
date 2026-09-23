@@ -1,0 +1,354 @@
+{
+  "cases": [
+    {
+      "kind": "window",
+      "name": "exactly 7 days after the seal date",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-15",
+      "expect": true
+    },
+    {
+      "kind": "window",
+      "name": "6 days is too soon",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-14",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "exactly 5 years",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2031-10-08",
+      "expect": true
+    },
+    {
+      "kind": "window",
+      "name": "5 years and 1 day is too far",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2031-10-09",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "the seal day itself is invalid",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-08",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "a date before the seal is invalid",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-01",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "01:30 local counts as the calendar date (no 04:00 shift): +6 days from 9 Oct is too soon",
+      "sealedAt": "2026-10-08T20:00:00Z",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-15",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "01:30 local on 9 Oct: 16 Oct is the first valid date",
+      "sealedAt": "2026-10-08T20:00:00Z",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-16",
+      "expect": true
+    },
+    {
+      "kind": "window",
+      "name": "the seal zone decides the date: 22:00 in New York is still 8 Oct",
+      "sealedAt": "2026-10-09T02:00:00Z",
+      "tz": "America/New_York",
+      "unlockLocalDate": "2026-10-15",
+      "expect": true
+    },
+    {
+      "kind": "window",
+      "name": "the same instant in Kolkata is already 9 Oct",
+      "sealedAt": "2026-10-09T02:00:00Z",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-10-15",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "sealed on 29 Feb: 5 years later is 28 Feb",
+      "sealedAt": "2028-02-29T12:00:00Z",
+      "tz": "UTC",
+      "unlockLocalDate": "2033-02-28",
+      "expect": true
+    },
+    {
+      "kind": "window",
+      "name": "sealed on 29 Feb: 1 Mar five years later is too far",
+      "sealedAt": "2028-02-29T12:00:00Z",
+      "tz": "UTC",
+      "unlockLocalDate": "2033-03-01",
+      "expect": false
+    },
+    {
+      "kind": "window",
+      "name": "a malformed date is invalid",
+      "sealedAt": "2026-10-08T18:00:00+05:30",
+      "tz": "Asia/Kolkata",
+      "unlockLocalDate": "2026-02-30",
+      "expect": false
+    },
+    {
+      "kind": "unlock_at",
+      "name": "10:00 IST",
+      "localDate": "2027-10-08",
+      "tz": "Asia/Kolkata",
+      "expect": "2027-10-08T04:30:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "10:00 in New York, summer (EDT)",
+      "localDate": "2027-07-01",
+      "tz": "America/New_York",
+      "expect": "2027-07-01T14:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "10:00 in New York, winter (EST)",
+      "localDate": "2027-01-15",
+      "tz": "America/New_York",
+      "expect": "2027-01-15T15:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "DST starts that night (spring forward at 02:00): 10:00 EDT",
+      "localDate": "2027-03-14",
+      "tz": "America/New_York",
+      "expect": "2027-03-14T14:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "DST ends that night (fall back at 02:00): 10:00 EST",
+      "localDate": "2026-11-01",
+      "tz": "America/New_York",
+      "expect": "2026-11-01T15:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "UTC+14 unlocks on the previous UTC day",
+      "localDate": "2026-10-08",
+      "tz": "Pacific/Kiritimati",
+      "expect": "2026-10-07T20:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "UTC-11",
+      "localDate": "2026-10-08",
+      "tz": "Pacific/Pago_Pago",
+      "expect": "2026-10-08T21:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "London in summer (BST)",
+      "localDate": "2027-06-01",
+      "tz": "Europe/London",
+      "expect": "2027-06-01T09:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "London in winter (GMT)",
+      "localDate": "2027-12-01",
+      "tz": "Europe/London",
+      "expect": "2027-12-01T10:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "a quarter-hour zone (Kathmandu +05:45)",
+      "localDate": "2027-01-01",
+      "tz": "Asia/Kathmandu",
+      "expect": "2027-01-01T04:15:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "a half-hour DST zone in its summer (Lord Howe +11)",
+      "localDate": "2027-01-15",
+      "tz": "Australia/Lord_Howe",
+      "expect": "2027-01-14T23:00:00Z"
+    },
+    {
+      "kind": "unlock_at",
+      "name": "after a move: the same date in the new zone",
+      "localDate": "2027-10-08",
+      "tz": "America/Los_Angeles",
+      "expect": "2027-10-08T17:00:00Z"
+    },
+    {
+      "kind": "trigger",
+      "name": "REQ-CAP-02: sealed Mon 18:00 for Overwhelmed, a Mon 22:00 Overwhelmed check-in does not fire it",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T18:00:00+05:30", "armedAt": "2026-10-06T18:00:00+05:30" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-05T22:00:00+05:30", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "REQ-CAP-02: one on Tue 19:00 fires it",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T18:00:00+05:30", "armedAt": "2026-10-06T18:00:00+05:30" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-06T19:00:00+05:30", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-00000000000a", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "armed exactly at armedAt (inclusive)",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T12:30:00Z", "armedAt": "2026-10-06T12:30:00Z" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-06T18:00:00+05:30", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-00000000000a", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "a mood target does not match its quadrant siblings",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "a quadrant target matches any mood of that quadrant",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000b", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-00000000000b", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "another quadrant does not match",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000b", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "calm", "quadrant": "moonlight", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "oldest match first (earlier armedAt wins)",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-000000000001", "unlockType": "mood", "triggerQuadrant": "rain", "sealedAt": "2026-10-03T10:00:00Z", "armedAt": "2026-10-04T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000002", "unlockType": "mood", "triggerMoodId": "lonely", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "lonely", "quadrant": "rain", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-000000000002", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "same armedAt: the earlier seal wins, then the smaller id",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-000000000009", "unlockType": "mood", "triggerQuadrant": "rain", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-04T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000003", "unlockType": "mood", "triggerQuadrant": "rain", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-04T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000001", "unlockType": "mood", "triggerQuadrant": "rain", "sealedAt": "2026-10-02T10:00:00Z", "armedAt": "2026-10-04T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "drained", "quadrant": "rain", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-000000000003", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "a re-armed capsule goes to the back of the line (armedAt, not sealedAt)",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-000000000001", "unlockType": "mood", "triggerQuadrant": "sunrise", "sealedAt": "2026-01-01T10:00:00Z", "armedAt": "2026-10-06T10:00:00Z", "cooldownUntil": "2026-10-01T09:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000002", "unlockType": "mood", "triggerMoodId": "joyful", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "joyful", "quadrant": "sunrise", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-000000000002", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "REQ-CAP-03: fired Mon 09:00, so nothing fires on Sunday",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000c", "unlockType": "mood", "triggerMoodId": "calm", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-10-12T09:00:00+05:30", "openedAt": "2026-10-12T03:31:00Z", "cooldownUntil": "2026-10-19T09:00:00+05:30" },
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T18:00:00+05:30", "armedAt": "2026-10-06T18:00:00+05:30" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-18T21:00:00+05:30", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "REQ-CAP-03: one minute before the next Mon 09:00 is still cooling down",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000c", "unlockType": "mood", "triggerMoodId": "calm", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-10-12T09:00:00+05:30", "openedAt": "2026-10-12T03:31:00Z", "cooldownUntil": "2026-10-19T09:00:00+05:30" },
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T18:00:00+05:30", "armedAt": "2026-10-06T18:00:00+05:30" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-19T08:59:00+05:30", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "REQ-CAP-03: from the next Mon 09:00 it fires again",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000c", "unlockType": "mood", "triggerMoodId": "calm", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-10-12T09:00:00+05:30", "openedAt": "2026-10-12T03:31:00Z", "cooldownUntil": "2026-10-19T09:00:00+05:30" },
+        { "id": "0192f0c2-0000-7000-8000-00000000000a", "unlockType": "mood", "triggerMoodId": "overwhelmed", "sealedAt": "2026-10-05T18:00:00+05:30", "armedAt": "2026-10-06T18:00:00+05:30" }
+      ],
+      "checkIn": { "moodId": "overwhelmed", "quadrant": "storm", "deviceTs": "2026-10-19T03:30:00Z", "live": true, "crisis": false },
+      "expect": { "fire": "0192f0c2-0000-7000-8000-00000000000a", "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "a deleted capsule's fire still holds the cooldown",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000d", "unlockType": "mood", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-10-07T10:00:00Z", "deletedAt": "2026-10-07T11:00:00Z", "cooldownUntil": "2026-10-14T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-00000000000b", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "crisis-flagged check-in: the match is held, not fired",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000b", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": true },
+      "expect": { "fire": null, "hold": "0192f0c2-0000-7000-8000-00000000000b" }
+    },
+    {
+      "kind": "trigger",
+      "name": "a backfill fires nothing",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-00000000000b", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-10-01T10:00:00Z", "armedAt": "2026-10-02T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": false, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "fired, opened, deleted and date capsules are never candidates",
+      "capsules": [
+        { "id": "0192f0c2-0000-7000-8000-000000000011", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-09-20T10:00:00Z", "cooldownUntil": "2026-09-27T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000012", "unlockType": "mood", "triggerQuadrant": "storm", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "firedAt": "2026-09-10T10:00:00Z", "openedAt": "2026-09-10T10:01:00Z", "cooldownUntil": "2026-09-17T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000013", "unlockType": "mood", "sealedAt": "2026-09-01T10:00:00Z", "armedAt": "2026-09-02T10:00:00Z", "deletedAt": "2026-09-03T10:00:00Z" },
+        { "id": "0192f0c2-0000-7000-8000-000000000014", "unlockType": "date", "sealedAt": "2026-09-01T10:00:00Z" }
+      ],
+      "checkIn": { "moodId": "anxious", "quadrant": "storm", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    },
+    {
+      "kind": "trigger",
+      "name": "no capsules, nothing to do",
+      "capsules": [],
+      "checkIn": { "moodId": "joyful", "quadrant": "sunrise", "deviceTs": "2026-10-08T10:00:00Z", "live": true, "crisis": false },
+      "expect": { "fire": null, "hold": null }
+    }
+  ]
+}

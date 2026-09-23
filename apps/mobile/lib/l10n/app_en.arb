@@ -292,11 +292,11 @@
   },
   "signin_apple": "Continue with Apple",
   "@signin_apple": {
-    "description": "Sign in with Apple. Only shown when social sign-in is enabled for the build."
+    "description": "Sign in with Apple button title. Apple allows only 'Sign in with Apple', 'Sign up with Apple' or 'Continue with Apple' (localized, same meaning). Keep 'Apple' in Latin script. Shown only when Apple sign-in is set up for the build."
   },
   "signin_google": "Continue with Google",
   "@signin_google": {
-    "description": "Sign in with Google. Only shown when social sign-in is enabled for the build."
+    "description": "Sign in with Google button label. Google allows only 'Sign in with Google', 'Sign up with Google' or 'Continue with Google' (localized, same meaning). Keep 'Google' in Latin script. Shown only when Google sign-in is set up for the build."
   },
   "signin_offline": "You're offline. Pick your first mood now. We'll finish setting up when you're connected.",
   "@signin_offline": {
@@ -999,6 +999,455 @@
   "@acct_inProgress": {
     "description": "\"Keep my account\" came too late: the 7-day grace is over and deletion has started. Calm, no blame. The only button is Sign out."
   },
+  "signin_or": "or",
+  "@signin_or": {
+    "description": "Divider between the email sign-in and the Apple / Google buttons. Lower case, one word."
+  },
+  "signin_socialNotReady": "That sign-in option isn't ready yet. Use your email for now.",
+  "@signin_socialNotReady": {
+    "description": "Apple or Google sign-in isn't set up (server or build). Calm, no blame; points to email."
+  },
+  "signin_socialOffline": "It looks like you're offline. Try again when you're connected.",
+  "@signin_socialOffline": {
+    "description": "Apple or Google sign-in couldn't reach the server (no connection). Calm, no blame."
+  },
+  "capsules_title": "Future you",
+  "@capsules_title": {
+    "description": "Title of the time-capsules area (Sanctuary section and the capsules list). Notes the person seals for their future self."
+  },
+  "capsules_emptyBody": "Write to future you. Seal it for a date, or for a feeling.",
+  "@capsules_emptyBody": {
+    "description": "Empty state of the capsules list and the Sanctuary entry (PRD 14-states). Inviting, never pushy."
+  },
+  "capsules_emptyCta": "Seal your first capsule",
+  "@capsules_emptyCta": {
+    "description": "Button in the empty capsules list that opens the composer (PRD 14-states)."
+  },
+  "capsules_new": "Write a capsule",
+  "@capsules_new": {
+    "description": "Button that opens the capsule composer when the person already has capsules."
+  },
+  "capsules_entryCount": "{count, plural, =0{Nothing sealed yet} =1{1 capsule sealed} other{{count} capsules sealed}}",
+  "@capsules_entryCount": {
+    "description": "Sanctuary entry: how many capsules are sealed (waiting).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capsules_entryReady": "{count, plural, =1{1 is ready to open} other{{count} are ready to open}}",
+  "@capsules_entryReady": {
+    "description": "Sanctuary entry: capsules whose time has come. Calm, no urgency.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capsules_sectionReady": "Ready to open",
+  "@capsules_sectionReady": {
+    "description": "List section: capsules that can be opened now."
+  },
+  "capsules_sectionSealed": "Sealed",
+  "@capsules_sectionSealed": {
+    "description": "List section: capsules still sealed."
+  },
+  "capsules_sectionOpened": "Opened",
+  "@capsules_sectionOpened": {
+    "description": "List section: capsules already opened (they can be read again)."
+  },
+  "capsules_sealedUntil": "Sealed until {date}. It'll keep.",
+  "@capsules_sealedUntil": {
+    "description": "A sealed date capsule (PRD 14-states). date = e.g. '12 Oct 2027'. Reassuring: it is safe and waiting.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_waitingFeeling": "Waiting for a feeling",
+  "@capsules_waitingFeeling": {
+    "description": "A sealed mood-trigger capsule in the list. Never names the feeling here."
+  },
+  "capsules_readyRow": "Ready when you are",
+  "@capsules_readyRow": {
+    "description": "A capsule in the list that can be opened now."
+  },
+  "capsules_untitled": "A capsule from {date}",
+  "@capsules_untitled": {
+    "description": "Shown instead of a title when the person left the title empty. date = the day it was sealed.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_lockedTitle": "A sealed capsule",
+  "@capsules_lockedTitle": {
+    "description": "Shown instead of the title when this phone can't read it yet (e.g. a new phone before the key arrives)."
+  },
+  "capsules_sealedOn": "Sealed {date}",
+  "@capsules_sealedOn": {
+    "description": "When a capsule was sealed. date = e.g. '8 Oct 2026'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_openedOn": "Opened {date}",
+  "@capsules_openedOn": {
+    "description": "When a capsule was opened. date = e.g. '8 Oct 2027'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_draftTitle": "Your draft is here",
+  "@capsules_draftTitle": {
+    "description": "Card in the list: an unsealed capsule draft kept on this phone."
+  },
+  "capsules_draftBody": "Pick up where you left off.",
+  "@capsules_draftBody": {
+    "description": "Under 'Your draft is here'."
+  },
+  "capsules_composeTitle": "Write to future you",
+  "@capsules_composeTitle": {
+    "description": "Title of the capsule composer."
+  },
+  "capsules_titleLabel": "Title",
+  "@capsules_titleLabel": {
+    "description": "Capsule title field (up to 60 characters)."
+  },
+  "capsules_titleHelper": "Shown on the capsule while it's sealed.",
+  "@capsules_titleHelper": {
+    "description": "Helper under the title field: the title is the only thing visible before it opens."
+  },
+  "capsules_textLabel": "Your note",
+  "@capsules_textLabel": {
+    "description": "Capsule text field (up to 2,000 characters)."
+  },
+  "capsules_textHelper": "Only you will read this, when it opens.",
+  "@capsules_textHelper": {
+    "description": "Helper under the capsule text field. Private."
+  },
+  "capsules_photosTitle": "Photos",
+  "@capsules_photosTitle": {
+    "description": "Section header for capsule photos."
+  },
+  "capsules_addPhoto": "Add a photo",
+  "@capsules_addPhoto": {
+    "description": "Opens the system photo picker (no permission needed)."
+  },
+  "capsules_photoHint": "Up to 3. Location and camera details are removed.",
+  "@capsules_photoHint": {
+    "description": "Under 'Add a photo': at most 3 photos; EXIF/GPS are stripped on the phone."
+  },
+  "capsules_photoAdding": "Adding your photo…",
+  "@capsules_photoAdding": {
+    "description": "While a picked photo is resized and cleaned on the phone."
+  },
+  "capsules_photoFailed": "That photo couldn't be added. Try another one.",
+  "@capsules_photoFailed": {
+    "description": "A picked photo could not be read or stored. Calm, no blame."
+  },
+  "capsules_photoRemove": "Remove photo {index}",
+  "@capsules_photoRemove": {
+    "description": "Screen-reader label / tooltip of a photo's remove button.",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "capsules_photoSemantic": "Photo {index} of {count}",
+  "@capsules_photoSemantic": {
+    "description": "Screen-reader label of a capsule photo.",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capsules_voiceHint": "Up to 2 minutes. Only you can hear it.",
+  "@capsules_voiceHint": {
+    "description": "Hint under the record button in the capsule composer: the 2-minute limit and that it is private."
+  },
+  "capsules_voiceLimit": "That's the full two minutes, so recording stopped. Your voice note is ready.",
+  "@capsules_voiceLimit": {
+    "description": "Calm note after a capsule recording stopped by itself at 2:00 (REQ-CAP-05)."
+  },
+  "capsules_unlockTitle": "When should it open?",
+  "@capsules_unlockTitle": {
+    "description": "Section header: choose a date or a feeling."
+  },
+  "capsules_unlockDate": "On a date",
+  "@capsules_unlockDate": {
+    "description": "Choice: the capsule opens on a date."
+  },
+  "capsules_unlockFeeling": "For a feeling",
+  "@capsules_unlockFeeling": {
+    "description": "Choice: the capsule opens on the next check-in with a chosen mood."
+  },
+  "capsules_pickDate": "Pick a date",
+  "@capsules_pickDate": {
+    "description": "Opens the date picker."
+  },
+  "capsules_changeDate": "Change date",
+  "@capsules_changeDate": {
+    "description": "Opens the date picker again."
+  },
+  "capsules_dateChosen": "Opens {date} at {time}",
+  "@capsules_dateChosen": {
+    "description": "The chosen unlock moment, e.g. 'Opens 12 Oct 2027 at 10:00 AM'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_dateHelp": "Any day from a week to five years from now.",
+  "@capsules_dateHelp": {
+    "description": "The allowed range for a date capsule (REQ-CAP-01)."
+  },
+  "capsules_datePickerHelp": "It opens at 10:00 that day",
+  "@capsules_datePickerHelp": {
+    "description": "Heading inside the date picker."
+  },
+  "capsules_feelingHelp": "It can open from 24 hours after sealing, the next time you check in feeling this.",
+  "@capsules_feelingHelp": {
+    "description": "How a mood capsule opens (REQ-CAP-02)."
+  },
+  "capsules_anyQuadrant": "Any {quadrant} feeling",
+  "@capsules_anyQuadrant": {
+    "description": "Choice: any mood of a quadrant, e.g. 'Any Storm feeling'.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_feelingChosen": "Waits for: {feeling}",
+  "@capsules_feelingChosen": {
+    "description": "The chosen trigger (a mood name, or 'Any Storm feeling').",
+    "placeholders": {
+      "feeling": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_seal": "Seal it",
+  "@capsules_seal": {
+    "description": "Seals the capsule (content can't change after this)."
+  },
+  "capsules_needContent": "Add a few words, a voice note or a photo first.",
+  "@capsules_needContent": {
+    "description": "Seal tapped with nothing inside. Calm."
+  },
+  "capsules_needUnlock": "Choose when it should open.",
+  "@capsules_needUnlock": {
+    "description": "Seal tapped without a date or feeling."
+  },
+  "capsules_sealFailed": "That didn't seal just now. Your capsule is still here. Try again.",
+  "@capsules_sealFailed": {
+    "description": "Sealing failed locally (e.g. storage). Nothing is lost."
+  },
+  "capsules_sealedTitle": "Sealed",
+  "@capsules_sealedTitle": {
+    "description": "Heading after sealing."
+  },
+  "capsules_sealedFeeling": "Sealed. It'll wait for that feeling.",
+  "@capsules_sealedFeeling": {
+    "description": "After sealing a mood capsule."
+  },
+  "capsules_mediaLater": "Sealed and safe on this phone. Photos and voice back up when you're online.",
+  "@capsules_mediaLater": {
+    "description": "Sealed while offline, or media still uploading (PRD 14-states 'media upload failed')."
+  },
+  "capsules_limitBody": "Free accounts keep 3 mood capsules waiting. Date capsules are unlimited.",
+  "@capsules_limitBody": {
+    "description": "A 4th mood-trigger capsule (REQ-CAP-04, PRD 14-states). No paywall: offers a date instead."
+  },
+  "capsules_limitPickDate": "Pick a date instead",
+  "@capsules_limitPickDate": {
+    "description": "Switches a 4th mood capsule to a date capsule."
+  },
+  "capsules_makeDate": "Make it a date capsule",
+  "@capsules_makeDate": {
+    "description": "A mood capsule the server couldn't keep (limit): choose a date for it."
+  },
+  "capsules_leaveTitle": "Keep this draft?",
+  "@capsules_leaveTitle": {
+    "description": "Leaving the composer with something written."
+  },
+  "capsules_leaveBody": "It stays on this phone until you seal it or let it go.",
+  "@capsules_leaveBody": {
+    "description": "Under 'Keep this draft?'."
+  },
+  "capsules_leaveEditing": "Keep editing",
+  "@capsules_leaveEditing": {
+    "description": "Stay in the composer (default, focused)."
+  },
+  "capsules_leaveKeep": "Keep draft",
+  "@capsules_leaveKeep": {
+    "description": "Leave; the draft stays on this phone."
+  },
+  "capsules_leaveDiscard": "Discard",
+  "@capsules_leaveDiscard": {
+    "description": "Leave and delete the draft."
+  },
+  "capsules_detailFeeling": "Waiting for a feeling: {feeling}.",
+  "@capsules_detailFeeling": {
+    "description": "A sealed mood capsule's page (in the app only, never on the lock screen).",
+    "placeholders": {
+      "feeling": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_detailArming": "It can open from {date}.",
+  "@capsules_detailArming": {
+    "description": "A mood capsule sealed less than 24 hours ago. date = day and time it arms.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "capsules_detailNoEarly": "Sealed means sealed: it can't be opened early or changed.",
+  "@capsules_detailNoEarly": {
+    "description": "Why there is no 'open' button on a sealed capsule."
+  },
+  "capsules_delete": "Delete capsule",
+  "@capsules_delete": {
+    "description": "Deletes a capsule (never shows its content)."
+  },
+  "capsules_deleteTitle": "Delete this capsule?",
+  "@capsules_deleteTitle": {
+    "description": "Confirmation before deleting."
+  },
+  "capsules_deleteBody": "It will be gone for good, without being opened.",
+  "@capsules_deleteBody": {
+    "description": "Deleting a sealed capsule."
+  },
+  "capsules_deleteBodyOpened": "It will be gone for good.",
+  "@capsules_deleteBodyOpened": {
+    "description": "Deleting an opened capsule."
+  },
+  "capsules_deleteConfirm": "Delete",
+  "@capsules_deleteConfirm": {
+    "description": "Confirms the deletion."
+  },
+  "capsules_deleteKeep": "Keep it",
+  "@capsules_deleteKeep": {
+    "description": "Cancels the deletion (default, focused)."
+  },
+  "capsules_deleted": "Capsule deleted.",
+  "@capsules_deleted": {
+    "description": "After a capsule was deleted."
+  },
+  "capsules_triggerTitle": "You left a note for a moment like this. Open now or later?",
+  "@capsules_triggerTitle": {
+    "description": "Card after a check-in that matched a mood capsule (PRD 12-notifications, in-app only)."
+  },
+  "capsules_holdTitle": "A note from past you is waiting. Open now, or later?",
+  "@capsules_holdTitle": {
+    "description": "After the support sheet, when a capsule matched a crisis-flagged check-in (F4 crisis collision rule). Gentle; 'Later' is fine."
+  },
+  "capsules_now": "Now",
+  "@capsules_now": {
+    "description": "Open the capsule now."
+  },
+  "capsules_later": "Later",
+  "@capsules_later": {
+    "description": "Keep it for later."
+  },
+  "capsules_readyTitle": "Something you sealed is ready to open.",
+  "@capsules_readyTitle": {
+    "description": "Home card and the local notification when a date capsule unlocks (PRD 12-notifications). Never a title, date or mood."
+  },
+  "capsules_readyMore": "{count, plural, =1{1 capsule is ready.} other{{count} capsules are ready.}}",
+  "@capsules_readyMore": {
+    "description": "Home card when several date capsules are ready.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capsules_readyOpen": "Open it",
+  "@capsules_readyOpen": {
+    "description": "Opens a capsule (Home card, a capsule's page, the hard-moment note)."
+  },
+  "capsules_channelName": "Capsules",
+  "@capsules_channelName": {
+    "description": "Android notification channel name (Settings)."
+  },
+  "capsules_channelDescription": "When something you sealed is ready to open.",
+  "@capsules_channelDescription": {
+    "description": "Android notification channel description."
+  },
+  "capsules_hardMoment": "You wrote this during a hard moment. Open when you're ready.",
+  "@capsules_hardMoment": {
+    "description": "Before opening a capsule sealed during a hard moment (PRD F4). A help button sits with it."
+  },
+  "capsules_skip": "Skip",
+  "@capsules_skip": {
+    "description": "Skips the opening animation."
+  },
+  "capsules_opening": "Opening your capsule",
+  "@capsules_opening": {
+    "description": "Screen-reader label of the short opening animation."
+  },
+  "capsules_openedTitle": "From past you",
+  "@capsules_openedTitle": {
+    "description": "Heading of an opened capsule."
+  },
+  "capsules_keepNextTime": "Keep for next time",
+  "@capsules_keepNextTime": {
+    "description": "Re-arms a mood capsule so it can open again for the same feeling."
+  },
+  "capsules_keptNextTime": "It'll wait for that feeling again.",
+  "@capsules_keptNextTime": {
+    "description": "After 'Keep for next time'."
+  },
+  "capsules_voiceOffline": "Your capsule is open. The voice note arrives when you're back online.",
+  "@capsules_voiceOffline": {
+    "description": "Opened offline; the voice note is only on the server (PRD 14-states)."
+  },
+  "capsules_photosOffline": "The photos arrive when you're back online.",
+  "@capsules_photosOffline": {
+    "description": "Opened offline; the photos are only on the server."
+  },
+  "capsules_mediaFailed": "This couldn't be loaded just now. Try again in a moment.",
+  "@capsules_mediaFailed": {
+    "description": "A capsule photo or voice note failed to load. Calm."
+  },
+  "capsules_retry": "Try again",
+  "@capsules_retry": {
+    "description": "Retries loading capsule media."
+  },
+  "capsules_cantRead": "This capsule can't be read on this phone yet. It opens once you're back online.",
+  "@capsules_cantRead": {
+    "description": "The data key isn't on this phone yet (new phone, offline)."
+  },
+  "capsules_accountDeletionCount": "{count, plural, =1{1 sealed capsule will be lost.} other{{count} sealed capsules will be lost.}}",
+  "@capsules_accountDeletionCount": {
+    "description": "Delete-account confirmation: sealed (unopened) capsules that deletion removes (PRD F4 edge cases).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "checkin_discardTitle": "Leave without saving?",
   "@checkin_discardTitle": {
     "description": "Asked when closing the check-in (or an edit) with a mood, tags or words not yet saved. Calm, no blame."
@@ -1367,6 +1816,151 @@
       }
     }
   },
+  "notif_reminderBanner": "A quiet minute for you. How's today feeling?",
+  "@notif_reminderBanner": {
+    "description": "In-app notice when the daily check-in reminder arrives while the app is open (same line as the push, PRD 12-notifications catalogue). Never guilt, never a streak."
+  },
+  "notif_reminderAction": "Check in",
+  "@notif_reminderAction": {
+    "description": "Action on the reminder notice: opens the check-in."
+  },
+  "notif_capsuleBanner": "Something you sealed is ready to open.",
+  "@notif_capsuleBanner": {
+    "description": "In-app notice when a date capsule's push arrives while the app is open (PRD catalogue line). Never a title, date or mood."
+  },
+  "notif_capsuleAction": "Open",
+  "@notif_capsuleAction": {
+    "description": "Action on the capsule notice: opens the capsules."
+  },
+  "notif_channelReminders": "Reminders",
+  "@notif_channelReminders": {
+    "description": "Android notification channel name for the daily check-in reminder (phone Settings)."
+  },
+  "notif_channelRemindersDescription": "Your daily check-in reminder.",
+  "@notif_channelRemindersDescription": {
+    "description": "Android notification channel description (phone Settings)."
+  },
+  "set_notifications": "Notifications",
+  "@set_notifications": {
+    "description": "Settings section heading."
+  },
+  "set_notifMaster": "Notifications from Aura",
+  "@set_notifMaster": {
+    "description": "Master switch for every push."
+  },
+  "set_notifMasterNote": "At most two a day. Nothing on your lock screen says how you feel.",
+  "@set_notifMasterNote": {
+    "description": "Under the master switch: the daily cap and the privacy promise (PRD 12 rules 2 and 3). Calm."
+  },
+  "set_notifReminder": "Daily check-in reminder",
+  "@set_notifReminder": {
+    "description": "Switch for the daily reminder push."
+  },
+  "set_notifReminderNote": "One gentle nudge a day, at {time}. Skipped once you've checked in.",
+  "@set_notifReminderNote": {
+    "description": "Under the reminder switch when on; {time} is the chosen time, e.g. '8:00 PM'.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "set_notifReminderOffNote": "Off. Turn it on for one gentle nudge a day.",
+  "@set_notifReminderOffNote": {
+    "description": "Under the reminder switch when off."
+  },
+  "set_notifReminderTime": "Reminder time",
+  "@set_notifReminderTime": {
+    "description": "Row that opens the time picker for the daily reminder."
+  },
+  "set_notifCapsule": "A capsule is ready to open",
+  "@set_notifCapsule": {
+    "description": "Switch for the 'date capsule unlocked' push."
+  },
+  "set_notifCapsuleNote": "On the day you chose for something you sealed.",
+  "@set_notifCapsuleNote": {
+    "description": "Under the capsule switch."
+  },
+  "set_notifQuietNote": "Quiet hours: nothing is sent {start}–{end}.",
+  "@set_notifQuietNote": {
+    "description": "Quiet hours explainer; {start}/{end} are times like '11:00 PM'.",
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "set_notifQuietFrom": "Quiet from",
+  "@set_notifQuietFrom": {
+    "description": "Row: start of quiet hours (opens a time picker)."
+  },
+  "set_notifQuietUntil": "Quiet until",
+  "@set_notifQuietUntil": {
+    "description": "Row: end of quiet hours (opens a time picker)."
+  },
+  "set_notifDiscreet": "Discreet mode",
+  "@set_notifDiscreet": {
+    "description": "Switch: every push shows only a generic line (PRD rule 4)."
+  },
+  "set_notifDiscreetNote": "Every notification just says “Aura · You have a gentle update”.",
+  "@set_notifDiscreetNote": {
+    "description": "Under the discreet switch; quotes the discreet line."
+  },
+  "set_notifOffNote": "Notifications are off for Aura on this phone. Your choices here still apply once they're on.",
+  "@set_notifOffNote": {
+    "description": "Calm note when the OS permission is off (PRD 15-permissions). No blame."
+  },
+  "set_notifTurnOn": "Turn on",
+  "@set_notifTurnOn": {
+    "description": "Button in the off note: shows the phone's notification prompt."
+  },
+  "set_notifOpenSettings": "Open phone settings",
+  "@set_notifOpenSettings": {
+    "description": "Button in the off note: opens this app's page in the phone's Settings."
+  },
+  "set_notifQuietConfirmTitle": "This time is inside your quiet hours",
+  "@set_notifQuietConfirmTitle": {
+    "description": "Dialog title: the chosen reminder time falls inside quiet hours (one-time confirmation, PRD rule 1)."
+  },
+  "set_notifQuietConfirmBody": "Aura stays silent {start}–{end}. Send your reminder at {time} anyway?",
+  "@set_notifQuietConfirmBody": {
+    "description": "Dialog body; {start}/{end} quiet hours, {time} the reminder time.",
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "set_notifQuietConfirmYes": "Send it anyway",
+  "@set_notifQuietConfirmYes": {
+    "description": "Dialog: keep the reminder inside quiet hours (night shifts)."
+  },
+  "set_notifQuietConfirmNo": "Keep it quiet",
+  "@set_notifQuietConfirmNo": {
+    "description": "Dialog: don't send inside quiet hours."
+  },
+  "push_timeRow": "Every evening at {time}",
+  "@push_timeRow": {
+    "description": "On the notification explainer: when the daily nudge comes; {time} e.g. '8:00 PM'.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "push_changeTime": "Change time",
+  "@push_changeTime": {
+    "description": "Opens the time picker on the explainer."
+  },
   "onb_trustTitle": "Before we begin",
   "@onb_trustTitle": {
     "description": "Trust step title (privacy and boundaries). Calm."
@@ -1466,6 +2060,1474 @@
   "polish_helpNumberCopied": "Number copied",
   "@polish_helpNumberCopied": {
     "description": "Shown and announced after the helpline number was copied."
+  },
+  "rooms_title": "Rooms",
+  "@rooms_title": {
+    "description": "Rooms tab title (mood rooms with preset gestures). Never 'chat'."
+  },
+  "rooms_yourRooms": "Your rooms",
+  "@rooms_yourRooms": {
+    "description": "Heading over the rooms you are in (Rooms tab and the Home strip)."
+  },
+  "rooms_memories": "Memories",
+  "@rooms_memories": {
+    "description": "Heading over rooms that have become read-only memories (kept 7 days)."
+  },
+  "rooms_whatTitle": "What rooms are",
+  "@rooms_whatTitle": {
+    "description": "Rooms tab: heading of the short explanation card."
+  },
+  "rooms_whatBody": "A small room of people who feel like you do right now, for a day.",
+  "@rooms_whatBody": {
+    "description": "Rooms tab: one-line explanation. Calm; never 'chat' or 'strangers'."
+  },
+  "rooms_pointName": "A fresh name in every room. Nobody sees your account.",
+  "@rooms_pointName": {
+    "description": "Rooms tab privacy point: a new pseudonym per room."
+  },
+  "rooms_pointGestures": "No messages or DMs: only eight warm gestures.",
+  "@rooms_pointGestures": {
+    "description": "Rooms tab privacy point: gestures only."
+  },
+  "rooms_pointTime": "Rooms last a day, then rest as a memory for 7 days.",
+  "@rooms_pointTime": {
+    "description": "Rooms tab point: lifetime."
+  },
+  "rooms_lanternNote": "Lantern Hour: every night from 9 to 11 on your region's clock, rooms light a shared lantern and more people drop in.",
+  "@rooms_lanternNote": {
+    "description": "Rooms tab: when Lantern Hour happens. No pressure."
+  },
+  "rooms_lanternNow": "Lantern Hour is on now",
+  "@rooms_lanternNow": {
+    "description": "Label on a room card during Lantern Hour."
+  },
+  "rooms_checkInCta": "Check in to find a room",
+  "@rooms_checkInCta": {
+    "description": "Rooms tab button: rooms are found from a check-in."
+  },
+  "rooms_empty": "You're not in a room right now. After a check-in you can join people who feel the same.",
+  "@rooms_empty": {
+    "description": "Rooms tab when you are in no room."
+  },
+  "rooms_offline": "Rooms need a connection. Your own check-ins still save on this phone.",
+  "@rooms_offline": {
+    "description": "Rooms tab offline (no call is made)."
+  },
+  "rooms_loadFailed": "We couldn't reach the rooms just now.",
+  "@rooms_loadFailed": {
+    "description": "A rooms call failed (server or network). No blame."
+  },
+  "rooms_tryAgain": "Try again",
+  "@rooms_tryAgain": {
+    "description": "Retry a rooms call."
+  },
+  "rooms_signedOut": "Rooms open once you're signed in.",
+  "@rooms_signedOut": {
+    "description": "Rooms need an account (signed out)."
+  },
+  "rooms_signIn": "Sign in",
+  "@rooms_signIn": {
+    "description": "Button to sign in (rooms need an account)."
+  },
+  "rooms_suspended": "Rooms are paused for your account right now. Help is always here.",
+  "@rooms_suspended": {
+    "description": "The account's room access is paused (pending review). Calm, no blame."
+  },
+  "rooms_suspendedUntil": "Rooms are paused for your account until {date}. Help is always here.",
+  "@rooms_suspendedUntil": {
+    "description": "The account's room access is suspended until a date.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_accountClosed": "This account was closed for breaking Aura's rules.",
+  "@rooms_accountClosed": {
+    "description": "The account was closed by moderation (contract wording)."
+  },
+  "rooms_profilePending": "Rooms open once your account finishes setting up. Try again in a moment.",
+  "@rooms_profilePending": {
+    "description": "409 profile_required: onboarding hasn't reached the server yet."
+  },
+  "rooms_openHint": "Opens the room",
+  "@rooms_openHint": {
+    "description": "Screen-reader hint on a room card or strip item."
+  },
+  "rooms_memoryUntil": "A memory until {date}",
+  "@rooms_memoryUntil": {
+    "description": "Room card for a memory: when it closes for good.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_theme_lighthouse": "The Lighthouse",
+  "@rooms_theme_lighthouse": {
+    "description": "Room theme for Storm (high energy, unpleasant). Never 'bad'."
+  },
+  "rooms_theme_rain_sanctuary": "The Rain Sanctuary",
+  "@rooms_theme_rain_sanctuary": {
+    "description": "Room theme for Rain (low energy, unpleasant)."
+  },
+  "rooms_theme_midnight_observatory": "The Midnight Observatory",
+  "@rooms_theme_midnight_observatory": {
+    "description": "Room theme for Moonlight (low energy, pleasant)."
+  },
+  "rooms_theme_sunrise_deck": "The Sunrise Deck",
+  "@rooms_theme_sunrise_deck": {
+    "description": "Room theme for Sunrise (high energy, pleasant)."
+  },
+  "rooms_gesture_warm_tea": "Warm Tea",
+  "@rooms_gesture_warm_tea": {
+    "description": "Preset room gesture (a cup of tea offered). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_light_a_candle": "Light a Candle",
+  "@rooms_gesture_light_a_candle": {
+    "description": "Preset room gesture (a small light lit for someone). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_hug": "Hug",
+  "@rooms_gesture_hug": {
+    "description": "Preset room gesture (a hug). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_me_too": "Me Too",
+  "@rooms_gesture_me_too": {
+    "description": "Preset room gesture ('I feel it too'). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_soft_rain": "Soft Rain",
+  "@rooms_gesture_soft_rain": {
+    "description": "Preset room gesture (a gentle, calming rain). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_stargaze": "Stargaze",
+  "@rooms_gesture_stargaze": {
+    "description": "Preset room gesture (looking at the stars together). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_deep_breath": "Deep Breath",
+  "@rooms_gesture_deep_breath": {
+    "description": "Preset room gesture (breathe slowly together). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_gesture_youre_not_alone": "You're Not Alone",
+  "@rooms_gesture_youre_not_alone": {
+    "description": "Preset room gesture (reassurance). Warm, short; a name, not a sentence to translate literally."
+  },
+  "rooms_hereNow": "{count, plural, =0{Nobody here right now} =1{1 here now} other{{count} here now}}",
+  "@rooms_hereNow": {
+    "description": "Room header: current members seen in the last 2 min.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_today": "{count, plural, =1{1 person has been here today} other{{count} people have been here today}}",
+  "@rooms_today": {
+    "description": "Room header: everyone who has been a member today.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_countsSemantic": "{now, plural, =1{1 person here now} other{{now} people here now}}, {today, plural, =1{1 today} other{{today} today}}",
+  "@rooms_countsSemantic": {
+    "description": "Screen reader: the room header ('7 people here now, 31 today', REQ-A11Y-06).",
+    "placeholders": {
+      "now": {
+        "type": "int"
+      },
+      "today": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_stripSemantic": "{theme}, {count, plural, =1{1 person here now} other{{count} people here now}}",
+  "@rooms_stripSemantic": {
+    "description": "Screen reader: a room in the Home 'Your rooms' strip.",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_opening": "Opening the room…",
+  "@rooms_opening": {
+    "description": "Room screen while it loads."
+  },
+  "rooms_youAre": "You're {pseudonym} here",
+  "@rooms_youAre": {
+    "description": "Your pseudonym in this room (fresh per room; never translated).",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_coldStart": "{count, plural, =1{You're the first here today. Leave a light for the next one.} other{{count} people have been here today. Leave a light for the next one.}}",
+  "@rooms_coldStart": {
+    "description": "Room with nobody else here right now (cold start). Honest counts, never fake presence.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_lanternOn": "Lantern Hour · until {time}",
+  "@rooms_lanternOn": {
+    "description": "Room header during Lantern Hour (the shared evening window).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_closing": "This room becomes a memory at {time}.",
+  "@rooms_closing": {
+    "description": "Room in its last hours (no new members; gestures still work).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_memory": "This room has become a memory. You can look back for 7 days.",
+  "@rooms_memory": {
+    "description": "Room became read-only (24 h). Calm, not a loss."
+  },
+  "rooms_findNew": "Find a new room",
+  "@rooms_findNew": {
+    "description": "From a memory: start a check-in to find a new room."
+  },
+  "rooms_reconnecting": "Reconnecting…",
+  "@rooms_reconnecting": {
+    "description": "Chip while the live connection to the room is restored (gestures wait up to 30 s)."
+  },
+  "rooms_membersTitle": "Here with you",
+  "@rooms_membersTitle": {
+    "description": "Room screen: heading over the members."
+  },
+  "rooms_you": "You",
+  "@rooms_you": {
+    "description": "Your own tile among the members."
+  },
+  "rooms_memberHereNow": "here now",
+  "@rooms_memberHereNow": {
+    "description": "Screen reader: a member seen in the last 2 min."
+  },
+  "rooms_memberAway": "away for now",
+  "@rooms_memberAway": {
+    "description": "Screen reader: a member not seen for a while (still in the room)."
+  },
+  "rooms_memberMuted": "muted for you",
+  "@rooms_memberMuted": {
+    "description": "A member you muted (their gestures don't reach you)."
+  },
+  "rooms_memberLabel": "{pseudonym}, {mood}, {status}",
+  "@rooms_memberLabel": {
+    "description": "Screen reader: a member tile (pseudonym, mood at join, here now / away).",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      },
+      "mood": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_youLabel": "You, {pseudonym}, {mood}",
+  "@rooms_youLabel": {
+    "description": "Screen reader: your own tile.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      },
+      "mood": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_memberHint": "Opens options",
+  "@rooms_memberHint": {
+    "description": "Screen-reader hint on a member tile (gestures, report, block, mute)."
+  },
+  "rooms_recentTitle": "Warmth in this room",
+  "@rooms_recentTitle": {
+    "description": "Room screen: heading over recent gestures."
+  },
+  "rooms_receivedLine": "{pseudonym} sent you {gesture}",
+  "@rooms_receivedLine": {
+    "description": "A gesture you received ('Quiet Comet sent you Warm Tea'); also announced.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      },
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_sentToMember": "{gesture} sent to {pseudonym}",
+  "@rooms_sentToMember": {
+    "description": "Announcement after you send a gesture to a member (REQ-A11Y-06).",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      },
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_sentToRoom": "{gesture} sent to everyone here",
+  "@rooms_sentToRoom": {
+    "description": "Announcement after you send a gesture to the room.",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_someoneSent": "Someone sent {gesture}",
+  "@rooms_someoneSent": {
+    "description": "Someone else's gesture (unnamed, to a member).",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_someoneSentRoom": "Someone sent {gesture} to everyone here",
+  "@rooms_someoneSentRoom": {
+    "description": "Someone else's gesture to the whole room (unnamed).",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_youSentMember": "You sent {gesture} to {pseudonym}",
+  "@rooms_youSentMember": {
+    "description": "Your gesture in the room's list.",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      },
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_youSentRoom": "You sent {gesture} to everyone here",
+  "@rooms_youSentRoom": {
+    "description": "Your gesture to the room in the room's list.",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_trayTitle": "Send warmth to everyone here",
+  "@rooms_trayTitle": {
+    "description": "Gesture tray heading (tap a member to send to one person)."
+  },
+  "rooms_trayHint": "Sends to everyone here",
+  "@rooms_trayHint": {
+    "description": "Screen-reader hint on a tray gesture."
+  },
+  "rooms_trayResting": "Gestures rest in a memory. You can still report, block or mute.",
+  "@rooms_trayResting": {
+    "description": "Memory rooms are read-only."
+  },
+  "rooms_roomOptions": "Room options",
+  "@rooms_roomOptions": {
+    "description": "Tooltip of the room menu button (report a problem, leave)."
+  },
+  "rooms_reportRoom": "Report a problem here",
+  "@rooms_reportRoom": {
+    "description": "Room menu: report something in this room (F9)."
+  },
+  "rooms_leave": "Leave this room",
+  "@rooms_leave": {
+    "description": "Room menu: leave for good."
+  },
+  "rooms_removeMemory": "Remove from my rooms",
+  "@rooms_removeMemory": {
+    "description": "Room menu on a memory: leave it."
+  },
+  "rooms_leaveTitle": "Leave this room?",
+  "@rooms_leaveTitle": {
+    "description": "Leave confirmation title. Calm."
+  },
+  "rooms_leaveBody": "You won't be able to come back to it, and your seat opens up for someone else. Your next check-in can find you a new room.",
+  "@rooms_leaveBody": {
+    "description": "Leave confirmation: no rejoining; the slot frees up."
+  },
+  "rooms_leaveConfirm": "Leave room",
+  "@rooms_leaveConfirm": {
+    "description": "Leave confirmation button."
+  },
+  "rooms_stay": "Stay",
+  "@rooms_stay": {
+    "description": "Keep the room (the safe choice)."
+  },
+  "rooms_removeTitle": "Remove this memory?",
+  "@rooms_removeTitle": {
+    "description": "Leaving a memory room: confirmation title."
+  },
+  "rooms_removeBody": "It leaves your rooms now. Memories close for good after 7 days anyway.",
+  "@rooms_removeBody": {
+    "description": "Leaving a memory room: explanation."
+  },
+  "rooms_removeConfirm": "Remove",
+  "@rooms_removeConfirm": {
+    "description": "Leaving a memory room: confirm."
+  },
+  "rooms_keep": "Keep it",
+  "@rooms_keep": {
+    "description": "Keep a memory room (the safe choice)."
+  },
+  "rooms_leaveFailed": "That didn't go through. You're still in the room.",
+  "@rooms_leaveFailed": {
+    "description": "Leaving failed (e.g. offline)."
+  },
+  "rooms_gone": "This room has closed. Rooms rest for 7 days as memories, then they're gone.",
+  "@rooms_gone": {
+    "description": "The room no longer exists for you (purged or left)."
+  },
+  "rooms_backToRooms": "Back to your rooms",
+  "@rooms_backToRooms": {
+    "description": "Go to the Rooms tab."
+  },
+  "rooms_offlineRoom": "Rooms need a connection. This room opens again when you're back online.",
+  "@rooms_offlineRoom": {
+    "description": "Opening a room while offline (no call is made)."
+  },
+  "rooms_joinTitle": "Finding your room",
+  "@rooms_joinTitle": {
+    "description": "Title while matching into a room."
+  },
+  "rooms_finding": "Finding people who feel this way right now…",
+  "@rooms_finding": {
+    "description": "Loading while matching (≤ 5 s, PRD States)."
+  },
+  "rooms_offlineJoin": "Rooms need a connection. Your check-in is saved.",
+  "@rooms_offlineJoin": {
+    "description": "Joining offline (PRD States: Room offline). No call is made."
+  },
+  "rooms_joinFailed": "We couldn't reach the rooms just now. Your check-in is saved.",
+  "@rooms_joinFailed": {
+    "description": "Joining failed (server or network)."
+  },
+  "rooms_joinLimit": "That's 3 new rooms for this feeling today. The rooms you're in are still open to you.",
+  "@rooms_joinLimit": {
+    "description": "429 room_join_limit. Calm; returning to a room is always free."
+  },
+  "rooms_seeYourRooms": "See your rooms",
+  "@rooms_seeYourRooms": {
+    "description": "Go to the Rooms tab."
+  },
+  "rooms_poolUnavailable": "Hindi and Hinglish rooms are opening soon. Join an English room for now?",
+  "@rooms_poolUnavailable": {
+    "description": "409 language_pool_unavailable (PRD States)."
+  },
+  "rooms_poolJoinEnglish": "Join English room",
+  "@rooms_poolJoinEnglish": {
+    "description": "Join an English room instead."
+  },
+  "rooms_poolNotify": "Tell me when they open",
+  "@rooms_poolNotify": {
+    "description": "Ask for an in-app note when Hindi + Hinglish rooms open."
+  },
+  "rooms_poolNotifyDone": "We'll let you know here when Hindi and Hinglish rooms open.",
+  "@rooms_poolNotifyDone": {
+    "description": "Confirmation of 'Tell me when they open'."
+  },
+  "rooms_noRequest": "Rooms open from a check-in.",
+  "@rooms_noRequest": {
+    "description": "The join screen was opened without a check-in."
+  },
+  "rooms_offer": "Join a room of people feeling this",
+  "@rooms_offer": {
+    "description": "After a saved check-in: the room offer. Identical at every age."
+  },
+  "rooms_offerHint": "Opens a room, with a fresh name just for it",
+  "@rooms_offerHint": {
+    "description": "Screen-reader hint on the room offer."
+  },
+  "rooms_offerOffline": "Rooms open when you're back online",
+  "@rooms_offerOffline": {
+    "description": "Room offer while offline (REQ-ROOM-01). No call is made."
+  },
+  "rooms_offerLater": "Rooms are in the Rooms tab whenever you'd like company.",
+  "@rooms_offerLater": {
+    "description": "First check-in (during onboarding): where rooms are."
+  },
+  "rooms_guidelinesTitle": "Before your first room",
+  "@rooms_guidelinesTitle": {
+    "description": "Guidelines sheet title, shown before the first room."
+  },
+  "rooms_guidelinesIntro": "Rooms stay gentle because everyone keeps to a few simple things:",
+  "@rooms_guidelinesIntro": {
+    "description": "Guidelines intro."
+  },
+  "rooms_rule1": "Be kind. Everyone here is having a real day.",
+  "@rooms_rule1": {
+    "description": "Guideline 1."
+  },
+  "rooms_rule2": "No hate about caste, religion, gender, sexuality or anything else.",
+  "@rooms_rule2": {
+    "description": "Guideline 2."
+  },
+  "rooms_rule3": "No sexual content.",
+  "@rooms_rule3": {
+    "description": "Guideline 3."
+  },
+  "rooms_rule4": "Never share or ask for contact details or meet-ups, or anyone's age, school, city or photos.",
+  "@rooms_rule4": {
+    "description": "Guideline 4 (grooming and contact-swap)."
+  },
+  "rooms_rule5": "No selling or spam.",
+  "@rooms_rule5": {
+    "description": "Guideline 5."
+  },
+  "rooms_rule6": "Never encourage anyone to hurt themselves. Talking about how you feel is always okay.",
+  "@rooms_rule6": {
+    "description": "Guideline 6 (safe messaging: no method named)."
+  },
+  "rooms_guidelinesSafety": "You can report, block or mute anyone, and help is always one tap away.",
+  "@rooms_guidelinesSafety": {
+    "description": "Guidelines footer."
+  },
+  "rooms_guidelinesAgree": "I'll keep to these",
+  "@rooms_guidelinesAgree": {
+    "description": "Accept the guidelines and continue to the room."
+  },
+  "rooms_sendTo": "Send {pseudonym} some warmth",
+  "@rooms_sendTo": {
+    "description": "Member sheet: the gestures for this one person.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_gestureHintMember": "Sends to {pseudonym}",
+  "@rooms_gestureHintMember": {
+    "description": "Screen-reader hint on a gesture in the member sheet.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_report": "Report",
+  "@rooms_report": {
+    "description": "Member sheet action (F9)."
+  },
+  "rooms_block": "Block",
+  "@rooms_block": {
+    "description": "Member sheet action (F9): account-level, both ways."
+  },
+  "rooms_mute": "Mute",
+  "@rooms_mute": {
+    "description": "Member sheet action: hides their gestures for you in this room."
+  },
+  "rooms_unmute": "Unmute",
+  "@rooms_unmute": {
+    "description": "Member sheet action: undo a mute."
+  },
+  "rooms_safetyNote": "They're never told who reported, blocked or muted them.",
+  "@rooms_safetyNote": {
+    "description": "Member sheet reassurance under the safety actions."
+  },
+  "rooms_blockTitle": "Block {pseudonym}?",
+  "@rooms_blockTitle": {
+    "description": "Block confirmation title. Calm.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_blockBody": "You won't be placed in a room together again, and gestures between you stop. They won't be told.",
+  "@rooms_blockBody": {
+    "description": "Block confirmation body (the blocked person sees no change)."
+  },
+  "rooms_blocked": "{pseudonym} is blocked. You won't share a room again.",
+  "@rooms_blocked": {
+    "description": "After blocking.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_muted": "{pseudonym} is muted for you. Their gestures won't reach you here.",
+  "@rooms_muted": {
+    "description": "After muting (per room, for you only).",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_unmuted": "{pseudonym} is unmuted.",
+  "@rooms_unmuted": {
+    "description": "After unmuting.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_undo": "Undo",
+  "@rooms_undo": {
+    "description": "Undo a mute."
+  },
+  "rooms_actionFailed": "That didn't go through. Try again in a moment.",
+  "@rooms_actionFailed": {
+    "description": "A room action failed (e.g. offline). No blame."
+  },
+  "rooms_reportMember": "Report {pseudonym}",
+  "@rooms_reportMember": {
+    "description": "Report sheet title for a member.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "rooms_reportGesture": "Report this gesture",
+  "@rooms_reportGesture": {
+    "description": "Report sheet title / button for a received gesture."
+  },
+  "rooms_reportWhy": "What's happening?",
+  "@rooms_reportWhy": {
+    "description": "Report sheet: pick one reason."
+  },
+  "rooms_reason1": "Someone may be in danger or hurting themselves",
+  "@rooms_reason1": {
+    "description": "Report reason 1 (crisis lane: the reporter sees helplines). Safe messaging."
+  },
+  "rooms_reason2": "Harassment or bullying",
+  "@rooms_reason2": {
+    "description": "Report reason 2."
+  },
+  "rooms_reason3": "Sexual content or advances",
+  "@rooms_reason3": {
+    "description": "Report reason 3."
+  },
+  "rooms_reason4": "Hate or slurs",
+  "@rooms_reason4": {
+    "description": "Report reason 4."
+  },
+  "rooms_reason5": "Contact details or personal info",
+  "@rooms_reason5": {
+    "description": "Report reason 5."
+  },
+  "rooms_reason6": "Spam or selling",
+  "@rooms_reason6": {
+    "description": "Report reason 6."
+  },
+  "rooms_reason7": "Someone may be under 13",
+  "@rooms_reason7": {
+    "description": "Report reason 7 (never shows anyone's age)."
+  },
+  "rooms_reason8": "Something else",
+  "@rooms_reason8": {
+    "description": "Report reason 8."
+  },
+  "rooms_reportNoteLabel": "Anything a moderator should know? (optional)",
+  "@rooms_reportNoteLabel": {
+    "description": "Report note field label (≤ 200 characters)."
+  },
+  "rooms_reportNoteHelp": "Only Aura's moderators read this. Please leave out phone numbers, links and handles.",
+  "@rooms_reportNoteHelp": {
+    "description": "Report note helper text."
+  },
+  "rooms_reportNoteContact": "Phone numbers, links and handles can't be shared here. It keeps everyone safer.",
+  "@rooms_reportNoteContact": {
+    "description": "On-device PII check on the report note (PRD States wording). Nothing was sent."
+  },
+  "rooms_reportSend": "Send report",
+  "@rooms_reportSend": {
+    "description": "Submit a report."
+  },
+  "rooms_reportThanks": "Thank you for telling us. A moderator will look at it, usually within a day.",
+  "@rooms_reportThanks": {
+    "description": "After a report (room or other)."
+  },
+  "rooms_reportHidden": "Thank you for telling us. You won't get their gestures in this room while a moderator takes a look.",
+  "@rooms_reportHidden": {
+    "description": "After reporting a member (they are muted for you here)."
+  },
+  "rooms_reportGestureHidden": "Thank you for telling us. That gesture is hidden for you now.",
+  "@rooms_reportGestureHidden": {
+    "description": "After reporting a gesture."
+  },
+  "rooms_reportCrisis": "Thank you for telling us. A moderator will look soon, and help is always one tap away.",
+  "@rooms_reportCrisis": {
+    "description": "After a report in the crisis lane (the Safety Center opens first). Safe messaging."
+  },
+  "rooms_reportLimit": "That's a lot of reports today. If someone is in danger, the help button is always here.",
+  "@rooms_reportLimit": {
+    "description": "429 report_limit (reason 1 is never limited)."
+  },
+  "rooms_reportFailed": "That didn't go through, so nothing was sent. Try again in a moment.",
+  "@rooms_reportFailed": {
+    "description": "Report failed."
+  },
+  "rooms_reportOffline": "Reports need a connection. Nothing was sent yet.",
+  "@rooms_reportOffline": {
+    "description": "Report while offline (no call is made)."
+  },
+  "rooms_surveyTitle": "Did you feel less alone?",
+  "@rooms_surveyTitle": {
+    "description": "Exit micro-survey (≥ 30 s in the room, at most once a day). Aggregate only."
+  },
+  "rooms_surveyYes": "Yes",
+  "@rooms_surveyYes": {
+    "description": "Survey answer."
+  },
+  "rooms_surveyNo": "Not really",
+  "@rooms_surveyNo": {
+    "description": "Survey answer."
+  },
+  "rooms_surveySkip": "Skip",
+  "@rooms_surveySkip": {
+    "description": "Skip the survey."
+  },
+  "sanctuary_title": "Sanctuary",
+  "@sanctuary_title": {
+    "description": "Title of the Sanctuary tab: a private, calm space (breathing, grounding)."
+  },
+  "sanctuary_intro": "A quiet place, just for you. Go at your own pace. Nothing here is scored.",
+  "@sanctuary_intro": {
+    "description": "Intro line at the top of the Sanctuary. Calm; nothing is timed against you or scored."
+  },
+  "sanctuary_todayTitle": "Today's minute",
+  "@sanctuary_todayTitle": {
+    "description": "Section header: one gentle suggestion for today (changes each day)."
+  },
+  "sanctuary_breatheSection": "Breathe",
+  "@sanctuary_breatheSection": {
+    "description": "Section header and title of the breathing session."
+  },
+  "sanctuary_breatheCard": "Breathe with your Aura",
+  "@sanctuary_breatheCard": {
+    "description": "Card that opens the breathing session."
+  },
+  "sanctuary_breatheCardBody": "Calm, box or 4-7-8 breathing, for as long as you like.",
+  "@sanctuary_breatheCardBody": {
+    "description": "Under the breathing card: the three rhythms, any length."
+  },
+  "sanctuary_groundingSection": "Grounding",
+  "@sanctuary_groundingSection": {
+    "description": "Section header: short grounding activities (five senses, hand on heart, three small things)."
+  },
+  "sanctuary_begin": "Begin",
+  "@sanctuary_begin": {
+    "description": "Button that opens an optional activity (Today's minute, A minute for you)."
+  },
+  "sanctuary_start": "Start",
+  "@sanctuary_start": {
+    "description": "Starts a timed activity (breathing, hand on heart)."
+  },
+  "sanctuary_pause": "Pause",
+  "@sanctuary_pause": {
+    "description": "Pauses an activity. Nothing is lost."
+  },
+  "sanctuary_resume": "Resume",
+  "@sanctuary_resume": {
+    "description": "Resumes a paused activity."
+  },
+  "sanctuary_finish": "Finish",
+  "@sanctuary_finish": {
+    "description": "Ends an activity early, gently (no penalty)."
+  },
+  "sanctuary_next": "Next",
+  "@sanctuary_next": {
+    "description": "Next step of a step-by-step activity."
+  },
+  "sanctuary_progress": "Progress through this session",
+  "@sanctuary_progress": {
+    "description": "Screen-reader label of the quiet progress ring (no numbers, no countdown)."
+  },
+  "sanctuary_progressBegun": "Just begun",
+  "@sanctuary_progressBegun": {
+    "description": "Progress ring value: first third."
+  },
+  "sanctuary_progressHalf": "About halfway",
+  "@sanctuary_progressHalf": {
+    "description": "Progress ring value: middle third."
+  },
+  "sanctuary_progressNearly": "Nearly through",
+  "@sanctuary_progressNearly": {
+    "description": "Progress ring value: last third. Never pressure."
+  },
+  "sanctuary_progressDone": "Complete",
+  "@sanctuary_progressDone": {
+    "description": "Progress ring value: finished."
+  },
+  "habits_autoLogged": "{habit} is marked done for today.",
+  "@habits_autoLogged": {
+    "description": "After a breathing session or a long note ticks off a habit automatically (F2). habit = the habit's name (Breathe, Journal).",
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      }
+    }
+  },
+  "breathe_rhythm": "Rhythm",
+  "@breathe_rhythm": {
+    "description": "Header above the three breathing patterns."
+  },
+  "breathe_calm": "Calm",
+  "@breathe_calm": {
+    "description": "Breathing pattern: in 4, out 6 (the default)."
+  },
+  "breathe_calmBody": "In for 4, out for 6. Gentle and steady.",
+  "@breathe_calmBody": {
+    "description": "Describes the calm pattern."
+  },
+  "breathe_box": "Box",
+  "@breathe_box": {
+    "description": "Breathing pattern: in 4, hold 4, out 4, hold 4."
+  },
+  "breathe_boxBody": "In, hold, out, hold. Four counts each.",
+  "@breathe_boxBody": {
+    "description": "Describes box breathing."
+  },
+  "breathe_478": "4-7-8",
+  "@breathe_478": {
+    "description": "Breathing pattern: in 4, hold 7, out 8 (digits stay as they are)."
+  },
+  "breathe_478Body": "In for 4, hold for 7, out for 8.",
+  "@breathe_478Body": {
+    "description": "Describes 4-7-8 breathing."
+  },
+  "breathe_lightHeaded": "If you feel light-headed, stop and breathe normally.",
+  "@breathe_lightHeaded": {
+    "description": "Gentle safety note with 4-7-8 breathing (long holds). Calm, not alarming."
+  },
+  "breathe_length": "Length",
+  "@breathe_length": {
+    "description": "Header above the session lengths."
+  },
+  "breathe_minutes": "{count, plural, =1{1 minute} other{{count} minutes}}",
+  "@breathe_minutes": {
+    "description": "A session length choice.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "breathe_openEnded": "Until I stop",
+  "@breathe_openEnded": {
+    "description": "Session length choice with no set end."
+  },
+  "breathe_in": "Breathe in",
+  "@breathe_in": {
+    "description": "Breathing cue: inhale. Also announced to screen readers when it begins."
+  },
+  "breathe_hold": "Hold",
+  "@breathe_hold": {
+    "description": "Breathing cue: hold the breath (box, 4-7-8)."
+  },
+  "breathe_out": "Breathe out",
+  "@breathe_out": {
+    "description": "Breathing cue: exhale."
+  },
+  "breathe_paused": "Paused. Take your time.",
+  "@breathe_paused": {
+    "description": "Shown (and announced) while a breathing session is paused."
+  },
+  "breathe_done": "That was time just for you.",
+  "@breathe_done": {
+    "description": "End of a breathing session. Acknowledged, never scored; leaving early is never mentioned."
+  },
+  "breathe_again": "Again",
+  "@breathe_again": {
+    "description": "Starts the same breathing session again."
+  },
+  "breathe_land1": "Feel your feet on the ground.",
+  "@breathe_land1": {
+    "description": "30-second grounding breath (after a Storm check-in), cue 1."
+  },
+  "breathe_land2": "Notice three sounds around you.",
+  "@breathe_land2": {
+    "description": "30-second grounding breath, cue 2."
+  },
+  "breathe_keepGoing": "Keep going",
+  "@breathe_keepGoing": {
+    "description": "After the 30-second grounding breath: opens the full breathing session."
+  },
+  "breathe_land3": "Let your shoulders drop.",
+  "@breathe_land3": {
+    "description": "30-second grounding breath, cue 3."
+  },
+  "senses_title": "Five senses",
+  "@senses_title": {
+    "description": "5-4-3-2-1 grounding: notice things with each sense, step by step."
+  },
+  "senses_card": "Notice what's around you, one sense at a time.",
+  "@senses_card": {
+    "description": "Under the five-senses card."
+  },
+  "senses_intro": "Let's notice what's around you, one sense at a time. Go at your own pace.",
+  "@senses_intro": {
+    "description": "Five senses: intro before the first step."
+  },
+  "senses_see": "Five things you can see",
+  "@senses_see": {
+    "description": "Five senses, step 1."
+  },
+  "senses_seeBody": "Look around slowly. Name them in your head or out loud.",
+  "@senses_seeBody": {
+    "description": "Five senses, step 1 hint."
+  },
+  "senses_touch": "Four things you can touch",
+  "@senses_touch": {
+    "description": "Five senses, step 2 (touch)."
+  },
+  "senses_touchBody": "The chair under you, your clothes, the air on your skin.",
+  "@senses_touchBody": {
+    "description": "Five senses, step 2 hint."
+  },
+  "senses_hear": "Three things you can hear",
+  "@senses_hear": {
+    "description": "Five senses, step 3."
+  },
+  "senses_hearBody": "Near or far, loud or soft.",
+  "@senses_hearBody": {
+    "description": "Five senses, step 3 hint."
+  },
+  "senses_smell": "Two things you can smell",
+  "@senses_smell": {
+    "description": "Five senses, step 4."
+  },
+  "senses_smellBody": "Or two scents you like, if nothing is near.",
+  "@senses_smellBody": {
+    "description": "Five senses, step 4 hint."
+  },
+  "senses_taste": "One thing you can taste",
+  "@senses_taste": {
+    "description": "Five senses, step 5."
+  },
+  "senses_tasteBody": "Or take a sip of water and notice it.",
+  "@senses_tasteBody": {
+    "description": "Five senses, step 5 hint."
+  },
+  "senses_step": "Step {step} of {total}",
+  "@senses_step": {
+    "description": "Screen-reader text for the quiet step dots. Not a score.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "senses_done": "You're here, in this moment. Nicely done.",
+  "@senses_done": {
+    "description": "After the fifth sense."
+  },
+  "heart_title": "Hand on heart",
+  "@heart_title": {
+    "description": "Self-compassion touch: a hand on the heart for a minute."
+  },
+  "heart_card": "A minute of warmth, just for you.",
+  "@heart_card": {
+    "description": "Under the hand-on-heart card."
+  },
+  "heart_intro": "Place a hand on your heart, or anywhere that feels comforting.",
+  "@heart_intro": {
+    "description": "Hand on heart: first cue, shown with the first slow breath. Gentle."
+  },
+  "heart_1": "Feel the warmth of your hand.",
+  "@heart_1": {
+    "description": "Hand on heart, phrase 1."
+  },
+  "heart_2": "Breathe gently. There's no rush.",
+  "@heart_2": {
+    "description": "Hand on heart, phrase 2."
+  },
+  "heart_3": "Whatever you're feeling is allowed here.",
+  "@heart_3": {
+    "description": "Hand on heart, phrase 3."
+  },
+  "heart_4": "Be as kind to yourself as you would be to a friend.",
+  "@heart_4": {
+    "description": "Hand on heart, phrase 4. Gender-neutral 'friend'."
+  },
+  "heart_done": "Thank you for being gentle with yourself.",
+  "@heart_done": {
+    "description": "After the hand-on-heart minute."
+  },
+  "gratitude_title": "Three small things",
+  "@gratitude_title": {
+    "description": "Gratitude: think of (or type) three small things that went okay. Nothing is stored."
+  },
+  "gratitude_card": "Three small things that went okay today.",
+  "@gratitude_card": {
+    "description": "Under the three-small-things card."
+  },
+  "gratitude_intro": "Bring three small things from today to mind, one at a time. There's nothing to write.",
+  "@gratitude_intro": {
+    "description": "Three small things: intro. Prompts only, no typing; nothing is stored."
+  },
+  "gratitude_1": "One small thing that went okay",
+  "@gratitude_1": {
+    "description": "Three small things, step 1."
+  },
+  "gratitude_1Body": "It can be tiny, like a warm drink or a kind word.",
+  "@gratitude_1Body": {
+    "description": "Three small things, step 1 hint."
+  },
+  "gratitude_2": "Another small thing",
+  "@gratitude_2": {
+    "description": "Three small things, step 2."
+  },
+  "gratitude_2Body": "Something you saw, heard or did.",
+  "@gratitude_2Body": {
+    "description": "Three small things, step 2 hint."
+  },
+  "gratitude_3": "One more small thing",
+  "@gratitude_3": {
+    "description": "Three small things, step 3."
+  },
+  "gratitude_3Body": "Maybe something about yourself.",
+  "@gratitude_3Body": {
+    "description": "Three small things, step 3 hint."
+  },
+  "gratitude_done": "Hold onto those for a moment. They're yours.",
+  "@gratitude_done": {
+    "description": "After the third small thing."
+  },
+  "savour_intro": "Let's replay one good moment from today, slowly.",
+  "@savour_intro": {
+    "description": "Savour (Sunrise's minute; also in the library): intro. Prompts only."
+  },
+  "savour_1": "Bring one good moment from today to mind, however small.",
+  "@savour_1": {
+    "description": "Savour, step 1."
+  },
+  "savour_2": "Where were you? What could you see and hear?",
+  "@savour_2": {
+    "description": "Savour, step 2."
+  },
+  "savour_3": "Notice how it feels to remember it now.",
+  "@savour_3": {
+    "description": "Savour, step 3."
+  },
+  "savour_done": "Let it stay with you a little longer.",
+  "@savour_done": {
+    "description": "After the savour steps."
+  },
+  "minute_forYou": "A minute for you",
+  "@minute_forYou": {
+    "description": "Optional card in the check-in saved moment, for every quadrant. Never shown right after the crisis sheet."
+  },
+  "minute_calmTitle": "One calm minute",
+  "@minute_calmTitle": {
+    "description": "Today's minute: one minute of calm breathing."
+  },
+  "minute_boxTitle": "Box breathing",
+  "@minute_boxTitle": {
+    "description": "Today's minute: one minute of box breathing."
+  },
+  "minute_478Title": "4-7-8 breathing",
+  "@minute_478Title": {
+    "description": "Today's minute: 4-7-8 breathing."
+  },
+  "minute_stillnessTitle": "A minute of stillness",
+  "@minute_stillnessTitle": {
+    "description": "One minute of slow breathing (Moonlight's minute; also in Today's minute)."
+  },
+  "minute_stillnessBody": "One quiet minute with the orb.",
+  "@minute_stillnessBody": {
+    "description": "Under 'A minute of stillness'."
+  },
+  "minute_landTitle": "Thirty seconds to land",
+  "@minute_landTitle": {
+    "description": "30-second grounding breath (Storm's minute)."
+  },
+  "minute_landBody": "Three slow breaths with the orb.",
+  "@minute_landBody": {
+    "description": "Under 'Thirty seconds to land' (Storm's minute)."
+  },
+  "minute_comfortTitle": "A little comfort",
+  "@minute_comfortTitle": {
+    "description": "Hand on heart, offered as Rain's minute."
+  },
+  "minute_comfortBody": "A hand on your heart, and a minute of warmth.",
+  "@minute_comfortBody": {
+    "description": "Under 'A little comfort'."
+  },
+  "minute_savourTitle": "Savour this",
+  "@minute_savourTitle": {
+    "description": "Savouring what feels good (Sunrise's minute)."
+  },
+  "minute_savourBody": "Replay one good moment from today.",
+  "@minute_savourBody": {
+    "description": "Under 'Savour this'."
+  },
+  "companion_storm1": "That's a lot at once. Your light is still here.",
+  "@companion_storm1": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm2": "Naming a storm takes courage. You showed up for yourself.",
+  "@companion_storm2": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm3": "Big, loud feelings are welcome here. So are you.",
+  "@companion_storm3": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm4": "Stormy days matter too. Thank you for checking in.",
+  "@companion_storm4": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm5": "You named this honestly. That matters.",
+  "@companion_storm5": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm6": "Storms are part of your sky too.",
+  "@companion_storm6": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm7": "Whatever is swirling, you noticed it. That counts.",
+  "@companion_storm7": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_storm8": "Even in a storm, your glow is yours.",
+  "@companion_storm8": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain1": "That feels heavy. Your light is still with you.",
+  "@companion_rain1": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain2": "Being honest about a low day takes courage. You showed up for yourself.",
+  "@companion_rain2": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain3": "Slow, heavy feelings are welcome here. So are you.",
+  "@companion_rain3": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain4": "Rainy days matter too. Thank you for checking in.",
+  "@companion_rain4": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain5": "You were honest with yourself today. That matters.",
+  "@companion_rain5": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain6": "Rain is part of your sky too.",
+  "@companion_rain6": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain7": "However heavy it is, you noticed it. That counts.",
+  "@companion_rain7": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_rain8": "Even on grey days, your glow is yours.",
+  "@companion_rain8": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight1": "A quiet, settled moment. Your light is resting easy.",
+  "@companion_moonlight1": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight2": "Noticing a quiet moment is worth something. You showed up for yourself.",
+  "@companion_moonlight2": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight3": "Soft, easy feelings are welcome here. So are you.",
+  "@companion_moonlight3": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight4": "Gentle days matter too. Thank you for checking in.",
+  "@companion_moonlight4": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight5": "You took a moment to notice this. That matters.",
+  "@companion_moonlight5": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight6": "Moonlight is part of your sky too.",
+  "@companion_moonlight6": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight7": "However small this calm is, you noticed it. That counts.",
+  "@companion_moonlight7": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_moonlight8": "In the quiet, your glow is yours.",
+  "@companion_moonlight8": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise1": "A bright moment. Your light is shining.",
+  "@companion_sunrise1": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise2": "Noticing a good moment is worth something. You showed up for yourself.",
+  "@companion_sunrise2": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise3": "Big, bright feelings are welcome here. So are you.",
+  "@companion_sunrise3": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise4": "Bright days matter too. Thank you for checking in.",
+  "@companion_sunrise4": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise5": "You let yourself notice this. That matters.",
+  "@companion_sunrise5": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise6": "Sunrise is part of your sky too.",
+  "@companion_sunrise6": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise7": "However big or small this is, you noticed it. That counts.",
+  "@companion_sunrise7": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_sunrise8": "In this brightness, your glow is yours.",
+  "@companion_sunrise8": {
+    "description": "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
+  },
+  "companion_neutral1": "Thank you for checking in.",
+  "@companion_neutral1": {
+    "description": "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise."
+  },
+  "companion_neutral2": "You showed up for yourself.",
+  "@companion_neutral2": {
+    "description": "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise."
+  },
+  "companion_neutral3": "Your light is still here.",
+  "@companion_neutral3": {
+    "description": "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise."
+  },
+  "companion_neutral4": "There's no rush here.",
+  "@companion_neutral4": {
+    "description": "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise."
+  },
+  "prompt_note1": "What's one small thing that helped today?",
+  "@prompt_note1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_note2": "What's on your mind right now?",
+  "@prompt_note2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_note3": "What would you like to remember about today?",
+  "@prompt_note3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_storm1": "What's taking up the most room right now?",
+  "@prompt_storm1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_storm2": "If this feeling could speak, what would it say?",
+  "@prompt_storm2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_storm3": "What's one thing you could set down, even for a minute?",
+  "@prompt_storm3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_rain1": "What would feel gentle right now?",
+  "@prompt_rain1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_rain2": "What's weighing on you today?",
+  "@prompt_rain2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_rain3": "Who or what has felt kind to you lately?",
+  "@prompt_rain3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_moonlight1": "What's helping you feel settled?",
+  "@prompt_moonlight1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_moonlight2": "What made today feel softer?",
+  "@prompt_moonlight2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_moonlight3": "What would you like to keep from this moment?",
+  "@prompt_moonlight3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_sunrise1": "What's lighting you up today?",
+  "@prompt_sunrise1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_sunrise2": "What went well that you'd like to remember?",
+  "@prompt_sunrise2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_sunrise3": "Who would you like to share this with?",
+  "@prompt_sunrise3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsule1": "What do you want future you to know?",
+  "@prompt_capsule1": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsule2": "What's helping you right now that you might forget?",
+  "@prompt_capsule2": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsule3": "What would you say to yourself on a hard day?",
+  "@prompt_capsule3": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsuleStorm": "What helps when everything feels like too much?",
+  "@prompt_capsuleStorm": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsuleRain": "What would you want to hear on a heavy day?",
+  "@prompt_capsuleRain": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsuleMoonlight": "What helps you find this calm again?",
+  "@prompt_capsuleMoonlight": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_capsuleSunrise": "What would you like to celebrate with future you?",
+  "@prompt_capsuleSunrise": {
+    "description": "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'."
+  },
+  "prompt_another": "Another prompt",
+  "@prompt_another": {
+    "description": "Shows a different guided prompt in the empty note (the prompt is only a hint, never saved)."
+  },
+  "prompt_settingsTitle": "Writing prompts",
+  "@prompt_settingsTitle": {
+    "description": "Settings switch: show a gentle guided prompt in the empty note field."
+  },
+  "prompt_settingsBody": "A gentle question in the empty note. Never saved.",
+  "@prompt_settingsBody": {
+    "description": "Under the Settings switch for guided prompts."
+  },
+  "backfill_add": "Add a past check-in",
+  "@backfill_add": {
+    "description": "History button: add a check-in for one of the last 7 days."
+  },
+  "backfill_pickTitle": "Which day?",
+  "@backfill_pickTitle": {
+    "description": "Title of the day picker for a past check-in."
+  },
+  "backfill_pickBody": "{count, plural, =1{You can add a check-in for yesterday.} other{You can add a check-in for any of the last {count} days.}}",
+  "@backfill_pickBody": {
+    "description": "Under the day picker title.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backfill_title": "How were you feeling?",
+  "@backfill_title": {
+    "description": "Title of the check-in picker for a past day."
+  },
+  "backfill_forDay": "Check-in for {day}",
+  "@backfill_forDay": {
+    "description": "Screen-reader label of the day chip on a past check-in, e.g. 'Check-in for Tuesday, October 6'. Tapping it changes the day.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "backfill_changeDay": "Change day",
+  "@backfill_changeDay": {
+    "description": "Screen-reader hint on the day of a past check-in."
+  },
+  "backfill_outOfRange": "Past check-ins can go up to a week back. Could you pick another day?",
+  "@backfill_outOfRange": {
+    "description": "When the picked day has moved out of the 7-day window (e.g. past 04:00). The selection is kept."
+  },
+  "backfill_savedTitle": "Added to your sky",
+  "@backfill_savedTitle": {
+    "description": "After saving a check-in for a past day (PRD 06d edge case)."
+  },
+  "backfill_savedDay": "Saved for {day}.",
+  "@backfill_savedDay": {
+    "description": "Under 'Added to your sky': the day it was saved for, e.g. 'Saved for Tuesday, October 6.'",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "backfill_savedBody": "Starlight comes from check-ins made on the day itself.",
+  "@backfill_savedBody": {
+    "description": "After saving a past check-in: why no Starlight shows (PRD F1: backfills earn nothing). Calm, no loss words."
+  },
+  "history_addedLater": "Added later",
+  "@history_addedLater": {
+    "description": "Shown instead of the time on a check-in that was added for a past day."
+  },
+  "history_whenAddedLater": "{day} · added later",
+  "@history_whenAddedLater": {
+    "description": "When a past-day check-in is for, on its page, e.g. 'Yesterday · added later'.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "shell_tabHome": "Home",
+  "@shell_tabHome": {
+    "description": "Navigation bar tab: the companion-led today view."
+  },
+  "shell_tabSanctuary": "Sanctuary",
+  "@shell_tabSanctuary": {
+    "description": "Navigation bar tab: the private calm space (breathing, grounding). Same name as the Sanctuary screen title."
+  },
+  "shell_tabRooms": "Rooms",
+  "@shell_tabRooms": {
+    "description": "Navigation bar tab: mood rooms with preset gestures. Never 'chat'."
+  },
+  "shell_tabInsights": "Insights",
+  "@shell_tabInsights": {
+    "description": "Navigation bar tab: private history and gentle patterns. Never clinical."
+  },
+  "shell_checkIn": "Check in",
+  "@shell_checkIn": {
+    "description": "The distinct centre action of the navigation bar: opens a new check-in (not a tab)."
+  },
+  "shell_checkInHint": "Starts a new check-in",
+  "@shell_checkInHint": {
+    "description": "Screen-reader hint on the centre Check in action, so it is not taken for a tab."
+  },
+  "safety_emergencyWhen": "Call emergency services right away if you or someone near you is in immediate danger, badly hurt, or can't stay safe.",
+  "@safety_emergencyWhen": {
+    "description": "Safety Center: when to call emergency services instead of a helpline. Direct and calm; never names a method (REQ-SAFE-15)."
+  },
+  "safety_settingsLink": "Help & Safety in Settings",
+  "@safety_settingsLink": {
+    "description": "Safety Center link (signed in only) to Settings › Help & Safety."
+  },
+  "safety_settingsHint": "Support contact, Grievance Officer and policies",
+  "@safety_settingsHint": {
+    "description": "Screen-reader hint on the link above: what that Settings section holds."
   },
   "voice_record": "Record a voice note",
   "@voice_record": {

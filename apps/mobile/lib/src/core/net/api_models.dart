@@ -133,6 +133,11 @@ abstract class ProfileRequest with _$ProfileRequest {
     required String uiLocale,
     required String timezone,
     String? country,
+
+    /// Platform age band read before sign-in (F8 REQ-ACC-04/10):
+    /// `under13` | `under18` | `adult`. Sent only when set; the server keeps
+    /// the invisible under-18 flag and never returns it.
+    @JsonKey(includeIfNull: false) String? ageSignal,
   }) = _ProfileRequest;
 
   factory ProfileRequest.fromJson(Map<String, dynamic> json) =>

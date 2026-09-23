@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +21,8 @@ import '../checkin/checkin_repository.dart';
 import '../checkin/checkin_screen.dart' show checkInSaveColor;
 import '../checkin/mood_grid.dart';
 import '../checkin/quadrant_glyph.dart';
+import '../habits/habit_repository.dart' show noteCompletesJournal;
+import '../sanctuary/habit_auto_complete.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
 import '../voice/voice_note_field.dart';
@@ -30,7 +34,9 @@ import 'history_providers.dart';
 /// One check-in (`/history/:id`): mood, time, tags, the private note, the
 /// voice note and its sync status. Edit within 24 h of making it (same id,
 /// never re-earns; voice can be added, replaced or removed); delete any
-/// time — a tombstone that keeps Starlight and glow days (F1).
+/// time — a tombstone that keeps Starlight and glow days (F1). An edit that
+/// leaves a note of 50+ characters ticks off today's Journal (F2), except on
+/// a check-in added for a past day (a backfill completes no habit).
 class CheckInDetailScreen extends ConsumerStatefulWidget {
   const CheckInDetailScreen({super.key, required this.id});
 
@@ -52,6 +58,9 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
 
   /// The last edit saved without its new voice note (storage full).
   bool _voiceDropped = false;
+
+  /// The last edit's note ticked off today's Journal (F2).
+  bool _journalLogged = false;
 
   /// Plays the saved voice note (loaded lazily on the first play).
   VoicePlaybackController? _playback;
@@ -158,6 +167,10 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     await draft.finishVoice();
     final note = draft.note.text;
     final noteEdited = draft.noteChanged;
+    final row = ref.read(checkInEntryProvider(widget.id)).value;
+    final backfill =
+        row != null &&
+        isBackfillRow(row, ref.read(timeContextProvider).timezone);
     var dropped = false;
     try {
       await ref
@@ -183,6 +196,14 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     AuraHaptics.light();
     if (!mounted) return;
     _endEdit();
+    // F2: writing a longer note is journaling (never for a backfill).
+    if (noteEdited && !backfill && noteCompletesJournal(note)) {
+      unawaited(
+        autoCompleteHabitToday(ref, PresetHabitKeys.journal).then((logged) {
+          if (logged && mounted) setState(() => _journalLogged = true);
+        }),
+      );
+    }
     // Saved first, then support if the edited words call for it (F1/F9).
     if (noteEdited && noteNeedsSupport(note)) {
       await showSupportSheet(context, crisis: true);
@@ -340,15 +361,27 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
         ),
         const SizedBox(height: AuraSpace.s),
         Text(
-          l.history_when(
-            historyDayLabel(
-              l,
-              localeTag,
-              LocalDay.parse(row.localDay),
-              time.dayOf(now),
-            ),
-            historyTimeLabel(context, row, time.timezone),
-          ),
+          isBackfillRow(row, time.timezone)
+              // Added later for a past day: its clock time is when it was
+              // added, so it isn't shown.
+              ? l.history_whenAddedLater(
+                  historyDayLabel(
+                    l,
+                    localeTag,
+                    LocalDay.parse(row.localDay),
+                    time.dayOf(now),
+                  ),
+                )
+              : l.history_when(
+                  historyDayLabel(
+                    l,
+                    localeTag,
+                    LocalDay.parse(row.localDay),
+                    time.dayOf(now),
+                  ),
+                  historyTimeLabel(context, row, time.timezone),
+                ),
+          key: const ValueKey('history-when'),
           style: t.bodyMedium?.copyWith(color: AuraColors.textSoft),
         ),
         if (row.tags.isNotEmpty) ...[
@@ -399,6 +432,18 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
             l.voice_dropped,
             key: const ValueKey('history-voice-dropped'),
             icon: Icons.mic_off_outlined,
+          ),
+        ],
+        if (_journalLogged) ...[
+          const SizedBox(height: AuraSpace.m),
+          Semantics(
+            liveRegion: true,
+            container: true,
+            child: _Line(
+              key: const ValueKey('history-journal-logged'),
+              icon: Icons.check_circle_outline_rounded,
+              text: l.habits_autoLogged(habitLabel(l, PresetHabitKeys.journal)),
+            ),
           ),
         ],
         const SizedBox(height: AuraSpace.xl),

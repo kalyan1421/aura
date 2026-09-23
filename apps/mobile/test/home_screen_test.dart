@@ -1,55 +1,31 @@
-import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/core/ids/ids.dart';
-import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/prefs/comfort_prefs.dart';
-import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
 import 'package:aura/src/core/sync/sync_service.dart';
-import 'package:aura/src/core/theme/app_theme.dart';
 import 'package:aura/src/features/account/account_providers.dart';
 import 'package:aura/src/features/auth/auth_repository.dart';
 import 'package:aura/src/features/checkin/checkin_repository.dart';
 import 'package:aura/src/features/home/home_screen.dart';
 import 'package:aura/src/features/progress/progress_view.dart';
+import 'package:aura/src/features/shell/app_shell.dart';
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 
 import 'helpers.dart';
+import 'shell_helpers.dart';
 
-/// Home inside a minimal router (history/check-in/settings are stubs).
-Widget _app(List<Override> overrides) {
-  const locale = Locale('en');
-  return ProviderScope(
-    overrides: overrides,
-    child: MaterialApp.router(
-      theme: buildAuraTheme(locale),
-      locale: locale,
-      supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        ...systemLocalizationDelegates,
-      ],
-      routerConfig: GoRouter(
-        initialLocation: Routes.home,
-        routes: [
-          GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
-          GoRoute(
-            path: Routes.history,
-            builder: (_, _) => const Scaffold(body: Text('history-page')),
-          ),
-          GoRoute(path: Routes.checkIn, builder: (_, _) => const Scaffold()),
-          GoRoute(path: Routes.settings, builder: (_, _) => const Scaffold()),
-        ],
-      ),
-    ),
-  );
-}
+/// Home as the app shell's first tab (the other tabs, check-in and
+/// settings are stand-ins; see shell_helpers.dart).
+Widget _app(List<Override> overrides) =>
+    shellTestApp(overrides, router: shellTestRouter());
+
+/// The top of the app shell's navigation bar: Home's fold.
+double _navTop(WidgetTester tester) =>
+    tester.getRect(find.byKey(AuraNavBar.barKey)).top;
 
 void _setSize(WidgetTester tester, Size logical) {
   tester.view.physicalSize = logical * 3;
@@ -160,7 +136,7 @@ void main() {
     });
 
     testWidgets('when everything fits, the avatar takes exactly the rest: '
-        'the last habit row ends at the check-in bar', (tester) async {
+        'the last habit row ends at the navigation bar', (tester) async {
       // Wide enough for the (wide) test font's chips to fit, short enough
       // that the avatar stays under its cap.
       _setSize(tester, const Size(800, 800));
@@ -171,6 +147,7 @@ void main() {
       expect(tester.takeException(), isNull);
 
       final fold = tester.getRect(find.byType(ListView)).bottom;
+      expect(fold, closeTo(_navTop(tester), 0.01));
       final last = tester.getRect(
         find.byKey(ValueKey('habit-${presetHabits.last.key}')),
       );
@@ -182,19 +159,23 @@ void main() {
     });
 
     for (final size in const [Size(375, 667), Size(390, 844)]) {
-      testWidgets('no overflow at ${size.width.toInt()}×${size.height.toInt()}',
-          (tester) async {
-        _setSize(tester, size);
-        final db = memoryDb();
-        await _checkIn(tester, db);
-        await tester.pumpWidget(_app(testOverrides(db: db)));
-        await settleIo(tester);
+      testWidgets(
+        'no overflow at ${size.width.toInt()}×${size.height.toInt()}',
+        (tester) async {
+          _setSize(tester, size);
+          final db = memoryDb();
+          await _checkIn(tester, db);
+          await tester.pumpWidget(_app(testOverrides(db: db)));
+          await settleIo(tester);
 
-        expect(tester.takeException(), isNull);
-        final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
-        expect(avatar.height, inInclusiveRange(140, 340));
-        await _close(tester);
-      });
+          expect(tester.takeException(), isNull);
+          final avatar = tester.getSize(
+            find.byKey(const ValueKey('home-avatar')),
+          );
+          expect(avatar.height, inInclusiveRange(140, 340));
+          await _close(tester);
+        },
+      );
     }
 
     // With the test font (twice as wide as a phone's) the chips need more
@@ -207,7 +188,7 @@ void main() {
       final name = '${size.width.toInt()}×${size.height.toInt()}';
       for (final newUser in [false, true]) {
         testWidgets('$name${newUser ? ' (new user)' : ''}: stats row, glow '
-            'card and the whole first habit row sit above the check-in bar '
+            'card and the whole first habit row sit above the navigation bar '
             'without scrolling', (tester) async {
           _setSize(tester, size);
           final db = memoryDb();
@@ -217,8 +198,7 @@ void main() {
           expect(tester.takeException(), isNull);
 
           final fold = tester.getRect(find.byType(ListView)).bottom;
-          final bar = tester.getRect(find.byKey(const ValueKey('home-checkin')));
-          expect(fold, lessThanOrEqualTo(bar.top));
+          expect(fold, lessThanOrEqualTo(_navTop(tester)));
           final keys = [
             'home-stage-progress',
             if (!newUser) 'home-glow-card',
@@ -226,7 +206,9 @@ void main() {
             // Every chip in the first row, not just the first one.
             for (final p in presetHabits)
               if (tester.getRect(find.byKey(ValueKey('habit-${p.key}'))).top ==
-                  tester.getRect(find.byKey(const ValueKey('habit-hydrate'))).top)
+                  tester
+                      .getRect(find.byKey(const ValueKey('habit-hydrate')))
+                      .top)
                 'habit-${p.key}',
           ];
           expect(keys, contains('habit-hydrate'));
@@ -235,7 +217,9 @@ void main() {
             expect(rect.bottom, lessThanOrEqualTo(fold), reason: key);
           }
           // The avatar stays the hero: never under its floor.
-          final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
+          final avatar = tester.getSize(
+            find.byKey(const ValueKey('home-avatar')),
+          );
           expect(avatar.height, greaterThanOrEqualTo(minAvatar));
           await _close(tester);
         });
@@ -244,8 +228,9 @@ void main() {
 
     for (final size in const [Size(375, 667), Size(390, 844)]) {
       testWidgets('200% text at ${size.width.toInt()}×${size.height.toInt()}: '
-          'nothing overflows and Home still scrolls to the habits',
-          (tester) async {
+          'nothing overflows and Home still scrolls to the habits', (
+        tester,
+      ) async {
         _setSize(tester, size);
         tester.platformDispatcher.textScaleFactorTestValue = 2;
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
@@ -267,8 +252,7 @@ void main() {
     }
 
     testWidgets('the decorative wordmark shows when "I need help now" fits '
-        'beside it, and steps aside when the label would wrap',
-        (tester) async {
+        'beside it, and steps aside when the label would wrap', (tester) async {
       // Wide enough for both on one line (the test font is wide).
       _setSize(tester, const Size(700, 900));
       final db = memoryDb();
@@ -319,15 +303,18 @@ void main() {
       );
       expect(bar.value, closeTo(0.15, 1e-9));
       expect(
-        find.bySemanticsLabel(RegExp('Spark, 15 of 100 Starlight toward Ember')),
+        find.bySemanticsLabel(
+          RegExp('Spark, 15 of 100 Starlight toward Ember'),
+        ),
         findsOneWidget,
       );
       semantics.dispose();
       await _close(tester);
     });
 
-    testWidgets('Constellation shows its stars instead of a bar',
-        (tester) async {
+    testWidgets('Constellation shows its stars instead of a bar', (
+      tester,
+    ) async {
       _setSize(tester, const Size(390, 844));
       final semantics = tester.ensureSemantics();
       final db = memoryDb();
@@ -353,8 +340,9 @@ void main() {
   });
 
   group('glow card (item 3)', () {
-    testWidgets('star icon, not fire; the rest-day row explains rest days',
-        (tester) async {
+    testWidgets('star icon, not fire; the rest-day row explains rest days', (
+      tester,
+    ) async {
       _setSize(tester, const Size(390, 844));
       final db = memoryDb();
       await tester.pumpWidget(
@@ -384,15 +372,19 @@ void main() {
         find.text('Every 4 glow days earn a rest day. You can keep up to 3.'),
         findsOneWidget,
       );
-      expect(find.text("Every glow day you've had stays with you."), findsOneWidget);
+      expect(
+        find.text("Every glow day you've had stays with you."),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const ValueKey('rest-close')));
       await _sheet(tester);
       expect(find.text('Rest days'), findsNothing);
       await _close(tester);
     });
 
-    testWidgets('Hide streak number keeps glow days and rest days',
-        (tester) async {
+    testWidgets('Hide streak number keeps glow days and rest days', (
+      tester,
+    ) async {
       _setSize(tester, const Size(390, 844));
       final db = memoryDb();
       await tester.pumpWidget(
@@ -413,8 +405,8 @@ void main() {
   });
 
   group('history line (item 4)', () {
-    testWidgets('"Your check-ins" when none today; opens history',
-        (tester) async {
+    testWidgets('"Your check-ins" when none today; opens the Insights tab '
+        '(the history)', (tester) async {
       _setSize(tester, const Size(390, 844));
       final db = memoryDb();
       await tester.pumpWidget(_app(testOverrides(db: db)));
@@ -425,7 +417,11 @@ void main() {
       expect(tester.getSize(line).height, greaterThanOrEqualTo(48));
       await tester.tap(line);
       await settleIo(tester);
-      expect(find.text('history-page'), findsOneWidget);
+      expect(find.text('insights-page'), findsOneWidget);
+      expect(
+        tester.getSemantics(find.byKey(AuraNavBar.tabKey(ShellTab.insights))),
+        isSemantics(isSelected: true, hasSelectedState: true),
+      );
       await _close(tester);
     });
 
@@ -444,8 +440,9 @@ void main() {
   });
 
   group('sync indicator (item 7)', () {
-    testWidgets('signed in and online: state, explanation and Sync now',
-        (tester) async {
+    testWidgets('signed in and online: state, explanation and Sync now', (
+      tester,
+    ) async {
       _setSize(tester, const Size(390, 844));
       final db = memoryDb();
       final sync = _KickSync()..setPhase(SyncPhase.idle);
@@ -461,8 +458,10 @@ void main() {
       await _sheet(tester);
 
       expect(find.byKey(const ValueKey('sync-sheet-status')), findsOneWidget);
-      expect(find.text('Everything is saved on this phone and in your account.'),
-          findsOneWidget);
+      expect(
+        find.text('Everything is saved on this phone and in your account.'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const ValueKey('sync-now')));
       await tester.pump();
       expect(sync.kicks, 1);
@@ -487,8 +486,10 @@ void main() {
       await _sheet(tester);
       expect(find.text('Saved on this phone'), findsWidgets);
       expect(
-        find.text("You're offline. Everything is safe on this phone and syncs "
-            "when you're back online."),
+        find.text(
+          "You're offline. Everything is safe on this phone and syncs "
+          "when you're back online.",
+        ),
         findsOneWidget,
       );
       expect(find.byKey(const ValueKey('sync-now')), findsNothing);
@@ -497,8 +498,9 @@ void main() {
   });
 
   group('account deletion hold', () {
-    testWidgets('a scheduled deletion shows "Keep my account?" on Home',
-        (tester) async {
+    testWidgets('a scheduled deletion shows "Keep my account?" on Home', (
+      tester,
+    ) async {
       _setSize(tester, const Size(390, 844));
       final db = memoryDb();
       await tester.pumpWidget(
@@ -523,7 +525,20 @@ void main() {
     });
   });
 
-  group('reduce motion (item 8)', () {
+  group("check-in entry (item 8): the shell's centre action, not a bar on "
+      'Home', () {
+    testWidgets('Home has no check-in bar of its own', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      await tester.pumpWidget(_app(testOverrides(db: memoryDb())));
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('home-checkin')), findsNothing);
+      expect(find.byKey(AuraNavBar.checkInKey), findsOneWidget);
+      await tester.tap(find.byKey(AuraNavBar.checkInKey));
+      await settleIo(tester);
+      expect(find.text('checkin-page'), findsOneWidget);
+      await _close(tester);
+    });
+
     Future<bool> pulses(WidgetTester tester, {required bool reduce}) async {
       _setSize(tester, const Size(390, 844));
       if (reduce) {
@@ -544,8 +559,8 @@ void main() {
       );
       await settleIo(tester);
       final animated = find
-          .ancestor(
-            of: find.byKey(const ValueKey('home-checkin')),
+          .descendant(
+            of: find.byKey(AuraNavBar.checkInKey),
             matching: find.byType(Animate),
           )
           .evaluate()

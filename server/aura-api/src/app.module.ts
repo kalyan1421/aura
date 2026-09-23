@@ -11,6 +11,8 @@ import { MediaModule } from './media/media.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProgressionModule } from './progression/progression.module';
 import { QueuesModule } from './queues/queues.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { SafetyModule } from './safety/safety.module';
 import { SyncModule } from './sync/sync.module';
 
 /** HTTP API (src/main.ts). Queues are producer-only here; processors run in src/worker.ts. */
@@ -29,6 +31,8 @@ import { SyncModule } from './sync/sync.module';
     DevicesModule,
     AccountModule,
     MediaModule,
+    RoomsModule, // F5 Mood Rooms — contracts/api/v1-rooms.md
+    SafetyModule, // F9 core safety (reports, blocks, standing; internal ModerationService)
   ],
 })
 export class AppModule {}

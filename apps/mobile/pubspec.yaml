@@ -55,6 +55,19 @@ dependencies:
   record: ^7.1.1
   audioplayers: ^6.8.1
 
+  # Time capsules (F4): photos from the system picker (PHPicker / Android
+  # Photo Picker, no library permission), resized to ≤ 2,048 px with EXIF/GPS
+  # stripped on device (package:image), and the offline date-unlock local
+  # notification at 10:00 local.
+  image_picker: ^1.2.3
+  image: ^4.10.1
+  flutter_local_notifications: ^22.3.1
+
+  # Social sign-in (F8 REQ-ACC-01): native ID tokens exchanged with Supabase
+  # (signInWithIdToken). docs/setup/social-sign-in.md.
+  google_sign_in: ^7.2.0
+  sign_in_with_apple: ^8.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,9 +1,11 @@
 import { Controller, Get, HttpStatus, Module, Res } from '@nestjs/common';
 import type { Response } from 'express';
+import { CapsuleUnlockModule } from './capsules/capsule-unlock.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
 import { DbService } from './db/db.service';
 import { probe } from './health/health.controller';
+import { NotificationsModule } from './notifications/notifications.module';
 import { QueuesModule } from './queues/queues.module';
 import { QueuesService } from './queues/queues.service';
 import { WorkerHostService } from './queues/worker-host.service';
@@ -35,7 +37,7 @@ class WorkerHealthController {
 
 /** Worker process (src/worker.ts): BullMQ processors + tiny health endpoint. No auth, no API routes. */
 @Module({
-  imports: [ConfigModule, DbModule, QueuesModule],
+  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule],
   controllers: [WorkerHealthController],
   providers: [WorkerHostService],
 })

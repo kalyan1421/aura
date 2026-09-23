@@ -137,7 +137,74 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
       });
     }
   },
+  'capsules.json': (json) {
+    for (final c in _cases(json)) {
+      final kind = c['kind'] as String;
+      test('$kind: ${c['name']}', () {
+        switch (kind) {
+          case 'window':
+            expect(
+              isValidUnlockDate(
+                _ts(c['sealedAt']),
+                c['tz'] as String,
+                c['unlockLocalDate'] as String,
+              ),
+              c['expect'],
+            );
+          case 'unlock_at':
+            final at = capsuleUnlockAt(
+              LocalDay.parse(c['localDate'] as String),
+              c['tz'] as String,
+            );
+            expect(at.isUtc, isTrue);
+            expect(at, _ts(c['expect']));
+          case 'trigger':
+            final pick = pickTrigger(
+              (c['capsules'] as List<dynamic>).cast<Map<String, dynamic>>().map(
+                _triggerCapsule,
+              ),
+              _triggerCheckIn(c['checkIn'] as Map<String, dynamic>),
+            );
+            final want = c['expect'] as Map<String, dynamic>;
+            expect(
+              pick,
+              TriggerPick(
+                fire: want['fire'] as String?,
+                hold: want['hold'] as String?,
+              ),
+            );
+          default:
+            fail('Unknown capsules.json case kind "$kind"');
+        }
+      });
+    }
+  },
 };
+
+DateTime? _tsOrNull(Object? s) => s == null ? null : _ts(s);
+
+TriggerCapsule _triggerCapsule(Map<String, dynamic> j) => TriggerCapsule(
+  id: j['id'] as String,
+  unlockType: CapsuleUnlockType.byName(j['unlockType'] as String)!,
+  triggerMoodId: j['triggerMoodId'] as String?,
+  triggerQuadrant: j['triggerQuadrant'] == null
+      ? null
+      : quadrantByName(j['triggerQuadrant'] as String),
+  sealedAt: _ts(j['sealedAt']),
+  armedAt: _tsOrNull(j['armedAt']),
+  firedAt: _tsOrNull(j['firedAt']),
+  openedAt: _tsOrNull(j['openedAt']),
+  deletedAt: _tsOrNull(j['deletedAt']),
+  cooldownUntil: _tsOrNull(j['cooldownUntil']),
+);
+
+TriggerCheckIn _triggerCheckIn(Map<String, dynamic> j) => TriggerCheckIn(
+  moodId: j['moodId'] as String,
+  quadrant: quadrantByName(j['quadrant'] as String)!,
+  deviceTs: _ts(j['deviceTs']),
+  live: j['live'] as bool,
+  crisis: j['crisis'] as bool,
+);
 
 void main() {
   final files =

@@ -12,11 +12,21 @@ abstract final class Entities {
   static const String checkIn = 'check_in';
   static const String habit = 'habit';
   static const String habitLog = 'habit_log';
+
+  /// F4 time capsules (contracts/api/v1-capsules.md §2): ops [Ops.seal],
+  /// [Ops.open], [Ops.fire], [Ops.rearm], [Ops.delete].
+  static const String capsule = 'capsule';
 }
 
 abstract final class Ops {
   static const String upsert = 'upsert';
   static const String delete = 'delete';
+
+  // Capsule ops.
+  static const String seal = 'seal';
+  static const String open = 'open';
+  static const String fire = 'fire';
+  static const String rearm = 'rearm';
 }
 
 /// The local outbox. Writers call [enqueue] inside the same transaction as
@@ -151,6 +161,28 @@ class OutboxRepository {
     return row?.nextAttemptAt;
   }
 
+  /// Whether a mutation for [entityId] still waits in the outbox (a pulled
+  /// row must not overwrite what this phone hasn't sent yet).
+  Future<bool> hasPending(String entityId) async {
+    final row =
+        await (_db.select(_db.outbox)
+              ..where((t) => t.entityId.equals(entityId))
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
+  }
+
+  /// Removes mutations that must never be sent (e.g. the seal of a capsule
+  /// deleted before it left the phone). Not dead-lettered: nothing failed.
+  Future<void> drop(List<OutboxRow> rows) async {
+    if (rows.isEmpty) return;
+    await _db.transaction(() async {
+      for (final r in rows) {
+        await (_db.delete(_db.outbox)..where((t) => t.seq.equals(r.seq))).go();
+      }
+    });
+  }
+
   /// The server accepted (or already had) these: drop them and mark the
   /// records synced.
   Future<void> acknowledge(List<OutboxRow> rows) async {
@@ -158,6 +190,20 @@ class OutboxRepository {
     await _db.transaction(() async {
       for (final r in rows) {
         await (_db.delete(_db.outbox)..where((t) => t.seq.equals(r.seq))).go();
+        if (r.entity == Entities.capsule) {
+          // The seal is on the server: the capsule is no longer local-only.
+          if (r.op == Ops.seal) {
+            await (_db.update(
+              _db.capsules,
+            )..where((t) => t.id.equals(r.entityId))).write(
+              const CapsulesCompanion(
+                synced: Value(true),
+                rejected: Value(null),
+              ),
+            );
+          }
+          continue;
+        }
         if (r.op != Ops.upsert) continue;
         switch (r.entity) {
           case Entities.checkIn:

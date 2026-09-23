@@ -293,8 +293,10 @@ describe('SyncService (in-memory repo)', () => {
   });
 
   it.each<[string, () => unknown, string]>([
-    ['unknown entity', () => ({ ...checkIn(), entity: 'capsule' }), 'unknown_entity'],
+    ['unknown entity', () => ({ ...checkIn(), entity: 'not_an_entity' }), 'unknown_entity'],
     ['unknown op', () => ({ ...checkIn(), op: 'patch' }), 'unknown_op'],
+    ['an op the entity does not support', () => ({ ...checkIn(), op: 'seal' }), 'unknown_op'],
+    ['capsule entity without the capsule handler', () => ({ ...checkIn(), entity: 'capsule', op: 'seal' }), 'unknown_entity'],
     ['bad payload', () => ({ ...checkIn(), payload: { id: 'nope', moodId: 'calm' } }), 'invalid_payload'],
     ['missing deviceTs on a new event', () => ({ ...checkIn(), deviceTs: undefined }), 'invalid_payload'],
     ['habit_log for an unknown habit', () => log(uuidv7()), 'habit_not_found'],

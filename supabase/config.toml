@@ -97,7 +97,9 @@ enabled = true
 # Port to use for the email testing server web interface.
 port = 55524
 # Uncomment to expose additional ports for testing user applications that send emails.
-# smtp_port = 55525
+# Aura: Mailpit's SMTP on the host, so NestJS can send grievance acknowledgements, replies and paging emails
+# (SMTP_URL=smtp://127.0.0.1:55525; docs/setup/admin-console.md). Applies after `supabase stop && supabase start`.
+smtp_port = 55525
 # pop3_port = 55526
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
@@ -280,9 +282,11 @@ auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 max_enrolled_factors = 10
 
 # Control MFA via App Authenticator (TOTP)
+# Aura: on for the admin console's second factor (PRD 19, REQ-ADM-01: staff sessions must reach AAL2 with TOTP;
+# docs/setup/admin-console.md). The app never asks users to enroll. TOTP MFA is free on hosted Supabase.
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+enroll_enabled = true
+verify_enabled = true
 
 # Configure MFA via Phone Messaging
 [auth.mfa.phone]
@@ -300,29 +304,45 @@ max_frequency = "5s"
 # Use an external OAuth provider. The full list of providers are: `apple`, `azure`, `bitbucket`,
 # `discord`, `facebook`, `github`, `gitlab`, `google`, `keycloak`, `linkedin_oidc`, `notion`, `twitch`,
 # `twitter`, `x`, `slack`, `spotify`, `workos`, `zoom`.
+# Aura (F8 REQ-ACC-01; docs/setup/social-sign-in.md): native Sign in with Apple / Google. The app sends
+# the provider's ID token to POST /auth/v1/token?grant_type=id_token (signInWithIdToken); Supabase checks
+# the token's audience against `client_id` (a comma-separated list) and its nonce. Values come from the
+# gitignored supabase/.env (the CLI loads it). While a variable is unset the CLI prints
+# "WARN: environment variable is unset" and still starts; the provider then answers "Unacceptable
+# audience", which the app shows as "That sign-in option isn't ready yet". Changes apply only after
+# `supabase stop && supabase start`.
 [auth.external.apple]
-enabled = false
+enabled = true
+# Comma-separated. iOS native: the bundle id `com.akvega.aura`. Android / web (browser OAuth): put the
+# Services ID FIRST (it's the OAuth client_id), then the bundle id.
 client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
-# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
+# Browser OAuth only (Android): the client-secret JWT signed with the Sign in with Apple key. Native iOS
+# sign-in doesn't need it. DO NOT commit it.
 secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
 # Overrides the default auth redirectUrl.
 redirect_uri = ""
 # Overrides the default auth provider URL. Used to support self-hosted gitlab, single-tenant Azure,
 # or any other third-party OIDC providers.
 url = ""
-# If enabled, the nonce check will be skipped. Required for local sign in with Google auth.
+# The app sends SHA-256(raw nonce) to Apple and the raw nonce to Supabase, so the check stays on.
 skip_nonce_check = false
-# If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
+# Apple always returns the email when the email scope is requested (possibly a private relay address).
 email_optional = false
 
 [auth.external.google]
-enabled = false
+enabled = true
+# Comma-separated, WEB client id FIRST (browser OAuth uses the first; Android ID tokens carry it as their
+# audience), then the iOS client id (iOS tokens may carry it). All from the same Google Cloud project.
 client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
-# DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
+# The Web client's secret: browser OAuth only; native ID-token sign-in doesn't use it. DO NOT commit it.
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 redirect_uri = ""
 url = ""
-# Native Google sign-in on iOS/Android passes an id_token with a nonce; keep the check on.
+# Keep the nonce check ON, for iOS too. Supabase's guide says to skip it on iOS because GoogleSignIn-iOS
+# used to put its own random nonce in the token; google_sign_in_ios >= 6.1 (GoogleSignIn-iOS 9) passes the
+# app's nonce through, as Credential Manager does on Android, so the token carries SHA-256(raw nonce) and
+# the app sends the raw nonce. Skipping the check would let a Google token issued to any app with an
+# accepted client id be replayed here.
 skip_nonce_check = false
 email_optional = false
 

@@ -25,6 +25,23 @@ const Duration checkInEditWindow = Duration(hours: 24);
 /// How many of the person's own custom tags the picker offers again.
 const int maxRecentCustomTags = 10;
 
+/// A past check-in (F1 backfill) can be added for up to this many Aura days
+/// back. The server refuses older ones (`backfill_too_old`).
+const int maxBackfillDays = 7;
+
+/// Whether a check-in for [day] can be added on [today] as a backfill:
+/// 1–[maxBackfillDays] Aura days back (today itself is a live check-in).
+bool isBackfillDay(LocalDay day, LocalDay today) {
+  final back = today.daysSince(day);
+  return back >= 1 && back <= maxBackfillDays;
+}
+
+/// [CheckInRepository.save] with a `backfillDay` outside [isBackfillDay]
+/// (e.g. the 04:00 rollover moved it to 8 days back). Nothing is saved.
+class BackfillOutOfRange implements Exception {
+  const BackfillOutOfRange();
+}
+
 /// True while [row] may still be edited at [now]. A row whose server-side
 /// note isn't readable on this phone yet is not editable: the edit would
 /// overwrite that note.
@@ -84,6 +101,14 @@ class CheckInRepository {
   /// [voice] is a finished draft recording (≤ 60 s). It is moved into the
   /// voice store; if that fails the check-in still saves, without voice, and
   /// [onVoiceDropped] runs.
+  ///
+  /// [backfillDay]: a past Aura day, for a check-in added later from History
+  /// (F1 backfill). It is stored with that `local_day` but stamped now
+  /// (`device_ts`, `tz`), so by RULES.md §2 it is not a live event: it earns
+  /// no Starlight and is no active-day evidence (no streak effect), locally
+  /// and on the server, which stores it as a backfill. Throws
+  /// [BackfillOutOfRange] (nothing saved) unless it is 1–[maxBackfillDays]
+  /// days back.
   Future<CheckInRow> save({
     required String id,
     required Mood mood,
@@ -91,9 +116,14 @@ class CheckInRepository {
     String? note,
     VoiceClip? voice,
     void Function()? onVoiceDropped,
+    LocalDay? backfillDay,
   }) async {
     final now = _time.now();
-    final day = _time.dayOf(now);
+    final today = _time.dayOf(now);
+    if (backfillDay != null && !isBackfillDay(backfillDay, today)) {
+      throw const BackfillOutOfRange();
+    }
+    final day = backfillDay ?? today;
     final text = note?.trim();
     final hasNote = text != null && text.isNotEmpty;
     final cleanTags = _cleanTags(tags);

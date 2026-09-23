@@ -10,9 +10,14 @@ export const MAX_TAG_CHARS = 20;
 /** PRD F2: habit names ≤ 30 characters (grapheme clusters) → else `habit_name_too_long`. */
 export const MAX_HABIT_NAME_CHARS = 30;
 
-export const ENTITIES = ['check_in', 'habit', 'habit_log'] as const;
+/** F14: `notification_prefs` (op `upsert`, a patch of settings) — contracts/api/v1-notifications.md. */
+export const ENTITIES = ['check_in', 'habit', 'habit_log', 'capsule', 'notification_prefs'] as const;
 export type Entity = (typeof ENTITIES)[number];
-export const OPS = ['upsert', 'delete'] as const;
+/**
+ * `upsert` / `delete` for check-ins and habits; F4 capsules use `seal` / `open` / `fire` / `rearm` / `delete`
+ * (contracts/api/v1-capsules.md). An op the entity doesn't support → `unknown_op`.
+ */
+export const OPS = ['upsert', 'delete', 'seal', 'open', 'fire', 'rearm'] as const;
 export type Op = (typeof OPS)[number];
 
 const uuid = z.string().regex(UUID_RE, 'must be a UUID').transform((s) => s.toLowerCase());

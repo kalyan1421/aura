@@ -329,7 +329,7 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
     it('validation reasons: habit_not_found, unknown_entity, invalid_payload, backfill_too_old, invalid_mutation_id', async () => {
       const muts = [
         log(uuidv7()),
-        { ...checkIn(), entity: 'capsule' },
+        { ...checkIn(), entity: 'not_an_entity' },
         { ...checkIn(), payload: { id: 'nope', moodId: 'calm' } },
         checkIn('calm', { localDay: addDays(today(), -8) }),
         { ...checkIn(), id: 'not-a-uuid' },
@@ -898,12 +898,34 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
     const populate = async (u: TestUser): Promise<string[]> => {
       await onboard(u).expect(200);
       const h = uuidv7();
-      const r = await pushAs(u, [checkIn(), habit(h, 'breathe'), log(h)]).expect(200);
-      expect(r.body.results.map((x: { status: string }) => x.status)).toEqual(['applied', 'applied', 'applied']);
+      // F4: a trigger capsule (ciphertext only; no unlock job, unlike a date capsule)
+      const capsule = {
+        id: uuidv7(),
+        entity: 'capsule',
+        op: 'seal',
+        deviceTs: now(),
+        payload: { id: uuidv7(), payloadCt: Buffer.from('capsule-ciphertext').toString('base64'), unlockType: 'mood', triggerQuadrant: 'rain' },
+      };
+      const r = await pushAs(u, [checkIn(), habit(h, 'breathe'), log(h), capsule]).expect(200);
+      expect(r.body.results.map((x: { status: string }) => x.status)).toEqual(['applied', 'applied', 'applied', 'applied']);
       await as(u, http().get('/v1/keys/data-key')).expect(200);
       await as(u, http().put('/v1/devices')).send({ token: fcmToken(), platform: 'ios' }).expect(204);
       await db.query('insert into public.notification_prefs (user_id, reminder_time) values ($1, $2)', [u.id, '21:00']);
       await db.query(`insert into public.user_consents (user_id, purpose, policy_version) values ($1, 'core', 'v1')`, [u.id]);
+      // F5/F9: a room membership (through the API), plus a sanction and a strike as the moderation service writes them.
+      await as(u, http().post('/v1/rooms/match')).send({ quadrant: 'storm', moodId: 'anxious' }).expect(200);
+      await db.query(`insert into public.sanctions (user_id, kind, reason_code, source) values ($1, 'warning', 'e2e', 'moderator')`, [u.id]);
+      await db.query(
+        `insert into public.strikes (user_id, reason_code, created_by, expires_at) values ($1, 'e2e', 'staff:e2e', now() + interval '90 days')`,
+        [u.id],
+      );
+      // F8 follow-ups: an under-18 platform-signal flag and a (sealed-looking) Sign in with Apple token, as the API
+      // writes them (test/e2e/account-followups.e2e-spec.ts covers the real flows).
+      await db.query(`insert into public.minor_signals (user_id, minor_until) values ($1, current_date + 1)`, [u.id]);
+      await db.query(`insert into public.apple_auth_tokens (user_id, client_id, wrapped_refresh_token) values ($1, 'com.akvega.aura', $2)`, [
+        u.id,
+        randomBytes(64).toString('base64'),
+      ]);
       const paths = [`${u.id}/voice/${uuidv7()}.bin`, `${u.id}/capsules/${uuidv7()}/0.bin`];
       for (const p of paths) await upload(p);
       return paths;

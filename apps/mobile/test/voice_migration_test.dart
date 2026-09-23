@@ -70,9 +70,10 @@ void main() {
     addTearDown(db.close);
 
     final c = await db.select(db.checkIns).getSingle(); // opens + migrates
-    expect(db.schemaVersion, 4);
+    // Migrates through v4 to the current version (v5 added capsules).
+    expect(db.schemaVersion, greaterThanOrEqualTo(4));
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.data.values.single, 4);
+    expect(version.data.values.single, db.schemaVersion);
 
     expect(c.id, 'c1');
     expect(c.note, 'tea');

@@ -1,8 +1,9 @@
-import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { MediaStoreError, MediaStoreUnavailableError, PrivateMediaStore } from '../account/private-media';
+import { CapsuleMediaGate } from '../capsules/capsule-media.gate';
 import { ApiError } from '../common/api-error';
 import { parseOrThrow } from '../common/zod';
-import { isOwnMediaPath, voiceObjectPath } from './media-paths';
+import { CAPSULE_PHOTO_SLOTS, capsuleIdOfPath, capsuleObjectPath, isOwnMediaPath, voiceObjectPath } from './media-paths';
 import {
   DOWNLOAD_URL_TTL_SECONDS,
   downloadUrlRequestSchema,
@@ -10,6 +11,7 @@ import {
   UPLOAD_URL_TTL_SECONDS,
   uploadUrlRequestSchema,
   type DownloadUrlResponse,
+  type UploadUrlRequest,
   type UploadUrlResponse,
 } from './media.schema';
 
@@ -26,16 +28,36 @@ const isStorageOutage = (err: unknown): err is Error =>
 const earliest = (ms: number, d: Date): string => new Date(Math.min(ms, d.getTime())).toISOString();
 
 /**
- * F1 voice notes (contracts/api/v1.md "Media: voice notes"). Clients never touch the private bucket:
- * this service signs one short-lived URL per object with the service role key. The bytes are
- * client-encrypted (DS-1); nothing here ever sees plaintext, and paths/ids are never logged.
+ * `index` belongs to `capsule_photo` only (required there, an integer slot 0–2); every other kind must omit it
+ * (or send null). Returns the object path for the request.
+ */
+function objectPathFor(userId: string, req: UploadUrlRequest): string {
+  const index = req.index;
+  if (req.kind !== 'capsule_photo') {
+    if (index !== undefined && index !== null) throw ApiError.badRequest('invalid_request', `index: only for capsule_photo`);
+    return req.kind === 'voice' ? voiceObjectPath(userId, req.recordId) : capsuleObjectPath(userId, req.recordId, 'voice');
+  }
+  if (typeof index !== 'number' || !Number.isInteger(index) || index < 0 || index >= CAPSULE_PHOTO_SLOTS) {
+    throw ApiError.badRequest('invalid_request', `index: an integer 0–${CAPSULE_PHOTO_SLOTS - 1} is required for capsule_photo`);
+  }
+  return capsuleObjectPath(userId, req.recordId, `photo-${index}`);
+}
+
+/**
+ * F1 voice notes (contracts/api/v1.md "Media: voice notes") and F4 capsule media (contracts/api/v1-capsules.md §5).
+ * Clients never touch the private bucket: this service signs one short-lived URL per object with the service role
+ * key. The bytes are client-encrypted (DS-1); nothing here ever sees plaintext, and paths/ids are never logged.
  */
 @Injectable()
 export class MediaService implements OnModuleInit {
   private readonly logger = new Logger('Media');
 
-  /** Provided globally by QueuesModule (the same Storage client the worker's account purge uses). */
-  constructor(private readonly store: PrivateMediaStore) {}
+  constructor(
+    /** Provided globally by QueuesModule (the same Storage client the worker's account purge uses). */
+    private readonly store: PrivateMediaStore,
+    /** "Sealed means sealed" for capsule slots (CapsulesModule). Without it capsule kinds answer 503. */
+    @Optional() private readonly capsules?: CapsuleMediaGate,
+  ) {}
 
   onModuleInit(): void {
     if (!this.store.configured) {
@@ -45,14 +67,21 @@ export class MediaService implements OnModuleInit {
     }
   }
 
-  /** `200 { path, uploadUrl, expiresAt }` — an upsert URL for `<user_id>/voice/<recordId>`. */
+  /**
+   * `200 { path, uploadUrl, expiresAt }` — an upsert URL for `<user_id>/voice/<recordId>` or a capsule slot
+   * `<user_id>/capsules/<recordId>/voice|photo-<index>` (`409 capsule_sealed` / `capsule_deleted`, see CapsuleMediaGate).
+   */
   async uploadUrl(userId: string, body: unknown, now = new Date()): Promise<UploadUrlResponse> {
     const req = parseOrThrow(uploadUrlRequestSchema, body);
+    const path = objectPathFor(userId, req);
     const max = MAX_MEDIA_BYTES[req.kind];
     if (req.bytes > max) throw ApiError.badRequest('media_too_large', `bytes: at most ${max} for ${req.kind}`);
     if (!Number.isInteger(req.bytes)) throw ApiError.badRequest('invalid_request', 'bytes: must be an integer');
+    if (req.kind !== 'voice') {
+      if (!this.capsules) throw mediaUnavailable();
+      await this.capsules.checkUpload(userId, req.recordId, path);
+    }
 
-    const path = voiceObjectPath(userId, req.recordId);
     const signed = await this.storage(() => this.store.signUpload(path));
     // Storage's own token lifetime is project-wide (2 h by default); the client is told the shorter one.
     return { path, uploadUrl: signed.url, expiresAt: earliest(now.getTime() + UPLOAD_URL_TTL_SECONDS * 1000, signed.expiresAt) };
@@ -62,6 +91,8 @@ export class MediaService implements OnModuleInit {
   async downloadUrl(userId: string, body: unknown, now = new Date()): Promise<DownloadUrlResponse> {
     const { path } = parseOrThrow(downloadUrlRequestSchema, body);
     if (!isOwnMediaPath(userId, path)) throw mediaNotFound();
+    // A deleted capsule never shows content again, even if its objects outlive the best-effort cleanup.
+    if (capsuleIdOfPath(userId, path) && (await this.capsules?.isDeletedCapsulePath(userId, path))) throw mediaNotFound();
     const signed = await this.storage(() => this.store.signDownload(path, DOWNLOAD_URL_TTL_SECONDS));
     if (!signed) throw mediaNotFound();
     return { downloadUrl: signed.url, expiresAt: earliest(now.getTime() + DOWNLOAD_URL_TTL_SECONDS * 1000, signed.expiresAt) };

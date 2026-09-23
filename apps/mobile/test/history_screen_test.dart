@@ -157,6 +157,63 @@ void main() {
     await done(tester);
   });
 
+  testWidgets('as the Insights tab: no dead Back; Settings opens from the '
+      'top bar, and help is still within the first three focus stops', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    final semantics = tester.ensureSemantics();
+    final tabs = GoRouter(
+      initialLocation: '/insights',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (_, _, shell) => shell,
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/insights',
+                  builder: (_, _) => const HistoryScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(path: '/settings', builder: (_, _) => const Text('settings')),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: testOverrides(db: memoryDb()),
+        child: MaterialApp.router(
+          theme: buildAuraTheme(const Locale('en')),
+          locale: const Locale('en'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            ...systemLocalizationDelegates,
+          ],
+          routerConfig: tabs,
+        ),
+      ),
+    );
+    await settleIo(tester);
+    expect(find.byType(BackButton), findsNothing);
+    expect(find.byKey(const ValueKey('shell-settings')), findsOneWidget);
+    final order = tester.semantics.simulatedAccessibilityTraversal().toList();
+    final helpAt = order.indexWhere(
+      (n) => n.getSemanticsData().label.contains('I need help now'),
+    );
+    expect(helpAt, inInclusiveRange(0, 2));
+    await tester.tap(find.byKey(const ValueKey('shell-settings')));
+    await tester.pumpAndSettle();
+    expect(find.text('settings'), findsOneWidget);
+    semantics.dispose();
+    await done(tester);
+  });
+
   testWidgets('empty: calm copy and a Check in button', (tester) async {
     await pumpApp(tester, memoryDb());
     expect(

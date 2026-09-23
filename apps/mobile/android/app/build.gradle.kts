@@ -10,6 +10,9 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        // flutter_local_notifications (F4 capsule notices) needs Java 8+
+        // library desugaring for its scheduling on older Android versions.
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -46,4 +49,12 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Play Age Signals (beta), read before sign-in (F8 REQ-ACC-04;
+    // MainActivity "com.akvega.aura/age_signals"). Shows no UI.
+    implementation("com.google.android.play:age-signals:0.0.4")
+    // flutter_local_notifications (see compileOptions above).
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

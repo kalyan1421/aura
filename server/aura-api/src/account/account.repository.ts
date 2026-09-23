@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { Queryable } from '../db/db';
+import { ACTIVE_SANCTION_SQL } from '../safety/safety-types';
 
 export interface DeletionRow {
   requestedAt: Date;
@@ -14,6 +15,19 @@ export type CancelResult = 'cancelled' | 'none' | 'due';
  */
 export async function isDeletionPending(q: Queryable, userId: string): Promise<boolean> {
   const r = await q.query('select 1 from public.account_deletions where user_id = $1', [userId]);
+  return (r.rowCount ?? 0) > 0;
+}
+
+/**
+ * Was the account closed for breaking the rules (an active `account_ban` sanction, F9 / 19 admin console)? The
+ * account-closed guard runs it on every authenticated request (src/auth/account-closed.guard.ts): one lookup on the
+ * partial index `sanctions_user_idx (user_id, kind) where lifted_at is null`.
+ */
+export async function isAccountClosed(q: Queryable, userId: string): Promise<boolean> {
+  const r = await q.query(
+    `select 1 from public.sanctions s where s.user_id = $1 and s.kind = 'account_ban' and ${ACTIVE_SANCTION_SQL('s')} limit 1`,
+    [userId],
+  );
   return (r.rowCount ?? 0) > 0;
 }
 

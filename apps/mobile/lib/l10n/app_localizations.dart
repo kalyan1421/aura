@@ -510,13 +510,13 @@ abstract class AppLocalizations {
   /// **'That email doesn\'t look quite right.'**
   String get signin_invalidEmail;
 
-  /// Sign in with Apple. Only shown when social sign-in is enabled for the build.
+  /// Sign in with Apple button title. Apple allows only 'Sign in with Apple', 'Sign up with Apple' or 'Continue with Apple' (localized, same meaning). Keep 'Apple' in Latin script. Shown only when Apple sign-in is set up for the build.
   ///
   /// In en, this message translates to:
   /// **'Continue with Apple'**
   String get signin_apple;
 
-  /// Sign in with Google. Only shown when social sign-in is enabled for the build.
+  /// Sign in with Google button label. Google allows only 'Sign in with Google', 'Sign up with Google' or 'Continue with Google' (localized, same meaning). Keep 'Google' in Latin script. Shown only when Google sign-in is set up for the build.
   ///
   /// In en, this message translates to:
   /// **'Continue with Google'**
@@ -1403,6 +1403,558 @@ abstract class AppLocalizations {
   /// **'This account is already being deleted, so it can\'t be kept any more. This phone will be cleared and signed out.'**
   String get acct_inProgress;
 
+  /// Divider between the email sign-in and the Apple / Google buttons. Lower case, one word.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get signin_or;
+
+  /// Apple or Google sign-in isn't set up (server or build). Calm, no blame; points to email.
+  ///
+  /// In en, this message translates to:
+  /// **'That sign-in option isn\'t ready yet. Use your email for now.'**
+  String get signin_socialNotReady;
+
+  /// Apple or Google sign-in couldn't reach the server (no connection). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'It looks like you\'re offline. Try again when you\'re connected.'**
+  String get signin_socialOffline;
+
+  /// Title of the time-capsules area (Sanctuary section and the capsules list). Notes the person seals for their future self.
+  ///
+  /// In en, this message translates to:
+  /// **'Future you'**
+  String get capsules_title;
+
+  /// Empty state of the capsules list and the Sanctuary entry (PRD 14-states). Inviting, never pushy.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to future you. Seal it for a date, or for a feeling.'**
+  String get capsules_emptyBody;
+
+  /// Button in the empty capsules list that opens the composer (PRD 14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Seal your first capsule'**
+  String get capsules_emptyCta;
+
+  /// Button that opens the capsule composer when the person already has capsules.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a capsule'**
+  String get capsules_new;
+
+  /// Sanctuary entry: how many capsules are sealed (waiting).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing sealed yet} =1{1 capsule sealed} other{{count} capsules sealed}}'**
+  String capsules_entryCount(int count);
+
+  /// Sanctuary entry: capsules whose time has come. Calm, no urgency.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 is ready to open} other{{count} are ready to open}}'**
+  String capsules_entryReady(int count);
+
+  /// List section: capsules that can be opened now.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to open'**
+  String get capsules_sectionReady;
+
+  /// List section: capsules still sealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed'**
+  String get capsules_sectionSealed;
+
+  /// List section: capsules already opened (they can be read again).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened'**
+  String get capsules_sectionOpened;
+
+  /// A sealed date capsule (PRD 14-states). date = e.g. '12 Oct 2027'. Reassuring: it is safe and waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed until {date}. It\'ll keep.'**
+  String capsules_sealedUntil(String date);
+
+  /// A sealed mood-trigger capsule in the list. Never names the feeling here.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a feeling'**
+  String get capsules_waitingFeeling;
+
+  /// A capsule in the list that can be opened now.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready when you are'**
+  String get capsules_readyRow;
+
+  /// Shown instead of a title when the person left the title empty. date = the day it was sealed.
+  ///
+  /// In en, this message translates to:
+  /// **'A capsule from {date}'**
+  String capsules_untitled(String date);
+
+  /// Shown instead of the title when this phone can't read it yet (e.g. a new phone before the key arrives).
+  ///
+  /// In en, this message translates to:
+  /// **'A sealed capsule'**
+  String get capsules_lockedTitle;
+
+  /// When a capsule was sealed. date = e.g. '8 Oct 2026'.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed {date}'**
+  String capsules_sealedOn(String date);
+
+  /// When a capsule was opened. date = e.g. '8 Oct 2027'.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened {date}'**
+  String capsules_openedOn(String date);
+
+  /// Card in the list: an unsealed capsule draft kept on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your draft is here'**
+  String get capsules_draftTitle;
+
+  /// Under 'Your draft is here'.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up where you left off.'**
+  String get capsules_draftBody;
+
+  /// Title of the capsule composer.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to future you'**
+  String get capsules_composeTitle;
+
+  /// Capsule title field (up to 60 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get capsules_titleLabel;
+
+  /// Helper under the title field: the title is the only thing visible before it opens.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on the capsule while it\'s sealed.'**
+  String get capsules_titleHelper;
+
+  /// Capsule text field (up to 2,000 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'Your note'**
+  String get capsules_textLabel;
+
+  /// Helper under the capsule text field. Private.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you will read this, when it opens.'**
+  String get capsules_textHelper;
+
+  /// Section header for capsule photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get capsules_photosTitle;
+
+  /// Opens the system photo picker (no permission needed).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get capsules_addPhoto;
+
+  /// Under 'Add a photo': at most 3 photos; EXIF/GPS are stripped on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 3. Location and camera details are removed.'**
+  String get capsules_photoHint;
+
+  /// While a picked photo is resized and cleaned on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding your photo…'**
+  String get capsules_photoAdding;
+
+  /// A picked photo could not be read or stored. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That photo couldn\'t be added. Try another one.'**
+  String get capsules_photoFailed;
+
+  /// Screen-reader label / tooltip of a photo's remove button.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo {index}'**
+  String capsules_photoRemove(int index);
+
+  /// Screen-reader label of a capsule photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo {index} of {count}'**
+  String capsules_photoSemantic(int index, int count);
+
+  /// Hint under the record button in the capsule composer: the 2-minute limit and that it is private.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 2 minutes. Only you can hear it.'**
+  String get capsules_voiceHint;
+
+  /// Calm note after a capsule recording stopped by itself at 2:00 (REQ-CAP-05).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s the full two minutes, so recording stopped. Your voice note is ready.'**
+  String get capsules_voiceLimit;
+
+  /// Section header: choose a date or a feeling.
+  ///
+  /// In en, this message translates to:
+  /// **'When should it open?'**
+  String get capsules_unlockTitle;
+
+  /// Choice: the capsule opens on a date.
+  ///
+  /// In en, this message translates to:
+  /// **'On a date'**
+  String get capsules_unlockDate;
+
+  /// Choice: the capsule opens on the next check-in with a chosen mood.
+  ///
+  /// In en, this message translates to:
+  /// **'For a feeling'**
+  String get capsules_unlockFeeling;
+
+  /// Opens the date picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get capsules_pickDate;
+
+  /// Opens the date picker again.
+  ///
+  /// In en, this message translates to:
+  /// **'Change date'**
+  String get capsules_changeDate;
+
+  /// The chosen unlock moment, e.g. 'Opens 12 Oct 2027 at 10:00 AM'.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens {date} at {time}'**
+  String capsules_dateChosen(String date, String time);
+
+  /// The allowed range for a date capsule (REQ-CAP-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Any day from a week to five years from now.'**
+  String get capsules_dateHelp;
+
+  /// Heading inside the date picker.
+  ///
+  /// In en, this message translates to:
+  /// **'It opens at 10:00 that day'**
+  String get capsules_datePickerHelp;
+
+  /// How a mood capsule opens (REQ-CAP-02).
+  ///
+  /// In en, this message translates to:
+  /// **'It can open from 24 hours after sealing, the next time you check in feeling this.'**
+  String get capsules_feelingHelp;
+
+  /// Choice: any mood of a quadrant, e.g. 'Any Storm feeling'.
+  ///
+  /// In en, this message translates to:
+  /// **'Any {quadrant} feeling'**
+  String capsules_anyQuadrant(String quadrant);
+
+  /// The chosen trigger (a mood name, or 'Any Storm feeling').
+  ///
+  /// In en, this message translates to:
+  /// **'Waits for: {feeling}'**
+  String capsules_feelingChosen(String feeling);
+
+  /// Seals the capsule (content can't change after this).
+  ///
+  /// In en, this message translates to:
+  /// **'Seal it'**
+  String get capsules_seal;
+
+  /// Seal tapped with nothing inside. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few words, a voice note or a photo first.'**
+  String get capsules_needContent;
+
+  /// Seal tapped without a date or feeling.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when it should open.'**
+  String get capsules_needUnlock;
+
+  /// Sealing failed locally (e.g. storage). Nothing is lost.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t seal just now. Your capsule is still here. Try again.'**
+  String get capsules_sealFailed;
+
+  /// Heading after sealing.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed'**
+  String get capsules_sealedTitle;
+
+  /// After sealing a mood capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed. It\'ll wait for that feeling.'**
+  String get capsules_sealedFeeling;
+
+  /// Sealed while offline, or media still uploading (PRD 14-states 'media upload failed').
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed and safe on this phone. Photos and voice back up when you\'re online.'**
+  String get capsules_mediaLater;
+
+  /// A 4th mood-trigger capsule (REQ-CAP-04, PRD 14-states). No paywall: offers a date instead.
+  ///
+  /// In en, this message translates to:
+  /// **'Free accounts keep 3 mood capsules waiting. Date capsules are unlimited.'**
+  String get capsules_limitBody;
+
+  /// Switches a 4th mood capsule to a date capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date instead'**
+  String get capsules_limitPickDate;
+
+  /// A mood capsule the server couldn't keep (limit): choose a date for it.
+  ///
+  /// In en, this message translates to:
+  /// **'Make it a date capsule'**
+  String get capsules_makeDate;
+
+  /// Leaving the composer with something written.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this draft?'**
+  String get capsules_leaveTitle;
+
+  /// Under 'Keep this draft?'.
+  ///
+  /// In en, this message translates to:
+  /// **'It stays on this phone until you seal it or let it go.'**
+  String get capsules_leaveBody;
+
+  /// Stay in the composer (default, focused).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get capsules_leaveEditing;
+
+  /// Leave; the draft stays on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep draft'**
+  String get capsules_leaveKeep;
+
+  /// Leave and delete the draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get capsules_leaveDiscard;
+
+  /// A sealed mood capsule's page (in the app only, never on the lock screen).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a feeling: {feeling}.'**
+  String capsules_detailFeeling(String feeling);
+
+  /// A mood capsule sealed less than 24 hours ago. date = day and time it arms.
+  ///
+  /// In en, this message translates to:
+  /// **'It can open from {date}.'**
+  String capsules_detailArming(String date);
+
+  /// Why there is no 'open' button on a sealed capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed means sealed: it can\'t be opened early or changed.'**
+  String get capsules_detailNoEarly;
+
+  /// Deletes a capsule (never shows its content).
+  ///
+  /// In en, this message translates to:
+  /// **'Delete capsule'**
+  String get capsules_delete;
+
+  /// Confirmation before deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this capsule?'**
+  String get capsules_deleteTitle;
+
+  /// Deleting a sealed capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be gone for good, without being opened.'**
+  String get capsules_deleteBody;
+
+  /// Deleting an opened capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be gone for good.'**
+  String get capsules_deleteBodyOpened;
+
+  /// Confirms the deletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get capsules_deleteConfirm;
+
+  /// Cancels the deletion (default, focused).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get capsules_deleteKeep;
+
+  /// After a capsule was deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Capsule deleted.'**
+  String get capsules_deleted;
+
+  /// Card after a check-in that matched a mood capsule (PRD 12-notifications, in-app only).
+  ///
+  /// In en, this message translates to:
+  /// **'You left a note for a moment like this. Open now or later?'**
+  String get capsules_triggerTitle;
+
+  /// After the support sheet, when a capsule matched a crisis-flagged check-in (F4 crisis collision rule). Gentle; 'Later' is fine.
+  ///
+  /// In en, this message translates to:
+  /// **'A note from past you is waiting. Open now, or later?'**
+  String get capsules_holdTitle;
+
+  /// Open the capsule now.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get capsules_now;
+
+  /// Keep it for later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get capsules_later;
+
+  /// Home card and the local notification when a date capsule unlocks (PRD 12-notifications). Never a title, date or mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Something you sealed is ready to open.'**
+  String get capsules_readyTitle;
+
+  /// Home card when several date capsules are ready.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 capsule is ready.} other{{count} capsules are ready.}}'**
+  String capsules_readyMore(int count);
+
+  /// Opens a capsule (Home card, a capsule's page, the hard-moment note).
+  ///
+  /// In en, this message translates to:
+  /// **'Open it'**
+  String get capsules_readyOpen;
+
+  /// Android notification channel name (Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'Capsules'**
+  String get capsules_channelName;
+
+  /// Android notification channel description.
+  ///
+  /// In en, this message translates to:
+  /// **'When something you sealed is ready to open.'**
+  String get capsules_channelDescription;
+
+  /// Before opening a capsule sealed during a hard moment (PRD F4). A help button sits with it.
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote this during a hard moment. Open when you\'re ready.'**
+  String get capsules_hardMoment;
+
+  /// Skips the opening animation.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get capsules_skip;
+
+  /// Screen-reader label of the short opening animation.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening your capsule'**
+  String get capsules_opening;
+
+  /// Heading of an opened capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'From past you'**
+  String get capsules_openedTitle;
+
+  /// Re-arms a mood capsule so it can open again for the same feeling.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep for next time'**
+  String get capsules_keepNextTime;
+
+  /// After 'Keep for next time'.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'ll wait for that feeling again.'**
+  String get capsules_keptNextTime;
+
+  /// Opened offline; the voice note is only on the server (PRD 14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Your capsule is open. The voice note arrives when you\'re back online.'**
+  String get capsules_voiceOffline;
+
+  /// Opened offline; the photos are only on the server.
+  ///
+  /// In en, this message translates to:
+  /// **'The photos arrive when you\'re back online.'**
+  String get capsules_photosOffline;
+
+  /// A capsule photo or voice note failed to load. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'This couldn\'t be loaded just now. Try again in a moment.'**
+  String get capsules_mediaFailed;
+
+  /// Retries loading capsule media.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get capsules_retry;
+
+  /// The data key isn't on this phone yet (new phone, offline).
+  ///
+  /// In en, this message translates to:
+  /// **'This capsule can\'t be read on this phone yet. It opens once you\'re back online.'**
+  String get capsules_cantRead;
+
+  /// Delete-account confirmation: sealed (unopened) capsules that deletion removes (PRD F4 edge cases).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sealed capsule will be lost.} other{{count} sealed capsules will be lost.}}'**
+  String capsules_accountDeletionCount(int count);
+
   /// Asked when closing the check-in (or an edit) with a mood, tags or words not yet saved. Calm, no blame.
   ///
   /// In en, this message translates to:
@@ -1829,6 +2381,180 @@ abstract class AppLocalizations {
   /// **'{habit} is marked done for today.'**
   String help_breatheLogged(String habit);
 
+  /// In-app notice when the daily check-in reminder arrives while the app is open (same line as the push, PRD 12-notifications catalogue). Never guilt, never a streak.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet minute for you. How\'s today feeling?'**
+  String get notif_reminderBanner;
+
+  /// Action on the reminder notice: opens the check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get notif_reminderAction;
+
+  /// In-app notice when a date capsule's push arrives while the app is open (PRD catalogue line). Never a title, date or mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Something you sealed is ready to open.'**
+  String get notif_capsuleBanner;
+
+  /// Action on the capsule notice: opens the capsules.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get notif_capsuleAction;
+
+  /// Android notification channel name for the daily check-in reminder (phone Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get notif_channelReminders;
+
+  /// Android notification channel description (phone Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'Your daily check-in reminder.'**
+  String get notif_channelRemindersDescription;
+
+  /// Settings section heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get set_notifications;
+
+  /// Master switch for every push.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications from Aura'**
+  String get set_notifMaster;
+
+  /// Under the master switch: the daily cap and the privacy promise (PRD 12 rules 2 and 3). Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'At most two a day. Nothing on your lock screen says how you feel.'**
+  String get set_notifMasterNote;
+
+  /// Switch for the daily reminder push.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily check-in reminder'**
+  String get set_notifReminder;
+
+  /// Under the reminder switch when on; {time} is the chosen time, e.g. '8:00 PM'.
+  ///
+  /// In en, this message translates to:
+  /// **'One gentle nudge a day, at {time}. Skipped once you\'ve checked in.'**
+  String set_notifReminderNote(String time);
+
+  /// Under the reminder switch when off.
+  ///
+  /// In en, this message translates to:
+  /// **'Off. Turn it on for one gentle nudge a day.'**
+  String get set_notifReminderOffNote;
+
+  /// Row that opens the time picker for the daily reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get set_notifReminderTime;
+
+  /// Switch for the 'date capsule unlocked' push.
+  ///
+  /// In en, this message translates to:
+  /// **'A capsule is ready to open'**
+  String get set_notifCapsule;
+
+  /// Under the capsule switch.
+  ///
+  /// In en, this message translates to:
+  /// **'On the day you chose for something you sealed.'**
+  String get set_notifCapsuleNote;
+
+  /// Quiet hours explainer; {start}/{end} are times like '11:00 PM'.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours: nothing is sent {start}–{end}.'**
+  String set_notifQuietNote(String start, String end);
+
+  /// Row: start of quiet hours (opens a time picker).
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet from'**
+  String get set_notifQuietFrom;
+
+  /// Row: end of quiet hours (opens a time picker).
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet until'**
+  String get set_notifQuietUntil;
+
+  /// Switch: every push shows only a generic line (PRD rule 4).
+  ///
+  /// In en, this message translates to:
+  /// **'Discreet mode'**
+  String get set_notifDiscreet;
+
+  /// Under the discreet switch; quotes the discreet line.
+  ///
+  /// In en, this message translates to:
+  /// **'Every notification just says “Aura · You have a gentle update”.'**
+  String get set_notifDiscreetNote;
+
+  /// Calm note when the OS permission is off (PRD 15-permissions). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Aura on this phone. Your choices here still apply once they\'re on.'**
+  String get set_notifOffNote;
+
+  /// Button in the off note: shows the phone's notification prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get set_notifTurnOn;
+
+  /// Button in the off note: opens this app's page in the phone's Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open phone settings'**
+  String get set_notifOpenSettings;
+
+  /// Dialog title: the chosen reminder time falls inside quiet hours (one-time confirmation, PRD rule 1).
+  ///
+  /// In en, this message translates to:
+  /// **'This time is inside your quiet hours'**
+  String get set_notifQuietConfirmTitle;
+
+  /// Dialog body; {start}/{end} quiet hours, {time} the reminder time.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura stays silent {start}–{end}. Send your reminder at {time} anyway?'**
+  String set_notifQuietConfirmBody(String start, String end, String time);
+
+  /// Dialog: keep the reminder inside quiet hours (night shifts).
+  ///
+  /// In en, this message translates to:
+  /// **'Send it anyway'**
+  String get set_notifQuietConfirmYes;
+
+  /// Dialog: don't send inside quiet hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it quiet'**
+  String get set_notifQuietConfirmNo;
+
+  /// On the notification explainer: when the daily nudge comes; {time} e.g. '8:00 PM'.
+  ///
+  /// In en, this message translates to:
+  /// **'Every evening at {time}'**
+  String push_timeRow(String time);
+
+  /// Opens the time picker on the explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Change time'**
+  String get push_changeTime;
+
   /// Trust step title (privacy and boundaries). Calm.
   ///
   /// In en, this message translates to:
@@ -1948,6 +2674,1920 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number copied'**
   String get polish_helpNumberCopied;
+
+  /// Rooms tab title (mood rooms with preset gestures). Never 'chat'.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get rooms_title;
+
+  /// Heading over the rooms you are in (Rooms tab and the Home strip).
+  ///
+  /// In en, this message translates to:
+  /// **'Your rooms'**
+  String get rooms_yourRooms;
+
+  /// Heading over rooms that have become read-only memories (kept 7 days).
+  ///
+  /// In en, this message translates to:
+  /// **'Memories'**
+  String get rooms_memories;
+
+  /// Rooms tab: heading of the short explanation card.
+  ///
+  /// In en, this message translates to:
+  /// **'What rooms are'**
+  String get rooms_whatTitle;
+
+  /// Rooms tab: one-line explanation. Calm; never 'chat' or 'strangers'.
+  ///
+  /// In en, this message translates to:
+  /// **'A small room of people who feel like you do right now, for a day.'**
+  String get rooms_whatBody;
+
+  /// Rooms tab privacy point: a new pseudonym per room.
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh name in every room. Nobody sees your account.'**
+  String get rooms_pointName;
+
+  /// Rooms tab privacy point: gestures only.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages or DMs: only eight warm gestures.'**
+  String get rooms_pointGestures;
+
+  /// Rooms tab point: lifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms last a day, then rest as a memory for 7 days.'**
+  String get rooms_pointTime;
+
+  /// Rooms tab: when Lantern Hour happens. No pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Hour: every night from 9 to 11 on your region\'s clock, rooms light a shared lantern and more people drop in.'**
+  String get rooms_lanternNote;
+
+  /// Label on a room card during Lantern Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Hour is on now'**
+  String get rooms_lanternNow;
+
+  /// Rooms tab button: rooms are found from a check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in to find a room'**
+  String get rooms_checkInCta;
+
+  /// Rooms tab when you are in no room.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not in a room right now. After a check-in you can join people who feel the same.'**
+  String get rooms_empty;
+
+  /// Rooms tab offline (no call is made).
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms need a connection. Your own check-ins still save on this phone.'**
+  String get rooms_offline;
+
+  /// A rooms call failed (server or network). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t reach the rooms just now.'**
+  String get rooms_loadFailed;
+
+  /// Retry a rooms call.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get rooms_tryAgain;
+
+  /// Rooms need an account (signed out).
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms open once you\'re signed in.'**
+  String get rooms_signedOut;
+
+  /// Button to sign in (rooms need an account).
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get rooms_signIn;
+
+  /// The account's room access is paused (pending review). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are paused for your account right now. Help is always here.'**
+  String get rooms_suspended;
+
+  /// The account's room access is suspended until a date.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are paused for your account until {date}. Help is always here.'**
+  String rooms_suspendedUntil(String date);
+
+  /// The account was closed by moderation (contract wording).
+  ///
+  /// In en, this message translates to:
+  /// **'This account was closed for breaking Aura\'s rules.'**
+  String get rooms_accountClosed;
+
+  /// 409 profile_required: onboarding hasn't reached the server yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms open once your account finishes setting up. Try again in a moment.'**
+  String get rooms_profilePending;
+
+  /// Screen-reader hint on a room card or strip item.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the room'**
+  String get rooms_openHint;
+
+  /// Room card for a memory: when it closes for good.
+  ///
+  /// In en, this message translates to:
+  /// **'A memory until {date}'**
+  String rooms_memoryUntil(String date);
+
+  /// Room theme for Storm (high energy, unpleasant). Never 'bad'.
+  ///
+  /// In en, this message translates to:
+  /// **'The Lighthouse'**
+  String get rooms_theme_lighthouse;
+
+  /// Room theme for Rain (low energy, unpleasant).
+  ///
+  /// In en, this message translates to:
+  /// **'The Rain Sanctuary'**
+  String get rooms_theme_rain_sanctuary;
+
+  /// Room theme for Moonlight (low energy, pleasant).
+  ///
+  /// In en, this message translates to:
+  /// **'The Midnight Observatory'**
+  String get rooms_theme_midnight_observatory;
+
+  /// Room theme for Sunrise (high energy, pleasant).
+  ///
+  /// In en, this message translates to:
+  /// **'The Sunrise Deck'**
+  String get rooms_theme_sunrise_deck;
+
+  /// Preset room gesture (a cup of tea offered). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm Tea'**
+  String get rooms_gesture_warm_tea;
+
+  /// Preset room gesture (a small light lit for someone). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Light a Candle'**
+  String get rooms_gesture_light_a_candle;
+
+  /// Preset room gesture (a hug). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Hug'**
+  String get rooms_gesture_hug;
+
+  /// Preset room gesture ('I feel it too'). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Me Too'**
+  String get rooms_gesture_me_too;
+
+  /// Preset room gesture (a gentle, calming rain). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft Rain'**
+  String get rooms_gesture_soft_rain;
+
+  /// Preset room gesture (looking at the stars together). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Stargaze'**
+  String get rooms_gesture_stargaze;
+
+  /// Preset room gesture (breathe slowly together). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep Breath'**
+  String get rooms_gesture_deep_breath;
+
+  /// Preset room gesture (reassurance). Warm, short; a name, not a sentence to translate literally.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re Not Alone'**
+  String get rooms_gesture_youre_not_alone;
+
+  /// Room header: current members seen in the last 2 min.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody here right now} =1{1 here now} other{{count} here now}}'**
+  String rooms_hereNow(int count);
+
+  /// Room header: everyone who has been a member today.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 person has been here today} other{{count} people have been here today}}'**
+  String rooms_today(int count);
+
+  /// Screen reader: the room header ('7 people here now, 31 today', REQ-A11Y-06).
+  ///
+  /// In en, this message translates to:
+  /// **'{now, plural, =1{1 person here now} other{{now} people here now}}, {today, plural, =1{1 today} other{{today} today}}'**
+  String rooms_countsSemantic(int now, int today);
+
+  /// Screen reader: a room in the Home 'Your rooms' strip.
+  ///
+  /// In en, this message translates to:
+  /// **'{theme}, {count, plural, =1{1 person here now} other{{count} people here now}}'**
+  String rooms_stripSemantic(String theme, int count);
+
+  /// Room screen while it loads.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the room…'**
+  String get rooms_opening;
+
+  /// Your pseudonym in this room (fresh per room; never translated).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re {pseudonym} here'**
+  String rooms_youAre(String pseudonym);
+
+  /// Room with nobody else here right now (cold start). Honest counts, never fake presence.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You\'re the first here today. Leave a light for the next one.} other{{count} people have been here today. Leave a light for the next one.}}'**
+  String rooms_coldStart(int count);
+
+  /// Room header during Lantern Hour (the shared evening window).
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Hour · until {time}'**
+  String rooms_lanternOn(String time);
+
+  /// Room in its last hours (no new members; gestures still work).
+  ///
+  /// In en, this message translates to:
+  /// **'This room becomes a memory at {time}.'**
+  String rooms_closing(String time);
+
+  /// Room became read-only (24 h). Calm, not a loss.
+  ///
+  /// In en, this message translates to:
+  /// **'This room has become a memory. You can look back for 7 days.'**
+  String get rooms_memory;
+
+  /// From a memory: start a check-in to find a new room.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a new room'**
+  String get rooms_findNew;
+
+  /// Chip while the live connection to the room is restored (gestures wait up to 30 s).
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get rooms_reconnecting;
+
+  /// Room screen: heading over the members.
+  ///
+  /// In en, this message translates to:
+  /// **'Here with you'**
+  String get rooms_membersTitle;
+
+  /// Your own tile among the members.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get rooms_you;
+
+  /// Screen reader: a member seen in the last 2 min.
+  ///
+  /// In en, this message translates to:
+  /// **'here now'**
+  String get rooms_memberHereNow;
+
+  /// Screen reader: a member not seen for a while (still in the room).
+  ///
+  /// In en, this message translates to:
+  /// **'away for now'**
+  String get rooms_memberAway;
+
+  /// A member you muted (their gestures don't reach you).
+  ///
+  /// In en, this message translates to:
+  /// **'muted for you'**
+  String get rooms_memberMuted;
+
+  /// Screen reader: a member tile (pseudonym, mood at join, here now / away).
+  ///
+  /// In en, this message translates to:
+  /// **'{pseudonym}, {mood}, {status}'**
+  String rooms_memberLabel(String pseudonym, String mood, String status);
+
+  /// Screen reader: your own tile.
+  ///
+  /// In en, this message translates to:
+  /// **'You, {pseudonym}, {mood}'**
+  String rooms_youLabel(String pseudonym, String mood);
+
+  /// Screen-reader hint on a member tile (gestures, report, block, mute).
+  ///
+  /// In en, this message translates to:
+  /// **'Opens options'**
+  String get rooms_memberHint;
+
+  /// Room screen: heading over recent gestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Warmth in this room'**
+  String get rooms_recentTitle;
+
+  /// A gesture you received ('Quiet Comet sent you Warm Tea'); also announced.
+  ///
+  /// In en, this message translates to:
+  /// **'{pseudonym} sent you {gesture}'**
+  String rooms_receivedLine(String pseudonym, String gesture);
+
+  /// Announcement after you send a gesture to a member (REQ-A11Y-06).
+  ///
+  /// In en, this message translates to:
+  /// **'{gesture} sent to {pseudonym}'**
+  String rooms_sentToMember(String gesture, String pseudonym);
+
+  /// Announcement after you send a gesture to the room.
+  ///
+  /// In en, this message translates to:
+  /// **'{gesture} sent to everyone here'**
+  String rooms_sentToRoom(String gesture);
+
+  /// Someone else's gesture (unnamed, to a member).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone sent {gesture}'**
+  String rooms_someoneSent(String gesture);
+
+  /// Someone else's gesture to the whole room (unnamed).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone sent {gesture} to everyone here'**
+  String rooms_someoneSentRoom(String gesture);
+
+  /// Your gesture in the room's list.
+  ///
+  /// In en, this message translates to:
+  /// **'You sent {gesture} to {pseudonym}'**
+  String rooms_youSentMember(String gesture, String pseudonym);
+
+  /// Your gesture to the room in the room's list.
+  ///
+  /// In en, this message translates to:
+  /// **'You sent {gesture} to everyone here'**
+  String rooms_youSentRoom(String gesture);
+
+  /// Gesture tray heading (tap a member to send to one person).
+  ///
+  /// In en, this message translates to:
+  /// **'Send warmth to everyone here'**
+  String get rooms_trayTitle;
+
+  /// Screen-reader hint on a tray gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends to everyone here'**
+  String get rooms_trayHint;
+
+  /// Memory rooms are read-only.
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures rest in a memory. You can still report, block or mute.'**
+  String get rooms_trayResting;
+
+  /// Tooltip of the room menu button (report a problem, leave).
+  ///
+  /// In en, this message translates to:
+  /// **'Room options'**
+  String get rooms_roomOptions;
+
+  /// Room menu: report something in this room (F9).
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem here'**
+  String get rooms_reportRoom;
+
+  /// Room menu: leave for good.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this room'**
+  String get rooms_leave;
+
+  /// Room menu on a memory: leave it.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from my rooms'**
+  String get rooms_removeMemory;
+
+  /// Leave confirmation title. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this room?'**
+  String get rooms_leaveTitle;
+
+  /// Leave confirmation: no rejoining; the slot frees up.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t be able to come back to it, and your seat opens up for someone else. Your next check-in can find you a new room.'**
+  String get rooms_leaveBody;
+
+  /// Leave confirmation button.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave room'**
+  String get rooms_leaveConfirm;
+
+  /// Keep the room (the safe choice).
+  ///
+  /// In en, this message translates to:
+  /// **'Stay'**
+  String get rooms_stay;
+
+  /// Leaving a memory room: confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this memory?'**
+  String get rooms_removeTitle;
+
+  /// Leaving a memory room: explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves your rooms now. Memories close for good after 7 days anyway.'**
+  String get rooms_removeBody;
+
+  /// Leaving a memory room: confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get rooms_removeConfirm;
+
+  /// Keep a memory room (the safe choice).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get rooms_keep;
+
+  /// Leaving failed (e.g. offline).
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. You\'re still in the room.'**
+  String get rooms_leaveFailed;
+
+  /// The room no longer exists for you (purged or left).
+  ///
+  /// In en, this message translates to:
+  /// **'This room has closed. Rooms rest for 7 days as memories, then they\'re gone.'**
+  String get rooms_gone;
+
+  /// Go to the Rooms tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to your rooms'**
+  String get rooms_backToRooms;
+
+  /// Opening a room while offline (no call is made).
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms need a connection. This room opens again when you\'re back online.'**
+  String get rooms_offlineRoom;
+
+  /// Title while matching into a room.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your room'**
+  String get rooms_joinTitle;
+
+  /// Loading while matching (≤ 5 s, PRD States).
+  ///
+  /// In en, this message translates to:
+  /// **'Finding people who feel this way right now…'**
+  String get rooms_finding;
+
+  /// Joining offline (PRD States: Room offline). No call is made.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms need a connection. Your check-in is saved.'**
+  String get rooms_offlineJoin;
+
+  /// Joining failed (server or network).
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t reach the rooms just now. Your check-in is saved.'**
+  String get rooms_joinFailed;
+
+  /// 429 room_join_limit. Calm; returning to a room is always free.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s 3 new rooms for this feeling today. The rooms you\'re in are still open to you.'**
+  String get rooms_joinLimit;
+
+  /// Go to the Rooms tab.
+  ///
+  /// In en, this message translates to:
+  /// **'See your rooms'**
+  String get rooms_seeYourRooms;
+
+  /// 409 language_pool_unavailable (PRD States).
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi and Hinglish rooms are opening soon. Join an English room for now?'**
+  String get rooms_poolUnavailable;
+
+  /// Join an English room instead.
+  ///
+  /// In en, this message translates to:
+  /// **'Join English room'**
+  String get rooms_poolJoinEnglish;
+
+  /// Ask for an in-app note when Hindi + Hinglish rooms open.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell me when they open'**
+  String get rooms_poolNotify;
+
+  /// Confirmation of 'Tell me when they open'.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let you know here when Hindi and Hinglish rooms open.'**
+  String get rooms_poolNotifyDone;
+
+  /// The join screen was opened without a check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms open from a check-in.'**
+  String get rooms_noRequest;
+
+  /// After a saved check-in: the room offer. Identical at every age.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a room of people feeling this'**
+  String get rooms_offer;
+
+  /// Screen-reader hint on the room offer.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens a room, with a fresh name just for it'**
+  String get rooms_offerHint;
+
+  /// Room offer while offline (REQ-ROOM-01). No call is made.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms open when you\'re back online'**
+  String get rooms_offerOffline;
+
+  /// First check-in (during onboarding): where rooms are.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are in the Rooms tab whenever you\'d like company.'**
+  String get rooms_offerLater;
+
+  /// Guidelines sheet title, shown before the first room.
+  ///
+  /// In en, this message translates to:
+  /// **'Before your first room'**
+  String get rooms_guidelinesTitle;
+
+  /// Guidelines intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms stay gentle because everyone keeps to a few simple things:'**
+  String get rooms_guidelinesIntro;
+
+  /// Guideline 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Be kind. Everyone here is having a real day.'**
+  String get rooms_rule1;
+
+  /// Guideline 2.
+  ///
+  /// In en, this message translates to:
+  /// **'No hate about caste, religion, gender, sexuality or anything else.'**
+  String get rooms_rule2;
+
+  /// Guideline 3.
+  ///
+  /// In en, this message translates to:
+  /// **'No sexual content.'**
+  String get rooms_rule3;
+
+  /// Guideline 4 (grooming and contact-swap).
+  ///
+  /// In en, this message translates to:
+  /// **'Never share or ask for contact details or meet-ups, or anyone\'s age, school, city or photos.'**
+  String get rooms_rule4;
+
+  /// Guideline 5.
+  ///
+  /// In en, this message translates to:
+  /// **'No selling or spam.'**
+  String get rooms_rule5;
+
+  /// Guideline 6 (safe messaging: no method named).
+  ///
+  /// In en, this message translates to:
+  /// **'Never encourage anyone to hurt themselves. Talking about how you feel is always okay.'**
+  String get rooms_rule6;
+
+  /// Guidelines footer.
+  ///
+  /// In en, this message translates to:
+  /// **'You can report, block or mute anyone, and help is always one tap away.'**
+  String get rooms_guidelinesSafety;
+
+  /// Accept the guidelines and continue to the room.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ll keep to these'**
+  String get rooms_guidelinesAgree;
+
+  /// Member sheet: the gestures for this one person.
+  ///
+  /// In en, this message translates to:
+  /// **'Send {pseudonym} some warmth'**
+  String rooms_sendTo(String pseudonym);
+
+  /// Screen-reader hint on a gesture in the member sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends to {pseudonym}'**
+  String rooms_gestureHintMember(String pseudonym);
+
+  /// Member sheet action (F9).
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get rooms_report;
+
+  /// Member sheet action (F9): account-level, both ways.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get rooms_block;
+
+  /// Member sheet action: hides their gestures for you in this room.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get rooms_mute;
+
+  /// Member sheet action: undo a mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get rooms_unmute;
+
+  /// Member sheet reassurance under the safety actions.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'re never told who reported, blocked or muted them.'**
+  String get rooms_safetyNote;
+
+  /// Block confirmation title. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Block {pseudonym}?'**
+  String rooms_blockTitle(String pseudonym);
+
+  /// Block confirmation body (the blocked person sees no change).
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t be placed in a room together again, and gestures between you stop. They won\'t be told.'**
+  String get rooms_blockBody;
+
+  /// After blocking.
+  ///
+  /// In en, this message translates to:
+  /// **'{pseudonym} is blocked. You won\'t share a room again.'**
+  String rooms_blocked(String pseudonym);
+
+  /// After muting (per room, for you only).
+  ///
+  /// In en, this message translates to:
+  /// **'{pseudonym} is muted for you. Their gestures won\'t reach you here.'**
+  String rooms_muted(String pseudonym);
+
+  /// After unmuting.
+  ///
+  /// In en, this message translates to:
+  /// **'{pseudonym} is unmuted.'**
+  String rooms_unmuted(String pseudonym);
+
+  /// Undo a mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get rooms_undo;
+
+  /// A room action failed (e.g. offline). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Try again in a moment.'**
+  String get rooms_actionFailed;
+
+  /// Report sheet title for a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Report {pseudonym}'**
+  String rooms_reportMember(String pseudonym);
+
+  /// Report sheet title / button for a received gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this gesture'**
+  String get rooms_reportGesture;
+
+  /// Report sheet: pick one reason.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s happening?'**
+  String get rooms_reportWhy;
+
+  /// Report reason 1 (crisis lane: the reporter sees helplines). Safe messaging.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone may be in danger or hurting themselves'**
+  String get rooms_reason1;
+
+  /// Report reason 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment or bullying'**
+  String get rooms_reason2;
+
+  /// Report reason 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual content or advances'**
+  String get rooms_reason3;
+
+  /// Report reason 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Hate or slurs'**
+  String get rooms_reason4;
+
+  /// Report reason 5.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact details or personal info'**
+  String get rooms_reason5;
+
+  /// Report reason 6.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam or selling'**
+  String get rooms_reason6;
+
+  /// Report reason 7 (never shows anyone's age).
+  ///
+  /// In en, this message translates to:
+  /// **'Someone may be under 13'**
+  String get rooms_reason7;
+
+  /// Report reason 8.
+  ///
+  /// In en, this message translates to:
+  /// **'Something else'**
+  String get rooms_reason8;
+
+  /// Report note field label (≤ 200 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'Anything a moderator should know? (optional)'**
+  String get rooms_reportNoteLabel;
+
+  /// Report note helper text.
+  ///
+  /// In en, this message translates to:
+  /// **'Only Aura\'s moderators read this. Please leave out phone numbers, links and handles.'**
+  String get rooms_reportNoteHelp;
+
+  /// On-device PII check on the report note (PRD States wording). Nothing was sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone numbers, links and handles can\'t be shared here. It keeps everyone safer.'**
+  String get rooms_reportNoteContact;
+
+  /// Submit a report.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get rooms_reportSend;
+
+  /// After a report (room or other).
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for telling us. A moderator will look at it, usually within a day.'**
+  String get rooms_reportThanks;
+
+  /// After reporting a member (they are muted for you here).
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for telling us. You won\'t get their gestures in this room while a moderator takes a look.'**
+  String get rooms_reportHidden;
+
+  /// After reporting a gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for telling us. That gesture is hidden for you now.'**
+  String get rooms_reportGestureHidden;
+
+  /// After a report in the crisis lane (the Safety Center opens first). Safe messaging.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for telling us. A moderator will look soon, and help is always one tap away.'**
+  String get rooms_reportCrisis;
+
+  /// 429 report_limit (reason 1 is never limited).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s a lot of reports today. If someone is in danger, the help button is always here.'**
+  String get rooms_reportLimit;
+
+  /// Report failed.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through, so nothing was sent. Try again in a moment.'**
+  String get rooms_reportFailed;
+
+  /// Report while offline (no call is made).
+  ///
+  /// In en, this message translates to:
+  /// **'Reports need a connection. Nothing was sent yet.'**
+  String get rooms_reportOffline;
+
+  /// Exit micro-survey (≥ 30 s in the room, at most once a day). Aggregate only.
+  ///
+  /// In en, this message translates to:
+  /// **'Did you feel less alone?'**
+  String get rooms_surveyTitle;
+
+  /// Survey answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get rooms_surveyYes;
+
+  /// Survey answer.
+  ///
+  /// In en, this message translates to:
+  /// **'Not really'**
+  String get rooms_surveyNo;
+
+  /// Skip the survey.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get rooms_surveySkip;
+
+  /// Title of the Sanctuary tab: a private, calm space (breathing, grounding).
+  ///
+  /// In en, this message translates to:
+  /// **'Sanctuary'**
+  String get sanctuary_title;
+
+  /// Intro line at the top of the Sanctuary. Calm; nothing is timed against you or scored.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet place, just for you. Go at your own pace. Nothing here is scored.'**
+  String get sanctuary_intro;
+
+  /// Section header: one gentle suggestion for today (changes each day).
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s minute'**
+  String get sanctuary_todayTitle;
+
+  /// Section header and title of the breathing session.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe'**
+  String get sanctuary_breatheSection;
+
+  /// Card that opens the breathing session.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe with your Aura'**
+  String get sanctuary_breatheCard;
+
+  /// Under the breathing card: the three rhythms, any length.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm, box or 4-7-8 breathing, for as long as you like.'**
+  String get sanctuary_breatheCardBody;
+
+  /// Section header: short grounding activities (five senses, hand on heart, three small things).
+  ///
+  /// In en, this message translates to:
+  /// **'Grounding'**
+  String get sanctuary_groundingSection;
+
+  /// Button that opens an optional activity (Today's minute, A minute for you).
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get sanctuary_begin;
+
+  /// Starts a timed activity (breathing, hand on heart).
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get sanctuary_start;
+
+  /// Pauses an activity. Nothing is lost.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get sanctuary_pause;
+
+  /// Resumes a paused activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get sanctuary_resume;
+
+  /// Ends an activity early, gently (no penalty).
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get sanctuary_finish;
+
+  /// Next step of a step-by-step activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get sanctuary_next;
+
+  /// Screen-reader label of the quiet progress ring (no numbers, no countdown).
+  ///
+  /// In en, this message translates to:
+  /// **'Progress through this session'**
+  String get sanctuary_progress;
+
+  /// Progress ring value: first third.
+  ///
+  /// In en, this message translates to:
+  /// **'Just begun'**
+  String get sanctuary_progressBegun;
+
+  /// Progress ring value: middle third.
+  ///
+  /// In en, this message translates to:
+  /// **'About halfway'**
+  String get sanctuary_progressHalf;
+
+  /// Progress ring value: last third. Never pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearly through'**
+  String get sanctuary_progressNearly;
+
+  /// Progress ring value: finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get sanctuary_progressDone;
+
+  /// After a breathing session or a long note ticks off a habit automatically (F2). habit = the habit's name (Breathe, Journal).
+  ///
+  /// In en, this message translates to:
+  /// **'{habit} is marked done for today.'**
+  String habits_autoLogged(String habit);
+
+  /// Header above the three breathing patterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Rhythm'**
+  String get breathe_rhythm;
+
+  /// Breathing pattern: in 4, out 6 (the default).
+  ///
+  /// In en, this message translates to:
+  /// **'Calm'**
+  String get breathe_calm;
+
+  /// Describes the calm pattern.
+  ///
+  /// In en, this message translates to:
+  /// **'In for 4, out for 6. Gentle and steady.'**
+  String get breathe_calmBody;
+
+  /// Breathing pattern: in 4, hold 4, out 4, hold 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Box'**
+  String get breathe_box;
+
+  /// Describes box breathing.
+  ///
+  /// In en, this message translates to:
+  /// **'In, hold, out, hold. Four counts each.'**
+  String get breathe_boxBody;
+
+  /// Breathing pattern: in 4, hold 7, out 8 (digits stay as they are).
+  ///
+  /// In en, this message translates to:
+  /// **'4-7-8'**
+  String get breathe_478;
+
+  /// Describes 4-7-8 breathing.
+  ///
+  /// In en, this message translates to:
+  /// **'In for 4, hold for 7, out for 8.'**
+  String get breathe_478Body;
+
+  /// Gentle safety note with 4-7-8 breathing (long holds). Calm, not alarming.
+  ///
+  /// In en, this message translates to:
+  /// **'If you feel light-headed, stop and breathe normally.'**
+  String get breathe_lightHeaded;
+
+  /// Header above the session lengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Length'**
+  String get breathe_length;
+
+  /// A session length choice.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute} other{{count} minutes}}'**
+  String breathe_minutes(int count);
+
+  /// Session length choice with no set end.
+  ///
+  /// In en, this message translates to:
+  /// **'Until I stop'**
+  String get breathe_openEnded;
+
+  /// Breathing cue: inhale. Also announced to screen readers when it begins.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get breathe_in;
+
+  /// Breathing cue: hold the breath (box, 4-7-8).
+  ///
+  /// In en, this message translates to:
+  /// **'Hold'**
+  String get breathe_hold;
+
+  /// Breathing cue: exhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe out'**
+  String get breathe_out;
+
+  /// Shown (and announced) while a breathing session is paused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused. Take your time.'**
+  String get breathe_paused;
+
+  /// End of a breathing session. Acknowledged, never scored; leaving early is never mentioned.
+  ///
+  /// In en, this message translates to:
+  /// **'That was time just for you.'**
+  String get breathe_done;
+
+  /// Starts the same breathing session again.
+  ///
+  /// In en, this message translates to:
+  /// **'Again'**
+  String get breathe_again;
+
+  /// 30-second grounding breath (after a Storm check-in), cue 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Feel your feet on the ground.'**
+  String get breathe_land1;
+
+  /// 30-second grounding breath, cue 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice three sounds around you.'**
+  String get breathe_land2;
+
+  /// After the 30-second grounding breath: opens the full breathing session.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going'**
+  String get breathe_keepGoing;
+
+  /// 30-second grounding breath, cue 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Let your shoulders drop.'**
+  String get breathe_land3;
+
+  /// 5-4-3-2-1 grounding: notice things with each sense, step by step.
+  ///
+  /// In en, this message translates to:
+  /// **'Five senses'**
+  String get senses_title;
+
+  /// Under the five-senses card.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice what\'s around you, one sense at a time.'**
+  String get senses_card;
+
+  /// Five senses: intro before the first step.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s notice what\'s around you, one sense at a time. Go at your own pace.'**
+  String get senses_intro;
+
+  /// Five senses, step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Five things you can see'**
+  String get senses_see;
+
+  /// Five senses, step 1 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Look around slowly. Name them in your head or out loud.'**
+  String get senses_seeBody;
+
+  /// Five senses, step 2 (touch).
+  ///
+  /// In en, this message translates to:
+  /// **'Four things you can touch'**
+  String get senses_touch;
+
+  /// Five senses, step 2 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'The chair under you, your clothes, the air on your skin.'**
+  String get senses_touchBody;
+
+  /// Five senses, step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Three things you can hear'**
+  String get senses_hear;
+
+  /// Five senses, step 3 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Near or far, loud or soft.'**
+  String get senses_hearBody;
+
+  /// Five senses, step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Two things you can smell'**
+  String get senses_smell;
+
+  /// Five senses, step 4 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Or two scents you like, if nothing is near.'**
+  String get senses_smellBody;
+
+  /// Five senses, step 5.
+  ///
+  /// In en, this message translates to:
+  /// **'One thing you can taste'**
+  String get senses_taste;
+
+  /// Five senses, step 5 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Or take a sip of water and notice it.'**
+  String get senses_tasteBody;
+
+  /// Screen-reader text for the quiet step dots. Not a score.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String senses_step(int step, int total);
+
+  /// After the fifth sense.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re here, in this moment. Nicely done.'**
+  String get senses_done;
+
+  /// Self-compassion touch: a hand on the heart for a minute.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand on heart'**
+  String get heart_title;
+
+  /// Under the hand-on-heart card.
+  ///
+  /// In en, this message translates to:
+  /// **'A minute of warmth, just for you.'**
+  String get heart_card;
+
+  /// Hand on heart: first cue, shown with the first slow breath. Gentle.
+  ///
+  /// In en, this message translates to:
+  /// **'Place a hand on your heart, or anywhere that feels comforting.'**
+  String get heart_intro;
+
+  /// Hand on heart, phrase 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Feel the warmth of your hand.'**
+  String get heart_1;
+
+  /// Hand on heart, phrase 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe gently. There\'s no rush.'**
+  String get heart_2;
+
+  /// Hand on heart, phrase 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Whatever you\'re feeling is allowed here.'**
+  String get heart_3;
+
+  /// Hand on heart, phrase 4. Gender-neutral 'friend'.
+  ///
+  /// In en, this message translates to:
+  /// **'Be as kind to yourself as you would be to a friend.'**
+  String get heart_4;
+
+  /// After the hand-on-heart minute.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for being gentle with yourself.'**
+  String get heart_done;
+
+  /// Gratitude: think of (or type) three small things that went okay. Nothing is stored.
+  ///
+  /// In en, this message translates to:
+  /// **'Three small things'**
+  String get gratitude_title;
+
+  /// Under the three-small-things card.
+  ///
+  /// In en, this message translates to:
+  /// **'Three small things that went okay today.'**
+  String get gratitude_card;
+
+  /// Three small things: intro. Prompts only, no typing; nothing is stored.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring three small things from today to mind, one at a time. There\'s nothing to write.'**
+  String get gratitude_intro;
+
+  /// Three small things, step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'One small thing that went okay'**
+  String get gratitude_1;
+
+  /// Three small things, step 1 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'It can be tiny, like a warm drink or a kind word.'**
+  String get gratitude_1Body;
+
+  /// Three small things, step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Another small thing'**
+  String get gratitude_2;
+
+  /// Three small things, step 2 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Something you saw, heard or did.'**
+  String get gratitude_2Body;
+
+  /// Three small things, step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'One more small thing'**
+  String get gratitude_3;
+
+  /// Three small things, step 3 hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe something about yourself.'**
+  String get gratitude_3Body;
+
+  /// After the third small thing.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold onto those for a moment. They\'re yours.'**
+  String get gratitude_done;
+
+  /// Savour (Sunrise's minute; also in the library): intro. Prompts only.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s replay one good moment from today, slowly.'**
+  String get savour_intro;
+
+  /// Savour, step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring one good moment from today to mind, however small.'**
+  String get savour_1;
+
+  /// Savour, step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Where were you? What could you see and hear?'**
+  String get savour_2;
+
+  /// Savour, step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice how it feels to remember it now.'**
+  String get savour_3;
+
+  /// After the savour steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Let it stay with you a little longer.'**
+  String get savour_done;
+
+  /// Optional card in the check-in saved moment, for every quadrant. Never shown right after the crisis sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'A minute for you'**
+  String get minute_forYou;
+
+  /// Today's minute: one minute of calm breathing.
+  ///
+  /// In en, this message translates to:
+  /// **'One calm minute'**
+  String get minute_calmTitle;
+
+  /// Today's minute: one minute of box breathing.
+  ///
+  /// In en, this message translates to:
+  /// **'Box breathing'**
+  String get minute_boxTitle;
+
+  /// Today's minute: 4-7-8 breathing.
+  ///
+  /// In en, this message translates to:
+  /// **'4-7-8 breathing'**
+  String get minute_478Title;
+
+  /// One minute of slow breathing (Moonlight's minute; also in Today's minute).
+  ///
+  /// In en, this message translates to:
+  /// **'A minute of stillness'**
+  String get minute_stillnessTitle;
+
+  /// Under 'A minute of stillness'.
+  ///
+  /// In en, this message translates to:
+  /// **'One quiet minute with the orb.'**
+  String get minute_stillnessBody;
+
+  /// 30-second grounding breath (Storm's minute).
+  ///
+  /// In en, this message translates to:
+  /// **'Thirty seconds to land'**
+  String get minute_landTitle;
+
+  /// Under 'Thirty seconds to land' (Storm's minute).
+  ///
+  /// In en, this message translates to:
+  /// **'Three slow breaths with the orb.'**
+  String get minute_landBody;
+
+  /// Hand on heart, offered as Rain's minute.
+  ///
+  /// In en, this message translates to:
+  /// **'A little comfort'**
+  String get minute_comfortTitle;
+
+  /// Under 'A little comfort'.
+  ///
+  /// In en, this message translates to:
+  /// **'A hand on your heart, and a minute of warmth.'**
+  String get minute_comfortBody;
+
+  /// Savouring what feels good (Sunrise's minute).
+  ///
+  /// In en, this message translates to:
+  /// **'Savour this'**
+  String get minute_savourTitle;
+
+  /// Under 'Savour this'.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay one good moment from today.'**
+  String get minute_savourBody;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s a lot at once. Your light is still here.'**
+  String get companion_storm1;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Naming a storm takes courage. You showed up for yourself.'**
+  String get companion_storm2;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Big, loud feelings are welcome here. So are you.'**
+  String get companion_storm3;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Stormy days matter too. Thank you for checking in.'**
+  String get companion_storm4;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'You named this honestly. That matters.'**
+  String get companion_storm5;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Storms are part of your sky too.'**
+  String get companion_storm6;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Whatever is swirling, you noticed it. That counts.'**
+  String get companion_storm7;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Even in a storm, your glow is yours.'**
+  String get companion_storm8;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'That feels heavy. Your light is still with you.'**
+  String get companion_rain1;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Being honest about a low day takes courage. You showed up for yourself.'**
+  String get companion_rain2;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow, heavy feelings are welcome here. So are you.'**
+  String get companion_rain3;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Rainy days matter too. Thank you for checking in.'**
+  String get companion_rain4;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'You were honest with yourself today. That matters.'**
+  String get companion_rain5;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain is part of your sky too.'**
+  String get companion_rain6;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'However heavy it is, you noticed it. That counts.'**
+  String get companion_rain7;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Even on grey days, your glow is yours.'**
+  String get companion_rain8;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet, settled moment. Your light is resting easy.'**
+  String get companion_moonlight1;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Noticing a quiet moment is worth something. You showed up for yourself.'**
+  String get companion_moonlight2;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft, easy feelings are welcome here. So are you.'**
+  String get companion_moonlight3;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle days matter too. Thank you for checking in.'**
+  String get companion_moonlight4;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'You took a moment to notice this. That matters.'**
+  String get companion_moonlight5;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Moonlight is part of your sky too.'**
+  String get companion_moonlight6;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'However small this calm is, you noticed it. That counts.'**
+  String get companion_moonlight7;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'In the quiet, your glow is yours.'**
+  String get companion_moonlight8;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'A bright moment. Your light is shining.'**
+  String get companion_sunrise1;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Noticing a good moment is worth something. You showed up for yourself.'**
+  String get companion_sunrise2;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Big, bright feelings are welcome here. So are you.'**
+  String get companion_sunrise3;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Bright days matter too. Thank you for checking in.'**
+  String get companion_sunrise4;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'You let yourself notice this. That matters.'**
+  String get companion_sunrise5;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise is part of your sky too.'**
+  String get companion_sunrise6;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'However big or small this is, you noticed it. That counts.'**
+  String get companion_sunrise7;
+
+  /// Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth.
+  ///
+  /// In en, this message translates to:
+  /// **'In this brightness, your glow is yours.'**
+  String get companion_sunrise8;
+
+  /// Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for checking in.'**
+  String get companion_neutral1;
+
+  /// Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.
+  ///
+  /// In en, this message translates to:
+  /// **'You showed up for yourself.'**
+  String get companion_neutral2;
+
+  /// Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.
+  ///
+  /// In en, this message translates to:
+  /// **'Your light is still here.'**
+  String get companion_neutral3;
+
+  /// Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s no rush here.'**
+  String get companion_neutral4;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s one small thing that helped today?'**
+  String get prompt_note1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind right now?'**
+  String get prompt_note2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to remember about today?'**
+  String get prompt_note3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s taking up the most room right now?'**
+  String get prompt_storm1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'If this feeling could speak, what would it say?'**
+  String get prompt_storm2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s one thing you could set down, even for a minute?'**
+  String get prompt_storm3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would feel gentle right now?'**
+  String get prompt_rain1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s weighing on you today?'**
+  String get prompt_rain2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'Who or what has felt kind to you lately?'**
+  String get prompt_rain3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s helping you feel settled?'**
+  String get prompt_moonlight1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What made today feel softer?'**
+  String get prompt_moonlight2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to keep from this moment?'**
+  String get prompt_moonlight3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s lighting you up today?'**
+  String get prompt_sunrise1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What went well that you\'d like to remember?'**
+  String get prompt_sunrise2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'Who would you like to share this with?'**
+  String get prompt_sunrise3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you want future you to know?'**
+  String get prompt_capsule1;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s helping you right now that you might forget?'**
+  String get prompt_capsule2;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you say to yourself on a hard day?'**
+  String get prompt_capsule3;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What helps when everything feels like too much?'**
+  String get prompt_capsuleStorm;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you want to hear on a heavy day?'**
+  String get prompt_capsuleRain;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What helps you find this calm again?'**
+  String get prompt_capsuleMoonlight;
+
+  /// Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to celebrate with future you?'**
+  String get prompt_capsuleSunrise;
+
+  /// Shows a different guided prompt in the empty note (the prompt is only a hint, never saved).
+  ///
+  /// In en, this message translates to:
+  /// **'Another prompt'**
+  String get prompt_another;
+
+  /// Settings switch: show a gentle guided prompt in the empty note field.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing prompts'**
+  String get prompt_settingsTitle;
+
+  /// Under the Settings switch for guided prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle question in the empty note. Never saved.'**
+  String get prompt_settingsBody;
+
+  /// History button: add a check-in for one of the last 7 days.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a past check-in'**
+  String get backfill_add;
+
+  /// Title of the day picker for a past check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Which day?'**
+  String get backfill_pickTitle;
+
+  /// Under the day picker title.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You can add a check-in for yesterday.} other{You can add a check-in for any of the last {count} days.}}'**
+  String backfill_pickBody(int count);
+
+  /// Title of the check-in picker for a past day.
+  ///
+  /// In en, this message translates to:
+  /// **'How were you feeling?'**
+  String get backfill_title;
+
+  /// Screen-reader label of the day chip on a past check-in, e.g. 'Check-in for Tuesday, October 6'. Tapping it changes the day.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in for {day}'**
+  String backfill_forDay(String day);
+
+  /// Screen-reader hint on the day of a past check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Change day'**
+  String get backfill_changeDay;
+
+  /// When the picked day has moved out of the 7-day window (e.g. past 04:00). The selection is kept.
+  ///
+  /// In en, this message translates to:
+  /// **'Past check-ins can go up to a week back. Could you pick another day?'**
+  String get backfill_outOfRange;
+
+  /// After saving a check-in for a past day (PRD 06d edge case).
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your sky'**
+  String get backfill_savedTitle;
+
+  /// Under 'Added to your sky': the day it was saved for, e.g. 'Saved for Tuesday, October 6.'
+  ///
+  /// In en, this message translates to:
+  /// **'Saved for {day}.'**
+  String backfill_savedDay(String day);
+
+  /// After saving a past check-in: why no Starlight shows (PRD F1: backfills earn nothing). Calm, no loss words.
+  ///
+  /// In en, this message translates to:
+  /// **'Starlight comes from check-ins made on the day itself.'**
+  String get backfill_savedBody;
+
+  /// Shown instead of the time on a check-in that was added for a past day.
+  ///
+  /// In en, this message translates to:
+  /// **'Added later'**
+  String get history_addedLater;
+
+  /// When a past-day check-in is for, on its page, e.g. 'Yesterday · added later'.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} · added later'**
+  String history_whenAddedLater(String day);
+
+  /// Navigation bar tab: the companion-led today view.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get shell_tabHome;
+
+  /// Navigation bar tab: the private calm space (breathing, grounding). Same name as the Sanctuary screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sanctuary'**
+  String get shell_tabSanctuary;
+
+  /// Navigation bar tab: mood rooms with preset gestures. Never 'chat'.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms'**
+  String get shell_tabRooms;
+
+  /// Navigation bar tab: private history and gentle patterns. Never clinical.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get shell_tabInsights;
+
+  /// The distinct centre action of the navigation bar: opens a new check-in (not a tab).
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get shell_checkIn;
+
+  /// Screen-reader hint on the centre Check in action, so it is not taken for a tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts a new check-in'**
+  String get shell_checkInHint;
+
+  /// Safety Center: when to call emergency services instead of a helpline. Direct and calm; never names a method (REQ-SAFE-15).
+  ///
+  /// In en, this message translates to:
+  /// **'Call emergency services right away if you or someone near you is in immediate danger, badly hurt, or can\'t stay safe.'**
+  String get safety_emergencyWhen;
+
+  /// Safety Center link (signed in only) to Settings › Help & Safety.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Safety in Settings'**
+  String get safety_settingsLink;
+
+  /// Screen-reader hint on the link above: what that Settings section holds.
+  ///
+  /// In en, this message translates to:
+  /// **'Support contact, Grievance Officer and policies'**
+  String get safety_settingsHint;
 
   /// Button in the check-in details that starts recording a voice note (also its screen-reader label).
   ///

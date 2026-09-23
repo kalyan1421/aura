@@ -12,6 +12,8 @@ import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
 import '../checkin/quadrant_glyph.dart';
+import '../shell/app_shell.dart' show ShellSettingsButton, isShellTabRoot;
+import 'backfill.dart';
 import 'history_format.dart';
 import 'history_providers.dart';
 
@@ -19,6 +21,8 @@ import 'history_providers.dart';
 /// Rows show the mood, time and discreet markers (tags, note, voice) only —
 /// never note text.
 /// Read from Drift, so it works offline (PRD F10 "history is never gated").
+/// "Add a past check-in" adds one for any of the last 7 days (F1 backfill);
+/// it shows under its day, marked "Added later" instead of a time.
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
@@ -32,7 +36,12 @@ class HistoryScreen extends ConsumerWidget {
       appBar: helpAppBar(
         context,
         title: l.history_title,
-        leading: const HistoryBackButton(fallback: Routes.home),
+        // As the Insights tab's first screen there is nowhere to go back
+        // to; Settings opens from here instead (app shell). Opened on its
+        // own, Back.
+        leading: isShellTabRoot(context)
+            ? const ShellSettingsButton()
+            : const HistoryBackButton(fallback: Routes.home),
       ),
       body: CosmicBackground(
         child: rows == null
@@ -95,9 +104,24 @@ class _Empty extends StatelessWidget {
             child: Text(l.home_checkIn),
           ),
         ),
+        const SizedBox(height: AuraSpace.s),
+        const Center(child: _AddPastButton()),
       ],
     );
   }
+}
+
+/// "Add a past check-in" (F1 backfill: one of the last 7 days).
+class _AddPastButton extends ConsumerWidget {
+  const _AddPastButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => TextButton.icon(
+    key: const ValueKey('history-add-past'),
+    onPressed: () => addPastCheckIn(context, ref),
+    icon: const Icon(Icons.edit_calendar_outlined),
+    label: Text(AppLocalizations.of(context).backfill_add),
+  );
 }
 
 class _List extends ConsumerWidget {
@@ -137,22 +161,31 @@ class _List extends ConsumerWidget {
         if (i == 0) {
           return Padding(
             padding: const EdgeInsets.only(bottom: AuraSpace.s),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ExcludeSemantics(
-                  child: Icon(
-                    Icons.lock_outline_rounded,
-                    size: 16,
-                    color: AuraColors.textMuted,
-                  ),
+                Row(
+                  children: [
+                    const ExcludeSemantics(
+                      child: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 16,
+                        color: AuraColors.textMuted,
+                      ),
+                    ),
+                    const SizedBox(width: AuraSpace.xs),
+                    Flexible(
+                      child: Text(
+                        l.history_private,
+                        style: t.bodySmall?.copyWith(
+                          color: AuraColors.textSoft,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AuraSpace.xs),
-                Flexible(
-                  child: Text(
-                    l.history_private,
-                    style: t.bodySmall?.copyWith(color: AuraColors.textSoft),
-                  ),
-                ),
+                const SizedBox(height: AuraSpace.xs),
+                const _AddPastButton(),
               ],
             ),
           );
@@ -178,7 +211,10 @@ class _List extends ConsumerWidget {
         return _Row(
           row: row,
           localeTag: localeTag,
-          time: historyTimeLabel(context, row, time.timezone),
+          // A past check-in's clock time is when it was added: say so.
+          time: isBackfillRow(row, time.timezone)
+              ? l.history_addedLater
+              : historyTimeLabel(context, row, time.timezone),
         );
       },
     );

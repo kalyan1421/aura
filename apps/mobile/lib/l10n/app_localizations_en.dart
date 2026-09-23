@@ -802,6 +802,359 @@ class AppLocalizationsEn extends AppLocalizations {
       'This account is already being deleted, so it can\'t be kept any more. This phone will be cleared and signed out.';
 
   @override
+  String get signin_or => 'or';
+
+  @override
+  String get signin_socialNotReady =>
+      'That sign-in option isn\'t ready yet. Use your email for now.';
+
+  @override
+  String get signin_socialOffline =>
+      'It looks like you\'re offline. Try again when you\'re connected.';
+
+  @override
+  String get capsules_title => 'Future you';
+
+  @override
+  String get capsules_emptyBody =>
+      'Write to future you. Seal it for a date, or for a feeling.';
+
+  @override
+  String get capsules_emptyCta => 'Seal your first capsule';
+
+  @override
+  String get capsules_new => 'Write a capsule';
+
+  @override
+  String capsules_entryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capsules sealed',
+      one: '1 capsule sealed',
+      zero: 'Nothing sealed yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String capsules_entryReady(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count are ready to open',
+      one: '1 is ready to open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_sectionReady => 'Ready to open';
+
+  @override
+  String get capsules_sectionSealed => 'Sealed';
+
+  @override
+  String get capsules_sectionOpened => 'Opened';
+
+  @override
+  String capsules_sealedUntil(String date) {
+    return 'Sealed until $date. It\'ll keep.';
+  }
+
+  @override
+  String get capsules_waitingFeeling => 'Waiting for a feeling';
+
+  @override
+  String get capsules_readyRow => 'Ready when you are';
+
+  @override
+  String capsules_untitled(String date) {
+    return 'A capsule from $date';
+  }
+
+  @override
+  String get capsules_lockedTitle => 'A sealed capsule';
+
+  @override
+  String capsules_sealedOn(String date) {
+    return 'Sealed $date';
+  }
+
+  @override
+  String capsules_openedOn(String date) {
+    return 'Opened $date';
+  }
+
+  @override
+  String get capsules_draftTitle => 'Your draft is here';
+
+  @override
+  String get capsules_draftBody => 'Pick up where you left off.';
+
+  @override
+  String get capsules_composeTitle => 'Write to future you';
+
+  @override
+  String get capsules_titleLabel => 'Title';
+
+  @override
+  String get capsules_titleHelper => 'Shown on the capsule while it\'s sealed.';
+
+  @override
+  String get capsules_textLabel => 'Your note';
+
+  @override
+  String get capsules_textHelper => 'Only you will read this, when it opens.';
+
+  @override
+  String get capsules_photosTitle => 'Photos';
+
+  @override
+  String get capsules_addPhoto => 'Add a photo';
+
+  @override
+  String get capsules_photoHint =>
+      'Up to 3. Location and camera details are removed.';
+
+  @override
+  String get capsules_photoAdding => 'Adding your photo…';
+
+  @override
+  String get capsules_photoFailed =>
+      'That photo couldn\'t be added. Try another one.';
+
+  @override
+  String capsules_photoRemove(int index) {
+    return 'Remove photo $index';
+  }
+
+  @override
+  String capsules_photoSemantic(int index, int count) {
+    return 'Photo $index of $count';
+  }
+
+  @override
+  String get capsules_voiceHint => 'Up to 2 minutes. Only you can hear it.';
+
+  @override
+  String get capsules_voiceLimit =>
+      'That\'s the full two minutes, so recording stopped. Your voice note is ready.';
+
+  @override
+  String get capsules_unlockTitle => 'When should it open?';
+
+  @override
+  String get capsules_unlockDate => 'On a date';
+
+  @override
+  String get capsules_unlockFeeling => 'For a feeling';
+
+  @override
+  String get capsules_pickDate => 'Pick a date';
+
+  @override
+  String get capsules_changeDate => 'Change date';
+
+  @override
+  String capsules_dateChosen(String date, String time) {
+    return 'Opens $date at $time';
+  }
+
+  @override
+  String get capsules_dateHelp => 'Any day from a week to five years from now.';
+
+  @override
+  String get capsules_datePickerHelp => 'It opens at 10:00 that day';
+
+  @override
+  String get capsules_feelingHelp =>
+      'It can open from 24 hours after sealing, the next time you check in feeling this.';
+
+  @override
+  String capsules_anyQuadrant(String quadrant) {
+    return 'Any $quadrant feeling';
+  }
+
+  @override
+  String capsules_feelingChosen(String feeling) {
+    return 'Waits for: $feeling';
+  }
+
+  @override
+  String get capsules_seal => 'Seal it';
+
+  @override
+  String get capsules_needContent =>
+      'Add a few words, a voice note or a photo first.';
+
+  @override
+  String get capsules_needUnlock => 'Choose when it should open.';
+
+  @override
+  String get capsules_sealFailed =>
+      'That didn\'t seal just now. Your capsule is still here. Try again.';
+
+  @override
+  String get capsules_sealedTitle => 'Sealed';
+
+  @override
+  String get capsules_sealedFeeling => 'Sealed. It\'ll wait for that feeling.';
+
+  @override
+  String get capsules_mediaLater =>
+      'Sealed and safe on this phone. Photos and voice back up when you\'re online.';
+
+  @override
+  String get capsules_limitBody =>
+      'Free accounts keep 3 mood capsules waiting. Date capsules are unlimited.';
+
+  @override
+  String get capsules_limitPickDate => 'Pick a date instead';
+
+  @override
+  String get capsules_makeDate => 'Make it a date capsule';
+
+  @override
+  String get capsules_leaveTitle => 'Keep this draft?';
+
+  @override
+  String get capsules_leaveBody =>
+      'It stays on this phone until you seal it or let it go.';
+
+  @override
+  String get capsules_leaveEditing => 'Keep editing';
+
+  @override
+  String get capsules_leaveKeep => 'Keep draft';
+
+  @override
+  String get capsules_leaveDiscard => 'Discard';
+
+  @override
+  String capsules_detailFeeling(String feeling) {
+    return 'Waiting for a feeling: $feeling.';
+  }
+
+  @override
+  String capsules_detailArming(String date) {
+    return 'It can open from $date.';
+  }
+
+  @override
+  String get capsules_detailNoEarly =>
+      'Sealed means sealed: it can\'t be opened early or changed.';
+
+  @override
+  String get capsules_delete => 'Delete capsule';
+
+  @override
+  String get capsules_deleteTitle => 'Delete this capsule?';
+
+  @override
+  String get capsules_deleteBody =>
+      'It will be gone for good, without being opened.';
+
+  @override
+  String get capsules_deleteBodyOpened => 'It will be gone for good.';
+
+  @override
+  String get capsules_deleteConfirm => 'Delete';
+
+  @override
+  String get capsules_deleteKeep => 'Keep it';
+
+  @override
+  String get capsules_deleted => 'Capsule deleted.';
+
+  @override
+  String get capsules_triggerTitle =>
+      'You left a note for a moment like this. Open now or later?';
+
+  @override
+  String get capsules_holdTitle =>
+      'A note from past you is waiting. Open now, or later?';
+
+  @override
+  String get capsules_now => 'Now';
+
+  @override
+  String get capsules_later => 'Later';
+
+  @override
+  String get capsules_readyTitle => 'Something you sealed is ready to open.';
+
+  @override
+  String capsules_readyMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capsules are ready.',
+      one: '1 capsule is ready.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_readyOpen => 'Open it';
+
+  @override
+  String get capsules_channelName => 'Capsules';
+
+  @override
+  String get capsules_channelDescription =>
+      'When something you sealed is ready to open.';
+
+  @override
+  String get capsules_hardMoment =>
+      'You wrote this during a hard moment. Open when you\'re ready.';
+
+  @override
+  String get capsules_skip => 'Skip';
+
+  @override
+  String get capsules_opening => 'Opening your capsule';
+
+  @override
+  String get capsules_openedTitle => 'From past you';
+
+  @override
+  String get capsules_keepNextTime => 'Keep for next time';
+
+  @override
+  String get capsules_keptNextTime => 'It\'ll wait for that feeling again.';
+
+  @override
+  String get capsules_voiceOffline =>
+      'Your capsule is open. The voice note arrives when you\'re back online.';
+
+  @override
+  String get capsules_photosOffline =>
+      'The photos arrive when you\'re back online.';
+
+  @override
+  String get capsules_mediaFailed =>
+      'This couldn\'t be loaded just now. Try again in a moment.';
+
+  @override
+  String get capsules_retry => 'Try again';
+
+  @override
+  String get capsules_cantRead =>
+      'This capsule can\'t be read on this phone yet. It opens once you\'re back online.';
+
+  @override
+  String capsules_accountDeletionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sealed capsules will be lost.',
+      one: '1 sealed capsule will be lost.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get checkin_discardTitle => 'Leave without saving?';
 
   @override
@@ -1070,6 +1423,109 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get notif_reminderBanner =>
+      'A quiet minute for you. How\'s today feeling?';
+
+  @override
+  String get notif_reminderAction => 'Check in';
+
+  @override
+  String get notif_capsuleBanner => 'Something you sealed is ready to open.';
+
+  @override
+  String get notif_capsuleAction => 'Open';
+
+  @override
+  String get notif_channelReminders => 'Reminders';
+
+  @override
+  String get notif_channelRemindersDescription =>
+      'Your daily check-in reminder.';
+
+  @override
+  String get set_notifications => 'Notifications';
+
+  @override
+  String get set_notifMaster => 'Notifications from Aura';
+
+  @override
+  String get set_notifMasterNote =>
+      'At most two a day. Nothing on your lock screen says how you feel.';
+
+  @override
+  String get set_notifReminder => 'Daily check-in reminder';
+
+  @override
+  String set_notifReminderNote(String time) {
+    return 'One gentle nudge a day, at $time. Skipped once you\'ve checked in.';
+  }
+
+  @override
+  String get set_notifReminderOffNote =>
+      'Off. Turn it on for one gentle nudge a day.';
+
+  @override
+  String get set_notifReminderTime => 'Reminder time';
+
+  @override
+  String get set_notifCapsule => 'A capsule is ready to open';
+
+  @override
+  String get set_notifCapsuleNote =>
+      'On the day you chose for something you sealed.';
+
+  @override
+  String set_notifQuietNote(String start, String end) {
+    return 'Quiet hours: nothing is sent $start–$end.';
+  }
+
+  @override
+  String get set_notifQuietFrom => 'Quiet from';
+
+  @override
+  String get set_notifQuietUntil => 'Quiet until';
+
+  @override
+  String get set_notifDiscreet => 'Discreet mode';
+
+  @override
+  String get set_notifDiscreetNote =>
+      'Every notification just says “Aura · You have a gentle update”.';
+
+  @override
+  String get set_notifOffNote =>
+      'Notifications are off for Aura on this phone. Your choices here still apply once they\'re on.';
+
+  @override
+  String get set_notifTurnOn => 'Turn on';
+
+  @override
+  String get set_notifOpenSettings => 'Open phone settings';
+
+  @override
+  String get set_notifQuietConfirmTitle =>
+      'This time is inside your quiet hours';
+
+  @override
+  String set_notifQuietConfirmBody(String start, String end, String time) {
+    return 'Aura stays silent $start–$end. Send your reminder at $time anyway?';
+  }
+
+  @override
+  String get set_notifQuietConfirmYes => 'Send it anyway';
+
+  @override
+  String get set_notifQuietConfirmNo => 'Keep it quiet';
+
+  @override
+  String push_timeRow(String time) {
+    return 'Every evening at $time';
+  }
+
+  @override
+  String get push_changeTime => 'Change time';
+
+  @override
   String get onb_trustTitle => 'Before we begin';
 
   @override
@@ -1140,6 +1596,1165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get polish_helpNumberCopied => 'Number copied';
+
+  @override
+  String get rooms_title => 'Rooms';
+
+  @override
+  String get rooms_yourRooms => 'Your rooms';
+
+  @override
+  String get rooms_memories => 'Memories';
+
+  @override
+  String get rooms_whatTitle => 'What rooms are';
+
+  @override
+  String get rooms_whatBody =>
+      'A small room of people who feel like you do right now, for a day.';
+
+  @override
+  String get rooms_pointName =>
+      'A fresh name in every room. Nobody sees your account.';
+
+  @override
+  String get rooms_pointGestures =>
+      'No messages or DMs: only eight warm gestures.';
+
+  @override
+  String get rooms_pointTime =>
+      'Rooms last a day, then rest as a memory for 7 days.';
+
+  @override
+  String get rooms_lanternNote =>
+      'Lantern Hour: every night from 9 to 11 on your region\'s clock, rooms light a shared lantern and more people drop in.';
+
+  @override
+  String get rooms_lanternNow => 'Lantern Hour is on now';
+
+  @override
+  String get rooms_checkInCta => 'Check in to find a room';
+
+  @override
+  String get rooms_empty =>
+      'You\'re not in a room right now. After a check-in you can join people who feel the same.';
+
+  @override
+  String get rooms_offline =>
+      'Rooms need a connection. Your own check-ins still save on this phone.';
+
+  @override
+  String get rooms_loadFailed => 'We couldn\'t reach the rooms just now.';
+
+  @override
+  String get rooms_tryAgain => 'Try again';
+
+  @override
+  String get rooms_signedOut => 'Rooms open once you\'re signed in.';
+
+  @override
+  String get rooms_signIn => 'Sign in';
+
+  @override
+  String get rooms_suspended =>
+      'Rooms are paused for your account right now. Help is always here.';
+
+  @override
+  String rooms_suspendedUntil(String date) {
+    return 'Rooms are paused for your account until $date. Help is always here.';
+  }
+
+  @override
+  String get rooms_accountClosed =>
+      'This account was closed for breaking Aura\'s rules.';
+
+  @override
+  String get rooms_profilePending =>
+      'Rooms open once your account finishes setting up. Try again in a moment.';
+
+  @override
+  String get rooms_openHint => 'Opens the room';
+
+  @override
+  String rooms_memoryUntil(String date) {
+    return 'A memory until $date';
+  }
+
+  @override
+  String get rooms_theme_lighthouse => 'The Lighthouse';
+
+  @override
+  String get rooms_theme_rain_sanctuary => 'The Rain Sanctuary';
+
+  @override
+  String get rooms_theme_midnight_observatory => 'The Midnight Observatory';
+
+  @override
+  String get rooms_theme_sunrise_deck => 'The Sunrise Deck';
+
+  @override
+  String get rooms_gesture_warm_tea => 'Warm Tea';
+
+  @override
+  String get rooms_gesture_light_a_candle => 'Light a Candle';
+
+  @override
+  String get rooms_gesture_hug => 'Hug';
+
+  @override
+  String get rooms_gesture_me_too => 'Me Too';
+
+  @override
+  String get rooms_gesture_soft_rain => 'Soft Rain';
+
+  @override
+  String get rooms_gesture_stargaze => 'Stargaze';
+
+  @override
+  String get rooms_gesture_deep_breath => 'Deep Breath';
+
+  @override
+  String get rooms_gesture_youre_not_alone => 'You\'re Not Alone';
+
+  @override
+  String rooms_hereNow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count here now',
+      one: '1 here now',
+      zero: 'Nobody here right now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_today(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people have been here today',
+      one: '1 person has been here today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_countsSemantic(int now, int today) {
+    String _temp0 = intl.Intl.pluralLogic(
+      now,
+      locale: localeName,
+      other: '$now people here now',
+      one: '1 person here now',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      today,
+      locale: localeName,
+      other: '$today today',
+      one: '1 today',
+    );
+    return '$_temp0, $_temp1';
+  }
+
+  @override
+  String rooms_stripSemantic(String theme, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people here now',
+      one: '1 person here now',
+    );
+    return '$theme, $_temp0';
+  }
+
+  @override
+  String get rooms_opening => 'Opening the room…';
+
+  @override
+  String rooms_youAre(String pseudonym) {
+    return 'You\'re $pseudonym here';
+  }
+
+  @override
+  String rooms_coldStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count people have been here today. Leave a light for the next one.',
+      one: 'You\'re the first here today. Leave a light for the next one.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_lanternOn(String time) {
+    return 'Lantern Hour · until $time';
+  }
+
+  @override
+  String rooms_closing(String time) {
+    return 'This room becomes a memory at $time.';
+  }
+
+  @override
+  String get rooms_memory =>
+      'This room has become a memory. You can look back for 7 days.';
+
+  @override
+  String get rooms_findNew => 'Find a new room';
+
+  @override
+  String get rooms_reconnecting => 'Reconnecting…';
+
+  @override
+  String get rooms_membersTitle => 'Here with you';
+
+  @override
+  String get rooms_you => 'You';
+
+  @override
+  String get rooms_memberHereNow => 'here now';
+
+  @override
+  String get rooms_memberAway => 'away for now';
+
+  @override
+  String get rooms_memberMuted => 'muted for you';
+
+  @override
+  String rooms_memberLabel(String pseudonym, String mood, String status) {
+    return '$pseudonym, $mood, $status';
+  }
+
+  @override
+  String rooms_youLabel(String pseudonym, String mood) {
+    return 'You, $pseudonym, $mood';
+  }
+
+  @override
+  String get rooms_memberHint => 'Opens options';
+
+  @override
+  String get rooms_recentTitle => 'Warmth in this room';
+
+  @override
+  String rooms_receivedLine(String pseudonym, String gesture) {
+    return '$pseudonym sent you $gesture';
+  }
+
+  @override
+  String rooms_sentToMember(String gesture, String pseudonym) {
+    return '$gesture sent to $pseudonym';
+  }
+
+  @override
+  String rooms_sentToRoom(String gesture) {
+    return '$gesture sent to everyone here';
+  }
+
+  @override
+  String rooms_someoneSent(String gesture) {
+    return 'Someone sent $gesture';
+  }
+
+  @override
+  String rooms_someoneSentRoom(String gesture) {
+    return 'Someone sent $gesture to everyone here';
+  }
+
+  @override
+  String rooms_youSentMember(String gesture, String pseudonym) {
+    return 'You sent $gesture to $pseudonym';
+  }
+
+  @override
+  String rooms_youSentRoom(String gesture) {
+    return 'You sent $gesture to everyone here';
+  }
+
+  @override
+  String get rooms_trayTitle => 'Send warmth to everyone here';
+
+  @override
+  String get rooms_trayHint => 'Sends to everyone here';
+
+  @override
+  String get rooms_trayResting =>
+      'Gestures rest in a memory. You can still report, block or mute.';
+
+  @override
+  String get rooms_roomOptions => 'Room options';
+
+  @override
+  String get rooms_reportRoom => 'Report a problem here';
+
+  @override
+  String get rooms_leave => 'Leave this room';
+
+  @override
+  String get rooms_removeMemory => 'Remove from my rooms';
+
+  @override
+  String get rooms_leaveTitle => 'Leave this room?';
+
+  @override
+  String get rooms_leaveBody =>
+      'You won\'t be able to come back to it, and your seat opens up for someone else. Your next check-in can find you a new room.';
+
+  @override
+  String get rooms_leaveConfirm => 'Leave room';
+
+  @override
+  String get rooms_stay => 'Stay';
+
+  @override
+  String get rooms_removeTitle => 'Remove this memory?';
+
+  @override
+  String get rooms_removeBody =>
+      'It leaves your rooms now. Memories close for good after 7 days anyway.';
+
+  @override
+  String get rooms_removeConfirm => 'Remove';
+
+  @override
+  String get rooms_keep => 'Keep it';
+
+  @override
+  String get rooms_leaveFailed =>
+      'That didn\'t go through. You\'re still in the room.';
+
+  @override
+  String get rooms_gone =>
+      'This room has closed. Rooms rest for 7 days as memories, then they\'re gone.';
+
+  @override
+  String get rooms_backToRooms => 'Back to your rooms';
+
+  @override
+  String get rooms_offlineRoom =>
+      'Rooms need a connection. This room opens again when you\'re back online.';
+
+  @override
+  String get rooms_joinTitle => 'Finding your room';
+
+  @override
+  String get rooms_finding => 'Finding people who feel this way right now…';
+
+  @override
+  String get rooms_offlineJoin =>
+      'Rooms need a connection. Your check-in is saved.';
+
+  @override
+  String get rooms_joinFailed =>
+      'We couldn\'t reach the rooms just now. Your check-in is saved.';
+
+  @override
+  String get rooms_joinLimit =>
+      'That\'s 3 new rooms for this feeling today. The rooms you\'re in are still open to you.';
+
+  @override
+  String get rooms_seeYourRooms => 'See your rooms';
+
+  @override
+  String get rooms_poolUnavailable =>
+      'Hindi and Hinglish rooms are opening soon. Join an English room for now?';
+
+  @override
+  String get rooms_poolJoinEnglish => 'Join English room';
+
+  @override
+  String get rooms_poolNotify => 'Tell me when they open';
+
+  @override
+  String get rooms_poolNotifyDone =>
+      'We\'ll let you know here when Hindi and Hinglish rooms open.';
+
+  @override
+  String get rooms_noRequest => 'Rooms open from a check-in.';
+
+  @override
+  String get rooms_offer => 'Join a room of people feeling this';
+
+  @override
+  String get rooms_offerHint => 'Opens a room, with a fresh name just for it';
+
+  @override
+  String get rooms_offerOffline => 'Rooms open when you\'re back online';
+
+  @override
+  String get rooms_offerLater =>
+      'Rooms are in the Rooms tab whenever you\'d like company.';
+
+  @override
+  String get rooms_guidelinesTitle => 'Before your first room';
+
+  @override
+  String get rooms_guidelinesIntro =>
+      'Rooms stay gentle because everyone keeps to a few simple things:';
+
+  @override
+  String get rooms_rule1 => 'Be kind. Everyone here is having a real day.';
+
+  @override
+  String get rooms_rule2 =>
+      'No hate about caste, religion, gender, sexuality or anything else.';
+
+  @override
+  String get rooms_rule3 => 'No sexual content.';
+
+  @override
+  String get rooms_rule4 =>
+      'Never share or ask for contact details or meet-ups, or anyone\'s age, school, city or photos.';
+
+  @override
+  String get rooms_rule5 => 'No selling or spam.';
+
+  @override
+  String get rooms_rule6 =>
+      'Never encourage anyone to hurt themselves. Talking about how you feel is always okay.';
+
+  @override
+  String get rooms_guidelinesSafety =>
+      'You can report, block or mute anyone, and help is always one tap away.';
+
+  @override
+  String get rooms_guidelinesAgree => 'I\'ll keep to these';
+
+  @override
+  String rooms_sendTo(String pseudonym) {
+    return 'Send $pseudonym some warmth';
+  }
+
+  @override
+  String rooms_gestureHintMember(String pseudonym) {
+    return 'Sends to $pseudonym';
+  }
+
+  @override
+  String get rooms_report => 'Report';
+
+  @override
+  String get rooms_block => 'Block';
+
+  @override
+  String get rooms_mute => 'Mute';
+
+  @override
+  String get rooms_unmute => 'Unmute';
+
+  @override
+  String get rooms_safetyNote =>
+      'They\'re never told who reported, blocked or muted them.';
+
+  @override
+  String rooms_blockTitle(String pseudonym) {
+    return 'Block $pseudonym?';
+  }
+
+  @override
+  String get rooms_blockBody =>
+      'You won\'t be placed in a room together again, and gestures between you stop. They won\'t be told.';
+
+  @override
+  String rooms_blocked(String pseudonym) {
+    return '$pseudonym is blocked. You won\'t share a room again.';
+  }
+
+  @override
+  String rooms_muted(String pseudonym) {
+    return '$pseudonym is muted for you. Their gestures won\'t reach you here.';
+  }
+
+  @override
+  String rooms_unmuted(String pseudonym) {
+    return '$pseudonym is unmuted.';
+  }
+
+  @override
+  String get rooms_undo => 'Undo';
+
+  @override
+  String get rooms_actionFailed =>
+      'That didn\'t go through. Try again in a moment.';
+
+  @override
+  String rooms_reportMember(String pseudonym) {
+    return 'Report $pseudonym';
+  }
+
+  @override
+  String get rooms_reportGesture => 'Report this gesture';
+
+  @override
+  String get rooms_reportWhy => 'What\'s happening?';
+
+  @override
+  String get rooms_reason1 => 'Someone may be in danger or hurting themselves';
+
+  @override
+  String get rooms_reason2 => 'Harassment or bullying';
+
+  @override
+  String get rooms_reason3 => 'Sexual content or advances';
+
+  @override
+  String get rooms_reason4 => 'Hate or slurs';
+
+  @override
+  String get rooms_reason5 => 'Contact details or personal info';
+
+  @override
+  String get rooms_reason6 => 'Spam or selling';
+
+  @override
+  String get rooms_reason7 => 'Someone may be under 13';
+
+  @override
+  String get rooms_reason8 => 'Something else';
+
+  @override
+  String get rooms_reportNoteLabel =>
+      'Anything a moderator should know? (optional)';
+
+  @override
+  String get rooms_reportNoteHelp =>
+      'Only Aura\'s moderators read this. Please leave out phone numbers, links and handles.';
+
+  @override
+  String get rooms_reportNoteContact =>
+      'Phone numbers, links and handles can\'t be shared here. It keeps everyone safer.';
+
+  @override
+  String get rooms_reportSend => 'Send report';
+
+  @override
+  String get rooms_reportThanks =>
+      'Thank you for telling us. A moderator will look at it, usually within a day.';
+
+  @override
+  String get rooms_reportHidden =>
+      'Thank you for telling us. You won\'t get their gestures in this room while a moderator takes a look.';
+
+  @override
+  String get rooms_reportGestureHidden =>
+      'Thank you for telling us. That gesture is hidden for you now.';
+
+  @override
+  String get rooms_reportCrisis =>
+      'Thank you for telling us. A moderator will look soon, and help is always one tap away.';
+
+  @override
+  String get rooms_reportLimit =>
+      'That\'s a lot of reports today. If someone is in danger, the help button is always here.';
+
+  @override
+  String get rooms_reportFailed =>
+      'That didn\'t go through, so nothing was sent. Try again in a moment.';
+
+  @override
+  String get rooms_reportOffline =>
+      'Reports need a connection. Nothing was sent yet.';
+
+  @override
+  String get rooms_surveyTitle => 'Did you feel less alone?';
+
+  @override
+  String get rooms_surveyYes => 'Yes';
+
+  @override
+  String get rooms_surveyNo => 'Not really';
+
+  @override
+  String get rooms_surveySkip => 'Skip';
+
+  @override
+  String get sanctuary_title => 'Sanctuary';
+
+  @override
+  String get sanctuary_intro =>
+      'A quiet place, just for you. Go at your own pace. Nothing here is scored.';
+
+  @override
+  String get sanctuary_todayTitle => 'Today\'s minute';
+
+  @override
+  String get sanctuary_breatheSection => 'Breathe';
+
+  @override
+  String get sanctuary_breatheCard => 'Breathe with your Aura';
+
+  @override
+  String get sanctuary_breatheCardBody =>
+      'Calm, box or 4-7-8 breathing, for as long as you like.';
+
+  @override
+  String get sanctuary_groundingSection => 'Grounding';
+
+  @override
+  String get sanctuary_begin => 'Begin';
+
+  @override
+  String get sanctuary_start => 'Start';
+
+  @override
+  String get sanctuary_pause => 'Pause';
+
+  @override
+  String get sanctuary_resume => 'Resume';
+
+  @override
+  String get sanctuary_finish => 'Finish';
+
+  @override
+  String get sanctuary_next => 'Next';
+
+  @override
+  String get sanctuary_progress => 'Progress through this session';
+
+  @override
+  String get sanctuary_progressBegun => 'Just begun';
+
+  @override
+  String get sanctuary_progressHalf => 'About halfway';
+
+  @override
+  String get sanctuary_progressNearly => 'Nearly through';
+
+  @override
+  String get sanctuary_progressDone => 'Complete';
+
+  @override
+  String habits_autoLogged(String habit) {
+    return '$habit is marked done for today.';
+  }
+
+  @override
+  String get breathe_rhythm => 'Rhythm';
+
+  @override
+  String get breathe_calm => 'Calm';
+
+  @override
+  String get breathe_calmBody => 'In for 4, out for 6. Gentle and steady.';
+
+  @override
+  String get breathe_box => 'Box';
+
+  @override
+  String get breathe_boxBody => 'In, hold, out, hold. Four counts each.';
+
+  @override
+  String get breathe_478 => '4-7-8';
+
+  @override
+  String get breathe_478Body => 'In for 4, hold for 7, out for 8.';
+
+  @override
+  String get breathe_lightHeaded =>
+      'If you feel light-headed, stop and breathe normally.';
+
+  @override
+  String get breathe_length => 'Length';
+
+  @override
+  String breathe_minutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes',
+      one: '1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get breathe_openEnded => 'Until I stop';
+
+  @override
+  String get breathe_in => 'Breathe in';
+
+  @override
+  String get breathe_hold => 'Hold';
+
+  @override
+  String get breathe_out => 'Breathe out';
+
+  @override
+  String get breathe_paused => 'Paused. Take your time.';
+
+  @override
+  String get breathe_done => 'That was time just for you.';
+
+  @override
+  String get breathe_again => 'Again';
+
+  @override
+  String get breathe_land1 => 'Feel your feet on the ground.';
+
+  @override
+  String get breathe_land2 => 'Notice three sounds around you.';
+
+  @override
+  String get breathe_keepGoing => 'Keep going';
+
+  @override
+  String get breathe_land3 => 'Let your shoulders drop.';
+
+  @override
+  String get senses_title => 'Five senses';
+
+  @override
+  String get senses_card => 'Notice what\'s around you, one sense at a time.';
+
+  @override
+  String get senses_intro =>
+      'Let\'s notice what\'s around you, one sense at a time. Go at your own pace.';
+
+  @override
+  String get senses_see => 'Five things you can see';
+
+  @override
+  String get senses_seeBody =>
+      'Look around slowly. Name them in your head or out loud.';
+
+  @override
+  String get senses_touch => 'Four things you can touch';
+
+  @override
+  String get senses_touchBody =>
+      'The chair under you, your clothes, the air on your skin.';
+
+  @override
+  String get senses_hear => 'Three things you can hear';
+
+  @override
+  String get senses_hearBody => 'Near or far, loud or soft.';
+
+  @override
+  String get senses_smell => 'Two things you can smell';
+
+  @override
+  String get senses_smellBody => 'Or two scents you like, if nothing is near.';
+
+  @override
+  String get senses_taste => 'One thing you can taste';
+
+  @override
+  String get senses_tasteBody => 'Or take a sip of water and notice it.';
+
+  @override
+  String senses_step(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get senses_done => 'You\'re here, in this moment. Nicely done.';
+
+  @override
+  String get heart_title => 'Hand on heart';
+
+  @override
+  String get heart_card => 'A minute of warmth, just for you.';
+
+  @override
+  String get heart_intro =>
+      'Place a hand on your heart, or anywhere that feels comforting.';
+
+  @override
+  String get heart_1 => 'Feel the warmth of your hand.';
+
+  @override
+  String get heart_2 => 'Breathe gently. There\'s no rush.';
+
+  @override
+  String get heart_3 => 'Whatever you\'re feeling is allowed here.';
+
+  @override
+  String get heart_4 => 'Be as kind to yourself as you would be to a friend.';
+
+  @override
+  String get heart_done => 'Thank you for being gentle with yourself.';
+
+  @override
+  String get gratitude_title => 'Three small things';
+
+  @override
+  String get gratitude_card => 'Three small things that went okay today.';
+
+  @override
+  String get gratitude_intro =>
+      'Bring three small things from today to mind, one at a time. There\'s nothing to write.';
+
+  @override
+  String get gratitude_1 => 'One small thing that went okay';
+
+  @override
+  String get gratitude_1Body =>
+      'It can be tiny, like a warm drink or a kind word.';
+
+  @override
+  String get gratitude_2 => 'Another small thing';
+
+  @override
+  String get gratitude_2Body => 'Something you saw, heard or did.';
+
+  @override
+  String get gratitude_3 => 'One more small thing';
+
+  @override
+  String get gratitude_3Body => 'Maybe something about yourself.';
+
+  @override
+  String get gratitude_done => 'Hold onto those for a moment. They\'re yours.';
+
+  @override
+  String get savour_intro =>
+      'Let\'s replay one good moment from today, slowly.';
+
+  @override
+  String get savour_1 =>
+      'Bring one good moment from today to mind, however small.';
+
+  @override
+  String get savour_2 => 'Where were you? What could you see and hear?';
+
+  @override
+  String get savour_3 => 'Notice how it feels to remember it now.';
+
+  @override
+  String get savour_done => 'Let it stay with you a little longer.';
+
+  @override
+  String get minute_forYou => 'A minute for you';
+
+  @override
+  String get minute_calmTitle => 'One calm minute';
+
+  @override
+  String get minute_boxTitle => 'Box breathing';
+
+  @override
+  String get minute_478Title => '4-7-8 breathing';
+
+  @override
+  String get minute_stillnessTitle => 'A minute of stillness';
+
+  @override
+  String get minute_stillnessBody => 'One quiet minute with the orb.';
+
+  @override
+  String get minute_landTitle => 'Thirty seconds to land';
+
+  @override
+  String get minute_landBody => 'Three slow breaths with the orb.';
+
+  @override
+  String get minute_comfortTitle => 'A little comfort';
+
+  @override
+  String get minute_comfortBody =>
+      'A hand on your heart, and a minute of warmth.';
+
+  @override
+  String get minute_savourTitle => 'Savour this';
+
+  @override
+  String get minute_savourBody => 'Replay one good moment from today.';
+
+  @override
+  String get companion_storm1 =>
+      'That\'s a lot at once. Your light is still here.';
+
+  @override
+  String get companion_storm2 =>
+      'Naming a storm takes courage. You showed up for yourself.';
+
+  @override
+  String get companion_storm3 =>
+      'Big, loud feelings are welcome here. So are you.';
+
+  @override
+  String get companion_storm4 =>
+      'Stormy days matter too. Thank you for checking in.';
+
+  @override
+  String get companion_storm5 => 'You named this honestly. That matters.';
+
+  @override
+  String get companion_storm6 => 'Storms are part of your sky too.';
+
+  @override
+  String get companion_storm7 =>
+      'Whatever is swirling, you noticed it. That counts.';
+
+  @override
+  String get companion_storm8 => 'Even in a storm, your glow is yours.';
+
+  @override
+  String get companion_rain1 =>
+      'That feels heavy. Your light is still with you.';
+
+  @override
+  String get companion_rain2 =>
+      'Being honest about a low day takes courage. You showed up for yourself.';
+
+  @override
+  String get companion_rain3 =>
+      'Slow, heavy feelings are welcome here. So are you.';
+
+  @override
+  String get companion_rain4 =>
+      'Rainy days matter too. Thank you for checking in.';
+
+  @override
+  String get companion_rain5 =>
+      'You were honest with yourself today. That matters.';
+
+  @override
+  String get companion_rain6 => 'Rain is part of your sky too.';
+
+  @override
+  String get companion_rain7 =>
+      'However heavy it is, you noticed it. That counts.';
+
+  @override
+  String get companion_rain8 => 'Even on grey days, your glow is yours.';
+
+  @override
+  String get companion_moonlight1 =>
+      'A quiet, settled moment. Your light is resting easy.';
+
+  @override
+  String get companion_moonlight2 =>
+      'Noticing a quiet moment is worth something. You showed up for yourself.';
+
+  @override
+  String get companion_moonlight3 =>
+      'Soft, easy feelings are welcome here. So are you.';
+
+  @override
+  String get companion_moonlight4 =>
+      'Gentle days matter too. Thank you for checking in.';
+
+  @override
+  String get companion_moonlight5 =>
+      'You took a moment to notice this. That matters.';
+
+  @override
+  String get companion_moonlight6 => 'Moonlight is part of your sky too.';
+
+  @override
+  String get companion_moonlight7 =>
+      'However small this calm is, you noticed it. That counts.';
+
+  @override
+  String get companion_moonlight8 => 'In the quiet, your glow is yours.';
+
+  @override
+  String get companion_sunrise1 => 'A bright moment. Your light is shining.';
+
+  @override
+  String get companion_sunrise2 =>
+      'Noticing a good moment is worth something. You showed up for yourself.';
+
+  @override
+  String get companion_sunrise3 =>
+      'Big, bright feelings are welcome here. So are you.';
+
+  @override
+  String get companion_sunrise4 =>
+      'Bright days matter too. Thank you for checking in.';
+
+  @override
+  String get companion_sunrise5 =>
+      'You let yourself notice this. That matters.';
+
+  @override
+  String get companion_sunrise6 => 'Sunrise is part of your sky too.';
+
+  @override
+  String get companion_sunrise7 =>
+      'However big or small this is, you noticed it. That counts.';
+
+  @override
+  String get companion_sunrise8 => 'In this brightness, your glow is yours.';
+
+  @override
+  String get companion_neutral1 => 'Thank you for checking in.';
+
+  @override
+  String get companion_neutral2 => 'You showed up for yourself.';
+
+  @override
+  String get companion_neutral3 => 'Your light is still here.';
+
+  @override
+  String get companion_neutral4 => 'There\'s no rush here.';
+
+  @override
+  String get prompt_note1 => 'What\'s one small thing that helped today?';
+
+  @override
+  String get prompt_note2 => 'What\'s on your mind right now?';
+
+  @override
+  String get prompt_note3 => 'What would you like to remember about today?';
+
+  @override
+  String get prompt_storm1 => 'What\'s taking up the most room right now?';
+
+  @override
+  String get prompt_storm2 => 'If this feeling could speak, what would it say?';
+
+  @override
+  String get prompt_storm3 =>
+      'What\'s one thing you could set down, even for a minute?';
+
+  @override
+  String get prompt_rain1 => 'What would feel gentle right now?';
+
+  @override
+  String get prompt_rain2 => 'What\'s weighing on you today?';
+
+  @override
+  String get prompt_rain3 => 'Who or what has felt kind to you lately?';
+
+  @override
+  String get prompt_moonlight1 => 'What\'s helping you feel settled?';
+
+  @override
+  String get prompt_moonlight2 => 'What made today feel softer?';
+
+  @override
+  String get prompt_moonlight3 =>
+      'What would you like to keep from this moment?';
+
+  @override
+  String get prompt_sunrise1 => 'What\'s lighting you up today?';
+
+  @override
+  String get prompt_sunrise2 => 'What went well that you\'d like to remember?';
+
+  @override
+  String get prompt_sunrise3 => 'Who would you like to share this with?';
+
+  @override
+  String get prompt_capsule1 => 'What do you want future you to know?';
+
+  @override
+  String get prompt_capsule2 =>
+      'What\'s helping you right now that you might forget?';
+
+  @override
+  String get prompt_capsule3 => 'What would you say to yourself on a hard day?';
+
+  @override
+  String get prompt_capsuleStorm =>
+      'What helps when everything feels like too much?';
+
+  @override
+  String get prompt_capsuleRain =>
+      'What would you want to hear on a heavy day?';
+
+  @override
+  String get prompt_capsuleMoonlight => 'What helps you find this calm again?';
+
+  @override
+  String get prompt_capsuleSunrise =>
+      'What would you like to celebrate with future you?';
+
+  @override
+  String get prompt_another => 'Another prompt';
+
+  @override
+  String get prompt_settingsTitle => 'Writing prompts';
+
+  @override
+  String get prompt_settingsBody =>
+      'A gentle question in the empty note. Never saved.';
+
+  @override
+  String get backfill_add => 'Add a past check-in';
+
+  @override
+  String get backfill_pickTitle => 'Which day?';
+
+  @override
+  String backfill_pickBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You can add a check-in for any of the last $count days.',
+      one: 'You can add a check-in for yesterday.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backfill_title => 'How were you feeling?';
+
+  @override
+  String backfill_forDay(String day) {
+    return 'Check-in for $day';
+  }
+
+  @override
+  String get backfill_changeDay => 'Change day';
+
+  @override
+  String get backfill_outOfRange =>
+      'Past check-ins can go up to a week back. Could you pick another day?';
+
+  @override
+  String get backfill_savedTitle => 'Added to your sky';
+
+  @override
+  String backfill_savedDay(String day) {
+    return 'Saved for $day.';
+  }
+
+  @override
+  String get backfill_savedBody =>
+      'Starlight comes from check-ins made on the day itself.';
+
+  @override
+  String get history_addedLater => 'Added later';
+
+  @override
+  String history_whenAddedLater(String day) {
+    return '$day · added later';
+  }
+
+  @override
+  String get shell_tabHome => 'Home';
+
+  @override
+  String get shell_tabSanctuary => 'Sanctuary';
+
+  @override
+  String get shell_tabRooms => 'Rooms';
+
+  @override
+  String get shell_tabInsights => 'Insights';
+
+  @override
+  String get shell_checkIn => 'Check in';
+
+  @override
+  String get shell_checkInHint => 'Starts a new check-in';
+
+  @override
+  String get safety_emergencyWhen =>
+      'Call emergency services right away if you or someone near you is in immediate danger, badly hurt, or can\'t stay safe.';
+
+  @override
+  String get safety_settingsLink => 'Help & Safety in Settings';
+
+  @override
+  String get safety_settingsHint =>
+      'Support contact, Grievance Officer and policies';
 
   @override
   String get voice_record => 'Record a voice note';

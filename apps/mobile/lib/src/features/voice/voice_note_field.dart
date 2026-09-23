@@ -44,6 +44,73 @@ void announceVoice(BuildContext context, String message) {
 
 enum _Phase { idle, starting, recording, denied, failed }
 
+/// What a [VoiceNoteField] records into: a check-in draft (F1) or a capsule
+/// draft (F4). The field keeps the recording in the draft through this; the
+/// draft notifies when its voice changes.
+abstract interface class VoiceDraftBinding implements Listenable {
+  /// A new, unsaved recording.
+  VoiceClip? get newVoice;
+
+  /// The voice note the record already has (a check-in edit), if any.
+  SavedVoice? get savedVoice;
+
+  /// [savedVoice] is kept as it is (shown for playback).
+  bool get keepsSavedVoice;
+
+  set isRecording(bool value);
+
+  /// The field went away mid-recording (its recording is dropped). Silent.
+  void recordingDropped();
+
+  /// A finished recording: replaces any earlier one of this draft.
+  void setNewVoice(VoiceClip clip);
+
+  /// No voice note at all.
+  void removeVoice();
+
+  /// The field registers how to finish a recording in progress, so saving
+  /// never waits on (or loses) it.
+  void attachRecorder(Future<void> Function()? finish);
+}
+
+/// [CheckInDraft] as a [VoiceDraftBinding] (it has these members already).
+class _CheckInVoiceBinding implements VoiceDraftBinding {
+  _CheckInVoiceBinding(this._d);
+
+  final CheckInDraft _d;
+
+  @override
+  void addListener(VoidCallback listener) => _d.addListener(listener);
+
+  @override
+  void removeListener(VoidCallback listener) => _d.removeListener(listener);
+
+  @override
+  VoiceClip? get newVoice => _d.newVoice;
+
+  @override
+  SavedVoice? get savedVoice => _d.savedVoice;
+
+  @override
+  bool get keepsSavedVoice => _d.keepsSavedVoice;
+
+  @override
+  set isRecording(bool value) => _d.isRecording = value;
+
+  @override
+  void recordingDropped() => _d.recordingDropped();
+
+  @override
+  void setNewVoice(VoiceClip clip) => _d.setNewVoice(clip);
+
+  @override
+  void removeVoice() => _d.removeVoice();
+
+  @override
+  void attachRecorder(Future<void> Function()? finish) =>
+      _d.attachRecorder(finish);
+}
+
 /// The voice note of a check-in draft (F1: optional, ≤ 60 s, private).
 ///
 /// * First mic tap: a short explainer (PRD 15-permissions wording); only
@@ -57,10 +124,44 @@ enum _Phase { idle, starting, recording, denied, failed }
 ///
 /// Save is never blocked by voice: it finishes a recording in progress
 /// ([CheckInDraft.finishVoice]) and saves with it.
+///
+/// [VoiceNoteField.custom] records into any [VoiceDraftBinding] with its own
+/// limit, storage and copy (the F4 capsule composer: ≤ 2:00, recordings kept
+/// with the capsule draft).
 class VoiceNoteField extends ConsumerStatefulWidget {
-  const VoiceNoteField({super.key, required this.draft});
+  const VoiceNoteField({super.key, required CheckInDraft this.draft})
+    : binding = null,
+      maxDuration = maxVoiceDuration,
+      newRecordingPath = null,
+      recordHint = null,
+      limitReachedText = null;
 
-  final CheckInDraft draft;
+  const VoiceNoteField.custom({
+    super.key,
+    required VoiceDraftBinding this.binding,
+    required this.maxDuration,
+    required Future<String> Function() this.newRecordingPath,
+    this.recordHint,
+    this.limitReachedText,
+  }) : draft = null;
+
+  /// The check-in draft (F1), or `null` for [VoiceNoteField.custom].
+  final CheckInDraft? draft;
+
+  /// Any other draft ([VoiceNoteField.custom]).
+  final VoiceDraftBinding? binding;
+
+  /// Recording stops by itself here.
+  final Duration maxDuration;
+
+  /// Where a new recording goes (default: the voice store's drafts).
+  final Future<String> Function()? newRecordingPath;
+
+  /// The hint under "Record a voice note" (default: the F1 minute).
+  final String? recordHint;
+
+  /// The calm note after recording stopped at [maxDuration].
+  final String? limitReachedText;
 
   /// How often the elapsed time advances.
   static const Duration tick = Duration(milliseconds: 250);
@@ -85,7 +186,12 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
   VoicePlaybackController? _playback;
   Object? _playbackOf;
 
-  CheckInDraft get _draft => widget.draft;
+  late VoiceDraftBinding _draft = _bindingOf(widget);
+
+  static VoiceDraftBinding _bindingOf(VoiceNoteField w) =>
+      w.binding ?? _CheckInVoiceBinding(w.draft!);
+
+  Duration get _max => widget.maxDuration;
 
   @override
   void initState() {
@@ -98,11 +204,11 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
   @override
   void didUpdateWidget(VoiceNoteField old) {
     super.didUpdateWidget(old);
-    if (old.draft != widget.draft) {
-      old.draft
+    if (old.draft != widget.draft || old.binding != widget.binding) {
+      _draft
         ..attachRecorder(null)
         ..removeListener(_onDraft);
-      _draft
+      _draft = _bindingOf(widget)
         ..attachRecorder(_finish)
         ..addListener(_onDraft);
     }
@@ -202,7 +308,9 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
 
   Future<void> _start(VoiceRecorder recorder) async {
     await _playback?.stop();
-    final path = await ref.read(voiceStoreProvider).newDraftPath();
+    final path =
+        await (widget.newRecordingPath ??
+            ref.read(voiceStoreProvider).newDraftPath)();
     await recorder.start(path);
     if (!mounted) {
       await recorder.cancel();
@@ -220,8 +328,8 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
     _draft.isRecording = true;
     _ticker = Timer.periodic(VoiceNoteField.tick, (t) {
       final elapsed = VoiceNoteField.tick * t.tick;
-      if (elapsed >= maxVoiceDuration) {
-        _elapsed = maxVoiceDuration;
+      if (elapsed >= _max) {
+        _elapsed = _max;
         unawaited(_finish(atLimit: true));
       } else if (mounted) {
         setState(() => _elapsed = elapsed);
@@ -243,7 +351,7 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
     _ticker = null;
     unawaited(_levels?.cancel());
     _levels = null;
-    final elapsed = _elapsed > maxVoiceDuration ? maxVoiceDuration : _elapsed;
+    final elapsed = _elapsed > _max ? _max : _elapsed;
     String? out;
     try {
       out = await _recorder?.stop();
@@ -332,6 +440,7 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
           child: recording
               ? _RecordingRow(
                   elapsed: _elapsed,
+                  limit: _max,
                   level: _level,
                   onStop: () {
                     AuraHaptics.selection();
@@ -362,7 +471,11 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
                     ),
                   ],
                 )
-              : _RecordTile(busy: _phase == _Phase.starting, onTap: _onRecord),
+              : _RecordTile(
+                  busy: _phase == _Phase.starting,
+                  onTap: _onRecord,
+                  hint: widget.recordHint ?? l.voice_recordHint,
+                ),
         ),
         if (_limitReached && hasVoice) ...[
           const SizedBox(height: AuraSpace.s),
@@ -370,7 +483,7 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
             liveRegion: true,
             container: true,
             child: Text(
-              l.voice_limitReached,
+              widget.limitReachedText ?? l.voice_limitReached,
               key: const ValueKey('voice-limit-note'),
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(color: AuraColors.textSoft),
@@ -495,10 +608,17 @@ class _Card extends StatelessWidget {
 
 /// Mic + "Record a voice note" + the limit hint; one control.
 class _RecordTile extends StatelessWidget {
-  const _RecordTile({required this.busy, required this.onTap});
+  const _RecordTile({
+    required this.busy,
+    required this.onTap,
+    required this.hint,
+  });
 
   final bool busy;
   final VoidCallback onTap;
+
+  /// The limit hint ("Up to a minute. Only you can hear it.").
+  final String hint;
 
   @override
   Widget build(BuildContext context) {
@@ -509,7 +629,7 @@ class _RecordTile extends StatelessWidget {
       button: true,
       enabled: !busy,
       label: l.voice_record,
-      hint: l.voice_recordHint,
+      hint: hint,
       onTap: busy ? null : onTap,
       excludeSemantics: true,
       child: Row(
@@ -532,7 +652,7 @@ class _RecordTile extends StatelessWidget {
                   Text(l.voice_record, style: t.bodyLarge),
                   const SizedBox(height: 2),
                   Text(
-                    l.voice_recordHint,
+                    hint,
                     style: t.bodySmall?.copyWith(color: AuraColors.textSoft),
                   ),
                 ],
@@ -549,11 +669,15 @@ class _RecordTile extends StatelessWidget {
 class _RecordingRow extends StatelessWidget {
   const _RecordingRow({
     required this.elapsed,
+    required this.limit,
     required this.level,
     required this.onStop,
   });
 
   final Duration elapsed;
+
+  /// Where recording stops by itself.
+  final Duration limit;
   final double level;
   final VoidCallback onStop;
 
@@ -613,7 +737,7 @@ class _RecordingRow extends StatelessWidget {
                 child: Text(
                   l.voice_elapsed(
                     formatVoiceTime(elapsed),
-                    formatVoiceTime(maxVoiceDuration),
+                    formatVoiceTime(limit),
                   ),
                   key: const ValueKey('voice-elapsed'),
                   style: t.bodySmall?.copyWith(

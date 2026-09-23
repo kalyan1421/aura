@@ -11,7 +11,8 @@
     "start:worker:dev": "ts-node-dev --respawn --transpile-only src/worker.ts",
     "test": "jest --config jest.config.js",
     "test:e2e": "jest --config test/jest-e2e.config.js --runInBand",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit && pnpm run lint:copy",
+    "lint:copy": "jest --config jest.config.js test/unit/notifications.copy-lint.spec.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.5",

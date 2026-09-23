@@ -10,6 +10,7 @@ import '../features/account/account_providers.dart';
 import '../features/auth/auth_repository.dart';
 import '../features/auth/sign_out_service.dart';
 import '../features/avatar/moments_controller.dart';
+import '../features/capsules/capsule_providers.dart';
 import '../features/checkin/checkin_repository.dart';
 import '../features/habits/habit_repository.dart';
 import '../features/onboarding/gate_controller.dart';
@@ -323,6 +324,9 @@ SyncController syncController(Ref ref) {
       checkIns: ref.read(checkInRepositoryProvider),
       store: ref.watch(voiceStoreProvider),
     ),
+    // F4 capsules: seal ciphertext + media first, rejections, media
+    // retries and the public.capsules pull (features/capsules).
+    capsules: ref.read(capsuleSyncProvider),
   )..start();
   // "Keep my account" (or a sign-out) clears the hold: push again.
   ref.listen(deletionHoldProvider, (prev, next) {

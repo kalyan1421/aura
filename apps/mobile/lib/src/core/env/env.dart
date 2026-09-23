@@ -15,9 +15,39 @@ abstract final class Env {
     defaultValue: String.fromEnvironment('SUPABASE_ANON_KEY'),
   );
 
-  /// Apple and Google sign-in buttons are shown but disabled until this flag
-  /// is on (providers are configured but disabled in supabase/config.toml).
-  static const bool socialSignIn = bool.fromEnvironment('AURA_SOCIAL_SIGNIN');
+  // ---- Social sign-in (F8 REQ-ACC-01; docs/setup/social-sign-in.md) --------
+  // A button shows only when its provider is configured for this build (see
+  // SocialSignInConfig). None of these values is a secret: OAuth client ids
+  // identify the app and ship inside every build.
+
+  /// Master switch for Sign in with Apple / Google. On by default, but each
+  /// provider still needs its own values below; `false` hides both.
+  static const bool socialSignIn = bool.fromEnvironment(
+    'AURA_SOCIAL_SIGNIN',
+    defaultValue: true,
+  );
+
+  /// Google OAuth **Web** client id: `serverClientId` on Android, and the
+  /// audience of the ID token Supabase checks. Google is hidden without it.
+  static const String googleWebClientId = String.fromEnvironment(
+    'AURA_GOOGLE_WEB_CLIENT_ID',
+  );
+
+  /// Google OAuth **iOS** client id (iOS only). Its reversed form must also
+  /// be the URL scheme in the gitignored `ios/Flutter/Secrets.xcconfig`.
+  static const String googleIosClientId = String.fromEnvironment(
+    'AURA_GOOGLE_IOS_CLIENT_ID',
+  );
+
+  /// Sign in with Apple is set up: the App ID has the capability and the
+  /// Supabase Apple provider lists the bundle id. Native on iOS.
+  static const bool appleSignIn = bool.fromEnvironment('AURA_APPLE_SIGNIN');
+
+  /// Sign in with Apple on Android, through Supabase browser OAuth. Needs the
+  /// Services ID, its key and an HTTPS callback in Supabase (hosted only).
+  static const bool appleSignInAndroid = bool.fromEnvironment(
+    'AURA_APPLE_SIGNIN_ANDROID',
+  );
 
   /// Hindi and Hinglish are beta languages; hidden from pickers in alpha.
   static const bool betaLocales = bool.fromEnvironment('AURA_BETA_LOCALES');
@@ -56,7 +86,8 @@ abstract final class Env {
     return _isLocalBuild ? _localPublishableKey : '';
   }
 
-  static bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseKey.isNotEmpty;
+  static bool get hasSupabase =>
+      supabaseUrl.isNotEmpty && supabaseKey.isNotEmpty;
   static bool get hasApi => apiUrl.isNotEmpty;
 
   // ---- Legal & support (onboarding trust step, Settings → Help & Safety) --
@@ -104,7 +135,8 @@ abstract final class Env {
   /// Shown in Settings; keep in step with pubspec `version`.
   static const String appVersion = '0.1.0 (1)';
 
-  /// Supabase redirect for magic links (allow-listed in supabase/config.toml).
+  /// Supabase redirect for magic links and browser OAuth (Apple on Android);
+  /// allow-listed in supabase/config.toml.
   static const String authRedirect = 'aura://auth-callback';
 
   static String _stripSlash(String s) =>

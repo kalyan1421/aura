@@ -18,6 +18,7 @@ import {
   type StarlightEvent,
   type StreakState,
 } from '../../src/rules';
+import { isValidUnlockDate, pickTrigger, unlockAt, type TriggerCapsule, type TriggerCheckIn } from '../../src/capsules/capsule-rules';
 
 const VECTORS_DIR = resolve(__dirname, '..', '..', '..', '..', 'contracts', 'rules', 'vectors');
 
@@ -49,6 +50,15 @@ const runners: Record<string, Runner> = {
   },
   'streak.json': (c) => expect(foldStreak(c.initial as StreakState, c.days)).toEqual(c.expect),
   'nebula.json': (c) => expect(isResting(c.lastActiveDay, c.currentAuraDay)).toBe(c.expect),
+  // RULES.md §9 (F4). One file, three pure rules told apart by `kind`.
+  'capsules.json': (c) => {
+    if (c.kind === 'window') return expect(isValidUnlockDate(c.sealedAt, c.tz, c.unlockLocalDate)).toBe(c.expect);
+    if (c.kind === 'unlock_at') return expect(unlockAt(c.localDate, c.tz).toISOString()).toBe(new Date(c.expect).toISOString());
+    if (c.kind === 'trigger') {
+      return expect(pickTrigger(c.capsules as TriggerCapsule[], c.checkIn as TriggerCheckIn)).toEqual(c.expect);
+    }
+    throw new Error(`capsules.json: unknown kind ${String(c.kind)}`);
+  },
 };
 
 const files = readdirSync(VECTORS_DIR).filter((f) => f.endsWith('.json')).sort();

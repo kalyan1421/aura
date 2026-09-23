@@ -1,28 +1,26 @@
 import 'dart:io';
 
-import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/core/ids/ids.dart';
-import 'package:aura/src/core/l10n/locale_controller.dart';
-import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
 import 'package:aura/src/core/theme/app_theme.dart';
 import 'package:aura/src/features/account/account_providers.dart';
 import 'package:aura/src/features/checkin/checkin_repository.dart';
 import 'package:aura/src/features/habits/habit_repository.dart';
 import 'package:aura/src/features/home/home_screen.dart';
+import 'package:aura/src/features/shell/app_shell.dart';
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/foundation.dart' show precisionErrorTolerance;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 
 import 'helpers.dart';
+import 'shell_helpers.dart';
 
-/// Home's fold with real fonts instead of the (twice as wide) test font:
+/// Home's fold (the top of the app shell's navigation bar) with real fonts
+/// instead of the (twice as wide) test font:
 /// the theme's iOS typography names `CupertinoSystemText` /
 /// `CupertinoSystemDisplay`, which on a phone resolve to the system font.
 /// Here they are SF Pro (macOS's SFNS.ttf, the iPhone's font; its weight
@@ -81,30 +79,9 @@ void main() {
     ]);
   });
 
-  Widget app(String tag, List<Override> overrides) {
-    final locale = localeFromTag(tag);
-    return ProviderScope(
-      overrides: overrides,
-      child: MaterialApp.router(
-        theme: buildAuraTheme(locale),
-        locale: locale,
-        supportedLocales: AppLocalizations.supportedLocales,
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          ...systemLocalizationDelegates,
-        ],
-        routerConfig: GoRouter(
-          initialLocation: Routes.home,
-          routes: [
-            GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
-            GoRoute(path: Routes.history, builder: (_, _) => const Scaffold()),
-            GoRoute(path: Routes.checkIn, builder: (_, _) => const Scaffold()),
-            GoRoute(path: Routes.settings, builder: (_, _) => const Scaffold()),
-          ],
-        ),
-      ),
-    );
-  }
+  /// Home as the first tab of the real app shell (other tabs stubbed).
+  Widget app(String tag, List<Override> overrides) =>
+      shellTestApp(overrides, router: shellTestRouter(), tag: tag);
 
   /// [phone] in logical pixels with its status bar / home indicator insets.
   void setPhone(WidgetTester tester, _Phone phone) {
@@ -144,9 +121,13 @@ void main() {
 
   int rowsOf(List<Rect> rects) => {for (final r in rects) r.top}.length;
 
-  /// The bottom of Home's scroll viewport: the check-in bar starts here.
+  /// The bottom of Home's scroll viewport: the navigation bar starts here.
   double foldOf(WidgetTester tester) =>
       tester.getRect(find.byType(ListView)).bottom;
+
+  /// The top of the app shell's navigation bar.
+  double navTop(WidgetTester tester) =>
+      tester.getRect(find.byKey(AuraNavBar.barKey)).top;
 
   const common = [
     _Phone('iPhone 14 · 390×844', Size(390, 844), top: 47, bottom: 34),
@@ -155,7 +136,7 @@ void main() {
   ];
   const se = _Phone('iPhone SE · 375×667', Size(375, 667), top: 20, bottom: 0);
 
-  group('common phones, 1.0 text: every habit chip above the check-in bar '
+  group('common phones, 1.0 text: every habit chip above the navigation bar '
       'without scrolling, avatar ≥ $homeAvatarFloor', () {
     for (final phone in common) {
       for (final tag in const ['en', 'te-Latn']) {
@@ -172,8 +153,7 @@ void main() {
             expect(tester.takeException(), isNull);
 
             final fold = foldOf(tester);
-            final bar = rectOf(tester, 'home-checkin');
-            expect(fold, lessThanOrEqualTo(bar.top));
+            expect(fold, lessThanOrEqualTo(navTop(tester)));
             expect(
               find.byKey(const ValueKey('home-glow-card')),
               newUser ? findsNothing : findsOneWidget,
@@ -273,7 +253,7 @@ void main() {
       for (final newUser in const [true, false]) {
         final who = newUser ? 'new user' : 'after a check-in';
         testWidgets('$tag, $who: the whole first habit row is above the '
-            'check-in bar', (tester) async {
+            'navigation bar', (tester) async {
           setPhone(tester, se);
           final db = memoryDb();
           if (!newUser) await checkIn(tester, db);

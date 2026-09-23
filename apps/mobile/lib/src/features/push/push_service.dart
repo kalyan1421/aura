@@ -119,13 +119,72 @@ class PushService {
         case SoftAskAnswer.notNow:
           // The one-time iOS prompt is saved for a real yes; capsule notices
           // can still arrive quietly in Notification Center.
-          if (m.supportsProvisional) await m.requestPermission(provisional: true);
+          if (m.supportsProvisional) {
+            await m.requestPermission(provisional: true);
+          }
       }
     } catch (e) {
       debugPrint('push: permission ${e.runtimeType}');
     }
     // Registration can wait on the APNs token; never hold the UI for it.
     unawaited(register());
+  }
+
+  // ---- permission from Settings (F14) ------------------------------------------
+
+  /// PRD 15-permissions: "re-ask at most once, no sooner than 30 days after a
+  /// decline". Measured from the explainer answer (a "Not now", or an
+  /// "Allow" the OS then denied).
+  static const Duration reAskAfter = Duration(days: 30);
+
+  /// The OS permission now, without prompting; null when push is off in
+  /// this build (Firebase did not start).
+  Future<PushPermission?> permission() async {
+    final m = _messaging;
+    if (m == null || _disposed) return null;
+    try {
+      return await m.permission();
+    } catch (e) {
+      debugPrint('push: permission ${e.runtimeType}');
+      return PushPermission.denied;
+    }
+  }
+
+  /// Whether Settings may fire the OS prompt now: never asked yet, or the
+  /// one re-ask is due (30+ days after the answer, and not used). Otherwise
+  /// Settings only links to the phone's settings.
+  Future<bool> mayAskAgain() async {
+    if (_messaging == null || _disposed) return false;
+    final j = await _kv.getJson(KvKeys.pushSoftAsk);
+    if (j == null) return true;
+    if (j['reaskedAt'] != null) return false;
+    final at = DateTime.tryParse('${j['at'] ?? ''}');
+    if (at == null) return false;
+    return !_clock.now().isBefore(at.add(reAskAfter));
+  }
+
+  /// The person turned notifications on in Settings (an explicit, meaningful
+  /// moment): the OS prompt — the first ask, or the one re-ask — then the
+  /// registration. Returns the resulting permission (null without push).
+  Future<PushPermission?> requestFromSettings() async {
+    final m = _messaging;
+    if (m == null || _disposed) return null;
+    final prior = await _kv.getJson(KvKeys.pushSoftAsk);
+    final now = _clock.now().toUtc().toIso8601String();
+    await _kv.setJson(KvKeys.pushSoftAsk, {
+      'answer': SoftAskAnswer.allow.name,
+      'at': prior?['at'] ?? now,
+      if (prior != null) 'reaskedAt': now,
+    });
+    PushPermission result;
+    try {
+      result = await m.requestPermission();
+    } catch (e) {
+      debugPrint('push: permission ${e.runtimeType}');
+      result = await permission() ?? PushPermission.denied;
+    }
+    unawaited(register());
+    return result;
   }
 
   // ---- registration -------------------------------------------------------------
@@ -292,7 +351,8 @@ class PushService {
   }
 
   void _logType(String kind, String? type) {
-    // Routing comes with F14. Never log anything but the type.
+    // Routing and in-app notices: PushInbox (push_inbox.dart). Never log
+    // anything but the type.
     if (kDebugMode) debugPrint('push: $kind type=$type');
   }
 

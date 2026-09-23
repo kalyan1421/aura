@@ -22,7 +22,9 @@ Local defaults (debug/profile builds only; release must pass real values):
 | `AURA_API_URL` | `http://127.0.0.1:3310` (Android emulator `http://10.0.2.2:3310`) | NestJS |
 | `SUPABASE_URL` | `http://127.0.0.1:55521` (emulator `10.0.2.2`) | supabase/LOCAL.md |
 | `SUPABASE_PUBLISHABLE_KEY` | the CLI's fixed local publishable key | not a secret, local only |
-| `AURA_SOCIAL_SIGNIN` | `false` | Apple / Google buttons shown but disabled |
+| `AURA_SOCIAL_SIGNIN` | `true` | master switch; each provider still needs the values below |
+| `AURA_GOOGLE_WEB_CLIENT_ID` / `AURA_GOOGLE_IOS_CLIENT_ID` | — | Google OAuth client ids (docs/setup/social-sign-in.md) |
+| `AURA_APPLE_SIGNIN` / `AURA_APPLE_SIGNIN_ANDROID` | `false` | Sign in with Apple set up (iOS native / Android browser flow) |
 | `AURA_BETA_LOCALES` | `false` | shows Hindi / Hinglish in pickers |
 | `AURA_DEBUG_TOOLS` | `true` in debug | Settings → Avatar lab (`/debug/avatar`) |
 

@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,7 +11,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
-import '../../core/router/router.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../account/account_providers.dart';
@@ -57,10 +56,10 @@ const double homeAvatarFloorCompact = 140;
 
 /// The avatar's height in a scroll viewport [viewport] dp tall when the
 /// content under it (status line, stats, history line, glow card, habits)
-/// needs [below] dp: everything that is left above the check-in bar, never
-/// under [floor] (then Home scrolls) nor over [homeAvatarMax]. No extra gap
-/// above the bar: the last chip row's 48 dp tap targets already keep its
-/// pills clear of it.
+/// needs [below] dp: everything that is left above the app shell's
+/// navigation bar, never under [floor] (then Home scrolls) nor over
+/// [homeAvatarMax]. No extra gap above the bar: the last chip row's 48 dp
+/// tap targets already keep its pills clear of it.
 double homeAvatarHeight({
   required double viewport,
   required double below,
@@ -68,12 +67,15 @@ double homeAvatarHeight({
 }) => (viewport - below).clamp(floor, homeAvatarMax);
 
 /// Screens shorter than this (iPhone SE, small Android phones) get tighter
-/// spacing, a slimmer check-in bar and the smaller avatar floor.
+/// spacing and the smaller avatar floor.
 const double _shortScreen = 700;
 
 /// Painter aspect (width / height) the avatar art was composed for.
 const double _avatarAspect = 340 / 330;
 
+/// Home, the first tab of the app shell: the companion-led today view.
+/// Check in is the shell's centre action (it pulses there for a new user);
+/// "I need help now" and Settings sit in the top bar.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -156,10 +158,6 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              _CheckInBar(
-                pulse: view.loaded && !view.hasActivity,
-                compact: compact,
-              ),
             ],
           ),
         ),
@@ -171,7 +169,7 @@ class HomeScreen extends ConsumerWidget {
 /// Home's avatar and everything under it, in one box. The content below is
 /// laid out first, at the real width, text scale and language; the avatar
 /// then gets what is left of [viewport] ([homeAvatarHeight]). So on common
-/// phones the stats, glow card and every habit row sit above the check-in
+/// phones the stats, glow card and every habit row sit above the navigation
 /// bar without scrolling, and the avatar stays the hero. Children, top to
 /// bottom: avatar (tight size, centred), status line, the rest.
 class _HeroFit extends MultiChildRenderObjectWidget {
@@ -184,7 +182,8 @@ class _HeroFit extends MultiChildRenderObjectWidget {
     required Widget below,
   }) : super(children: [avatar, status, below]);
 
-  /// Height of the scroll viewport between the top bar and the check-in bar.
+  /// Height of the scroll viewport between the top bar and the navigation
+  /// bar.
   final double viewport;
 
   /// The avatar's minimum height.
@@ -585,7 +584,8 @@ class _StarlightRow extends StatelessWidget {
   }
 }
 
-/// "2 check-ins today · See all" (or "Your check-ins") → check-in history.
+/// "2 check-ins today · See all" (or "Your check-ins") → the Insights tab
+/// (the check-in history until F10).
 class _HistoryLine extends ConsumerWidget {
   const _HistoryLine();
 
@@ -603,7 +603,7 @@ class _HistoryLine extends ConsumerWidget {
         child: InkWell(
           key: const ValueKey('home-history'),
           borderRadius: BorderRadius.circular(AuraRadius.s),
-          onTap: () => context.push(Routes.history),
+          onTap: () => context.go(Routes.insights),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: 48),
             child: Padding(
@@ -786,68 +786,6 @@ class _GlowCard extends ConsumerWidget {
           Text(l.home_lifetimeGlow(s.lifetimeGlowDays), style: t.bodySmall),
         ],
       ),
-    );
-  }
-}
-
-class _CheckInBar extends StatelessWidget {
-  const _CheckInBar({required this.pulse, this.compact = false});
-
-  final bool pulse;
-
-  /// Short screens: the filled-button minimum (56) and tighter padding.
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final pad = compact ? AuraSpace.s : AuraSpace.m;
-    Widget button = ConstrainedBox(
-      // Grows with large text instead of clipping the label.
-      constraints: BoxConstraints(
-        minHeight: compact ? 56 : 60,
-        minWidth: double.infinity,
-      ),
-      child: FilledButton.icon(
-        key: const ValueKey('home-checkin'),
-        onPressed: () => context.push(Routes.checkIn),
-        icon: const Icon(Icons.auto_awesome),
-        label: Text(l.home_checkIn, textAlign: TextAlign.center),
-      ),
-    );
-    // Pulses once for a new user (PRD States: Home empty); never under
-    // Reduce Motion (REQ-A11Y-08).
-    if (pulse && !reduceMotionOf(context)) {
-      button = button
-          .animate(delay: 600.ms)
-          .scale(
-            begin: const Offset(1, 1),
-            end: const Offset(1.03, 1.03),
-            duration: 450.ms,
-            curve: Curves.easeInOut,
-          )
-          .then()
-          .scale(
-            begin: const Offset(1.03, 1.03),
-            end: const Offset(1, 1),
-            duration: 450.ms,
-          );
-    }
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        AuraSpace.gutter,
-        pad,
-        AuraSpace.gutter,
-        pad + MediaQuery.paddingOf(context).bottom,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [AuraColors.skyDeep.withValues(alpha: 0), AuraColors.skyDeep],
-        ),
-      ),
-      child: button,
     );
   }
 }

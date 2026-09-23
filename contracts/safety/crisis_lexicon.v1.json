@@ -1,0 +1,207 @@
+{
+  "name": "aura.crisis_lexicon",
+  "version": 1,
+  "updated": "2026-09-23",
+  "review": {
+    "status": "draft",
+    "note": "NEEDS NATIVE + SAFE-MESSAGING REVIEW (A9) before alpha: te and te-Latn by a native speaker, every entry against the WHO / AFSP / Samaritans safe-messaging checklist. Seed list written by the dev team.",
+    "open": [
+      "te-Latn 'chachipotha' (I'll die) is often hyperbole ('aakali tho chachipotha'); kept as crisis until reviewed.",
+      "en 'dont want to live' also matches 'I don't want to live here'; kept as crisis (a gentle sheet beats a miss).",
+      "te 'చంపుకోవాలని' / te-Latn 'champukovalani': confirm they read as self-directed."
+    ]
+  },
+  "languages": {
+    "en": { "script": "Latin", "status": "alpha" },
+    "te": { "script": "Telugu", "status": "alpha" },
+    "te-Latn": { "script": "Latin", "status": "alpha" },
+    "hi": { "script": "Devanagari", "status": "placeholder" },
+    "hi-Latn": { "script": "Latin", "status": "placeholder" }
+  },
+  "kinds": {
+    "crisis": "High-confidence words for wanting to die or to harm oneself. Opens the full support sheet (crisis wording). The entry still saves first.",
+    "soft": "Idioms that borrow those words ('dying of boredom', 'navvi navvi chachipoya'). Never the crisis sheet; callers may show a gentle 'Help is here' card. Within one clause a soft match also explains away a crisis match it overlaps ('I want to die of boredom')."
+  },
+  "entries": [
+    {
+      "id": "en.kill_myself",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "kill myself",
+      "variants": ["killing myself", "killed myself", "kill my self", "killing my self"]
+    },
+    {
+      "id": "en.end_my_life",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "end my life",
+      "variants": ["ending my life", "end my own life", "take my own life", "take my life", "taking my own life", "end it all", "ending it all"]
+    },
+    {
+      "id": "en.suicide",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "suicide",
+      "variants": ["suicidal", "suicides", "sucide", "suicde", "suiside", "sucidal", "suicidel"]
+    },
+    {
+      "id": "en.want_to_die",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "want to die",
+      "variants": ["wanna die", "want to be dead", "wish i was dead", "wish i were dead", "wish i wasn't alive", "don't want to be alive", "don't want to exist"]
+    },
+    {
+      "id": "en.better_off_dead",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "better off dead",
+      "variants": ["better off without me"]
+    },
+    {
+      "id": "en.no_reason_to_live",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "no reason to live",
+      "variants": ["nothing to live for", "don't want to live", "do not want to live", "no point in living", "no point living"]
+    },
+    {
+      "id": "en.harm_myself",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "harm myself",
+      "variants": ["harming myself", "self harm", "self harming", "want to hurt myself", "going to hurt myself", "gonna hurt myself", "keep hurting myself", "hurt myself on purpose", "hurting myself on purpose"]
+    },
+    {
+      "id": "en.cant_go_on",
+      "language": "en",
+      "kind": "crisis",
+      "phrase": "can't go on anymore",
+      "variants": ["can't go on like this", "can't go on living", "cannot go on anymore", "cannot go on like this", "can not go on anymore"]
+    },
+    {
+      "id": "en.die_laughing",
+      "language": "en",
+      "kind": "soft",
+      "phrase": "die laughing",
+      "variants": ["dying laughing", "died laughing", "die of laughter", "dying of laughter", "died of laughter", "kill myself laughing", "killing myself laughing", "killed myself laughing"]
+    },
+    {
+      "id": "en.die_of_boredom",
+      "language": "en",
+      "kind": "soft",
+      "phrase": "die of boredom",
+      "variants": ["dying of boredom", "died of boredom", "bored to death", "boring me to death"]
+    },
+    {
+      "id": "en.die_of_embarrassment",
+      "language": "en",
+      "kind": "soft",
+      "phrase": "die of embarrassment",
+      "variants": ["dying of embarrassment", "died of embarrassment", "die of cringe", "dying of cringe"]
+    },
+    {
+      "id": "te.want_to_die",
+      "language": "te",
+      "kind": "crisis",
+      "phrase": "చచ్చిపోవాలని",
+      "variants": ["చనిపోవాలని", "చావాలని", "సచ్చిపోవాలని"]
+    },
+    {
+      "id": "te.will_die",
+      "language": "te",
+      "kind": "crisis",
+      "phrase": "చచ్చిపోతాను",
+      "variants": ["చనిపోతాను", "సచ్చిపోతాను"]
+    },
+    {
+      "id": "te.suicide",
+      "language": "te",
+      "kind": "crisis",
+      "phrase": "ఆత్మహత్య",
+      "variants": []
+    },
+    {
+      "id": "te.dont_want_to_live",
+      "language": "te",
+      "kind": "crisis",
+      "phrase": "బతకాలని లేదు",
+      "variants": ["బ్రతకాలని లేదు", "బతకాలనిపించట్లేదు", "బ్రతకాలనిపించట్లేదు", "బతకాలని అనిపించట్లేదు", "బ్రతకాలని అనిపించట్లేదు"]
+    },
+    {
+      "id": "te.kill_myself",
+      "language": "te",
+      "kind": "crisis",
+      "phrase": "నన్ను నేను చంపుకుంటాను",
+      "variants": ["చంపుకోవాలని"]
+    },
+    {
+      "id": "te.laughed_to_death",
+      "language": "te",
+      "kind": "soft",
+      "phrase": "నవ్వి నవ్వి చచ్చిపోయా",
+      "variants": ["నవ్వలేక చచ్చిపోయా"]
+    },
+    {
+      "id": "te.bored_to_death",
+      "language": "te",
+      "kind": "soft",
+      "phrase": "బోర్ కొట్టి చచ్చిపోతున్నా",
+      "variants": ["బోర్ కొట్టి చస్తున్నా"]
+    },
+    {
+      "id": "te-Latn.want_to_die",
+      "language": "te-Latn",
+      "kind": "crisis",
+      "phrase": "chachipovalani",
+      "stem": true,
+      "variants": ["chachipovali", "chachipovaalani", "chachipovaali", "chachhipovalani", "chachhipovali", "sachipovalani", "sachipovali", "sachipovaali", "chanipovalani", "chanipovali", "chanipovaali", "chavalani", "chaavaalani", "saavaalani"]
+    },
+    {
+      "id": "te-Latn.will_die",
+      "language": "te-Latn",
+      "kind": "crisis",
+      "phrase": "chachipotha",
+      "variants": ["chachipothaa", "chachipota", "chachipotanu", "chachipothanu", "chachhipotha", "sachipotha", "chanipotha", "chanipotanu", "chanipothanu"]
+    },
+    {
+      "id": "te-Latn.suicide",
+      "language": "te-Latn",
+      "kind": "crisis",
+      "phrase": "atmahatya",
+      "stem": true,
+      "variants": ["aatmahatya", "atmahathya", "aatmahathya", "athmahatya", "athmahathya", "aathmahathya"]
+    },
+    {
+      "id": "te-Latn.dont_want_to_live",
+      "language": "te-Latn",
+      "kind": "crisis",
+      "phrase": "bratakalani ledu",
+      "variants": ["brathakalani ledu", "bratakaalani ledu", "brathakaalani ledu", "batakalani ledu", "bathakalani ledu", "batakaalani ledu", "bratakalani anipinchatledu", "batakalani anipinchatledu", "bratakalanipinchatledu", "batakalanipinchatledu"]
+    },
+    {
+      "id": "te-Latn.kill_myself",
+      "language": "te-Latn",
+      "kind": "crisis",
+      "phrase": "nannu nenu champukuntanu",
+      "stem": true,
+      "variants": ["nannu nenu champukunta", "champukovalani", "champukovaalani"]
+    },
+    {
+      "id": "te-Latn.laughed_to_death",
+      "language": "te-Latn",
+      "kind": "soft",
+      "phrase": "navvi navvi chachipoya",
+      "stem": true,
+      "variants": ["navvi navvi sachipoya", "navvi navvi chanipoya", "navvaleka chachipoya", "navvaleka sachipoya"]
+    },
+    {
+      "id": "te-Latn.bored_to_death",
+      "language": "te-Latn",
+      "kind": "soft",
+      "phrase": "bore kotti chachipotunna",
+      "stem": true,
+      "variants": ["bore kotti chachipothunna", "bore kotti chastunna", "bore kotti chasthunna", "bore kotti sachipotunna", "bore tho chachipotunna"]
+    }
+  ]
+}

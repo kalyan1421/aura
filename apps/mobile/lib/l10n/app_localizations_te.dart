@@ -801,6 +801,361 @@ class AppLocalizationsTe extends AppLocalizations {
       'ఈ ఖాతా తొలగింపు ఇప్పటికే మొదలైంది, కాబట్టి దాన్ని ఇక ఉంచలేం. ఈ ఫోన్ క్లియర్ అయి సైన్ అవుట్ అవుతుంది.';
 
   @override
+  String get signin_or => 'లేదా';
+
+  @override
+  String get signin_socialNotReady =>
+      'ఆ సైన్-ఇన్ ఆప్షన్ ఇంకా సిద్ధంగా లేదు. ప్రస్తుతానికి మీ ఈమెయిల్ వాడండి.';
+
+  @override
+  String get signin_socialOffline =>
+      'మీరు ఆఫ్‌లైన్‌లో ఉన్నట్టున్నారు. కనెక్ట్ అయ్యాక మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get capsules_title => 'భవిష్యత్తులో మీరు';
+
+  @override
+  String get capsules_emptyBody =>
+      'భవిష్యత్తులోని మీకు రాయండి. ఒక తేదీ కోసం, లేదా ఒక భావన కోసం దాచిపెట్టండి.';
+
+  @override
+  String get capsules_emptyCta => 'మీ మొదటి క్యాప్సూల్ దాచిపెట్టండి';
+
+  @override
+  String get capsules_new => 'ఒక క్యాప్సూల్ రాయండి';
+
+  @override
+  String capsules_entryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count క్యాప్సూల్స్ దాచారు',
+      one: '1 క్యాప్సూల్ దాచారు',
+      zero: 'ఇంకా ఏదీ దాచలేదు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String capsules_entryReady(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count తెరవడానికి సిద్ధంగా ఉన్నాయి',
+      one: '1 తెరవడానికి సిద్ధంగా ఉంది',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_sectionReady => 'తెరవడానికి సిద్ధం';
+
+  @override
+  String get capsules_sectionSealed => 'దాచినవి';
+
+  @override
+  String get capsules_sectionOpened => 'తెరిచినవి';
+
+  @override
+  String capsules_sealedUntil(String date) {
+    return '$date వరకు దాచి ఉంది. భద్రంగా ఉంటుంది.';
+  }
+
+  @override
+  String get capsules_waitingFeeling => 'ఒక భావన కోసం ఎదురుచూస్తోంది';
+
+  @override
+  String get capsules_readyRow => 'మీరు సిద్ధమైనప్పుడు తెరవండి';
+
+  @override
+  String capsules_untitled(String date) {
+    return '$date నాటి క్యాప్సూల్';
+  }
+
+  @override
+  String get capsules_lockedTitle => 'దాచిన ఒక క్యాప్సూల్';
+
+  @override
+  String capsules_sealedOn(String date) {
+    return '$dateన దాచారు';
+  }
+
+  @override
+  String capsules_openedOn(String date) {
+    return '$dateన తెరిచారు';
+  }
+
+  @override
+  String get capsules_draftTitle => 'మీ డ్రాఫ్ట్ ఇక్కడే ఉంది';
+
+  @override
+  String get capsules_draftBody => 'ఆపిన చోటు నుండి కొనసాగించండి.';
+
+  @override
+  String get capsules_composeTitle => 'భవిష్యత్తులోని మీకు రాయండి';
+
+  @override
+  String get capsules_titleLabel => 'శీర్షిక';
+
+  @override
+  String get capsules_titleHelper =>
+      'దాచి ఉన్నప్పుడు క్యాప్సూల్ మీద ఇది కనిపిస్తుంది.';
+
+  @override
+  String get capsules_textLabel => 'మీ నోట్';
+
+  @override
+  String get capsules_textHelper =>
+      'ఇది తెరుచుకున్నప్పుడు మీరు మాత్రమే చదువుతారు.';
+
+  @override
+  String get capsules_photosTitle => 'ఫోటోలు';
+
+  @override
+  String get capsules_addPhoto => 'ఒక ఫోటో జోడించండి';
+
+  @override
+  String get capsules_photoHint => '3 వరకు. లొకేషన్, కెమెరా వివరాలు తీసేస్తాం.';
+
+  @override
+  String get capsules_photoAdding => 'మీ ఫోటో జోడిస్తున్నాం…';
+
+  @override
+  String get capsules_photoFailed =>
+      'ఆ ఫోటోను జోడించలేకపోయాం. ఇంకొకటి ప్రయత్నించండి.';
+
+  @override
+  String capsules_photoRemove(int index) {
+    return 'ఫోటో $index తీసేయండి';
+  }
+
+  @override
+  String capsules_photoSemantic(int index, int count) {
+    return '$countలో ఫోటో $index';
+  }
+
+  @override
+  String get capsules_voiceHint =>
+      '2 నిమిషాల వరకు. ఇది మీకు మాత్రమే వినిపిస్తుంది.';
+
+  @override
+  String get capsules_voiceLimit =>
+      'రెండు నిమిషాలు పూర్తయ్యాయి, అందుకే రికార్డింగ్ ఆగింది. మీ వాయిస్ నోట్ సిద్ధంగా ఉంది.';
+
+  @override
+  String get capsules_unlockTitle => 'ఇది ఎప్పుడు తెరుచుకోవాలి?';
+
+  @override
+  String get capsules_unlockDate => 'ఒక తేదీన';
+
+  @override
+  String get capsules_unlockFeeling => 'ఒక భావన కోసం';
+
+  @override
+  String get capsules_pickDate => 'తేదీ ఎంచుకోండి';
+
+  @override
+  String get capsules_changeDate => 'తేదీ మార్చండి';
+
+  @override
+  String capsules_dateChosen(String date, String time) {
+    return '$date $timeకి తెరుచుకుంటుంది';
+  }
+
+  @override
+  String get capsules_dateHelp => 'ఒక వారం నుండి ఐదేళ్ల లోపు ఏ రోజైనా.';
+
+  @override
+  String get capsules_datePickerHelp => 'ఆ రోజు 10:00కి తెరుచుకుంటుంది';
+
+  @override
+  String get capsules_feelingHelp =>
+      'దాచిన 24 గంటల తర్వాత నుండి, మీరు తదుపరి సారి ఇలా ఫీల్ అవుతూ చెక్-ఇన్ చేసినప్పుడు తెరుచుకోవచ్చు.';
+
+  @override
+  String capsules_anyQuadrant(String quadrant) {
+    return 'ఏదైనా $quadrant భావన';
+  }
+
+  @override
+  String capsules_feelingChosen(String feeling) {
+    return 'దీని కోసం ఎదురుచూస్తుంది: $feeling';
+  }
+
+  @override
+  String get capsules_seal => 'దాచిపెట్టండి';
+
+  @override
+  String get capsules_needContent =>
+      'ముందు కొన్ని మాటలు, ఒక వాయిస్ నోట్ లేదా ఒక ఫోటో జోడించండి.';
+
+  @override
+  String get capsules_needUnlock => 'ఇది ఎప్పుడు తెరుచుకోవాలో ఎంచుకోండి.';
+
+  @override
+  String get capsules_sealFailed =>
+      'ఇప్పుడు దాచలేకపోయాం. మీ క్యాప్సూల్ ఇక్కడే ఉంది. మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get capsules_sealedTitle => 'దాచిపెట్టాం';
+
+  @override
+  String get capsules_sealedFeeling =>
+      'దాచిపెట్టాం. ఆ భావన కోసం ఎదురుచూస్తుంది.';
+
+  @override
+  String get capsules_mediaLater =>
+      'ఈ ఫోన్‌లో భద్రంగా దాచాం. మీరు ఆన్‌లైన్‌కి వచ్చాక ఫోటోలు, వాయిస్ బ్యాకప్ అవుతాయి.';
+
+  @override
+  String get capsules_limitBody =>
+      'ఉచిత ఖాతాలో 3 మూడ్ క్యాప్సూల్స్ వరకు ఎదురుచూడగలవు. తేదీ క్యాప్సూల్స్‌కు పరిమితి లేదు.';
+
+  @override
+  String get capsules_limitPickDate => 'బదులుగా ఒక తేదీ ఎంచుకోండి';
+
+  @override
+  String get capsules_makeDate => 'దీన్ని తేదీ క్యాప్సూల్‌గా మార్చండి';
+
+  @override
+  String get capsules_leaveTitle => 'ఈ డ్రాఫ్ట్ ఉంచాలా?';
+
+  @override
+  String get capsules_leaveBody =>
+      'మీరు దాన్ని దాచే వరకు లేదా వదిలేసే వరకు ఇది ఈ ఫోన్‌లోనే ఉంటుంది.';
+
+  @override
+  String get capsules_leaveEditing => 'రాయడం కొనసాగించండి';
+
+  @override
+  String get capsules_leaveKeep => 'డ్రాఫ్ట్ ఉంచండి';
+
+  @override
+  String get capsules_leaveDiscard => 'వదిలేయండి';
+
+  @override
+  String capsules_detailFeeling(String feeling) {
+    return 'ఒక భావన కోసం ఎదురుచూస్తోంది: $feeling.';
+  }
+
+  @override
+  String capsules_detailArming(String date) {
+    return '$date నుండి తెరుచుకోవచ్చు.';
+  }
+
+  @override
+  String get capsules_detailNoEarly =>
+      'దాచిందంటే దాచిందే: దీన్ని ముందుగా తెరవలేరు, మార్చలేరు.';
+
+  @override
+  String get capsules_delete => 'క్యాప్సూల్ తొలగించండి';
+
+  @override
+  String get capsules_deleteTitle => 'ఈ క్యాప్సూల్ తొలగించాలా?';
+
+  @override
+  String get capsules_deleteBody => 'ఇది తెరవకుండానే శాశ్వతంగా పోతుంది.';
+
+  @override
+  String get capsules_deleteBodyOpened => 'ఇది శాశ్వతంగా పోతుంది.';
+
+  @override
+  String get capsules_deleteConfirm => 'తొలగించండి';
+
+  @override
+  String get capsules_deleteKeep => 'ఉంచండి';
+
+  @override
+  String get capsules_deleted => 'క్యాప్సూల్ తొలగించాం.';
+
+  @override
+  String get capsules_triggerTitle =>
+      'ఇలాంటి క్షణం కోసం మీరు ఒక నోట్ రాసుకున్నారు. ఇప్పుడే తెరవాలా, తర్వాతా?';
+
+  @override
+  String get capsules_holdTitle =>
+      'గతంలోని మీ నుండి ఒక నోట్ ఎదురుచూస్తోంది. ఇప్పుడే తెరవాలా, తర్వాతా?';
+
+  @override
+  String get capsules_now => 'ఇప్పుడే';
+
+  @override
+  String get capsules_later => 'తర్వాత';
+
+  @override
+  String get capsules_readyTitle => 'మీరు దాచుకున్నది ఇప్పుడు తెరవొచ్చు.';
+
+  @override
+  String capsules_readyMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count క్యాప్సూల్స్ సిద్ధంగా ఉన్నాయి.',
+      one: '1 క్యాప్సూల్ సిద్ధంగా ఉంది.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_readyOpen => 'తెరవండి';
+
+  @override
+  String get capsules_channelName => 'క్యాప్సూల్స్';
+
+  @override
+  String get capsules_channelDescription =>
+      'మీరు దాచుకున్నది తెరవడానికి సిద్ధమైనప్పుడు.';
+
+  @override
+  String get capsules_hardMoment =>
+      'మీరు ఇది ఒక కష్టమైన సమయంలో రాశారు. మీరు సిద్ధమైనప్పుడు తెరవండి.';
+
+  @override
+  String get capsules_skip => 'దాటవేయండి';
+
+  @override
+  String get capsules_opening => 'మీ క్యాప్సూల్ తెరుచుకుంటోంది';
+
+  @override
+  String get capsules_openedTitle => 'గతంలోని మీ నుండి';
+
+  @override
+  String get capsules_keepNextTime => 'తర్వాతి సారి కోసం ఉంచండి';
+
+  @override
+  String get capsules_keptNextTime => 'ఇది మళ్ళీ ఆ భావన కోసం ఎదురుచూస్తుంది.';
+
+  @override
+  String get capsules_voiceOffline =>
+      'మీ క్యాప్సూల్ తెరుచుకుంది. మీరు మళ్ళీ ఆన్‌లైన్‌కి వచ్చాక వాయిస్ నోట్ వస్తుంది.';
+
+  @override
+  String get capsules_photosOffline =>
+      'మీరు మళ్ళీ ఆన్‌లైన్‌కి వచ్చాక ఫోటోలు వస్తాయి.';
+
+  @override
+  String get capsules_mediaFailed =>
+      'ఇది ఇప్పుడు లోడ్ కాలేదు. కాసేపాగి మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get capsules_retry => 'మళ్ళీ ప్రయత్నించండి';
+
+  @override
+  String get capsules_cantRead =>
+      'ఈ క్యాప్సూల్‌ను ఈ ఫోన్‌లో ఇంకా చదవలేం. మీరు ఆన్‌లైన్‌కి వచ్చాక తెరుచుకుంటుంది.';
+
+  @override
+  String capsules_accountDeletionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'దాచిన $count క్యాప్సూల్స్ పోతాయి.',
+      one: 'దాచిన 1 క్యాప్సూల్ పోతుంది.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get checkin_discardTitle => 'సేవ్ చేయకుండా వెళ్ళిపోతారా?';
 
   @override
@@ -1070,6 +1425,108 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
+  String get notif_reminderBanner =>
+      'మీ కోసం ఒక నిమిషం. ఈ రోజు ఎలా అనిపిస్తోంది?';
+
+  @override
+  String get notif_reminderAction => 'చెక్-ఇన్ చేయండి';
+
+  @override
+  String get notif_capsuleBanner => 'మీరు దాచుకున్నది ఇప్పుడు తెరవొచ్చు.';
+
+  @override
+  String get notif_capsuleAction => 'తెరవండి';
+
+  @override
+  String get notif_channelReminders => 'రిమైండర్లు';
+
+  @override
+  String get notif_channelRemindersDescription =>
+      'మీ రోజువారీ చెక్-ఇన్ రిమైండర్.';
+
+  @override
+  String get set_notifications => 'నోటిఫికేషన్లు';
+
+  @override
+  String get set_notifMaster => 'Aura నుండి నోటిఫికేషన్లు';
+
+  @override
+  String get set_notifMasterNote =>
+      'రోజుకు రెండు మించి రావు. మీరు ఎలా ఫీల్ అవుతున్నారో మీ లాక్ స్క్రీన్ ఎప్పుడూ చెప్పదు.';
+
+  @override
+  String get set_notifReminder => 'రోజువారీ చెక్-ఇన్ రిమైండర్';
+
+  @override
+  String set_notifReminderNote(String time) {
+    return 'రోజుకు ఒక్క మృదువైన గుర్తు, $timeకి. మీరు చెక్-ఇన్ చేశాక రాదు.';
+  }
+
+  @override
+  String get set_notifReminderOffNote =>
+      'ఆఫ్‌లో ఉంది. రోజుకు ఒక్క మృదువైన గుర్తు కావాలంటే ఆన్ చేయండి.';
+
+  @override
+  String get set_notifReminderTime => 'రిమైండర్ సమయం';
+
+  @override
+  String get set_notifCapsule => 'క్యాప్సూల్ తెరవడానికి సిద్ధంగా ఉన్నప్పుడు';
+
+  @override
+  String get set_notifCapsuleNote =>
+      'మీరు దాచుకున్నదానికి మీరు ఎంచుకున్న రోజున.';
+
+  @override
+  String set_notifQuietNote(String start, String end) {
+    return 'నిశ్శబ్ద సమయం: $start–$end మధ్య ఏదీ పంపం.';
+  }
+
+  @override
+  String get set_notifQuietFrom => 'నిశ్శబ్దం మొదలు';
+
+  @override
+  String get set_notifQuietUntil => 'నిశ్శబ్దం ముగింపు';
+
+  @override
+  String get set_notifDiscreet => 'గోప్య మోడ్';
+
+  @override
+  String get set_notifDiscreetNote =>
+      'ప్రతి నోటిఫికేషన్ “Aura · మీకు ఒక మృదువైన అప్‌డేట్ ఉంది” అని మాత్రమే చెబుతుంది.';
+
+  @override
+  String get set_notifOffNote =>
+      'ఈ ఫోన్‌లో Aura నోటిఫికేషన్లు ఆఫ్‌లో ఉన్నాయి. అవి ఆన్ అయ్యాక ఇక్కడి మీ ఎంపికలే వర్తిస్తాయి.';
+
+  @override
+  String get set_notifTurnOn => 'ఆన్ చేయండి';
+
+  @override
+  String get set_notifOpenSettings => 'ఫోన్ సెట్టింగ్‌లు తెరవండి';
+
+  @override
+  String get set_notifQuietConfirmTitle => 'ఈ సమయం మీ నిశ్శబ్ద సమయంలో ఉంది';
+
+  @override
+  String set_notifQuietConfirmBody(String start, String end, String time) {
+    return 'Aura $start–$end మధ్య నిశ్శబ్దంగా ఉంటుంది. అయినా మీ రిమైండర్‌ను $timeకి పంపాలా?';
+  }
+
+  @override
+  String get set_notifQuietConfirmYes => 'అయినా పంపండి';
+
+  @override
+  String get set_notifQuietConfirmNo => 'నిశ్శబ్దంగానే ఉంచండి';
+
+  @override
+  String push_timeRow(String time) {
+    return 'ప్రతి సాయంత్రం $timeకి';
+  }
+
+  @override
+  String get push_changeTime => 'సమయం మార్చండి';
+
+  @override
   String get onb_trustTitle => 'మొదలుపెట్టే ముందు';
 
   @override
@@ -1139,6 +1596,1182 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get polish_helpNumberCopied => 'నంబర్ కాపీ అయింది';
+
+  @override
+  String get rooms_title => 'రూమ్‌లు';
+
+  @override
+  String get rooms_yourRooms => 'మీ రూమ్‌లు';
+
+  @override
+  String get rooms_memories => 'జ్ఞాపకాలు';
+
+  @override
+  String get rooms_whatTitle => 'రూమ్‌లు అంటే ఏమిటి';
+
+  @override
+  String get rooms_whatBody =>
+      'ఇప్పుడు మీలాగే అనిపిస్తున్న కొంతమంది ఉండే ఒక చిన్న రూమ్, ఒక్క రోజు కోసం.';
+
+  @override
+  String get rooms_pointName =>
+      'ప్రతి రూమ్‌లో ఒక కొత్త పేరు. మీ అకౌంట్ ఎవరికీ కనిపించదు.';
+
+  @override
+  String get rooms_pointGestures =>
+      'మెసేజ్‌లు, DMలు ఉండవు: ఎనిమిది ఆత్మీయ సంజ్ఞలు మాత్రమే.';
+
+  @override
+  String get rooms_pointTime =>
+      'రూమ్ ఒక రోజు ఉంటుంది, తర్వాత 7 రోజులు జ్ఞాపకంగా ఉంటుంది.';
+
+  @override
+  String get rooms_lanternNote =>
+      'Lantern Hour: మీ ప్రాంతం సమయం ప్రకారం ప్రతి రాత్రి 9 నుంచి 11 వరకు, రూమ్‌లు కలిసి ఒక లాంతరు వెలిగిస్తాయి, ఎక్కువ మంది వస్తారు.';
+
+  @override
+  String get rooms_lanternNow => 'ఇప్పుడు Lantern Hour నడుస్తోంది';
+
+  @override
+  String get rooms_checkInCta => 'రూమ్ కోసం చెక్-ఇన్ చేయండి';
+
+  @override
+  String get rooms_empty =>
+      'మీరు ఇప్పుడు ఏ రూమ్‌లోనూ లేరు. చెక్-ఇన్ తర్వాత, మీలాగే అనిపిస్తున్న వాళ్ళతో కలవొచ్చు.';
+
+  @override
+  String get rooms_offline =>
+      'రూమ్‌లకు కనెక్షన్ కావాలి. మీ చెక్-ఇన్‌లు ఈ ఫోన్‌లో సేవ్ అవుతూనే ఉంటాయి.';
+
+  @override
+  String get rooms_loadFailed => 'ఇప్పుడు రూమ్‌లను చేరుకోలేకపోయాం.';
+
+  @override
+  String get rooms_tryAgain => 'మళ్ళీ ప్రయత్నించండి';
+
+  @override
+  String get rooms_signedOut => 'సైన్ ఇన్ చేశాక రూమ్‌లు తెరుచుకుంటాయి.';
+
+  @override
+  String get rooms_signIn => 'సైన్ ఇన్ చేయండి';
+
+  @override
+  String get rooms_suspended =>
+      'ప్రస్తుతం మీ అకౌంట్‌కు రూమ్‌లు ఆపి ఉంచాం. సహాయం ఎప్పుడూ ఇక్కడే ఉంటుంది.';
+
+  @override
+  String rooms_suspendedUntil(String date) {
+    return 'మీ అకౌంట్‌కు $date వరకు రూమ్‌లు ఆపి ఉంచాం. సహాయం ఎప్పుడూ ఇక్కడే ఉంటుంది.';
+  }
+
+  @override
+  String get rooms_accountClosed =>
+      'Aura నియమాలను ఉల్లంఘించినందుకు ఈ అకౌంట్ మూసివేయబడింది.';
+
+  @override
+  String get rooms_profilePending =>
+      'మీ అకౌంట్ సెటప్ పూర్తయ్యాక రూమ్‌లు తెరుచుకుంటాయి. కాసేపట్లో మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get rooms_openHint => 'రూమ్ తెరుచుకుంటుంది';
+
+  @override
+  String rooms_memoryUntil(String date) {
+    return '$date వరకు జ్ఞాపకం';
+  }
+
+  @override
+  String get rooms_theme_lighthouse => 'దీపస్తంభం';
+
+  @override
+  String get rooms_theme_rain_sanctuary => 'వాన నిలయం';
+
+  @override
+  String get rooms_theme_midnight_observatory => 'అర్ధరాత్రి నక్షత్రశాల';
+
+  @override
+  String get rooms_theme_sunrise_deck => 'సూర్యోదయ వేదిక';
+
+  @override
+  String get rooms_gesture_warm_tea => 'వెచ్చని టీ';
+
+  @override
+  String get rooms_gesture_light_a_candle => 'ఒక దీపం';
+
+  @override
+  String get rooms_gesture_hug => 'కౌగిలింత';
+
+  @override
+  String get rooms_gesture_me_too => 'నాకూ అంతే';
+
+  @override
+  String get rooms_gesture_soft_rain => 'చిరుజల్లు';
+
+  @override
+  String get rooms_gesture_stargaze => 'నక్షత్రాలు చూద్దాం';
+
+  @override
+  String get rooms_gesture_deep_breath => 'దీర్ఘ శ్వాస';
+
+  @override
+  String get rooms_gesture_youre_not_alone => 'మీరు ఒంటరి కాదు';
+
+  @override
+  String rooms_hereNow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఇప్పుడు $count మంది ఉన్నారు',
+      one: 'ఇప్పుడు 1 ఉన్నారు',
+      zero: 'ఇప్పుడు ఎవరూ లేరు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_today(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఈ రోజు $count మంది ఇక్కడికి వచ్చారు',
+      one: 'ఈ రోజు 1 వ్యక్తి ఇక్కడికి వచ్చారు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_countsSemantic(int now, int today) {
+    String _temp0 = intl.Intl.pluralLogic(
+      now,
+      locale: localeName,
+      other: 'ఇప్పుడు $now మంది',
+      one: 'ఇప్పుడు 1 వ్యక్తి',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      today,
+      locale: localeName,
+      other: 'ఈ రోజు $today',
+      one: 'ఈ రోజు 1',
+    );
+    return '$_temp0, $_temp1';
+  }
+
+  @override
+  String rooms_stripSemantic(String theme, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఇప్పుడు $count మంది',
+      one: 'ఇప్పుడు 1 వ్యక్తి',
+    );
+    return '$theme, $_temp0';
+  }
+
+  @override
+  String get rooms_opening => 'రూమ్ తెరుస్తున్నాం…';
+
+  @override
+  String rooms_youAre(String pseudonym) {
+    return 'ఇక్కడ మీరు $pseudonym';
+  }
+
+  @override
+  String rooms_coldStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'ఈ రోజు $count మంది ఇక్కడికి వచ్చారు. తర్వాత వచ్చేవారి కోసం ఒక దీపం వదిలి వెళ్ళండి.',
+      one: 'ఈ రోజు ఇక్కడికి వచ్చిన మొదటివారు మీరే. తర్వాత వచ్చేవారి కోసం ఒక దీపం వదిలి వెళ్ళండి.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_lanternOn(String time) {
+    return 'Lantern Hour · $time వరకు';
+  }
+
+  @override
+  String rooms_closing(String time) {
+    return 'ఈ రూమ్ $timeకి జ్ఞాపకంగా మారుతుంది.';
+  }
+
+  @override
+  String get rooms_memory =>
+      'ఈ రూమ్ ఇప్పుడు ఒక జ్ఞాపకం. 7 రోజుల పాటు వెనక్కి చూసుకోవచ్చు.';
+
+  @override
+  String get rooms_findNew => 'కొత్త రూమ్ వెతకండి';
+
+  @override
+  String get rooms_reconnecting => 'మళ్ళీ కనెక్ట్ అవుతోంది…';
+
+  @override
+  String get rooms_membersTitle => 'మీతో ఇక్కడ';
+
+  @override
+  String get rooms_you => 'మీరు';
+
+  @override
+  String get rooms_memberHereNow => 'ఇప్పుడు ఇక్కడ ఉన్నారు';
+
+  @override
+  String get rooms_memberAway => 'ప్రస్తుతం దూరంగా ఉన్నారు';
+
+  @override
+  String get rooms_memberMuted => 'మీ కోసం మ్యూట్ చేశారు';
+
+  @override
+  String rooms_memberLabel(String pseudonym, String mood, String status) {
+    return '$pseudonym, $mood, $status';
+  }
+
+  @override
+  String rooms_youLabel(String pseudonym, String mood) {
+    return 'మీరు, $pseudonym, $mood';
+  }
+
+  @override
+  String get rooms_memberHint => 'ఆప్షన్లు తెరుచుకుంటాయి';
+
+  @override
+  String get rooms_recentTitle => 'ఈ రూమ్‌లో ఆత్మీయత';
+
+  @override
+  String rooms_receivedLine(String pseudonym, String gesture) {
+    return '$pseudonym మీకు $gesture పంపారు';
+  }
+
+  @override
+  String rooms_sentToMember(String gesture, String pseudonym) {
+    return '$pseudonymకి $gesture పంపారు';
+  }
+
+  @override
+  String rooms_sentToRoom(String gesture) {
+    return 'ఇక్కడ అందరికీ $gesture పంపారు';
+  }
+
+  @override
+  String rooms_someoneSent(String gesture) {
+    return 'ఎవరో $gesture పంపారు';
+  }
+
+  @override
+  String rooms_someoneSentRoom(String gesture) {
+    return 'ఎవరో ఇక్కడ అందరికీ $gesture పంపారు';
+  }
+
+  @override
+  String rooms_youSentMember(String gesture, String pseudonym) {
+    return 'మీరు $pseudonymకి $gesture పంపారు';
+  }
+
+  @override
+  String rooms_youSentRoom(String gesture) {
+    return 'మీరు ఇక్కడ అందరికీ $gesture పంపారు';
+  }
+
+  @override
+  String get rooms_trayTitle => 'ఇక్కడ అందరికీ ఆత్మీయత పంపండి';
+
+  @override
+  String get rooms_trayHint => 'ఇక్కడ అందరికీ పంపుతుంది';
+
+  @override
+  String get rooms_trayResting =>
+      'జ్ఞాపకంలో సంజ్ఞలు విశ్రాంతిలో ఉంటాయి. రిపోర్ట్, బ్లాక్, మ్యూట్ ఇంకా పనిచేస్తాయి.';
+
+  @override
+  String get rooms_roomOptions => 'రూమ్ ఆప్షన్లు';
+
+  @override
+  String get rooms_reportRoom => 'ఇక్కడ ఒక సమస్యను రిపోర్ట్ చేయండి';
+
+  @override
+  String get rooms_leave => 'ఈ రూమ్ నుంచి వెళ్ళిపోండి';
+
+  @override
+  String get rooms_removeMemory => 'నా రూమ్‌ల నుంచి తీసేయండి';
+
+  @override
+  String get rooms_leaveTitle => 'ఈ రూమ్ నుంచి వెళ్ళిపోతారా?';
+
+  @override
+  String get rooms_leaveBody =>
+      'మళ్ళీ ఈ రూమ్‌కి రాలేరు, మీ సీటు ఇంకొకరికి దొరుకుతుంది. మీ తర్వాతి చెక్-ఇన్ మీకు కొత్త రూమ్ వెతికిపెడుతుంది.';
+
+  @override
+  String get rooms_leaveConfirm => 'వెళ్ళిపోతాను';
+
+  @override
+  String get rooms_stay => 'ఇక్కడే ఉంటాను';
+
+  @override
+  String get rooms_removeTitle => 'ఈ జ్ఞాపకాన్ని తీసేయాలా?';
+
+  @override
+  String get rooms_removeBody =>
+      'ఇది ఇప్పుడే మీ రూమ్‌ల నుంచి వెళ్ళిపోతుంది. ఎలాగూ 7 రోజుల తర్వాత జ్ఞాపకాలు పూర్తిగా మూసుకుపోతాయి.';
+
+  @override
+  String get rooms_removeConfirm => 'తీసేయండి';
+
+  @override
+  String get rooms_keep => 'ఉంచండి';
+
+  @override
+  String get rooms_leaveFailed => 'అది జరగలేదు. మీరు ఇంకా రూమ్‌లోనే ఉన్నారు.';
+
+  @override
+  String get rooms_gone =>
+      'ఈ రూమ్ మూసుకుపోయింది. రూమ్‌లు 7 రోజులు జ్ఞాపకాలుగా ఉండి, తర్వాత పోతాయి.';
+
+  @override
+  String get rooms_backToRooms => 'మీ రూమ్‌లకు వెళ్ళండి';
+
+  @override
+  String get rooms_offlineRoom =>
+      'రూమ్‌లకు కనెక్షన్ కావాలి. మీరు మళ్ళీ ఆన్‌లైన్‌కి రాగానే ఈ రూమ్ తెరుచుకుంటుంది.';
+
+  @override
+  String get rooms_joinTitle => 'మీ రూమ్ వెతుకుతున్నాం';
+
+  @override
+  String get rooms_finding =>
+      'ఇప్పుడు ఇలాగే అనిపిస్తున్న వాళ్ళను వెతుకుతున్నాం…';
+
+  @override
+  String get rooms_offlineJoin =>
+      'రూమ్‌లకు కనెక్షన్ కావాలి. మీ చెక్-ఇన్ సేవ్ అయింది.';
+
+  @override
+  String get rooms_joinFailed =>
+      'ఇప్పుడు రూమ్‌లను చేరుకోలేకపోయాం. మీ చెక్-ఇన్ సేవ్ అయింది.';
+
+  @override
+  String get rooms_joinLimit =>
+      'ఈ రోజు ఈ భావనకు ఇప్పటికే 3 కొత్త రూమ్‌లు అయ్యాయి. మీరు ఉన్న రూమ్‌లు ఇంకా మీ కోసం తెరిచే ఉన్నాయి.';
+
+  @override
+  String get rooms_seeYourRooms => 'మీ రూమ్‌లు చూడండి';
+
+  @override
+  String get rooms_poolUnavailable =>
+      'హిందీ, హింగ్లిష్ రూమ్‌లు త్వరలో మొదలవుతాయి. ప్రస్తుతానికి ఇంగ్లీష్ రూమ్‌లో చేరతారా?';
+
+  @override
+  String get rooms_poolJoinEnglish => 'ఇంగ్లీష్ రూమ్‌లో చేరండి';
+
+  @override
+  String get rooms_poolNotify => 'అవి మొదలైనప్పుడు చెప్పండి';
+
+  @override
+  String get rooms_poolNotifyDone =>
+      'హిందీ, హింగ్లిష్ రూమ్‌లు మొదలైనప్పుడు ఇక్కడే చెబుతాం.';
+
+  @override
+  String get rooms_noRequest => 'రూమ్‌లు చెక్-ఇన్ నుంచి తెరుచుకుంటాయి.';
+
+  @override
+  String get rooms_offer => 'ఇలాగే అనిపిస్తున్న వాళ్ళ రూమ్‌లో చేరండి';
+
+  @override
+  String get rooms_offerHint =>
+      'దాని కోసమే కొత్త పేరుతో ఒక రూమ్ తెరుచుకుంటుంది';
+
+  @override
+  String get rooms_offerOffline =>
+      'మీరు మళ్ళీ ఆన్‌లైన్‌కి వచ్చాక రూమ్‌లు తెరుచుకుంటాయి';
+
+  @override
+  String get rooms_offerLater =>
+      'తోడు కావాలనిపించినప్పుడు, రూమ్‌లు Rooms ట్యాబ్‌లో ఉంటాయి.';
+
+  @override
+  String get rooms_guidelinesTitle => 'మీ మొదటి రూమ్‌కి ముందు';
+
+  @override
+  String get rooms_guidelinesIntro =>
+      'అందరూ ఈ కొన్ని చిన్న విషయాలు పాటిస్తారు కాబట్టే రూమ్‌లు ప్రశాంతంగా ఉంటాయి:';
+
+  @override
+  String get rooms_rule1 =>
+      'దయగా ఉండండి. ఇక్కడ అందరూ నిజమైన రోజును గడుపుతున్నారు.';
+
+  @override
+  String get rooms_rule2 =>
+      'కులం, మతం, లింగం, లైంగికత లేదా మరేదైనా గురించి ద్వేషం వద్దు.';
+
+  @override
+  String get rooms_rule3 => 'లైంగిక కంటెంట్ వద్దు.';
+
+  @override
+  String get rooms_rule4 =>
+      'కాంటాక్ట్ వివరాలు, కలవడాలు, లేదా ఎవరి వయసు, స్కూల్, ఊరు, ఫోటోలు అడగవద్దు, పంచుకోవద్దు.';
+
+  @override
+  String get rooms_rule5 => 'అమ్మకాలు, స్పామ్ వద్దు.';
+
+  @override
+  String get rooms_rule6 =>
+      'ఎవరినీ తమను తాము బాధపెట్టుకోమని ప్రోత్సహించవద్దు. మీకు ఎలా అనిపిస్తోందో మాట్లాడటం ఎప్పుడూ సరే.';
+
+  @override
+  String get rooms_guidelinesSafety =>
+      'ఎవరినైనా రిపోర్ట్, బ్లాక్ లేదా మ్యూట్ చేయవచ్చు, సహాయం ఎప్పుడూ ఒక్క ట్యాప్ దూరంలో ఉంటుంది.';
+
+  @override
+  String get rooms_guidelinesAgree => 'నేను వీటిని పాటిస్తాను';
+
+  @override
+  String rooms_sendTo(String pseudonym) {
+    return '$pseudonymకి కొంచెం ఆత్మీయత పంపండి';
+  }
+
+  @override
+  String rooms_gestureHintMember(String pseudonym) {
+    return '$pseudonymకి పంపుతుంది';
+  }
+
+  @override
+  String get rooms_report => 'రిపోర్ట్';
+
+  @override
+  String get rooms_block => 'బ్లాక్';
+
+  @override
+  String get rooms_mute => 'మ్యూట్';
+
+  @override
+  String get rooms_unmute => 'అన్‌మ్యూట్';
+
+  @override
+  String get rooms_safetyNote =>
+      'ఎవరు రిపోర్ట్, బ్లాక్ లేదా మ్యూట్ చేశారో వాళ్ళకు ఎప్పుడూ తెలియదు.';
+
+  @override
+  String rooms_blockTitle(String pseudonym) {
+    return '$pseudonymని బ్లాక్ చేయాలా?';
+  }
+
+  @override
+  String get rooms_blockBody =>
+      'మీరిద్దరూ మళ్ళీ ఒకే రూమ్‌లో ఉండరు, మీ మధ్య సంజ్ఞలు ఆగిపోతాయి. వాళ్ళకు ఈ విషయం చెప్పము.';
+
+  @override
+  String rooms_blocked(String pseudonym) {
+    return '$pseudonymని బ్లాక్ చేశారు. మీరు మళ్ళీ ఒకే రూమ్‌లో ఉండరు.';
+  }
+
+  @override
+  String rooms_muted(String pseudonym) {
+    return '$pseudonymని మీ కోసం మ్యూట్ చేశాం. వాళ్ళ సంజ్ఞలు ఇక్కడ మీకు చేరవు.';
+  }
+
+  @override
+  String rooms_unmuted(String pseudonym) {
+    return '$pseudonymని అన్‌మ్యూట్ చేశాం.';
+  }
+
+  @override
+  String get rooms_undo => 'వెనక్కి తీసుకోండి';
+
+  @override
+  String get rooms_actionFailed =>
+      'అది జరగలేదు. కాసేపట్లో మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String rooms_reportMember(String pseudonym) {
+    return '$pseudonymని రిపోర్ట్ చేయండి';
+  }
+
+  @override
+  String get rooms_reportGesture => 'ఈ సంజ్ఞను రిపోర్ట్ చేయండి';
+
+  @override
+  String get rooms_reportWhy => 'ఏం జరుగుతోంది?';
+
+  @override
+  String get rooms_reason1 =>
+      'ఎవరైనా ప్రమాదంలో ఉండొచ్చు లేదా తమను తాము బాధపెట్టుకుంటూ ఉండొచ్చు';
+
+  @override
+  String get rooms_reason2 => 'వేధింపులు లేదా బెదిరింపులు';
+
+  @override
+  String get rooms_reason3 => 'లైంగిక కంటెంట్ లేదా ప్రవర్తన';
+
+  @override
+  String get rooms_reason4 => 'ద్వేషం లేదా దూషణలు';
+
+  @override
+  String get rooms_reason5 => 'కాంటాక్ట్ వివరాలు లేదా వ్యక్తిగత సమాచారం';
+
+  @override
+  String get rooms_reason6 => 'స్పామ్ లేదా అమ్మకాలు';
+
+  @override
+  String get rooms_reason7 => 'ఎవరైనా 13 ఏళ్ల లోపు వారు కావచ్చు';
+
+  @override
+  String get rooms_reason8 => 'ఇంకేదైనా';
+
+  @override
+  String get rooms_reportNoteLabel =>
+      'మోడరేటర్‌కు తెలియాల్సింది ఏదైనా ఉందా? (ఐచ్ఛికం)';
+
+  @override
+  String get rooms_reportNoteHelp =>
+      'దీన్ని Aura మోడరేటర్‌లు మాత్రమే చదువుతారు. దయచేసి ఫోన్ నంబర్లు, లింక్‌లు, హ్యాండిల్స్ రాయకండి.';
+
+  @override
+  String get rooms_reportNoteContact =>
+      'ఫోన్ నంబర్లు, లింక్‌లు, హ్యాండిల్స్ ఇక్కడ పంచుకోలేరు. ఇది అందరినీ సురక్షితంగా ఉంచుతుంది.';
+
+  @override
+  String get rooms_reportSend => 'రిపోర్ట్ పంపండి';
+
+  @override
+  String get rooms_reportThanks =>
+      'మాకు చెప్పినందుకు ధన్యవాదాలు. ఒక మోడరేటర్ సాధారణంగా ఒక రోజులో దీన్ని చూస్తారు.';
+
+  @override
+  String get rooms_reportHidden =>
+      'చెప్పినందుకు ధన్యవాదాలు. మోడరేటర్ చూసే వరకు ఈ రూమ్‌లో వాళ్ళ సంజ్ఞలు మీకు రావు.';
+
+  @override
+  String get rooms_reportGestureHidden =>
+      'చెప్పినందుకు ధన్యవాదాలు. ఆ సంజ్ఞ ఇప్పుడు మీకు కనిపించదు.';
+
+  @override
+  String get rooms_reportCrisis =>
+      'చెప్పినందుకు ధన్యవాదాలు. ఒక మోడరేటర్ త్వరలో చూస్తారు, సహాయం ఎప్పుడూ ఒక్క ట్యాప్ దూరంలో ఉంటుంది.';
+
+  @override
+  String get rooms_reportLimit =>
+      'ఈ రోజు చాలా రిపోర్ట్‌లు వచ్చాయి. ఎవరైనా ప్రమాదంలో ఉంటే, సహాయం బటన్ ఎప్పుడూ ఇక్కడే ఉంటుంది.';
+
+  @override
+  String get rooms_reportFailed =>
+      'అది జరగలేదు, కాబట్టి ఏదీ పంపలేదు. కాసేపట్లో మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get rooms_reportOffline =>
+      'రిపోర్ట్‌లకు కనెక్షన్ కావాలి. ఇంకా ఏదీ పంపలేదు.';
+
+  @override
+  String get rooms_surveyTitle =>
+      'మీకు కొంచెం ఒంటరితనం తగ్గినట్టు అనిపించిందా?';
+
+  @override
+  String get rooms_surveyYes => 'అవును';
+
+  @override
+  String get rooms_surveyNo => 'అంతగా లేదు';
+
+  @override
+  String get rooms_surveySkip => 'వదిలేయండి';
+
+  @override
+  String get sanctuary_title => 'ప్రశాంత నిలయం';
+
+  @override
+  String get sanctuary_intro =>
+      'మీ కోసమే ఒక ప్రశాంతమైన చోటు. మీ వేగంతోనే వెళ్ళండి. ఇక్కడ దేనికీ స్కోర్ లేదు.';
+
+  @override
+  String get sanctuary_todayTitle => 'ఈరోజు ఒక నిమిషం';
+
+  @override
+  String get sanctuary_breatheSection => 'శ్వాస';
+
+  @override
+  String get sanctuary_breatheCard => 'మీ Auraతో కలిసి శ్వాస తీసుకోండి';
+
+  @override
+  String get sanctuary_breatheCardBody =>
+      'ప్రశాంతమైన, బాక్స్ లేదా 4-7-8 శ్వాస. మీకు ఎంతసేపు కావాలంటే అంతసేపు.';
+
+  @override
+  String get sanctuary_groundingSection => 'మనసు నిలకడకు';
+
+  @override
+  String get sanctuary_begin => 'మొదలుపెట్టండి';
+
+  @override
+  String get sanctuary_start => 'మొదలుపెట్టండి';
+
+  @override
+  String get sanctuary_pause => 'ఆపండి';
+
+  @override
+  String get sanctuary_resume => 'మళ్ళీ కొనసాగించండి';
+
+  @override
+  String get sanctuary_finish => 'ముగించండి';
+
+  @override
+  String get sanctuary_next => 'తర్వాత';
+
+  @override
+  String get sanctuary_progress => 'ఈ సెషన్‌లో ఎంతవరకు వచ్చారు';
+
+  @override
+  String get sanctuary_progressBegun => 'ఇప్పుడే మొదలైంది';
+
+  @override
+  String get sanctuary_progressHalf => 'దాదాపు సగం';
+
+  @override
+  String get sanctuary_progressNearly => 'దాదాపు పూర్తయింది';
+
+  @override
+  String get sanctuary_progressDone => 'పూర్తయింది';
+
+  @override
+  String habits_autoLogged(String habit) {
+    return 'ఈరోజు $habit అయినట్టు గుర్తించాం.';
+  }
+
+  @override
+  String get breathe_rhythm => 'లయ';
+
+  @override
+  String get breathe_calm => 'ప్రశాంతం';
+
+  @override
+  String get breathe_calmBody =>
+      '4 లెక్కలు లోపలికి, 6 బయటకు. మెల్లగా, స్థిరంగా.';
+
+  @override
+  String get breathe_box => 'బాక్స్';
+
+  @override
+  String get breathe_boxBody =>
+      'లోపలికి, ఆపి, బయటకు, ఆపి. ఒక్కోటి నాలుగు లెక్కలు.';
+
+  @override
+  String get breathe_478 => '4-7-8';
+
+  @override
+  String get breathe_478Body => '4 లెక్కలు లోపలికి, 7 ఆపి, 8 బయటకు.';
+
+  @override
+  String get breathe_lightHeaded =>
+      'తల తిరుగుతున్నట్టు అనిపిస్తే, ఆపేసి మామూలుగా శ్వాస తీసుకోండి.';
+
+  @override
+  String get breathe_length => 'ఎంతసేపు';
+
+  @override
+  String breathe_minutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count నిమిషాలు',
+      one: '1 నిమిషం',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get breathe_openEnded => 'నేను ఆపేవరకు';
+
+  @override
+  String get breathe_in => 'శ్వాస లోపలికి';
+
+  @override
+  String get breathe_hold => 'ఆపి ఉంచండి';
+
+  @override
+  String get breathe_out => 'శ్వాస బయటకు';
+
+  @override
+  String get breathe_paused => 'ఆగింది. మీకు కావలసినంత సమయం తీసుకోండి.';
+
+  @override
+  String get breathe_done => 'ఇది మీ కోసమే తీసుకున్న సమయం.';
+
+  @override
+  String get breathe_again => 'మళ్ళీ';
+
+  @override
+  String get breathe_land1 => 'మీ పాదాలు నేలను తాకుతున్నట్టు గమనించండి.';
+
+  @override
+  String get breathe_land2 =>
+      'మీ చుట్టూ వినిపిస్తున్న మూడు శబ్దాలను గమనించండి.';
+
+  @override
+  String get breathe_keepGoing => 'కొనసాగిద్దాం';
+
+  @override
+  String get breathe_land3 => 'భుజాలను వదులుగా వదిలేయండి.';
+
+  @override
+  String get senses_title => 'ఐదు ఇంద్రియాలు';
+
+  @override
+  String get senses_card => 'మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనించండి.';
+
+  @override
+  String get senses_intro =>
+      'మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనిద్దాం. మీ వేగంతోనే వెళ్ళండి.';
+
+  @override
+  String get senses_see => 'మీకు కనిపిస్తున్న ఐదు వస్తువులు';
+
+  @override
+  String get senses_seeBody =>
+      'నెమ్మదిగా చుట్టూ చూడండి. మనసులో గానీ, పైకి గానీ వాటి పేర్లు చెప్పండి.';
+
+  @override
+  String get senses_touch => 'మీరు తాకగలిగే నాలుగు విషయాలు';
+
+  @override
+  String get senses_touchBody =>
+      'మీ కింద కుర్చీ, మీ బట్టలు, మీ చర్మాన్ని తాకే గాలి.';
+
+  @override
+  String get senses_hear => 'మీకు వినిపిస్తున్న మూడు శబ్దాలు';
+
+  @override
+  String get senses_hearBody =>
+      'దగ్గరివైనా, దూరానివైనా, పెద్దవైనా, మెల్లనివైనా.';
+
+  @override
+  String get senses_smell => 'మీకు వాసన తెలుస్తున్న రెండు విషయాలు';
+
+  @override
+  String get senses_smellBody =>
+      'దగ్గర ఏమీ లేకపోతే, మీకు నచ్చిన రెండు వాసనలు గుర్తు చేసుకోండి.';
+
+  @override
+  String get senses_taste => 'మీకు రుచి తెలుస్తున్న ఒక్క విషయం';
+
+  @override
+  String get senses_tasteBody => 'లేదా కొంచెం నీళ్ళు తాగి ఆ రుచిని గమనించండి.';
+
+  @override
+  String senses_step(int step, int total) {
+    return '$totalలో $stepవ అడుగు';
+  }
+
+  @override
+  String get senses_done => 'మీరు ఇక్కడే, ఈ క్షణంలోనే ఉన్నారు. బాగా చేశారు.';
+
+  @override
+  String get heart_title => 'గుండెపై చేయి';
+
+  @override
+  String get heart_card => 'మీ కోసమే ఒక నిమిషం వెచ్చదనం.';
+
+  @override
+  String get heart_intro =>
+      'మీ చేతిని గుండెపై, లేదా మీకు హాయిగా అనిపించే చోట ఉంచండి.';
+
+  @override
+  String get heart_1 => 'మీ చేతి వెచ్చదనాన్ని గమనించండి.';
+
+  @override
+  String get heart_2 => 'మెల్లగా శ్వాస తీసుకోండి. తొందర ఏమీ లేదు.';
+
+  @override
+  String get heart_3 => 'మీకు ఏం అనిపిస్తున్నా, ఇక్కడ దానికి చోటు ఉంది.';
+
+  @override
+  String get heart_4 =>
+      'స్నేహితుల పట్ల ఎంత దయగా ఉంటారో, మీ పట్ల కూడా అంతే దయగా ఉండండి.';
+
+  @override
+  String get heart_done => 'మీ పట్ల మీరు మృదువుగా ఉన్నందుకు ధన్యవాదాలు.';
+
+  @override
+  String get gratitude_title => 'మూడు చిన్న విషయాలు';
+
+  @override
+  String get gratitude_card => 'ఈరోజు బాగానే జరిగిన మూడు చిన్న విషయాలు.';
+
+  @override
+  String get gratitude_intro =>
+      'ఈరోజు జరిగిన మూడు చిన్న విషయాలను ఒక్కొక్కటిగా గుర్తు తెచ్చుకోండి. ఏమీ రాయనక్కర్లేదు.';
+
+  @override
+  String get gratitude_1 => 'బాగానే జరిగిన ఒక చిన్న విషయం';
+
+  @override
+  String get gratitude_1Body =>
+      'అది చాలా చిన్నదైనా పర్వాలేదు, ఒక వేడి పానీయం లేదా ఒక మంచి మాట లాంటిది.';
+
+  @override
+  String get gratitude_2 => 'ఇంకొక చిన్న విషయం';
+
+  @override
+  String get gratitude_2Body => 'మీరు చూసినది, విన్నది లేదా చేసినది ఏదైనా.';
+
+  @override
+  String get gratitude_3 => 'మరొక్క చిన్న విషయం';
+
+  @override
+  String get gratitude_3Body => 'బహుశా మీ గురించే ఏదైనా.';
+
+  @override
+  String get gratitude_done => 'వాటిని ఒక క్షణం పట్టుకుని ఉండండి. అవి మీవే.';
+
+  @override
+  String get savour_intro =>
+      'ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మెల్లగా మళ్ళీ గుర్తు చేసుకుందాం.';
+
+  @override
+  String get savour_1 =>
+      'ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని గుర్తు తెచ్చుకోండి, ఎంత చిన్నదైనా.';
+
+  @override
+  String get savour_2 =>
+      'అప్పుడు మీరు ఎక్కడ ఉన్నారు? ఏం కనిపించింది, ఏం వినిపించింది?';
+
+  @override
+  String get savour_3 =>
+      'ఇప్పుడు దాన్ని గుర్తు చేసుకుంటే ఎలా అనిపిస్తోందో గమనించండి.';
+
+  @override
+  String get savour_done => 'అది మీతో ఇంకొంచెం సేపు ఉండనివ్వండి.';
+
+  @override
+  String get minute_forYou => 'మీ కోసం ఒక నిమిషం';
+
+  @override
+  String get minute_calmTitle => 'ఒక ప్రశాంత నిమిషం';
+
+  @override
+  String get minute_boxTitle => 'బాక్స్ శ్వాస';
+
+  @override
+  String get minute_478Title => '4-7-8 శ్వాస';
+
+  @override
+  String get minute_stillnessTitle => 'ఒక నిమిషం నిశ్చలత';
+
+  @override
+  String get minute_stillnessBody => 'గోళంతో కలిసి ఒక నిశ్శబ్ద నిమిషం.';
+
+  @override
+  String get minute_landTitle => 'నిలదొక్కుకోవడానికి ముప్పై సెకన్లు';
+
+  @override
+  String get minute_landBody => 'గోళంతో కలిసి మూడు నెమ్మది శ్వాసలు.';
+
+  @override
+  String get minute_comfortTitle => 'కొంచెం ఊరట';
+
+  @override
+  String get minute_comfortBody => 'గుండెపై ఒక చేయి, ఒక నిమిషం వెచ్చదనం.';
+
+  @override
+  String get minute_savourTitle => 'దీన్ని ఆస్వాదించండి';
+
+  @override
+  String get minute_savourBody =>
+      'ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మళ్ళీ గుర్తు చేసుకోండి.';
+
+  @override
+  String get companion_storm1 =>
+      'ఒకేసారి చాలా అనిపిస్తోంది. మీ వెలుగు ఇంకా ఇక్కడే ఉంది.';
+
+  @override
+  String get companion_storm2 =>
+      'తుఫానుకు పేరు పెట్టడానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.';
+
+  @override
+  String get companion_storm3 =>
+      'పెద్ద, గట్టి భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.';
+
+  @override
+  String get companion_storm4 =>
+      'తుఫాను రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.';
+
+  @override
+  String get companion_storm5 => 'మీరు దీన్ని నిజాయితీగా చెప్పారు. అది ముఖ్యం.';
+
+  @override
+  String get companion_storm6 => 'తుఫానులు కూడా మీ ఆకాశంలో భాగమే.';
+
+  @override
+  String get companion_storm7 =>
+      'లోపల ఏం సుడులు తిరుగుతున్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.';
+
+  @override
+  String get companion_storm8 => 'తుఫానులో కూడా, మీ వెలుగు మీదే.';
+
+  @override
+  String get companion_rain1 =>
+      'ఇది భారంగా అనిపిస్తోంది. మీ వెలుగు ఇంకా మీతోనే ఉంది.';
+
+  @override
+  String get companion_rain2 =>
+      'నిరుత్సాహమైన రోజు గురించి నిజాయితీగా ఉండటానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.';
+
+  @override
+  String get companion_rain3 =>
+      'నెమ్మదైన, బరువైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.';
+
+  @override
+  String get companion_rain4 =>
+      'వాన రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.';
+
+  @override
+  String get companion_rain5 =>
+      'ఈరోజు మీతో మీరు నిజాయితీగా ఉన్నారు. అది ముఖ్యం.';
+
+  @override
+  String get companion_rain6 => 'వాన కూడా మీ ఆకాశంలో భాగమే.';
+
+  @override
+  String get companion_rain7 =>
+      'ఎంత భారంగా ఉన్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.';
+
+  @override
+  String get companion_rain8 => 'మబ్బు పట్టిన రోజుల్లో కూడా, మీ వెలుగు మీదే.';
+
+  @override
+  String get companion_moonlight1 =>
+      'నిశ్శబ్దమైన, స్థిరమైన క్షణం. మీ వెలుగు హాయిగా విశ్రాంతి తీసుకుంటోంది.';
+
+  @override
+  String get companion_moonlight2 =>
+      'ఒక ప్రశాంత క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.';
+
+  @override
+  String get companion_moonlight3 =>
+      'మెత్తని, హాయైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.';
+
+  @override
+  String get companion_moonlight4 =>
+      'మెల్లని రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.';
+
+  @override
+  String get companion_moonlight5 =>
+      'దీన్ని గమనించడానికి మీరు ఒక క్షణం తీసుకున్నారు. అది ముఖ్యం.';
+
+  @override
+  String get companion_moonlight6 => 'వెన్నెల కూడా మీ ఆకాశంలో భాగమే.';
+
+  @override
+  String get companion_moonlight7 =>
+      'ఈ ప్రశాంతత ఎంత చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.';
+
+  @override
+  String get companion_moonlight8 => 'ఈ నిశ్శబ్దంలో, మీ వెలుగు మీదే.';
+
+  @override
+  String get companion_sunrise1 =>
+      'వెలుగుతో నిండిన క్షణం. మీ వెలుగు ప్రకాశిస్తోంది.';
+
+  @override
+  String get companion_sunrise2 =>
+      'ఒక మంచి క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.';
+
+  @override
+  String get companion_sunrise3 =>
+      'పెద్ద, ప్రకాశవంతమైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.';
+
+  @override
+  String get companion_sunrise4 =>
+      'వెలుగు రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.';
+
+  @override
+  String get companion_sunrise5 =>
+      'దీన్ని గమనించడానికి మీకు మీరు అవకాశం ఇచ్చారు. అది ముఖ్యం.';
+
+  @override
+  String get companion_sunrise6 => 'సూర్యోదయం కూడా మీ ఆకాశంలో భాగమే.';
+
+  @override
+  String get companion_sunrise7 =>
+      'ఇది పెద్దదైనా, చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.';
+
+  @override
+  String get companion_sunrise8 => 'ఈ సంతోషంలో, మీ వెలుగు మీదే.';
+
+  @override
+  String get companion_neutral1 => 'చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.';
+
+  @override
+  String get companion_neutral2 => 'మీరు మీ కోసం వచ్చారు.';
+
+  @override
+  String get companion_neutral3 => 'మీ వెలుగు ఇంకా ఇక్కడే ఉంది.';
+
+  @override
+  String get companion_neutral4 => 'ఇక్కడ తొందర ఏమీ లేదు.';
+
+  @override
+  String get prompt_note1 => 'ఈరోజు కొంచెం సహాయపడిన ఒక చిన్న విషయం ఏది?';
+
+  @override
+  String get prompt_note2 => 'ఇప్పుడు మీ మనసులో ఏముంది?';
+
+  @override
+  String get prompt_note3 =>
+      'ఈరోజు గురించి మీరు ఏం గుర్తుంచుకోవాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_storm1 =>
+      'ఇప్పుడు మీ మనసులో ఎక్కువ చోటు తీసుకుంటున్నది ఏది?';
+
+  @override
+  String get prompt_storm2 => 'ఈ భావన మాట్లాడగలిగితే, అది ఏం చెబుతుంది?';
+
+  @override
+  String get prompt_storm3 => 'ఒక్క నిమిషమైనా పక్కన పెట్టగలిగే ఒక విషయం ఏది?';
+
+  @override
+  String get prompt_rain1 => 'ఇప్పుడు మీకు ఏది హాయిగా అనిపిస్తుంది?';
+
+  @override
+  String get prompt_rain2 => 'ఈరోజు మీ మనసుపై బరువుగా ఉన్నది ఏది?';
+
+  @override
+  String get prompt_rain3 => 'ఈ మధ్య మీ పట్ల దయగా అనిపించింది ఎవరు, లేదా ఏది?';
+
+  @override
+  String get prompt_moonlight1 => 'మీరు స్థిరంగా ఉండటానికి ఏది సహాయపడుతోంది?';
+
+  @override
+  String get prompt_moonlight2 => 'ఈరోజు ఏది హాయిగా అనిపించేలా చేసింది?';
+
+  @override
+  String get prompt_moonlight3 =>
+      'ఈ క్షణం నుంచి మీరు ఏం దాచుకోవాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_sunrise1 => 'ఈరోజు మీలో ఉత్సాహం నింపుతున్నది ఏది?';
+
+  @override
+  String get prompt_sunrise2 =>
+      'బాగా జరిగిన ఏ విషయాన్ని మీరు గుర్తుంచుకోవాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_sunrise3 => 'దీన్ని మీరు ఎవరితో పంచుకోవాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_capsule1 =>
+      'భవిష్యత్తులోని మీకు మీరు ఏం తెలియజేయాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_capsule2 =>
+      'ఇప్పుడు మీకు సహాయపడుతున్న, తర్వాత మర్చిపోయే అవకాశం ఉన్న విషయం ఏది?';
+
+  @override
+  String get prompt_capsule3 => 'కష్టమైన రోజున మీకు మీరు ఏం చెప్పుకుంటారు?';
+
+  @override
+  String get prompt_capsuleStorm =>
+      'అంతా ఎక్కువైపోయినట్టు అనిపించినప్పుడు ఏది సహాయపడుతుంది?';
+
+  @override
+  String get prompt_capsuleRain => 'భారమైన రోజున మీరు ఏం వినాలనుకుంటారు?';
+
+  @override
+  String get prompt_capsuleMoonlight =>
+      'ఈ ప్రశాంతతను మళ్ళీ పొందడానికి ఏది సహాయపడుతుంది?';
+
+  @override
+  String get prompt_capsuleSunrise =>
+      'భవిష్యత్తులోని మీతో మీరు ఏ సంతోషాన్ని పంచుకోవాలనుకుంటున్నారు?';
+
+  @override
+  String get prompt_another => 'ఇంకో ప్రశ్న';
+
+  @override
+  String get prompt_settingsTitle => 'రాయడానికి సూచనలు';
+
+  @override
+  String get prompt_settingsBody =>
+      'ఖాళీ నోట్‌లో ఒక మృదువైన ప్రశ్న. ఇది ఎప్పుడూ సేవ్ అవ్వదు.';
+
+  @override
+  String get backfill_add => 'గత చెక్-ఇన్ జోడించండి';
+
+  @override
+  String get backfill_pickTitle => 'ఏ రోజు?';
+
+  @override
+  String backfill_pickBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'గత $count రోజుల్లో ఏ రోజుకైనా చెక్-ఇన్ జోడించవచ్చు.',
+      one: 'నిన్నటి కోసం చెక్-ఇన్ జోడించవచ్చు.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backfill_title => 'అప్పుడు మీకు ఎలా అనిపించింది?';
+
+  @override
+  String backfill_forDay(String day) {
+    return '$day కోసం చెక్-ఇన్';
+  }
+
+  @override
+  String get backfill_changeDay => 'రోజు మార్చండి';
+
+  @override
+  String get backfill_outOfRange =>
+      'గత చెక్-ఇన్‌లు ఒక వారం వెనక్కి వరకే జోడించగలం. వేరే రోజు ఎంచుకుంటారా?';
+
+  @override
+  String get backfill_savedTitle => 'మీ ఆకాశంలో చేరింది';
+
+  @override
+  String backfill_savedDay(String day) {
+    return '$day కోసం సేవ్ అయింది.';
+  }
+
+  @override
+  String get backfill_savedBody =>
+      'Starlight ఆ రోజే చేసిన చెక్-ఇన్‌ల నుంచి వస్తుంది.';
+
+  @override
+  String get history_addedLater => 'తర్వాత జోడించింది';
+
+  @override
+  String history_whenAddedLater(String day) {
+    return '$day · తర్వాత జోడించింది';
+  }
+
+  @override
+  String get shell_tabHome => 'హోమ్';
+
+  @override
+  String get shell_tabSanctuary => 'ప్రశాంత నిలయం';
+
+  @override
+  String get shell_tabRooms => 'రూమ్‌లు';
+
+  @override
+  String get shell_tabInsights => 'అవగాహన';
+
+  @override
+  String get shell_checkIn => 'చెక్-ఇన్';
+
+  @override
+  String get shell_checkInHint => 'కొత్త చెక్-ఇన్ మొదలవుతుంది';
+
+  @override
+  String get safety_emergencyWhen =>
+      'మీరు గానీ, మీ దగ్గర ఉన్నవారు గానీ తక్షణ ప్రమాదంలో ఉన్నా, తీవ్రంగా గాయపడినా, సురక్షితంగా ఉండలేకపోయినా వెంటనే అత్యవసర సేవలకు కాల్ చేయండి.';
+
+  @override
+  String get safety_settingsLink => 'సెట్టింగ్‌లలో సహాయం & భద్రత';
+
+  @override
+  String get safety_settingsHint =>
+      'సపోర్ట్ సంప్రదింపు, గ్రీవెన్స్ ఆఫీసర్, విధానాలు';
 
   @override
   String get voice_record => 'వాయిస్ నోట్ రికార్డ్ చేయండి';
@@ -2063,6 +3696,366 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
       'Ee account delete avvadam ippatike modalaindi, kabatti daanni inka unchalemu. Ee phone clear ayyi sign out avutundi.';
 
   @override
+  String get signin_or => 'leda';
+
+  @override
+  String get signin_socialNotReady =>
+      'Aa sign-in option inka ready ga ledu. Prastutaaniki mee email vaadandi.';
+
+  @override
+  String get signin_socialOffline =>
+      'Meeru offline lo unnattunnaru. Connect ayyaaka malli try cheyandi.';
+
+  @override
+  String get capsules_title => 'Future you';
+
+  @override
+  String get capsules_emptyBody =>
+      'Future lo unna meeku raayandi. Oka date kosam, leda oka feeling kosam daachi pettandi.';
+
+  @override
+  String get capsules_emptyCta => 'Mee first capsule seal cheyandi';
+
+  @override
+  String get capsules_new => 'Oka capsule raayandi';
+
+  @override
+  String capsules_entryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capsules daachaaru',
+      one: '1 capsule daachaaru',
+      zero: 'Inka emi daachaledu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String capsules_entryReady(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open cheyyadaaniki ready ga unnaayi',
+      one: '1 open cheyyadaaniki ready ga undi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_sectionReady => 'Open cheyyadaaniki ready';
+
+  @override
+  String get capsules_sectionSealed => 'Seal chesinavi';
+
+  @override
+  String get capsules_sectionOpened => 'Open chesinavi';
+
+  @override
+  String capsules_sealedUntil(String date) {
+    return '$date varaku seal ayyi undi. Bhadranga untundi.';
+  }
+
+  @override
+  String get capsules_waitingFeeling => 'Oka feeling kosam wait chestondi';
+
+  @override
+  String get capsules_readyRow => 'Meeru ready ainappudu open cheyandi';
+
+  @override
+  String capsules_untitled(String date) {
+    return '$date naati capsule';
+  }
+
+  @override
+  String get capsules_lockedTitle => 'Seal chesina oka capsule';
+
+  @override
+  String capsules_sealedOn(String date) {
+    return '$date na seal chesaaru';
+  }
+
+  @override
+  String capsules_openedOn(String date) {
+    return '$date na open chesaaru';
+  }
+
+  @override
+  String get capsules_draftTitle => 'Mee draft ikkade undi';
+
+  @override
+  String get capsules_draftBody => 'Aapina chotu nundi continue cheyandi.';
+
+  @override
+  String get capsules_composeTitle => 'Future lo unna meeku raayandi';
+
+  @override
+  String get capsules_titleLabel => 'Title';
+
+  @override
+  String get capsules_titleHelper =>
+      'Seal ayyi unnappudu capsule meeda idi kanipistundi.';
+
+  @override
+  String get capsules_textLabel => 'Mee note';
+
+  @override
+  String get capsules_textHelper =>
+      'Idi open ainappudu meeru maatrame chaduvutaaru.';
+
+  @override
+  String get capsules_photosTitle => 'Photos';
+
+  @override
+  String get capsules_addPhoto => 'Oka photo add cheyandi';
+
+  @override
+  String get capsules_photoHint =>
+      '3 varaku. Location, camera details teesestaam.';
+
+  @override
+  String get capsules_photoAdding => 'Mee photo add chestunnaam…';
+
+  @override
+  String get capsules_photoFailed =>
+      'Aa photo add cheyyalekapoyaam. Inkokati try cheyandi.';
+
+  @override
+  String capsules_photoRemove(int index) {
+    return 'Photo $index teeseyandi';
+  }
+
+  @override
+  String capsules_photoSemantic(int index, int count) {
+    return '$count lo photo $index';
+  }
+
+  @override
+  String get capsules_voiceHint =>
+      '2 nimishaala varaku. Idi meeku maatrame vinipistundi.';
+
+  @override
+  String get capsules_voiceLimit =>
+      'Rendu nimishaalu purthayyaayi, anduke recording aagindi. Mee voice note ready ga undi.';
+
+  @override
+  String get capsules_unlockTitle => 'Idi eppudu open avvaali?';
+
+  @override
+  String get capsules_unlockDate => 'Oka date na';
+
+  @override
+  String get capsules_unlockFeeling => 'Oka feeling kosam';
+
+  @override
+  String get capsules_pickDate => 'Date select cheyandi';
+
+  @override
+  String get capsules_changeDate => 'Date maarchandi';
+
+  @override
+  String capsules_dateChosen(String date, String time) {
+    return '$date $time ki open avutundi';
+  }
+
+  @override
+  String get capsules_dateHelp =>
+      'Oka vaaram nundi aidu ella lopu e roju aina.';
+
+  @override
+  String get capsules_datePickerHelp => 'Aa roju 10:00 ki open avutundi';
+
+  @override
+  String get capsules_feelingHelp =>
+      'Seal chesina 24 gantala tarvaata nundi, meeru next time ila feel avutu check-in chesinappudu open avvochu.';
+
+  @override
+  String capsules_anyQuadrant(String quadrant) {
+    return 'Edaina $quadrant feeling';
+  }
+
+  @override
+  String capsules_feelingChosen(String feeling) {
+    return 'Deeni kosam wait chestundi: $feeling';
+  }
+
+  @override
+  String get capsules_seal => 'Seal cheyandi';
+
+  @override
+  String get capsules_needContent =>
+      'Mundu konni maatalu, oka voice note leda oka photo add cheyandi.';
+
+  @override
+  String get capsules_needUnlock => 'Idi eppudu open avvaalo select cheyandi.';
+
+  @override
+  String get capsules_sealFailed =>
+      'Ippudu seal avvaledu. Mee capsule ikkade undi. Malli try cheyandi.';
+
+  @override
+  String get capsules_sealedTitle => 'Seal ayyindi';
+
+  @override
+  String get capsules_sealedFeeling =>
+      'Seal chesaam. Aa feeling kosam wait chestundi.';
+
+  @override
+  String get capsules_mediaLater =>
+      'Ee phone lo bhadranga seal chesaam. Meeru online ki vachaaka photos, voice backup avutaayi.';
+
+  @override
+  String get capsules_limitBody =>
+      'Free account lo 3 mood capsules varaku wait cheyyochu. Date capsules ki limit ledu.';
+
+  @override
+  String get capsules_limitPickDate => 'Badulu ga oka date select cheyandi';
+
+  @override
+  String get capsules_makeDate => 'Deenni date capsule ga maarchandi';
+
+  @override
+  String get capsules_leaveTitle => 'Ee draft unchaalaa?';
+
+  @override
+  String get capsules_leaveBody =>
+      'Meeru deenni seal chese varaku leda vadilese varaku idi ee phone lone untundi.';
+
+  @override
+  String get capsules_leaveEditing => 'Raayadam continue cheyandi';
+
+  @override
+  String get capsules_leaveKeep => 'Draft unchandi';
+
+  @override
+  String get capsules_leaveDiscard => 'Vadileyandi';
+
+  @override
+  String capsules_detailFeeling(String feeling) {
+    return 'Oka feeling kosam wait chestondi: $feeling.';
+  }
+
+  @override
+  String capsules_detailArming(String date) {
+    return '$date nundi open avvochu.';
+  }
+
+  @override
+  String get capsules_detailNoEarly =>
+      'Seal ante seal: deenni mundugaa open cheyyaleru, maarchaleru.';
+
+  @override
+  String get capsules_delete => 'Capsule delete cheyandi';
+
+  @override
+  String get capsules_deleteTitle => 'Ee capsule delete cheyyaalaa?';
+
+  @override
+  String get capsules_deleteBody =>
+      'Idi open cheyyakundaane shaashvatanga potundi.';
+
+  @override
+  String get capsules_deleteBodyOpened => 'Idi shaashvatanga potundi.';
+
+  @override
+  String get capsules_deleteConfirm => 'Delete cheyandi';
+
+  @override
+  String get capsules_deleteKeep => 'Unchandi';
+
+  @override
+  String get capsules_deleted => 'Capsule delete chesaam.';
+
+  @override
+  String get capsules_triggerTitle =>
+      'Ilanti moment kosam meeru oka note raasukunnaru. Ippude open cheyyala, tarvatha na?';
+
+  @override
+  String get capsules_holdTitle =>
+      'Gatam lo mee nundi oka note wait chestondi. Ippude open cheyyala, tarvatha na?';
+
+  @override
+  String get capsules_now => 'Ippude';
+
+  @override
+  String get capsules_later => 'Tarvatha';
+
+  @override
+  String get capsules_readyTitle =>
+      'Meeru daachukunnadi ippudu open cheyyochu.';
+
+  @override
+  String capsules_readyMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capsules ready ga unnaayi.',
+      one: '1 capsule ready ga undi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capsules_readyOpen => 'Open cheyandi';
+
+  @override
+  String get capsules_channelName => 'Capsules';
+
+  @override
+  String get capsules_channelDescription =>
+      'Meeru daachukunnadi open cheyyadaaniki ready ainappudu.';
+
+  @override
+  String get capsules_hardMoment =>
+      'Meeru idi oka kashtamaina samayam lo raasaaru. Meeru ready ainappudu open cheyandi.';
+
+  @override
+  String get capsules_skip => 'Skip cheyandi';
+
+  @override
+  String get capsules_opening => 'Mee capsule open avutondi';
+
+  @override
+  String get capsules_openedTitle => 'Gatam lo mee nundi';
+
+  @override
+  String get capsules_keepNextTime => 'Next time kosam unchandi';
+
+  @override
+  String get capsules_keptNextTime =>
+      'Idi malli aa feeling kosam wait chestundi.';
+
+  @override
+  String get capsules_voiceOffline =>
+      'Mee capsule open ayyindi. Meeru malli online ki vachaaka voice note vastundi.';
+
+  @override
+  String get capsules_photosOffline =>
+      'Meeru malli online ki vachaaka photos vastaayi.';
+
+  @override
+  String get capsules_mediaFailed =>
+      'Idi ippudu load avvaledu. Kaasepaagi malli try cheyandi.';
+
+  @override
+  String get capsules_retry => 'Malli try cheyandi';
+
+  @override
+  String get capsules_cantRead =>
+      'Ee capsule ni ee phone lo inka chadavalemu. Meeru online ki vachaaka open avutundi.';
+
+  @override
+  String capsules_accountDeletionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Seal chesina $count capsules potaayi.',
+      one: 'Seal chesina 1 capsule potundi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get checkin_discardTitle => 'Save cheyakunda vellipotaara?';
 
   @override
@@ -2333,6 +4326,109 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   }
 
   @override
+  String get notif_reminderBanner =>
+      'Mee kosam oka quiet minute. Ee roju ela anipistondi?';
+
+  @override
+  String get notif_reminderAction => 'Check in cheyandi';
+
+  @override
+  String get notif_capsuleBanner =>
+      'Meeru daachukunnadi ippudu open cheyyochu.';
+
+  @override
+  String get notif_capsuleAction => 'Open cheyandi';
+
+  @override
+  String get notif_channelReminders => 'Reminders';
+
+  @override
+  String get notif_channelRemindersDescription =>
+      'Mee daily check-in reminder.';
+
+  @override
+  String get set_notifications => 'Notifications';
+
+  @override
+  String get set_notifMaster => 'Aura nundi notifications';
+
+  @override
+  String get set_notifMasterNote =>
+      'Rojuki rendu minchi raavu. Meeru ela feel avutunnaro mee lock screen eppudu cheppadu.';
+
+  @override
+  String get set_notifReminder => 'Daily check-in reminder';
+
+  @override
+  String set_notifReminderNote(String time) {
+    return 'Rojuki okka gentle nudge, $time ki. Meeru check-in chesaaka raadu.';
+  }
+
+  @override
+  String get set_notifReminderOffNote =>
+      'Off lo undi. Rojuki okka gentle nudge kaavaalante on cheyandi.';
+
+  @override
+  String get set_notifReminderTime => 'Reminder time';
+
+  @override
+  String get set_notifCapsule => 'Capsule open cheyyadaaniki ready ainappudu';
+
+  @override
+  String get set_notifCapsuleNote =>
+      'Meeru daachukunnadaaniki meeru select chesina roju.';
+
+  @override
+  String set_notifQuietNote(String start, String end) {
+    return 'Quiet hours: $start–$end madhya edi pampam.';
+  }
+
+  @override
+  String get set_notifQuietFrom => 'Quiet modalu';
+
+  @override
+  String get set_notifQuietUntil => 'Quiet mugimpu';
+
+  @override
+  String get set_notifDiscreet => 'Discreet mode';
+
+  @override
+  String get set_notifDiscreetNote =>
+      'Prati notification “Aura · Meeku oka gentle update undi” ani maatrame cheptundi.';
+
+  @override
+  String get set_notifOffNote =>
+      'Ee phone lo Aura notifications off lo unnaayi. Avi on ayyaaka ikkadi mee choices ey apply avutaayi.';
+
+  @override
+  String get set_notifTurnOn => 'On cheyandi';
+
+  @override
+  String get set_notifOpenSettings => 'Phone settings open cheyandi';
+
+  @override
+  String get set_notifQuietConfirmTitle => 'Ee time mee quiet hours lo undi';
+
+  @override
+  String set_notifQuietConfirmBody(String start, String end, String time) {
+    return 'Aura $start–$end madhya quiet ga untundi. Ayinaa mee reminder ni $time ki pampaala?';
+  }
+
+  @override
+  String get set_notifQuietConfirmYes => 'Ayinaa pampandi';
+
+  @override
+  String get set_notifQuietConfirmNo => 'Quiet gaane unchandi';
+
+  @override
+  String push_timeRow(String time) {
+    return 'Prati saayantram $time ki';
+  }
+
+  @override
+  String get push_changeTime => 'Time maarchandi';
+
+  @override
   String get onb_trustTitle => 'Modalupette mundu';
 
   @override
@@ -2403,6 +4499,1200 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get polish_helpNumberCopied => 'Number copy ayyindi';
+
+  @override
+  String get rooms_title => 'Rooms';
+
+  @override
+  String get rooms_yourRooms => 'Mee rooms';
+
+  @override
+  String get rooms_memories => 'Memories';
+
+  @override
+  String get rooms_whatTitle => 'Rooms ante enti';
+
+  @override
+  String get rooms_whatBody =>
+      'Ippudu meelaage anipistunna konta mandi unde oka chinna room, oka roju kosam.';
+
+  @override
+  String get rooms_pointName =>
+      'Prati room lo oka kotha peru. Mee account evariki kanipinchadu.';
+
+  @override
+  String get rooms_pointGestures =>
+      'Messages, DMs undavu: enimidi warm gestures maatrame.';
+
+  @override
+  String get rooms_pointTime =>
+      'Room oka roju untundi, tarvaatha 7 rojulu memory ga untundi.';
+
+  @override
+  String get rooms_lanternNote =>
+      'Lantern Hour: mee region time prakaaram prati raatri 9 nundi 11 varaku, rooms kalisi oka lantern veligistaayi, ekkuva mandi vastaaru.';
+
+  @override
+  String get rooms_lanternNow => 'Ippudu Lantern Hour nadustondi';
+
+  @override
+  String get rooms_checkInCta => 'Room kosam check-in cheyandi';
+
+  @override
+  String get rooms_empty =>
+      'Meeru ippudu e room lonu leru. Check-in tarvaatha, meelaage anipistunna vaallatho kalavochu.';
+
+  @override
+  String get rooms_offline =>
+      'Rooms ki connection kaavaali. Mee check-ins ee phone lo save avutune untaayi.';
+
+  @override
+  String get rooms_loadFailed => 'Ippudu rooms ni reach cheyyalekapoyaam.';
+
+  @override
+  String get rooms_tryAgain => 'Malli try cheyandi';
+
+  @override
+  String get rooms_signedOut => 'Sign in chesaaka rooms open avutaayi.';
+
+  @override
+  String get rooms_signIn => 'Sign in cheyandi';
+
+  @override
+  String get rooms_suspended =>
+      'Prastutam mee account ki rooms aapi unchaam. Help eppudu ikkade untundi.';
+
+  @override
+  String rooms_suspendedUntil(String date) {
+    return 'Mee account ki $date varaku rooms aapi unchaam. Help eppudu ikkade untundi.';
+  }
+
+  @override
+  String get rooms_accountClosed =>
+      'Aura rules break chesinanduku ee account close chesaamu.';
+
+  @override
+  String get rooms_profilePending =>
+      'Mee account setup complete ayyaaka rooms open avutaayi. Kaasepatlo malli try cheyandi.';
+
+  @override
+  String get rooms_openHint => 'Room open avutundi';
+
+  @override
+  String rooms_memoryUntil(String date) {
+    return '$date varaku memory';
+  }
+
+  @override
+  String get rooms_theme_lighthouse => 'The Lighthouse';
+
+  @override
+  String get rooms_theme_rain_sanctuary => 'The Rain Sanctuary';
+
+  @override
+  String get rooms_theme_midnight_observatory => 'The Midnight Observatory';
+
+  @override
+  String get rooms_theme_sunrise_deck => 'The Sunrise Deck';
+
+  @override
+  String get rooms_gesture_warm_tea => 'Oka cup chai';
+
+  @override
+  String get rooms_gesture_light_a_candle => 'Oka deepam';
+
+  @override
+  String get rooms_gesture_hug => 'Hug';
+
+  @override
+  String get rooms_gesture_me_too => 'Naaku kooda';
+
+  @override
+  String get rooms_gesture_soft_rain => 'Chiru jallu';
+
+  @override
+  String get rooms_gesture_stargaze => 'Stars choodham';
+
+  @override
+  String get rooms_gesture_deep_breath => 'Deep breath';
+
+  @override
+  String get rooms_gesture_youre_not_alone => 'Meeru okkaru kaadu';
+
+  @override
+  String rooms_hereNow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ippudu $count mandi unnaru',
+      one: 'Ippudu 1 unnaru',
+      zero: 'Ippudu evaru leru',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_today(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ee roju $count mandi ikkadiki vachaaru',
+      one: 'Ee roju 1 person ikkadiki vachaaru',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_countsSemantic(int now, int today) {
+    String _temp0 = intl.Intl.pluralLogic(
+      now,
+      locale: localeName,
+      other: 'Ippudu $now mandi',
+      one: 'Ippudu 1 person',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      today,
+      locale: localeName,
+      other: 'ee roju $today',
+      one: 'ee roju 1',
+    );
+    return '$_temp0, $_temp1';
+  }
+
+  @override
+  String rooms_stripSemantic(String theme, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ippudu $count mandi',
+      one: 'Ippudu 1 person',
+    );
+    return '$theme, $_temp0';
+  }
+
+  @override
+  String get rooms_opening => 'Room open chestunnaam…';
+
+  @override
+  String rooms_youAre(String pseudonym) {
+    return 'Ikkada meeru $pseudonym';
+  }
+
+  @override
+  String rooms_coldStart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Ee roju $count mandi ikkadiki vachaaru. Tarvaatha vacchevaari kosam oka deepam vadili vellandi.',
+      one: 'Ee roju ikkadiki vachina modativaaru meere. Tarvaatha vacchevaari kosam oka deepam vadili vellandi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_lanternOn(String time) {
+    return 'Lantern Hour · $time varaku';
+  }
+
+  @override
+  String rooms_closing(String time) {
+    return 'Ee room $time ki memory ga maarutundi.';
+  }
+
+  @override
+  String get rooms_memory =>
+      'Ee room ippudu oka memory. 7 rojula paatu venakki choosukovachu.';
+
+  @override
+  String get rooms_findNew => 'Kotha room vetakandi';
+
+  @override
+  String get rooms_reconnecting => 'Malli connect avutondi…';
+
+  @override
+  String get rooms_membersTitle => 'Meetho ikkada';
+
+  @override
+  String get rooms_you => 'Meeru';
+
+  @override
+  String get rooms_memberHereNow => 'ippudu ikkada unnaru';
+
+  @override
+  String get rooms_memberAway => 'prastutam dooranga unnaru';
+
+  @override
+  String get rooms_memberMuted => 'meekosam mute chesaaru';
+
+  @override
+  String rooms_memberLabel(String pseudonym, String mood, String status) {
+    return '$pseudonym, $mood, $status';
+  }
+
+  @override
+  String rooms_youLabel(String pseudonym, String mood) {
+    return 'Meeru, $pseudonym, $mood';
+  }
+
+  @override
+  String get rooms_memberHint => 'Options open avutaayi';
+
+  @override
+  String get rooms_recentTitle => 'Ee room lo warmth';
+
+  @override
+  String rooms_receivedLine(String pseudonym, String gesture) {
+    return '$pseudonym meeku $gesture pampaaru';
+  }
+
+  @override
+  String rooms_sentToMember(String gesture, String pseudonym) {
+    return '$pseudonym ki $gesture pampaaru';
+  }
+
+  @override
+  String rooms_sentToRoom(String gesture) {
+    return 'Ikkada andariki $gesture pampaaru';
+  }
+
+  @override
+  String rooms_someoneSent(String gesture) {
+    return 'Evaro $gesture pampaaru';
+  }
+
+  @override
+  String rooms_someoneSentRoom(String gesture) {
+    return 'Evaro ikkada andariki $gesture pampaaru';
+  }
+
+  @override
+  String rooms_youSentMember(String gesture, String pseudonym) {
+    return 'Meeru $pseudonym ki $gesture pampaaru';
+  }
+
+  @override
+  String rooms_youSentRoom(String gesture) {
+    return 'Meeru ikkada andariki $gesture pampaaru';
+  }
+
+  @override
+  String get rooms_trayTitle => 'Ikkada andariki warmth pampandi';
+
+  @override
+  String get rooms_trayHint => 'Ikkada andariki pamputundi';
+
+  @override
+  String get rooms_trayResting =>
+      'Memory lo gestures rest lo untaayi. Report, block, mute inka panichestaayi.';
+
+  @override
+  String get rooms_roomOptions => 'Room options';
+
+  @override
+  String get rooms_reportRoom => 'Ikkada oka problem report cheyandi';
+
+  @override
+  String get rooms_leave => 'Ee room nundi vellipondi';
+
+  @override
+  String get rooms_removeMemory => 'Naa rooms nundi teeseyandi';
+
+  @override
+  String get rooms_leaveTitle => 'Ee room nundi vellipotaara?';
+
+  @override
+  String get rooms_leaveBody =>
+      'Malli ee room ki raaleru, mee seat inkokariki dorukutundi. Mee next check-in meeku kotha room vetiki pedutundi.';
+
+  @override
+  String get rooms_leaveConfirm => 'Vellipotaanu';
+
+  @override
+  String get rooms_stay => 'Ikkade untaanu';
+
+  @override
+  String get rooms_removeTitle => 'Ee memory ni teeseyaala?';
+
+  @override
+  String get rooms_removeBody =>
+      'Idi ippude mee rooms nundi vellipotundi. Elaagu 7 rojula tarvaatha memories poortiga moosukupotaayi.';
+
+  @override
+  String get rooms_removeConfirm => 'Teeseyandi';
+
+  @override
+  String get rooms_keep => 'Unchandi';
+
+  @override
+  String get rooms_leaveFailed =>
+      'Adi jaragaledu. Meeru inka room lone unnaru.';
+
+  @override
+  String get rooms_gone =>
+      'Ee room moosukupoyindi. Rooms 7 rojulu memories ga undi, tarvaatha potaayi.';
+
+  @override
+  String get rooms_backToRooms => 'Mee rooms ki vellandi';
+
+  @override
+  String get rooms_offlineRoom =>
+      'Rooms ki connection kaavaali. Meeru malli online ki raagaane ee room open avutundi.';
+
+  @override
+  String get rooms_joinTitle => 'Mee room vetukutunnaam';
+
+  @override
+  String get rooms_finding =>
+      'Ippudu ilaage anipistunna vaallani vetukutunnaam…';
+
+  @override
+  String get rooms_offlineJoin =>
+      'Rooms ki connection kaavaali. Mee check-in save ayyindi.';
+
+  @override
+  String get rooms_joinFailed =>
+      'Ippudu rooms ni reach cheyyalekapoyaam. Mee check-in save ayyindi.';
+
+  @override
+  String get rooms_joinLimit =>
+      'Ee roju ee feeling ki ippatike 3 kotha rooms ayyaayi. Meeru unna rooms inka meekosam open ga unnaayi.';
+
+  @override
+  String get rooms_seeYourRooms => 'Mee rooms choodandi';
+
+  @override
+  String get rooms_poolUnavailable =>
+      'Hindi, Hinglish rooms tvaralo modalavutaayi. Prastutaaniki English room lo cherataara?';
+
+  @override
+  String get rooms_poolJoinEnglish => 'English room lo cherandi';
+
+  @override
+  String get rooms_poolNotify => 'Avi modalainappudu cheppandi';
+
+  @override
+  String get rooms_poolNotifyDone =>
+      'Hindi, Hinglish rooms modalainappudu ikkade cheptaam.';
+
+  @override
+  String get rooms_noRequest => 'Rooms check-in nundi open avutaayi.';
+
+  @override
+  String get rooms_offer => 'Ilaage anipistunna vaalla room lo cherandi';
+
+  @override
+  String get rooms_offerHint =>
+      'Daani kosame kotha peruto oka room open avutundi';
+
+  @override
+  String get rooms_offerOffline =>
+      'Meeru malli online ki vachaaka rooms open avutaayi';
+
+  @override
+  String get rooms_offerLater =>
+      'Thodu kaavaalanipinchinappudu, rooms Rooms tab lo untaayi.';
+
+  @override
+  String get rooms_guidelinesTitle => 'Mee first room ki mundu';
+
+  @override
+  String get rooms_guidelinesIntro =>
+      'Andaru ee konni chinna vishayaalu paatistaaru kaabatte rooms prashaanthanga untaayi:';
+
+  @override
+  String get rooms_rule1 =>
+      'Dayaga undandi. Ikkada andaru nijamaina rojuni gaduputunnaru.';
+
+  @override
+  String get rooms_rule2 =>
+      'Kulam, matham, gender, sexuality leda inkedaina gurinchi hate vaddu.';
+
+  @override
+  String get rooms_rule3 => 'Sexual content vaddu.';
+
+  @override
+  String get rooms_rule4 =>
+      'Contact details, meet-ups, leda evari vayasu, school, ooru, photos adagavaddu, share cheyyavaddu.';
+
+  @override
+  String get rooms_rule5 => 'Selling, spam vaddu.';
+
+  @override
+  String get rooms_rule6 =>
+      'Evarini tamani taamu baadha pettukomani protsahinchavaddu. Meeku ela anipistondo maatlaadatam eppudu okay.';
+
+  @override
+  String get rooms_guidelinesSafety =>
+      'Evarinaina report, block leda mute cheyochu, help eppudu oka tap dooram lo untundi.';
+
+  @override
+  String get rooms_guidelinesAgree => 'Nenu veetini paatistaanu';
+
+  @override
+  String rooms_sendTo(String pseudonym) {
+    return '$pseudonym ki konchem warmth pampandi';
+  }
+
+  @override
+  String rooms_gestureHintMember(String pseudonym) {
+    return '$pseudonym ki pamputundi';
+  }
+
+  @override
+  String get rooms_report => 'Report';
+
+  @override
+  String get rooms_block => 'Block';
+
+  @override
+  String get rooms_mute => 'Mute';
+
+  @override
+  String get rooms_unmute => 'Unmute';
+
+  @override
+  String get rooms_safetyNote =>
+      'Evaru report, block leda mute chesaaro vaallaki eppudu teliyadu.';
+
+  @override
+  String rooms_blockTitle(String pseudonym) {
+    return '$pseudonym ni block cheyaala?';
+  }
+
+  @override
+  String get rooms_blockBody =>
+      'Meeriddaru malli oke room lo undaru, mee madhya gestures aagipotaayi. Vaallaki ee vishayam cheppamu.';
+
+  @override
+  String rooms_blocked(String pseudonym) {
+    return '$pseudonym ni block chesaaru. Meeru malli oke room lo undaru.';
+  }
+
+  @override
+  String rooms_muted(String pseudonym) {
+    return '$pseudonym ni meekosam mute chesaam. Vaalla gestures ikkada meeku cheravu.';
+  }
+
+  @override
+  String rooms_unmuted(String pseudonym) {
+    return '$pseudonym ni unmute chesaam.';
+  }
+
+  @override
+  String get rooms_undo => 'Undo';
+
+  @override
+  String get rooms_actionFailed =>
+      'Adi jaragaledu. Kaasepatlo malli try cheyandi.';
+
+  @override
+  String rooms_reportMember(String pseudonym) {
+    return '$pseudonym ni report cheyandi';
+  }
+
+  @override
+  String get rooms_reportGesture => 'Ee gesture ni report cheyandi';
+
+  @override
+  String get rooms_reportWhy => 'Em jarugutondi?';
+
+  @override
+  String get rooms_reason1 =>
+      'Evaraina danger lo undochu leda tamani taamu baadha pettukuntu undochu';
+
+  @override
+  String get rooms_reason2 => 'Harassment leda bullying';
+
+  @override
+  String get rooms_reason3 => 'Sexual content leda advances';
+
+  @override
+  String get rooms_reason4 => 'Hate leda slurs';
+
+  @override
+  String get rooms_reason5 => 'Contact details leda personal info';
+
+  @override
+  String get rooms_reason6 => 'Spam leda selling';
+
+  @override
+  String get rooms_reason7 => 'Evaraina 13 ella lopu vaallu kaavochu';
+
+  @override
+  String get rooms_reason8 => 'Inkedaina';
+
+  @override
+  String get rooms_reportNoteLabel =>
+      'Moderator ki teliyaalsindi edaina undaa? (optional)';
+
+  @override
+  String get rooms_reportNoteHelp =>
+      'Deenni Aura moderators maatrame chaduvutaaru. Dayachesi phone numbers, links, handles raayakandi.';
+
+  @override
+  String get rooms_reportNoteContact =>
+      'Phone numbers, links, handles ikkada share cheyyaleru. Idi andarini safe ga unchutundi.';
+
+  @override
+  String get rooms_reportSend => 'Report pampandi';
+
+  @override
+  String get rooms_reportThanks =>
+      'Maaku cheppinanduku thanks. Oka moderator saadhaaranamga oka roju lo deenni chustaaru.';
+
+  @override
+  String get rooms_reportHidden =>
+      'Cheppinanduku thanks. Moderator chuse varaku ee room lo vaalla gestures meeku raavu.';
+
+  @override
+  String get rooms_reportGestureHidden =>
+      'Cheppinanduku thanks. Aa gesture ippudu meeku kanipinchadu.';
+
+  @override
+  String get rooms_reportCrisis =>
+      'Cheppinanduku thanks. Oka moderator tvaralo chustaaru, help eppudu oka tap dooram lo untundi.';
+
+  @override
+  String get rooms_reportLimit =>
+      'Ee roju chaala reports vachaayi. Evaraina danger lo unte, help button eppudu ikkade untundi.';
+
+  @override
+  String get rooms_reportFailed =>
+      'Adi jaragaledu, kaabatti emi pampaledu. Kaasepatlo malli try cheyandi.';
+
+  @override
+  String get rooms_reportOffline =>
+      'Reports ki connection kaavaali. Inka emi pampaledu.';
+
+  @override
+  String get rooms_surveyTitle => 'Meeku konchem ontaritanam taggindaa?';
+
+  @override
+  String get rooms_surveyYes => 'Avunu';
+
+  @override
+  String get rooms_surveyNo => 'Antaga ledu';
+
+  @override
+  String get rooms_surveySkip => 'Skip';
+
+  @override
+  String get sanctuary_title => 'Sanctuary';
+
+  @override
+  String get sanctuary_intro =>
+      'Mee kosame oka prashaanthamaina chotu. Mee speed lone vellandi. Ikkada deeniki score ledu.';
+
+  @override
+  String get sanctuary_todayTitle => 'Ee roju oka nimisham';
+
+  @override
+  String get sanctuary_breatheSection => 'Shwaasa';
+
+  @override
+  String get sanctuary_breatheCard => 'Mee Aura tho kalisi breathe cheyandi';
+
+  @override
+  String get sanctuary_breatheCardBody =>
+      'Calm, box leda 4-7-8 breathing. Meeku entasepu kaavaalante antasepu.';
+
+  @override
+  String get sanctuary_groundingSection => 'Grounding';
+
+  @override
+  String get sanctuary_begin => 'Modalupettandi';
+
+  @override
+  String get sanctuary_start => 'Start cheyandi';
+
+  @override
+  String get sanctuary_pause => 'Aapandi';
+
+  @override
+  String get sanctuary_resume => 'Malli continue cheyandi';
+
+  @override
+  String get sanctuary_finish => 'Muginchandi';
+
+  @override
+  String get sanctuary_next => 'Next';
+
+  @override
+  String get sanctuary_progress => 'Ee session lo entavaraku vachaaru';
+
+  @override
+  String get sanctuary_progressBegun => 'Ippude modalaindi';
+
+  @override
+  String get sanctuary_progressHalf => 'Daadaapu sagam';
+
+  @override
+  String get sanctuary_progressNearly => 'Daadaapu purtayindi';
+
+  @override
+  String get sanctuary_progressDone => 'Purtayindi';
+
+  @override
+  String habits_autoLogged(String habit) {
+    return 'Ee roju $habit ayyindani mark chesaam.';
+  }
+
+  @override
+  String get breathe_rhythm => 'Rhythm';
+
+  @override
+  String get breathe_calm => 'Calm';
+
+  @override
+  String get breathe_calmBody =>
+      '4 counts lopaliki, 6 bayataki. Mellaga, sthiranga.';
+
+  @override
+  String get breathe_box => 'Box';
+
+  @override
+  String get breathe_boxBody =>
+      'Lopaliki, aapi, bayataki, aapi. Okkokati naalugu counts.';
+
+  @override
+  String get breathe_478 => '4-7-8';
+
+  @override
+  String get breathe_478Body => '4 counts lopaliki, 7 aapi, 8 bayataki.';
+
+  @override
+  String get breathe_lightHeaded =>
+      'Tala tirugutunnattu anipiste, aapesi maamooluga breathe cheyandi.';
+
+  @override
+  String get breathe_length => 'Entasepu';
+
+  @override
+  String breathe_minutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nimishaalu',
+      one: '1 nimisham',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get breathe_openEnded => 'Nenu aapevaraku';
+
+  @override
+  String get breathe_in => 'Lopaliki breathe cheyandi';
+
+  @override
+  String get breathe_hold => 'Aapi unchandi';
+
+  @override
+  String get breathe_out => 'Bayataki vadalandi';
+
+  @override
+  String get breathe_paused => 'Aagindi. Meeku kaavalsinanta time teesukondi.';
+
+  @override
+  String get breathe_done => 'Idi mee kosame teesukunna samayam.';
+
+  @override
+  String get breathe_again => 'Malli';
+
+  @override
+  String get breathe_land1 =>
+      'Mee paadaalu nelani taakutunnattu gamaninchandi.';
+
+  @override
+  String get breathe_land2 =>
+      'Mee chuttu vinipistunna moodu sounds gamaninchandi.';
+
+  @override
+  String get breathe_keepGoing => 'Continue cheddaam';
+
+  @override
+  String get breathe_land3 => 'Bhujaalu loose ga vadileyandi.';
+
+  @override
+  String get senses_title => 'Aidu indriyaalu';
+
+  @override
+  String get senses_card =>
+      'Mee chuttu unnavaatini okko indriyam tho gamaninchandi.';
+
+  @override
+  String get senses_intro =>
+      'Mee chuttu unnavaatini okko indriyam tho gamaniddaam. Mee speed lone vellandi.';
+
+  @override
+  String get senses_see => 'Meeku kanipistunna aidu vastuvulu';
+
+  @override
+  String get senses_seeBody =>
+      'Nemmadiga chuttu choodandi. Manasulo gaani, paiki gaani vaati perlu cheppandi.';
+
+  @override
+  String get senses_touch => 'Meeru taakagalige naalugu vishayaalu';
+
+  @override
+  String get senses_touchBody =>
+      'Mee kinda kurchi, mee battalu, mee charmaanni taake gaali.';
+
+  @override
+  String get senses_hear => 'Meeku vinipistunna moodu sounds';
+
+  @override
+  String get senses_hearBody =>
+      'Daggarivainaa, dooraanivainaa, peddavainaa, mellanivainaa.';
+
+  @override
+  String get senses_smell => 'Meeku vaasana telustunna rendu vishayaalu';
+
+  @override
+  String get senses_smellBody =>
+      'Daggara emi lekapote, meeku nachina rendu vaasanalu gurtu chesukondi.';
+
+  @override
+  String get senses_taste => 'Meeku ruchi telustunna okka vishayam';
+
+  @override
+  String get senses_tasteBody =>
+      'Leda konchem neellu taagi aa ruchini gamaninchandi.';
+
+  @override
+  String senses_step(int step, int total) {
+    return '$total lo $step va step';
+  }
+
+  @override
+  String get senses_done =>
+      'Meeru ikkade, ee kshanam lone unnaru. Baaga chesaaru.';
+
+  @override
+  String get heart_title => 'Gunde meeda cheyyi';
+
+  @override
+  String get heart_card => 'Mee kosame oka nimisham vecchadanam.';
+
+  @override
+  String get heart_intro =>
+      'Mee cheyyini gunde meeda, leda meeku haayiga anipinche chota unchandi.';
+
+  @override
+  String get heart_1 => 'Mee cheti vecchadanaanni gamaninchandi.';
+
+  @override
+  String get heart_2 => 'Mellaga breathe cheyandi. Tondara emi ledu.';
+
+  @override
+  String get heart_3 => 'Meeku em anipistunnaa, ikkada daaniki chotu undi.';
+
+  @override
+  String get heart_4 =>
+      'Friends patla entha dayaga untaaro, mee patla kooda ante dayaga undandi.';
+
+  @override
+  String get heart_done => 'Mee patla meeru mruduvuga unnanduku thanks.';
+
+  @override
+  String get gratitude_title => 'Moodu chinna vishayaalu';
+
+  @override
+  String get gratitude_card =>
+      'Ee roju baagaane jarigina moodu chinna vishayaalu.';
+
+  @override
+  String get gratitude_intro =>
+      'Ee roju jarigina moodu chinna vishayaalanu okkokkatiga gurtu techukondi. Emi raayanakkarledu.';
+
+  @override
+  String get gratitude_1 => 'Baagaane jarigina oka chinna vishayam';
+
+  @override
+  String get gratitude_1Body =>
+      'Adi chaala chinnadainaa parvaaledu, oka vedi drink leda oka manchi maata laantidi.';
+
+  @override
+  String get gratitude_2 => 'Inkoka chinna vishayam';
+
+  @override
+  String get gratitude_2Body =>
+      'Meeru choosinadi, vinnadi leda chesinadi edainaa.';
+
+  @override
+  String get gratitude_3 => 'Marokka chinna vishayam';
+
+  @override
+  String get gratitude_3Body => 'Bahusha mee gurinche edainaa.';
+
+  @override
+  String get gratitude_done =>
+      'Vaatini oka kshanam pattukuni undandi. Avi meeve.';
+
+  @override
+  String get savour_intro =>
+      'Ee roju jarigina oka manchi kshanaanni mellaga malli gurtu chesukundaam.';
+
+  @override
+  String get savour_1 =>
+      'Ee roju jarigina oka manchi kshanaanni gurtu techukondi, entha chinnadainaa.';
+
+  @override
+  String get savour_2 =>
+      'Appudu meeru ekkada unnaru? Em kanipinchindi, em vinipinchindi?';
+
+  @override
+  String get savour_3 =>
+      'Ippudu daanni gurtu chesukunte ela anipistondo gamaninchandi.';
+
+  @override
+  String get savour_done => 'Adi meetho inkonchem sepu undanivvandi.';
+
+  @override
+  String get minute_forYou => 'Mee kosam oka nimisham';
+
+  @override
+  String get minute_calmTitle => 'Oka prashaanta nimisham';
+
+  @override
+  String get minute_boxTitle => 'Box breathing';
+
+  @override
+  String get minute_478Title => '4-7-8 breathing';
+
+  @override
+  String get minute_stillnessTitle => 'Oka nimisham nishchalata';
+
+  @override
+  String get minute_stillnessBody => 'Orb tho kalisi oka nishabda nimisham.';
+
+  @override
+  String get minute_landTitle => 'Niladokkukovadaaniki muppai seconds';
+
+  @override
+  String get minute_landBody => 'Orb tho kalisi moodu nemmadi shwaasalu.';
+
+  @override
+  String get minute_comfortTitle => 'Konchem oorata';
+
+  @override
+  String get minute_comfortBody =>
+      'Gunde meeda oka cheyyi, oka nimisham vecchadanam.';
+
+  @override
+  String get minute_savourTitle => 'Deenni aaswaadinchandi';
+
+  @override
+  String get minute_savourBody =>
+      'Ee roju jarigina oka manchi kshanaanni malli gurtu chesukondi.';
+
+  @override
+  String get companion_storm1 =>
+      'Okesaari chaala anipistondi. Mee velugu inka ikkade undi.';
+
+  @override
+  String get companion_storm2 =>
+      'Storm ki peru pettadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru.';
+
+  @override
+  String get companion_storm3 =>
+      'Pedda, gatti feelings ki ikkada chotu undi. Meeku kooda.';
+
+  @override
+  String get companion_storm4 =>
+      'Storm rojulu kooda mukhyamainave. Check-in chesinanduku thanks.';
+
+  @override
+  String get companion_storm5 =>
+      'Meeru deenni nijaayiteega cheppaaru. Adi mukhyam.';
+
+  @override
+  String get companion_storm6 => 'Storms kooda mee aakaasham lo bhaagame.';
+
+  @override
+  String get companion_storm7 =>
+      'Lopala em sudulu tirugutunnaa, meeru daanni gamaninchaaru. Adi viluvainadi.';
+
+  @override
+  String get companion_storm8 => 'Storm lo kooda, mee velugu meede.';
+
+  @override
+  String get companion_rain1 =>
+      'Idi bhaaranga anipistondi. Mee velugu inka meethone undi.';
+
+  @override
+  String get companion_rain2 =>
+      'Low day gurinchi nijaayiteega undadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru.';
+
+  @override
+  String get companion_rain3 =>
+      'Nemmadaina, baruvaina feelings ki ikkada chotu undi. Meeku kooda.';
+
+  @override
+  String get companion_rain4 =>
+      'Vaana rojulu kooda mukhyamainave. Check-in chesinanduku thanks.';
+
+  @override
+  String get companion_rain5 =>
+      'Ee roju meetho meeru nijaayiteega unnaru. Adi mukhyam.';
+
+  @override
+  String get companion_rain6 => 'Vaana kooda mee aakaasham lo bhaagame.';
+
+  @override
+  String get companion_rain7 =>
+      'Entha bhaaranga unnaa, meeru daanni gamaninchaaru. Adi viluvainadi.';
+
+  @override
+  String get companion_rain8 =>
+      'Mabbu pattina rojullo kooda, mee velugu meede.';
+
+  @override
+  String get companion_moonlight1 =>
+      'Nishabdamaina, sthiramaina kshanam. Mee velugu haayiga rest teesukuntondi.';
+
+  @override
+  String get companion_moonlight2 =>
+      'Oka prashaanta kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru.';
+
+  @override
+  String get companion_moonlight3 =>
+      'Mettani, haayaina feelings ki ikkada chotu undi. Meeku kooda.';
+
+  @override
+  String get companion_moonlight4 =>
+      'Mellani rojulu kooda mukhyamainave. Check-in chesinanduku thanks.';
+
+  @override
+  String get companion_moonlight5 =>
+      'Deenni gamaninchadaaniki meeru oka kshanam teesukunnaru. Adi mukhyam.';
+
+  @override
+  String get companion_moonlight6 => 'Vennela kooda mee aakaasham lo bhaagame.';
+
+  @override
+  String get companion_moonlight7 =>
+      'Ee prashaanthata entha chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi.';
+
+  @override
+  String get companion_moonlight8 => 'Ee nishabdam lo, mee velugu meede.';
+
+  @override
+  String get companion_sunrise1 =>
+      'Velugu tho nindina kshanam. Mee velugu prakaashistondi.';
+
+  @override
+  String get companion_sunrise2 =>
+      'Oka manchi kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru.';
+
+  @override
+  String get companion_sunrise3 =>
+      'Pedda, prakaashavantamaina feelings ki ikkada chotu undi. Meeku kooda.';
+
+  @override
+  String get companion_sunrise4 =>
+      'Velugu rojulu kooda mukhyamainave. Check-in chesinanduku thanks.';
+
+  @override
+  String get companion_sunrise5 =>
+      'Deenni gamaninchadaaniki meeku meeru chance ichaaru. Adi mukhyam.';
+
+  @override
+  String get companion_sunrise6 => 'Sunrise kooda mee aakaasham lo bhaagame.';
+
+  @override
+  String get companion_sunrise7 =>
+      'Idi peddadainaa, chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi.';
+
+  @override
+  String get companion_sunrise8 => 'Ee santosham lo, mee velugu meede.';
+
+  @override
+  String get companion_neutral1 => 'Check-in chesinanduku thanks.';
+
+  @override
+  String get companion_neutral2 => 'Meeru mee kosam vachaaru.';
+
+  @override
+  String get companion_neutral3 => 'Mee velugu inka ikkade undi.';
+
+  @override
+  String get companion_neutral4 => 'Ikkada tondara emi ledu.';
+
+  @override
+  String get prompt_note1 =>
+      'Ee roju konchem help chesina oka chinna vishayam edi?';
+
+  @override
+  String get prompt_note2 => 'Ippudu mee manasulo emundi?';
+
+  @override
+  String get prompt_note3 =>
+      'Ee roju gurinchi meeru em gurtunchukovaalanukuntunnaru?';
+
+  @override
+  String get prompt_storm1 =>
+      'Ippudu mee manasulo ekkuva chotu teesukuntunnadi edi?';
+
+  @override
+  String get prompt_storm2 =>
+      'Ee feeling maatlaadagaligite, adi em chebutundi?';
+
+  @override
+  String get prompt_storm3 =>
+      'Okka nimishamainaa pakkana pettagalige oka vishayam edi?';
+
+  @override
+  String get prompt_rain1 => 'Ippudu meeku edi haayiga anipistundi?';
+
+  @override
+  String get prompt_rain2 => 'Ee roju mee manasu meeda baruvuga unnadi edi?';
+
+  @override
+  String get prompt_rain3 =>
+      'Ee madhya mee patla dayaga anipinchindi evaru, leda edi?';
+
+  @override
+  String get prompt_moonlight1 =>
+      'Meeru sthiranga undadaaniki edi help chestondi?';
+
+  @override
+  String get prompt_moonlight2 => 'Ee roju edi haayiga anipinchela chesindi?';
+
+  @override
+  String get prompt_moonlight3 =>
+      'Ee kshanam nunchi meeru em daachukovaalanukuntunnaru?';
+
+  @override
+  String get prompt_sunrise1 => 'Ee roju meelo utsaaham nimputunnadi edi?';
+
+  @override
+  String get prompt_sunrise2 =>
+      'Baaga jarigina e vishayaanni meeru gurtunchukovaalanukuntunnaru?';
+
+  @override
+  String get prompt_sunrise3 =>
+      'Deenni meeru evaritho panchukovaalanukuntunnaru?';
+
+  @override
+  String get prompt_capsule1 =>
+      'Future lo unna meeku meeru em teliyajeyaalanukuntunnaru?';
+
+  @override
+  String get prompt_capsule2 =>
+      'Ippudu meeku help chestunna, tarvaata marchipoye avakaasham unna vishayam edi?';
+
+  @override
+  String get prompt_capsule3 =>
+      'Kashtamaina roju na meeku meeru em cheppukuntaaru?';
+
+  @override
+  String get prompt_capsuleStorm =>
+      'Antaa ekkuvaipoyinattu anipinchinappudu edi help chestundi?';
+
+  @override
+  String get prompt_capsuleRain =>
+      'Bhaaramaina roju na meeru em vinaalanukuntaaru?';
+
+  @override
+  String get prompt_capsuleMoonlight =>
+      'Ee prashaanthatanu malli pondadaaniki edi help chestundi?';
+
+  @override
+  String get prompt_capsuleSunrise =>
+      'Future lo unna meetho meeru e santoshaanni panchukovaalanukuntunnaru?';
+
+  @override
+  String get prompt_another => 'Inko prashna';
+
+  @override
+  String get prompt_settingsTitle => 'Raayadaaniki prompts';
+
+  @override
+  String get prompt_settingsBody =>
+      'Khaali note lo oka gentle prashna. Idi eppudu save avvadu.';
+
+  @override
+  String get backfill_add => 'Past check-in add cheyandi';
+
+  @override
+  String get backfill_pickTitle => 'Ye roju?';
+
+  @override
+  String backfill_pickBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Gata $count rojullo ye roju kainaa check-in add cheyochu.',
+      one: 'Ninnati kosam check-in add cheyochu.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get backfill_title => 'Appudu meeku ela anipinchindi?';
+
+  @override
+  String backfill_forDay(String day) {
+    return '$day kosam check-in';
+  }
+
+  @override
+  String get backfill_changeDay => 'Roju maarchandi';
+
+  @override
+  String get backfill_outOfRange =>
+      'Past check-ins oka vaaram venakki varake add cheyagalam. Vere roju select chesukuntaara?';
+
+  @override
+  String get backfill_savedTitle => 'Mee aakaasham lo cherindi';
+
+  @override
+  String backfill_savedDay(String day) {
+    return '$day kosam save ayyindi.';
+  }
+
+  @override
+  String get backfill_savedBody =>
+      'Starlight aa roje chesina check-ins nunchi vastundi.';
+
+  @override
+  String get history_addedLater => 'Tarvaata add chesindi';
+
+  @override
+  String history_whenAddedLater(String day) {
+    return '$day · tarvaata add chesindi';
+  }
+
+  @override
+  String get shell_tabHome => 'Home';
+
+  @override
+  String get shell_tabSanctuary => 'Sanctuary';
+
+  @override
+  String get shell_tabRooms => 'Rooms';
+
+  @override
+  String get shell_tabInsights => 'Insights';
+
+  @override
+  String get shell_checkIn => 'Check in';
+
+  @override
+  String get shell_checkInHint => 'Kotha check-in modalavutundi';
+
+  @override
+  String get safety_emergencyWhen =>
+      'Meeru gaani, mee daggara unnavaallu gaani ventane danger lo unna, baaga gaayapadina, leda safe ga undaleka poyina, ventane emergency services ki call cheyandi.';
+
+  @override
+  String get safety_settingsLink => 'Settings lo Help & Safety';
+
+  @override
+  String get safety_settingsHint =>
+      'Support contact, Grievance Officer, policies';
 
   @override
   String get voice_record => 'Voice note record cheyandi';

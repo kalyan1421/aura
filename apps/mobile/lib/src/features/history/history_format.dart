@@ -16,6 +16,12 @@ String historyDayLabel(
 ) {
   if (day == today) return l.history_today;
   if (day == today.addDays(-1)) return l.history_yesterday;
+  return dateLabel(localeTag, day, today);
+}
+
+/// A localized date for an Aura day, never "Today"/"Yesterday" ("Thursday,
+/// 8 October"; with the year when it isn't [today]'s year).
+String dateLabel(String localeTag, LocalDay day, LocalDay today) {
   final date = DateTime(day.year, day.month, day.day);
   final locale = localeFromTag(localeTag);
   // Romanized locales read dates in English (as the DOB picker does).
@@ -29,6 +35,15 @@ String historyDayLabel(
     return format('en').format(date);
   }
 }
+
+/// Whether [row] was added later for a past day (F1 backfill): its Aura day
+/// isn't the one it was made on (RULES.md §2), judged in the zone it was
+/// stamped in. Rows pulled from the server carry no zone: [fallbackTz]
+/// (the device's) is used, so a traveller's pulled row made near 04:00 in
+/// another zone can read as added later.
+bool isBackfillRow(CheckInRow row, String fallbackTz) =>
+    LocalDay.tryParse(row.localDay) !=
+    auraDay(row.deviceTs, row.tz ?? fallbackTz);
 
 /// Wall-clock time the check-in was made, in the zone it was stamped in
 /// (rows pulled from the server carry no zone: [fallbackTz] is used).

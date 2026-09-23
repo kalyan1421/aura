@@ -11,6 +11,7 @@ import 'core/theme/app_theme.dart';
 import 'features/avatar/moments_controller.dart';
 import 'features/onboarding/gate_controller.dart';
 import 'features/profile/timezone_sync.dart';
+import 'features/push/push_inbox.dart';
 
 class AuraApp extends ConsumerStatefulWidget {
   const AuraApp({super.key});
@@ -40,9 +41,8 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       ref.read(gateControllerProvider.notifier).refreshLock();
-      refreshDeviceTimezone(ref).whenComplete(
-        () => ref.read(syncControllerProvider).onResume(),
-      );
+      refreshDeviceTimezone(ref)
+          .whenComplete(() => ref.read(syncControllerProvider).onResume());
     }
   }
 
@@ -53,6 +53,7 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     // whole session.
     ref.watch(syncControllerProvider);
     ref.watch(pushServiceProvider);
+    ref.watch(pushInboxProvider); // F14: in-app notices + tap routing
     ref.watch(momentsControllerProvider);
     final router = ref.watch(routerProvider);
     final comfort = ref.watch(comfortControllerProvider);

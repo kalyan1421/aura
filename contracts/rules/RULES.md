@@ -49,3 +49,29 @@ Fold over **distinct active aura days in ascending order** (input may be unsorte
 ## 8. Resting Nebula (`nebula.json`)
 `isResting = lastActiveDay != null && days(currentAuraDay − lastActiveDay) ≥ 3`
 (last active Monday → resting from Thursday 04:00; not on Wednesday 23:00).
+
+## 9. Time capsules (`capsules.json`, F4)
+Pure functions on device (offline unlock, triggers) and server (validation, the unlock push). Every case has a `kind`:
+
+- **`window`** — `isValidUnlockDate(sealedAt, tz, unlockLocalDate)`:
+  `sealDate = localDate(sealedAt, tz)` — the **calendar date** in the zone the device was in (no 04:00 shift).
+  Valid iff `addDays(sealDate, 7) ≤ unlockLocalDate ≤ addYears(sealDate, 5)`; `addYears` keeps month and day and
+  clamps Feb 29 → Feb 28. (The server additionally refuses dates > 5 years + 2 days past its own date — a broken-clock guard.)
+- **`unlock_at`** — `unlockAt(localDate, tz)` = the instant the wall clock in `tz` reads **10:00** on `localDate`.
+  If 10:00 does not exist that day (DST gap) it is shifted forward by the gap; if it occurs twice, the earlier
+  instant. Always evaluated in the user's **current** zone, so a timezone change moves the unlock to 10:00 in the
+  new zone. A date capsule is **due** when `now ≥ unlockAt(unlockLocalDate, currentTz)`.
+- **`trigger`** — `pickTrigger(capsules, checkIn)` → `{ fire: id | null, hold: id | null }`, evaluated on device
+  after a check-in is saved (`checkIn = { moodId, quadrant, deviceTs, live, crisis }`):
+  1. `live == false` (a backfill) → `{ fire: null, hold: null }`.
+  2. `cooldownUntil = max(c.cooldownUntil)` over **all** capsules, deleted ones included;
+     `checkIn.deviceTs < cooldownUntil` → nothing.
+  3. Candidates: `unlockType == "mood"`, `deletedAt == null`, `firedAt == null`, `openedAt == null`,
+     `armedAt ≤ checkIn.deviceTs`, and (`triggerMoodId == checkIn.moodId` or `triggerQuadrant == checkIn.quadrant`).
+  4. Pick the oldest by `armedAt`, then `sealedAt`, then `id` (plain string order).
+  5. `crisis` (lexicon hit or "I need help now") → `{ fire: null, hold: pick }`; otherwise `{ fire: pick, hold: null }`.
+
+Related rules (state transitions, not vectors): `armedAt = sealedAt + 24 h`; a re-arm ("Keep for next time") sets
+`armedAt` = the re-arm time. A fire at `t` sets that capsule's `cooldownUntil = t + 168 h` (7 × 24 h, absolute —
+REQ-CAP-03: fired Mon 09:00 → nothing fires before the next Mon 09:00). When two devices fire the same capsule
+offline, the earliest `t` wins and the cooldown starts from it. Instants compare as instants (offsets respected).

@@ -19,4 +19,17 @@ export const deletionRequestSchema = z.object({}).optional();
 export interface AccountStatus {
   /** ISO instant the purge becomes due, or null when no deletion is scheduled. */
   deletionScheduledFor: string | null;
+  /**
+   * `GET /v1/account` only, and only when true: the account was closed for breaking the rules (every other `/v1/*`
+   * route answers `403 account_closed`). Absent otherwise, so the usual body keeps its shape.
+   */
+  accountClosed?: true;
 }
+
+/**
+ * `POST /v1/account/apple-auth`: the one-time `authorizationCode` from the native Sign in with Apple sheet (valid
+ * 5 minutes, single use). Unknown keys are ignored.
+ */
+export const appleAuthRequestSchema = z.object({
+  authorizationCode: z.string().trim().min(1, 'is required').max(4096, 'is too long'),
+});

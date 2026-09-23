@@ -3579,6 +3579,1661 @@ class KeyValuesCompanion extends UpdateCompanion<KeyValueRow> {
   }
 }
 
+class $CapsulesTable extends Capsules
+    with TableInfo<$CapsulesTable, CapsuleRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CapsulesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unlockTypeMeta = const VerificationMeta(
+    'unlockType',
+  );
+  @override
+  late final GeneratedColumn<String> unlockType = GeneratedColumn<String>(
+    'unlock_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _unlockLocalDateMeta = const VerificationMeta(
+    'unlockLocalDate',
+  );
+  @override
+  late final GeneratedColumn<String> unlockLocalDate = GeneratedColumn<String>(
+    'unlock_local_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _triggerMoodIdMeta = const VerificationMeta(
+    'triggerMoodId',
+  );
+  @override
+  late final GeneratedColumn<String> triggerMoodId = GeneratedColumn<String>(
+    'trigger_mood_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _triggerQuadrantMeta = const VerificationMeta(
+    'triggerQuadrant',
+  );
+  @override
+  late final GeneratedColumn<String> triggerQuadrant = GeneratedColumn<String>(
+    'trigger_quadrant',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _payloadCtMeta = const VerificationMeta(
+    'payloadCt',
+  );
+  @override
+  late final GeneratedColumn<String> payloadCt = GeneratedColumn<String>(
+    'payload_ct',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _payloadClearMeta = const VerificationMeta(
+    'payloadClear',
+  );
+  @override
+  late final GeneratedColumn<String> payloadClear = GeneratedColumn<String>(
+    'payload_clear',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _sealedAtMeta = const VerificationMeta(
+    'sealedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> sealedAt = GeneratedColumn<DateTime>(
+    'sealed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sealTzMeta = const VerificationMeta('sealTz');
+  @override
+  late final GeneratedColumn<String> sealTz = GeneratedColumn<String>(
+    'seal_tz',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _armedAtMeta = const VerificationMeta(
+    'armedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> armedAt = GeneratedColumn<DateTime>(
+    'armed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cycleMeta = const VerificationMeta('cycle');
+  @override
+  late final GeneratedColumn<int> cycle = GeneratedColumn<int>(
+    'cycle',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _firedAtMeta = const VerificationMeta(
+    'firedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> firedAt = GeneratedColumn<DateTime>(
+    'fired_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cooldownUntilMeta = const VerificationMeta(
+    'cooldownUntil',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cooldownUntil =
+      GeneratedColumn<DateTime>(
+        'cooldown_until',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _openedAtMeta = const VerificationMeta(
+    'openedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> openedAt = GeneratedColumn<DateTime>(
+    'opened_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _openedDeviceTsMeta = const VerificationMeta(
+    'openedDeviceTs',
+  );
+  @override
+  late final GeneratedColumn<DateTime> openedDeviceTs =
+      GeneratedColumn<DateTime>(
+        'opened_device_ts',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverUpdatedAtMeta = const VerificationMeta(
+    'serverUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> serverUpdatedAt =
+      GeneratedColumn<DateTime>(
+        'server_updated_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _rejectedMeta = const VerificationMeta(
+    'rejected',
+  );
+  @override
+  late final GeneratedColumn<String> rejected = GeneratedColumn<String>(
+    'rejected',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notifyAtMeta = const VerificationMeta(
+    'notifyAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> notifyAt = GeneratedColumn<DateTime>(
+    'notify_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    unlockType,
+    unlockLocalDate,
+    triggerMoodId,
+    triggerQuadrant,
+    payloadCt,
+    payloadClear,
+    sealedAt,
+    sealTz,
+    armedAt,
+    cycle,
+    firedAt,
+    cooldownUntil,
+    openedAt,
+    openedDeviceTs,
+    deletedAt,
+    serverUpdatedAt,
+    synced,
+    rejected,
+    notifyAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'capsules';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CapsuleRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('unlock_type')) {
+      context.handle(
+        _unlockTypeMeta,
+        unlockType.isAcceptableOrUnknown(data['unlock_type']!, _unlockTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_unlockTypeMeta);
+    }
+    if (data.containsKey('unlock_local_date')) {
+      context.handle(
+        _unlockLocalDateMeta,
+        unlockLocalDate.isAcceptableOrUnknown(
+          data['unlock_local_date']!,
+          _unlockLocalDateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('trigger_mood_id')) {
+      context.handle(
+        _triggerMoodIdMeta,
+        triggerMoodId.isAcceptableOrUnknown(
+          data['trigger_mood_id']!,
+          _triggerMoodIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('trigger_quadrant')) {
+      context.handle(
+        _triggerQuadrantMeta,
+        triggerQuadrant.isAcceptableOrUnknown(
+          data['trigger_quadrant']!,
+          _triggerQuadrantMeta,
+        ),
+      );
+    }
+    if (data.containsKey('payload_ct')) {
+      context.handle(
+        _payloadCtMeta,
+        payloadCt.isAcceptableOrUnknown(data['payload_ct']!, _payloadCtMeta),
+      );
+    }
+    if (data.containsKey('payload_clear')) {
+      context.handle(
+        _payloadClearMeta,
+        payloadClear.isAcceptableOrUnknown(
+          data['payload_clear']!,
+          _payloadClearMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sealed_at')) {
+      context.handle(
+        _sealedAtMeta,
+        sealedAt.isAcceptableOrUnknown(data['sealed_at']!, _sealedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sealedAtMeta);
+    }
+    if (data.containsKey('seal_tz')) {
+      context.handle(
+        _sealTzMeta,
+        sealTz.isAcceptableOrUnknown(data['seal_tz']!, _sealTzMeta),
+      );
+    }
+    if (data.containsKey('armed_at')) {
+      context.handle(
+        _armedAtMeta,
+        armedAt.isAcceptableOrUnknown(data['armed_at']!, _armedAtMeta),
+      );
+    }
+    if (data.containsKey('cycle')) {
+      context.handle(
+        _cycleMeta,
+        cycle.isAcceptableOrUnknown(data['cycle']!, _cycleMeta),
+      );
+    }
+    if (data.containsKey('fired_at')) {
+      context.handle(
+        _firedAtMeta,
+        firedAt.isAcceptableOrUnknown(data['fired_at']!, _firedAtMeta),
+      );
+    }
+    if (data.containsKey('cooldown_until')) {
+      context.handle(
+        _cooldownUntilMeta,
+        cooldownUntil.isAcceptableOrUnknown(
+          data['cooldown_until']!,
+          _cooldownUntilMeta,
+        ),
+      );
+    }
+    if (data.containsKey('opened_at')) {
+      context.handle(
+        _openedAtMeta,
+        openedAt.isAcceptableOrUnknown(data['opened_at']!, _openedAtMeta),
+      );
+    }
+    if (data.containsKey('opened_device_ts')) {
+      context.handle(
+        _openedDeviceTsMeta,
+        openedDeviceTs.isAcceptableOrUnknown(
+          data['opened_device_ts']!,
+          _openedDeviceTsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('server_updated_at')) {
+      context.handle(
+        _serverUpdatedAtMeta,
+        serverUpdatedAt.isAcceptableOrUnknown(
+          data['server_updated_at']!,
+          _serverUpdatedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    if (data.containsKey('rejected')) {
+      context.handle(
+        _rejectedMeta,
+        rejected.isAcceptableOrUnknown(data['rejected']!, _rejectedMeta),
+      );
+    }
+    if (data.containsKey('notify_at')) {
+      context.handle(
+        _notifyAtMeta,
+        notifyAt.isAcceptableOrUnknown(data['notify_at']!, _notifyAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CapsuleRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CapsuleRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      unlockType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unlock_type'],
+      )!,
+      unlockLocalDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}unlock_local_date'],
+      ),
+      triggerMoodId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_mood_id'],
+      ),
+      triggerQuadrant: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trigger_quadrant'],
+      ),
+      payloadCt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_ct'],
+      ),
+      payloadClear: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_clear'],
+      ),
+      sealedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}sealed_at'],
+      )!,
+      sealTz: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seal_tz'],
+      ),
+      armedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}armed_at'],
+      ),
+      cycle: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cycle'],
+      )!,
+      firedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}fired_at'],
+      ),
+      cooldownUntil: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cooldown_until'],
+      ),
+      openedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}opened_at'],
+      ),
+      openedDeviceTs: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}opened_device_ts'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      serverUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}server_updated_at'],
+      ),
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+      rejected: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rejected'],
+      ),
+      notifyAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}notify_at'],
+      ),
+    );
+  }
+
+  @override
+  $CapsulesTable createAlias(String alias) {
+    return $CapsulesTable(attachedDatabase, alias);
+  }
+}
+
+class CapsuleRow extends DataClass implements Insertable<CapsuleRow> {
+  final String id;
+
+  /// `date` | `mood`.
+  final String unlockType;
+
+  /// Date capsules: opens at 10:00 on this date (`YYYY-MM-DD`) in the
+  /// current zone.
+  final String? unlockLocalDate;
+
+  /// Mood capsules: exactly one of these two.
+  final String? triggerMoodId;
+  final String? triggerQuadrant;
+
+  /// DS-1 ciphertext of the payload (AD = the capsule id). `null` on
+  /// tombstones and while [payloadClear] waits for the data key.
+  final String? payloadCt;
+
+  /// The payload JSON, only until a data key seals it (never synced).
+  final String? payloadClear;
+
+  /// Device time of sealing, and the zone it was sealed in (the window's
+  /// calendar date).
+  final DateTime sealedAt;
+  final String? sealTz;
+
+  /// Mood capsules: may fire from here (seal + 24 h, or the re-arm time).
+  final DateTime? armedAt;
+
+  /// Re-arms so far ("Keep for next time"); sent with open/fire/rearm.
+  final int cycle;
+
+  /// Fire time in the current cycle (earliest wins across devices).
+  final DateTime? firedAt;
+
+  /// Most recent fire + 168 h. The global cooldown is the max over all rows,
+  /// tombstones included.
+  final DateTime? cooldownUntil;
+
+  /// First open in the current cycle: the server's time once pulled, this
+  /// phone's until then. One-way.
+  final DateTime? openedAt;
+  final DateTime? openedDeviceTs;
+
+  /// Tombstone.
+  final DateTime? deletedAt;
+
+  /// The server row's `updated_at` (last pull that touched it).
+  final DateTime? serverUpdatedAt;
+
+  /// The seal reached the server (acknowledged, or pulled).
+  final bool synced;
+
+  /// The server refused the seal for good (`trigger_capsule_limit`,
+  /// `invalid_unlock_date`, `date_capsule_limit`): the capsule lives only
+  /// on this phone until the person changes it (e.g. makes it a date
+  /// capsule, which re-seals the same id).
+  final String? rejected;
+
+  /// When this phone's local "ready to open" notification fires (date
+  /// capsules; `null` when none is scheduled). Lets the push handler skip
+  /// the server's backup push for the same capsule.
+  final DateTime? notifyAt;
+  const CapsuleRow({
+    required this.id,
+    required this.unlockType,
+    this.unlockLocalDate,
+    this.triggerMoodId,
+    this.triggerQuadrant,
+    this.payloadCt,
+    this.payloadClear,
+    required this.sealedAt,
+    this.sealTz,
+    this.armedAt,
+    required this.cycle,
+    this.firedAt,
+    this.cooldownUntil,
+    this.openedAt,
+    this.openedDeviceTs,
+    this.deletedAt,
+    this.serverUpdatedAt,
+    required this.synced,
+    this.rejected,
+    this.notifyAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['unlock_type'] = Variable<String>(unlockType);
+    if (!nullToAbsent || unlockLocalDate != null) {
+      map['unlock_local_date'] = Variable<String>(unlockLocalDate);
+    }
+    if (!nullToAbsent || triggerMoodId != null) {
+      map['trigger_mood_id'] = Variable<String>(triggerMoodId);
+    }
+    if (!nullToAbsent || triggerQuadrant != null) {
+      map['trigger_quadrant'] = Variable<String>(triggerQuadrant);
+    }
+    if (!nullToAbsent || payloadCt != null) {
+      map['payload_ct'] = Variable<String>(payloadCt);
+    }
+    if (!nullToAbsent || payloadClear != null) {
+      map['payload_clear'] = Variable<String>(payloadClear);
+    }
+    map['sealed_at'] = Variable<DateTime>(sealedAt);
+    if (!nullToAbsent || sealTz != null) {
+      map['seal_tz'] = Variable<String>(sealTz);
+    }
+    if (!nullToAbsent || armedAt != null) {
+      map['armed_at'] = Variable<DateTime>(armedAt);
+    }
+    map['cycle'] = Variable<int>(cycle);
+    if (!nullToAbsent || firedAt != null) {
+      map['fired_at'] = Variable<DateTime>(firedAt);
+    }
+    if (!nullToAbsent || cooldownUntil != null) {
+      map['cooldown_until'] = Variable<DateTime>(cooldownUntil);
+    }
+    if (!nullToAbsent || openedAt != null) {
+      map['opened_at'] = Variable<DateTime>(openedAt);
+    }
+    if (!nullToAbsent || openedDeviceTs != null) {
+      map['opened_device_ts'] = Variable<DateTime>(openedDeviceTs);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    if (!nullToAbsent || serverUpdatedAt != null) {
+      map['server_updated_at'] = Variable<DateTime>(serverUpdatedAt);
+    }
+    map['synced'] = Variable<bool>(synced);
+    if (!nullToAbsent || rejected != null) {
+      map['rejected'] = Variable<String>(rejected);
+    }
+    if (!nullToAbsent || notifyAt != null) {
+      map['notify_at'] = Variable<DateTime>(notifyAt);
+    }
+    return map;
+  }
+
+  CapsulesCompanion toCompanion(bool nullToAbsent) {
+    return CapsulesCompanion(
+      id: Value(id),
+      unlockType: Value(unlockType),
+      unlockLocalDate: unlockLocalDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unlockLocalDate),
+      triggerMoodId: triggerMoodId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(triggerMoodId),
+      triggerQuadrant: triggerQuadrant == null && nullToAbsent
+          ? const Value.absent()
+          : Value(triggerQuadrant),
+      payloadCt: payloadCt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payloadCt),
+      payloadClear: payloadClear == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payloadClear),
+      sealedAt: Value(sealedAt),
+      sealTz: sealTz == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sealTz),
+      armedAt: armedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(armedAt),
+      cycle: Value(cycle),
+      firedAt: firedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firedAt),
+      cooldownUntil: cooldownUntil == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cooldownUntil),
+      openedAt: openedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openedAt),
+      openedDeviceTs: openedDeviceTs == null && nullToAbsent
+          ? const Value.absent()
+          : Value(openedDeviceTs),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      serverUpdatedAt: serverUpdatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverUpdatedAt),
+      synced: Value(synced),
+      rejected: rejected == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rejected),
+      notifyAt: notifyAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notifyAt),
+    );
+  }
+
+  factory CapsuleRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CapsuleRow(
+      id: serializer.fromJson<String>(json['id']),
+      unlockType: serializer.fromJson<String>(json['unlockType']),
+      unlockLocalDate: serializer.fromJson<String?>(json['unlockLocalDate']),
+      triggerMoodId: serializer.fromJson<String?>(json['triggerMoodId']),
+      triggerQuadrant: serializer.fromJson<String?>(json['triggerQuadrant']),
+      payloadCt: serializer.fromJson<String?>(json['payloadCt']),
+      payloadClear: serializer.fromJson<String?>(json['payloadClear']),
+      sealedAt: serializer.fromJson<DateTime>(json['sealedAt']),
+      sealTz: serializer.fromJson<String?>(json['sealTz']),
+      armedAt: serializer.fromJson<DateTime?>(json['armedAt']),
+      cycle: serializer.fromJson<int>(json['cycle']),
+      firedAt: serializer.fromJson<DateTime?>(json['firedAt']),
+      cooldownUntil: serializer.fromJson<DateTime?>(json['cooldownUntil']),
+      openedAt: serializer.fromJson<DateTime?>(json['openedAt']),
+      openedDeviceTs: serializer.fromJson<DateTime?>(json['openedDeviceTs']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      serverUpdatedAt: serializer.fromJson<DateTime?>(json['serverUpdatedAt']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      rejected: serializer.fromJson<String?>(json['rejected']),
+      notifyAt: serializer.fromJson<DateTime?>(json['notifyAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'unlockType': serializer.toJson<String>(unlockType),
+      'unlockLocalDate': serializer.toJson<String?>(unlockLocalDate),
+      'triggerMoodId': serializer.toJson<String?>(triggerMoodId),
+      'triggerQuadrant': serializer.toJson<String?>(triggerQuadrant),
+      'payloadCt': serializer.toJson<String?>(payloadCt),
+      'payloadClear': serializer.toJson<String?>(payloadClear),
+      'sealedAt': serializer.toJson<DateTime>(sealedAt),
+      'sealTz': serializer.toJson<String?>(sealTz),
+      'armedAt': serializer.toJson<DateTime?>(armedAt),
+      'cycle': serializer.toJson<int>(cycle),
+      'firedAt': serializer.toJson<DateTime?>(firedAt),
+      'cooldownUntil': serializer.toJson<DateTime?>(cooldownUntil),
+      'openedAt': serializer.toJson<DateTime?>(openedAt),
+      'openedDeviceTs': serializer.toJson<DateTime?>(openedDeviceTs),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'serverUpdatedAt': serializer.toJson<DateTime?>(serverUpdatedAt),
+      'synced': serializer.toJson<bool>(synced),
+      'rejected': serializer.toJson<String?>(rejected),
+      'notifyAt': serializer.toJson<DateTime?>(notifyAt),
+    };
+  }
+
+  CapsuleRow copyWith({
+    String? id,
+    String? unlockType,
+    Value<String?> unlockLocalDate = const Value.absent(),
+    Value<String?> triggerMoodId = const Value.absent(),
+    Value<String?> triggerQuadrant = const Value.absent(),
+    Value<String?> payloadCt = const Value.absent(),
+    Value<String?> payloadClear = const Value.absent(),
+    DateTime? sealedAt,
+    Value<String?> sealTz = const Value.absent(),
+    Value<DateTime?> armedAt = const Value.absent(),
+    int? cycle,
+    Value<DateTime?> firedAt = const Value.absent(),
+    Value<DateTime?> cooldownUntil = const Value.absent(),
+    Value<DateTime?> openedAt = const Value.absent(),
+    Value<DateTime?> openedDeviceTs = const Value.absent(),
+    Value<DateTime?> deletedAt = const Value.absent(),
+    Value<DateTime?> serverUpdatedAt = const Value.absent(),
+    bool? synced,
+    Value<String?> rejected = const Value.absent(),
+    Value<DateTime?> notifyAt = const Value.absent(),
+  }) => CapsuleRow(
+    id: id ?? this.id,
+    unlockType: unlockType ?? this.unlockType,
+    unlockLocalDate: unlockLocalDate.present
+        ? unlockLocalDate.value
+        : this.unlockLocalDate,
+    triggerMoodId: triggerMoodId.present
+        ? triggerMoodId.value
+        : this.triggerMoodId,
+    triggerQuadrant: triggerQuadrant.present
+        ? triggerQuadrant.value
+        : this.triggerQuadrant,
+    payloadCt: payloadCt.present ? payloadCt.value : this.payloadCt,
+    payloadClear: payloadClear.present ? payloadClear.value : this.payloadClear,
+    sealedAt: sealedAt ?? this.sealedAt,
+    sealTz: sealTz.present ? sealTz.value : this.sealTz,
+    armedAt: armedAt.present ? armedAt.value : this.armedAt,
+    cycle: cycle ?? this.cycle,
+    firedAt: firedAt.present ? firedAt.value : this.firedAt,
+    cooldownUntil: cooldownUntil.present
+        ? cooldownUntil.value
+        : this.cooldownUntil,
+    openedAt: openedAt.present ? openedAt.value : this.openedAt,
+    openedDeviceTs: openedDeviceTs.present
+        ? openedDeviceTs.value
+        : this.openedDeviceTs,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    serverUpdatedAt: serverUpdatedAt.present
+        ? serverUpdatedAt.value
+        : this.serverUpdatedAt,
+    synced: synced ?? this.synced,
+    rejected: rejected.present ? rejected.value : this.rejected,
+    notifyAt: notifyAt.present ? notifyAt.value : this.notifyAt,
+  );
+  CapsuleRow copyWithCompanion(CapsulesCompanion data) {
+    return CapsuleRow(
+      id: data.id.present ? data.id.value : this.id,
+      unlockType: data.unlockType.present
+          ? data.unlockType.value
+          : this.unlockType,
+      unlockLocalDate: data.unlockLocalDate.present
+          ? data.unlockLocalDate.value
+          : this.unlockLocalDate,
+      triggerMoodId: data.triggerMoodId.present
+          ? data.triggerMoodId.value
+          : this.triggerMoodId,
+      triggerQuadrant: data.triggerQuadrant.present
+          ? data.triggerQuadrant.value
+          : this.triggerQuadrant,
+      payloadCt: data.payloadCt.present ? data.payloadCt.value : this.payloadCt,
+      payloadClear: data.payloadClear.present
+          ? data.payloadClear.value
+          : this.payloadClear,
+      sealedAt: data.sealedAt.present ? data.sealedAt.value : this.sealedAt,
+      sealTz: data.sealTz.present ? data.sealTz.value : this.sealTz,
+      armedAt: data.armedAt.present ? data.armedAt.value : this.armedAt,
+      cycle: data.cycle.present ? data.cycle.value : this.cycle,
+      firedAt: data.firedAt.present ? data.firedAt.value : this.firedAt,
+      cooldownUntil: data.cooldownUntil.present
+          ? data.cooldownUntil.value
+          : this.cooldownUntil,
+      openedAt: data.openedAt.present ? data.openedAt.value : this.openedAt,
+      openedDeviceTs: data.openedDeviceTs.present
+          ? data.openedDeviceTs.value
+          : this.openedDeviceTs,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      serverUpdatedAt: data.serverUpdatedAt.present
+          ? data.serverUpdatedAt.value
+          : this.serverUpdatedAt,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      rejected: data.rejected.present ? data.rejected.value : this.rejected,
+      notifyAt: data.notifyAt.present ? data.notifyAt.value : this.notifyAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CapsuleRow(')
+          ..write('id: $id, ')
+          ..write('unlockType: $unlockType, ')
+          ..write('unlockLocalDate: $unlockLocalDate, ')
+          ..write('triggerMoodId: $triggerMoodId, ')
+          ..write('triggerQuadrant: $triggerQuadrant, ')
+          ..write('payloadCt: $payloadCt, ')
+          ..write('payloadClear: $payloadClear, ')
+          ..write('sealedAt: $sealedAt, ')
+          ..write('sealTz: $sealTz, ')
+          ..write('armedAt: $armedAt, ')
+          ..write('cycle: $cycle, ')
+          ..write('firedAt: $firedAt, ')
+          ..write('cooldownUntil: $cooldownUntil, ')
+          ..write('openedAt: $openedAt, ')
+          ..write('openedDeviceTs: $openedDeviceTs, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt, ')
+          ..write('synced: $synced, ')
+          ..write('rejected: $rejected, ')
+          ..write('notifyAt: $notifyAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    unlockType,
+    unlockLocalDate,
+    triggerMoodId,
+    triggerQuadrant,
+    payloadCt,
+    payloadClear,
+    sealedAt,
+    sealTz,
+    armedAt,
+    cycle,
+    firedAt,
+    cooldownUntil,
+    openedAt,
+    openedDeviceTs,
+    deletedAt,
+    serverUpdatedAt,
+    synced,
+    rejected,
+    notifyAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CapsuleRow &&
+          other.id == this.id &&
+          other.unlockType == this.unlockType &&
+          other.unlockLocalDate == this.unlockLocalDate &&
+          other.triggerMoodId == this.triggerMoodId &&
+          other.triggerQuadrant == this.triggerQuadrant &&
+          other.payloadCt == this.payloadCt &&
+          other.payloadClear == this.payloadClear &&
+          other.sealedAt == this.sealedAt &&
+          other.sealTz == this.sealTz &&
+          other.armedAt == this.armedAt &&
+          other.cycle == this.cycle &&
+          other.firedAt == this.firedAt &&
+          other.cooldownUntil == this.cooldownUntil &&
+          other.openedAt == this.openedAt &&
+          other.openedDeviceTs == this.openedDeviceTs &&
+          other.deletedAt == this.deletedAt &&
+          other.serverUpdatedAt == this.serverUpdatedAt &&
+          other.synced == this.synced &&
+          other.rejected == this.rejected &&
+          other.notifyAt == this.notifyAt);
+}
+
+class CapsulesCompanion extends UpdateCompanion<CapsuleRow> {
+  final Value<String> id;
+  final Value<String> unlockType;
+  final Value<String?> unlockLocalDate;
+  final Value<String?> triggerMoodId;
+  final Value<String?> triggerQuadrant;
+  final Value<String?> payloadCt;
+  final Value<String?> payloadClear;
+  final Value<DateTime> sealedAt;
+  final Value<String?> sealTz;
+  final Value<DateTime?> armedAt;
+  final Value<int> cycle;
+  final Value<DateTime?> firedAt;
+  final Value<DateTime?> cooldownUntil;
+  final Value<DateTime?> openedAt;
+  final Value<DateTime?> openedDeviceTs;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime?> serverUpdatedAt;
+  final Value<bool> synced;
+  final Value<String?> rejected;
+  final Value<DateTime?> notifyAt;
+  final Value<int> rowid;
+  const CapsulesCompanion({
+    this.id = const Value.absent(),
+    this.unlockType = const Value.absent(),
+    this.unlockLocalDate = const Value.absent(),
+    this.triggerMoodId = const Value.absent(),
+    this.triggerQuadrant = const Value.absent(),
+    this.payloadCt = const Value.absent(),
+    this.payloadClear = const Value.absent(),
+    this.sealedAt = const Value.absent(),
+    this.sealTz = const Value.absent(),
+    this.armedAt = const Value.absent(),
+    this.cycle = const Value.absent(),
+    this.firedAt = const Value.absent(),
+    this.cooldownUntil = const Value.absent(),
+    this.openedAt = const Value.absent(),
+    this.openedDeviceTs = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rejected = const Value.absent(),
+    this.notifyAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CapsulesCompanion.insert({
+    required String id,
+    required String unlockType,
+    this.unlockLocalDate = const Value.absent(),
+    this.triggerMoodId = const Value.absent(),
+    this.triggerQuadrant = const Value.absent(),
+    this.payloadCt = const Value.absent(),
+    this.payloadClear = const Value.absent(),
+    required DateTime sealedAt,
+    this.sealTz = const Value.absent(),
+    this.armedAt = const Value.absent(),
+    this.cycle = const Value.absent(),
+    this.firedAt = const Value.absent(),
+    this.cooldownUntil = const Value.absent(),
+    this.openedAt = const Value.absent(),
+    this.openedDeviceTs = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rejected = const Value.absent(),
+    this.notifyAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       unlockType = Value(unlockType),
+       sealedAt = Value(sealedAt);
+  static Insertable<CapsuleRow> custom({
+    Expression<String>? id,
+    Expression<String>? unlockType,
+    Expression<String>? unlockLocalDate,
+    Expression<String>? triggerMoodId,
+    Expression<String>? triggerQuadrant,
+    Expression<String>? payloadCt,
+    Expression<String>? payloadClear,
+    Expression<DateTime>? sealedAt,
+    Expression<String>? sealTz,
+    Expression<DateTime>? armedAt,
+    Expression<int>? cycle,
+    Expression<DateTime>? firedAt,
+    Expression<DateTime>? cooldownUntil,
+    Expression<DateTime>? openedAt,
+    Expression<DateTime>? openedDeviceTs,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? serverUpdatedAt,
+    Expression<bool>? synced,
+    Expression<String>? rejected,
+    Expression<DateTime>? notifyAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (unlockType != null) 'unlock_type': unlockType,
+      if (unlockLocalDate != null) 'unlock_local_date': unlockLocalDate,
+      if (triggerMoodId != null) 'trigger_mood_id': triggerMoodId,
+      if (triggerQuadrant != null) 'trigger_quadrant': triggerQuadrant,
+      if (payloadCt != null) 'payload_ct': payloadCt,
+      if (payloadClear != null) 'payload_clear': payloadClear,
+      if (sealedAt != null) 'sealed_at': sealedAt,
+      if (sealTz != null) 'seal_tz': sealTz,
+      if (armedAt != null) 'armed_at': armedAt,
+      if (cycle != null) 'cycle': cycle,
+      if (firedAt != null) 'fired_at': firedAt,
+      if (cooldownUntil != null) 'cooldown_until': cooldownUntil,
+      if (openedAt != null) 'opened_at': openedAt,
+      if (openedDeviceTs != null) 'opened_device_ts': openedDeviceTs,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (serverUpdatedAt != null) 'server_updated_at': serverUpdatedAt,
+      if (synced != null) 'synced': synced,
+      if (rejected != null) 'rejected': rejected,
+      if (notifyAt != null) 'notify_at': notifyAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CapsulesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? unlockType,
+    Value<String?>? unlockLocalDate,
+    Value<String?>? triggerMoodId,
+    Value<String?>? triggerQuadrant,
+    Value<String?>? payloadCt,
+    Value<String?>? payloadClear,
+    Value<DateTime>? sealedAt,
+    Value<String?>? sealTz,
+    Value<DateTime?>? armedAt,
+    Value<int>? cycle,
+    Value<DateTime?>? firedAt,
+    Value<DateTime?>? cooldownUntil,
+    Value<DateTime?>? openedAt,
+    Value<DateTime?>? openedDeviceTs,
+    Value<DateTime?>? deletedAt,
+    Value<DateTime?>? serverUpdatedAt,
+    Value<bool>? synced,
+    Value<String?>? rejected,
+    Value<DateTime?>? notifyAt,
+    Value<int>? rowid,
+  }) {
+    return CapsulesCompanion(
+      id: id ?? this.id,
+      unlockType: unlockType ?? this.unlockType,
+      unlockLocalDate: unlockLocalDate ?? this.unlockLocalDate,
+      triggerMoodId: triggerMoodId ?? this.triggerMoodId,
+      triggerQuadrant: triggerQuadrant ?? this.triggerQuadrant,
+      payloadCt: payloadCt ?? this.payloadCt,
+      payloadClear: payloadClear ?? this.payloadClear,
+      sealedAt: sealedAt ?? this.sealedAt,
+      sealTz: sealTz ?? this.sealTz,
+      armedAt: armedAt ?? this.armedAt,
+      cycle: cycle ?? this.cycle,
+      firedAt: firedAt ?? this.firedAt,
+      cooldownUntil: cooldownUntil ?? this.cooldownUntil,
+      openedAt: openedAt ?? this.openedAt,
+      openedDeviceTs: openedDeviceTs ?? this.openedDeviceTs,
+      deletedAt: deletedAt ?? this.deletedAt,
+      serverUpdatedAt: serverUpdatedAt ?? this.serverUpdatedAt,
+      synced: synced ?? this.synced,
+      rejected: rejected ?? this.rejected,
+      notifyAt: notifyAt ?? this.notifyAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (unlockType.present) {
+      map['unlock_type'] = Variable<String>(unlockType.value);
+    }
+    if (unlockLocalDate.present) {
+      map['unlock_local_date'] = Variable<String>(unlockLocalDate.value);
+    }
+    if (triggerMoodId.present) {
+      map['trigger_mood_id'] = Variable<String>(triggerMoodId.value);
+    }
+    if (triggerQuadrant.present) {
+      map['trigger_quadrant'] = Variable<String>(triggerQuadrant.value);
+    }
+    if (payloadCt.present) {
+      map['payload_ct'] = Variable<String>(payloadCt.value);
+    }
+    if (payloadClear.present) {
+      map['payload_clear'] = Variable<String>(payloadClear.value);
+    }
+    if (sealedAt.present) {
+      map['sealed_at'] = Variable<DateTime>(sealedAt.value);
+    }
+    if (sealTz.present) {
+      map['seal_tz'] = Variable<String>(sealTz.value);
+    }
+    if (armedAt.present) {
+      map['armed_at'] = Variable<DateTime>(armedAt.value);
+    }
+    if (cycle.present) {
+      map['cycle'] = Variable<int>(cycle.value);
+    }
+    if (firedAt.present) {
+      map['fired_at'] = Variable<DateTime>(firedAt.value);
+    }
+    if (cooldownUntil.present) {
+      map['cooldown_until'] = Variable<DateTime>(cooldownUntil.value);
+    }
+    if (openedAt.present) {
+      map['opened_at'] = Variable<DateTime>(openedAt.value);
+    }
+    if (openedDeviceTs.present) {
+      map['opened_device_ts'] = Variable<DateTime>(openedDeviceTs.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (serverUpdatedAt.present) {
+      map['server_updated_at'] = Variable<DateTime>(serverUpdatedAt.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (rejected.present) {
+      map['rejected'] = Variable<String>(rejected.value);
+    }
+    if (notifyAt.present) {
+      map['notify_at'] = Variable<DateTime>(notifyAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CapsulesCompanion(')
+          ..write('id: $id, ')
+          ..write('unlockType: $unlockType, ')
+          ..write('unlockLocalDate: $unlockLocalDate, ')
+          ..write('triggerMoodId: $triggerMoodId, ')
+          ..write('triggerQuadrant: $triggerQuadrant, ')
+          ..write('payloadCt: $payloadCt, ')
+          ..write('payloadClear: $payloadClear, ')
+          ..write('sealedAt: $sealedAt, ')
+          ..write('sealTz: $sealTz, ')
+          ..write('armedAt: $armedAt, ')
+          ..write('cycle: $cycle, ')
+          ..write('firedAt: $firedAt, ')
+          ..write('cooldownUntil: $cooldownUntil, ')
+          ..write('openedAt: $openedAt, ')
+          ..write('openedDeviceTs: $openedDeviceTs, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt, ')
+          ..write('synced: $synced, ')
+          ..write('rejected: $rejected, ')
+          ..write('notifyAt: $notifyAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CapsuleMediaTable extends CapsuleMedia
+    with TableInfo<$CapsuleMediaTable, CapsuleMediaRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CapsuleMediaTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _capsuleIdMeta = const VerificationMeta(
+    'capsuleId',
+  );
+  @override
+  late final GeneratedColumn<String> capsuleId = GeneratedColumn<String>(
+    'capsule_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _slotMeta = const VerificationMeta('slot');
+  @override
+  late final GeneratedColumn<String> slot = GeneratedColumn<String>(
+    'slot',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fileMeta = const VerificationMeta('file');
+  @override
+  late final GeneratedColumn<String> file = GeneratedColumn<String>(
+    'file',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pathMeta = const VerificationMeta('path');
+  @override
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+    'path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _nextAttemptAtMeta = const VerificationMeta(
+    'nextAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextAttemptAt =
+      GeneratedColumn<DateTime>(
+        'next_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _failedMeta = const VerificationMeta('failed');
+  @override
+  late final GeneratedColumn<bool> failed = GeneratedColumn<bool>(
+    'failed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("failed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    capsuleId,
+    slot,
+    file,
+    path,
+    attempts,
+    nextAttemptAt,
+    failed,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'capsule_media';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CapsuleMediaRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('capsule_id')) {
+      context.handle(
+        _capsuleIdMeta,
+        capsuleId.isAcceptableOrUnknown(data['capsule_id']!, _capsuleIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_capsuleIdMeta);
+    }
+    if (data.containsKey('slot')) {
+      context.handle(
+        _slotMeta,
+        slot.isAcceptableOrUnknown(data['slot']!, _slotMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_slotMeta);
+    }
+    if (data.containsKey('file')) {
+      context.handle(
+        _fileMeta,
+        file.isAcceptableOrUnknown(data['file']!, _fileMeta),
+      );
+    }
+    if (data.containsKey('path')) {
+      context.handle(
+        _pathMeta,
+        path.isAcceptableOrUnknown(data['path']!, _pathMeta),
+      );
+    }
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    if (data.containsKey('next_attempt_at')) {
+      context.handle(
+        _nextAttemptAtMeta,
+        nextAttemptAt.isAcceptableOrUnknown(
+          data['next_attempt_at']!,
+          _nextAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('failed')) {
+      context.handle(
+        _failedMeta,
+        failed.isAcceptableOrUnknown(data['failed']!, _failedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {capsuleId, slot};
+  @override
+  CapsuleMediaRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CapsuleMediaRow(
+      capsuleId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}capsule_id'],
+      )!,
+      slot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}slot'],
+      )!,
+      file: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file'],
+      ),
+      path: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}path'],
+      ),
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      nextAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_attempt_at'],
+      ),
+      failed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}failed'],
+      )!,
+    );
+  }
+
+  @override
+  $CapsuleMediaTable createAlias(String alias) {
+    return $CapsuleMediaTable(attachedDatabase, alias);
+  }
+}
+
+class CapsuleMediaRow extends DataClass implements Insertable<CapsuleMediaRow> {
+  final String capsuleId;
+  final String slot;
+  final String? file;
+  final String? path;
+
+  /// Failed uploads, and when to try again (uploads keep retrying after the
+  /// seal was pushed without them).
+  final int attempts;
+  final DateTime? nextAttemptAt;
+
+  /// The upload can never succeed (e.g. too large): stop trying.
+  final bool failed;
+  const CapsuleMediaRow({
+    required this.capsuleId,
+    required this.slot,
+    this.file,
+    this.path,
+    required this.attempts,
+    this.nextAttemptAt,
+    required this.failed,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['capsule_id'] = Variable<String>(capsuleId);
+    map['slot'] = Variable<String>(slot);
+    if (!nullToAbsent || file != null) {
+      map['file'] = Variable<String>(file);
+    }
+    if (!nullToAbsent || path != null) {
+      map['path'] = Variable<String>(path);
+    }
+    map['attempts'] = Variable<int>(attempts);
+    if (!nullToAbsent || nextAttemptAt != null) {
+      map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt);
+    }
+    map['failed'] = Variable<bool>(failed);
+    return map;
+  }
+
+  CapsuleMediaCompanion toCompanion(bool nullToAbsent) {
+    return CapsuleMediaCompanion(
+      capsuleId: Value(capsuleId),
+      slot: Value(slot),
+      file: file == null && nullToAbsent ? const Value.absent() : Value(file),
+      path: path == null && nullToAbsent ? const Value.absent() : Value(path),
+      attempts: Value(attempts),
+      nextAttemptAt: nextAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextAttemptAt),
+      failed: Value(failed),
+    );
+  }
+
+  factory CapsuleMediaRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CapsuleMediaRow(
+      capsuleId: serializer.fromJson<String>(json['capsuleId']),
+      slot: serializer.fromJson<String>(json['slot']),
+      file: serializer.fromJson<String?>(json['file']),
+      path: serializer.fromJson<String?>(json['path']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      nextAttemptAt: serializer.fromJson<DateTime?>(json['nextAttemptAt']),
+      failed: serializer.fromJson<bool>(json['failed']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'capsuleId': serializer.toJson<String>(capsuleId),
+      'slot': serializer.toJson<String>(slot),
+      'file': serializer.toJson<String?>(file),
+      'path': serializer.toJson<String?>(path),
+      'attempts': serializer.toJson<int>(attempts),
+      'nextAttemptAt': serializer.toJson<DateTime?>(nextAttemptAt),
+      'failed': serializer.toJson<bool>(failed),
+    };
+  }
+
+  CapsuleMediaRow copyWith({
+    String? capsuleId,
+    String? slot,
+    Value<String?> file = const Value.absent(),
+    Value<String?> path = const Value.absent(),
+    int? attempts,
+    Value<DateTime?> nextAttemptAt = const Value.absent(),
+    bool? failed,
+  }) => CapsuleMediaRow(
+    capsuleId: capsuleId ?? this.capsuleId,
+    slot: slot ?? this.slot,
+    file: file.present ? file.value : this.file,
+    path: path.present ? path.value : this.path,
+    attempts: attempts ?? this.attempts,
+    nextAttemptAt: nextAttemptAt.present
+        ? nextAttemptAt.value
+        : this.nextAttemptAt,
+    failed: failed ?? this.failed,
+  );
+  CapsuleMediaRow copyWithCompanion(CapsuleMediaCompanion data) {
+    return CapsuleMediaRow(
+      capsuleId: data.capsuleId.present ? data.capsuleId.value : this.capsuleId,
+      slot: data.slot.present ? data.slot.value : this.slot,
+      file: data.file.present ? data.file.value : this.file,
+      path: data.path.present ? data.path.value : this.path,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      nextAttemptAt: data.nextAttemptAt.present
+          ? data.nextAttemptAt.value
+          : this.nextAttemptAt,
+      failed: data.failed.present ? data.failed.value : this.failed,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CapsuleMediaRow(')
+          ..write('capsuleId: $capsuleId, ')
+          ..write('slot: $slot, ')
+          ..write('file: $file, ')
+          ..write('path: $path, ')
+          ..write('attempts: $attempts, ')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('failed: $failed')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(capsuleId, slot, file, path, attempts, nextAttemptAt, failed);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CapsuleMediaRow &&
+          other.capsuleId == this.capsuleId &&
+          other.slot == this.slot &&
+          other.file == this.file &&
+          other.path == this.path &&
+          other.attempts == this.attempts &&
+          other.nextAttemptAt == this.nextAttemptAt &&
+          other.failed == this.failed);
+}
+
+class CapsuleMediaCompanion extends UpdateCompanion<CapsuleMediaRow> {
+  final Value<String> capsuleId;
+  final Value<String> slot;
+  final Value<String?> file;
+  final Value<String?> path;
+  final Value<int> attempts;
+  final Value<DateTime?> nextAttemptAt;
+  final Value<bool> failed;
+  final Value<int> rowid;
+  const CapsuleMediaCompanion({
+    this.capsuleId = const Value.absent(),
+    this.slot = const Value.absent(),
+    this.file = const Value.absent(),
+    this.path = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
+    this.failed = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CapsuleMediaCompanion.insert({
+    required String capsuleId,
+    required String slot,
+    this.file = const Value.absent(),
+    this.path = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
+    this.failed = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : capsuleId = Value(capsuleId),
+       slot = Value(slot);
+  static Insertable<CapsuleMediaRow> custom({
+    Expression<String>? capsuleId,
+    Expression<String>? slot,
+    Expression<String>? file,
+    Expression<String>? path,
+    Expression<int>? attempts,
+    Expression<DateTime>? nextAttemptAt,
+    Expression<bool>? failed,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (capsuleId != null) 'capsule_id': capsuleId,
+      if (slot != null) 'slot': slot,
+      if (file != null) 'file': file,
+      if (path != null) 'path': path,
+      if (attempts != null) 'attempts': attempts,
+      if (nextAttemptAt != null) 'next_attempt_at': nextAttemptAt,
+      if (failed != null) 'failed': failed,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CapsuleMediaCompanion copyWith({
+    Value<String>? capsuleId,
+    Value<String>? slot,
+    Value<String?>? file,
+    Value<String?>? path,
+    Value<int>? attempts,
+    Value<DateTime?>? nextAttemptAt,
+    Value<bool>? failed,
+    Value<int>? rowid,
+  }) {
+    return CapsuleMediaCompanion(
+      capsuleId: capsuleId ?? this.capsuleId,
+      slot: slot ?? this.slot,
+      file: file ?? this.file,
+      path: path ?? this.path,
+      attempts: attempts ?? this.attempts,
+      nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
+      failed: failed ?? this.failed,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (capsuleId.present) {
+      map['capsule_id'] = Variable<String>(capsuleId.value);
+    }
+    if (slot.present) {
+      map['slot'] = Variable<String>(slot.value);
+    }
+    if (file.present) {
+      map['file'] = Variable<String>(file.value);
+    }
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (nextAttemptAt.present) {
+      map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt.value);
+    }
+    if (failed.present) {
+      map['failed'] = Variable<bool>(failed.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CapsuleMediaCompanion(')
+          ..write('capsuleId: $capsuleId, ')
+          ..write('slot: $slot, ')
+          ..write('file: $file, ')
+          ..write('path: $path, ')
+          ..write('attempts: $attempts, ')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('failed: $failed, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3588,6 +5243,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OutboxTable outbox = $OutboxTable(this);
   late final $DeadLettersTable deadLetters = $DeadLettersTable(this);
   late final $KeyValuesTable keyValues = $KeyValuesTable(this);
+  late final $CapsulesTable capsules = $CapsulesTable(this);
+  late final $CapsuleMediaTable capsuleMedia = $CapsuleMediaTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3599,6 +5256,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     outbox,
     deadLetters,
     keyValues,
+    capsules,
+    capsuleMedia,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -5378,6 +7037,760 @@ typedef $$KeyValuesTableProcessedTableManager =
       KeyValueRow,
       PrefetchHooks Function()
     >;
+typedef $$CapsulesTableCreateCompanionBuilder = CapsulesCompanion Function({
+  required String id,
+  required String unlockType,
+  Value<String?> unlockLocalDate,
+  Value<String?> triggerMoodId,
+  Value<String?> triggerQuadrant,
+  Value<String?> payloadCt,
+  Value<String?> payloadClear,
+  required DateTime sealedAt,
+  Value<String?> sealTz,
+  Value<DateTime?> armedAt,
+  Value<int> cycle,
+  Value<DateTime?> firedAt,
+  Value<DateTime?> cooldownUntil,
+  Value<DateTime?> openedAt,
+  Value<DateTime?> openedDeviceTs,
+  Value<DateTime?> deletedAt,
+  Value<DateTime?> serverUpdatedAt,
+  Value<bool> synced,
+  Value<String?> rejected,
+  Value<DateTime?> notifyAt,
+  Value<int> rowid,
+});
+typedef $$CapsulesTableUpdateCompanionBuilder = CapsulesCompanion Function({
+  Value<String> id,
+  Value<String> unlockType,
+  Value<String?> unlockLocalDate,
+  Value<String?> triggerMoodId,
+  Value<String?> triggerQuadrant,
+  Value<String?> payloadCt,
+  Value<String?> payloadClear,
+  Value<DateTime> sealedAt,
+  Value<String?> sealTz,
+  Value<DateTime?> armedAt,
+  Value<int> cycle,
+  Value<DateTime?> firedAt,
+  Value<DateTime?> cooldownUntil,
+  Value<DateTime?> openedAt,
+  Value<DateTime?> openedDeviceTs,
+  Value<DateTime?> deletedAt,
+  Value<DateTime?> serverUpdatedAt,
+  Value<bool> synced,
+  Value<String?> rejected,
+  Value<DateTime?> notifyAt,
+  Value<int> rowid,
+});
+
+class $$CapsulesTableFilterComposer
+    extends Composer<_$AppDatabase, $CapsulesTable> {
+  $$CapsulesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unlockType => $composableBuilder(
+    column: $table.unlockType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get unlockLocalDate => $composableBuilder(
+    column: $table.unlockLocalDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerMoodId => $composableBuilder(
+    column: $table.triggerMoodId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get triggerQuadrant => $composableBuilder(
+    column: $table.triggerQuadrant,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadCt => $composableBuilder(
+    column: $table.payloadCt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadClear => $composableBuilder(
+    column: $table.payloadClear,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get sealedAt => $composableBuilder(
+    column: $table.sealedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sealTz => $composableBuilder(
+    column: $table.sealTz,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get armedAt => $composableBuilder(
+    column: $table.armedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cycle => $composableBuilder(
+    column: $table.cycle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get firedAt => $composableBuilder(
+    column: $table.firedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cooldownUntil => $composableBuilder(
+    column: $table.cooldownUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get openedAt => $composableBuilder(
+    column: $table.openedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get openedDeviceTs => $composableBuilder(
+    column: $table.openedDeviceTs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get serverUpdatedAt => $composableBuilder(
+    column: $table.serverUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rejected => $composableBuilder(
+    column: $table.rejected,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get notifyAt => $composableBuilder(
+    column: $table.notifyAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CapsulesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CapsulesTable> {
+  $$CapsulesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unlockType => $composableBuilder(
+    column: $table.unlockType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get unlockLocalDate => $composableBuilder(
+    column: $table.unlockLocalDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerMoodId => $composableBuilder(
+    column: $table.triggerMoodId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get triggerQuadrant => $composableBuilder(
+    column: $table.triggerQuadrant,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadCt => $composableBuilder(
+    column: $table.payloadCt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadClear => $composableBuilder(
+    column: $table.payloadClear,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get sealedAt => $composableBuilder(
+    column: $table.sealedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sealTz => $composableBuilder(
+    column: $table.sealTz,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get armedAt => $composableBuilder(
+    column: $table.armedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cycle => $composableBuilder(
+    column: $table.cycle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get firedAt => $composableBuilder(
+    column: $table.firedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cooldownUntil => $composableBuilder(
+    column: $table.cooldownUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get openedAt => $composableBuilder(
+    column: $table.openedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get openedDeviceTs => $composableBuilder(
+    column: $table.openedDeviceTs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get serverUpdatedAt => $composableBuilder(
+    column: $table.serverUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rejected => $composableBuilder(
+    column: $table.rejected,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get notifyAt => $composableBuilder(
+    column: $table.notifyAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CapsulesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CapsulesTable> {
+  $$CapsulesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get unlockType => $composableBuilder(
+    column: $table.unlockType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get unlockLocalDate => $composableBuilder(
+    column: $table.unlockLocalDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerMoodId => $composableBuilder(
+    column: $table.triggerMoodId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get triggerQuadrant => $composableBuilder(
+    column: $table.triggerQuadrant,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get payloadCt =>
+      $composableBuilder(column: $table.payloadCt, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadClear => $composableBuilder(
+    column: $table.payloadClear,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get sealedAt =>
+      $composableBuilder(column: $table.sealedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get sealTz =>
+      $composableBuilder(column: $table.sealTz, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get armedAt =>
+      $composableBuilder(column: $table.armedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get cycle =>
+      $composableBuilder(column: $table.cycle, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get firedAt =>
+      $composableBuilder(column: $table.firedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get cooldownUntil => $composableBuilder(
+    column: $table.cooldownUntil,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get openedAt =>
+      $composableBuilder(column: $table.openedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get openedDeviceTs => $composableBuilder(
+    column: $table.openedDeviceTs,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get serverUpdatedAt => $composableBuilder(
+    column: $table.serverUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<String> get rejected =>
+      $composableBuilder(column: $table.rejected, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get notifyAt =>
+      $composableBuilder(column: $table.notifyAt, builder: (column) => column);
+}
+
+class $$CapsulesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CapsulesTable,
+          CapsuleRow,
+          $$CapsulesTableFilterComposer,
+          $$CapsulesTableOrderingComposer,
+          $$CapsulesTableAnnotationComposer,
+          $$CapsulesTableCreateCompanionBuilder,
+          $$CapsulesTableUpdateCompanionBuilder,
+          (
+            CapsuleRow,
+            BaseReferences<_$AppDatabase, $CapsulesTable, CapsuleRow>,
+          ),
+          CapsuleRow,
+          PrefetchHooks Function()
+        > {
+  $$CapsulesTableTableManager(_$AppDatabase db, $CapsulesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CapsulesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CapsulesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CapsulesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> unlockType = const Value.absent(),
+                Value<String?> unlockLocalDate = const Value.absent(),
+                Value<String?> triggerMoodId = const Value.absent(),
+                Value<String?> triggerQuadrant = const Value.absent(),
+                Value<String?> payloadCt = const Value.absent(),
+                Value<String?> payloadClear = const Value.absent(),
+                Value<DateTime> sealedAt = const Value.absent(),
+                Value<String?> sealTz = const Value.absent(),
+                Value<DateTime?> armedAt = const Value.absent(),
+                Value<int> cycle = const Value.absent(),
+                Value<DateTime?> firedAt = const Value.absent(),
+                Value<DateTime?> cooldownUntil = const Value.absent(),
+                Value<DateTime?> openedAt = const Value.absent(),
+                Value<DateTime?> openedDeviceTs = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> serverUpdatedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<String?> rejected = const Value.absent(),
+                Value<DateTime?> notifyAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapsulesCompanion(
+                id: id,
+                unlockType: unlockType,
+                unlockLocalDate: unlockLocalDate,
+                triggerMoodId: triggerMoodId,
+                triggerQuadrant: triggerQuadrant,
+                payloadCt: payloadCt,
+                payloadClear: payloadClear,
+                sealedAt: sealedAt,
+                sealTz: sealTz,
+                armedAt: armedAt,
+                cycle: cycle,
+                firedAt: firedAt,
+                cooldownUntil: cooldownUntil,
+                openedAt: openedAt,
+                openedDeviceTs: openedDeviceTs,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                synced: synced,
+                rejected: rejected,
+                notifyAt: notifyAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String unlockType,
+                Value<String?> unlockLocalDate = const Value.absent(),
+                Value<String?> triggerMoodId = const Value.absent(),
+                Value<String?> triggerQuadrant = const Value.absent(),
+                Value<String?> payloadCt = const Value.absent(),
+                Value<String?> payloadClear = const Value.absent(),
+                required DateTime sealedAt,
+                Value<String?> sealTz = const Value.absent(),
+                Value<DateTime?> armedAt = const Value.absent(),
+                Value<int> cycle = const Value.absent(),
+                Value<DateTime?> firedAt = const Value.absent(),
+                Value<DateTime?> cooldownUntil = const Value.absent(),
+                Value<DateTime?> openedAt = const Value.absent(),
+                Value<DateTime?> openedDeviceTs = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<DateTime?> serverUpdatedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<String?> rejected = const Value.absent(),
+                Value<DateTime?> notifyAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapsulesCompanion.insert(
+                id: id,
+                unlockType: unlockType,
+                unlockLocalDate: unlockLocalDate,
+                triggerMoodId: triggerMoodId,
+                triggerQuadrant: triggerQuadrant,
+                payloadCt: payloadCt,
+                payloadClear: payloadClear,
+                sealedAt: sealedAt,
+                sealTz: sealTz,
+                armedAt: armedAt,
+                cycle: cycle,
+                firedAt: firedAt,
+                cooldownUntil: cooldownUntil,
+                openedAt: openedAt,
+                openedDeviceTs: openedDeviceTs,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                synced: synced,
+                rejected: rejected,
+                notifyAt: notifyAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CapsulesTable, CapsuleRow>(table),
+                  BaseReferences<_$AppDatabase, $CapsulesTable, CapsuleRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CapsulesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CapsulesTable,
+      CapsuleRow,
+      $$CapsulesTableFilterComposer,
+      $$CapsulesTableOrderingComposer,
+      $$CapsulesTableAnnotationComposer,
+      $$CapsulesTableCreateCompanionBuilder,
+      $$CapsulesTableUpdateCompanionBuilder,
+      (CapsuleRow, BaseReferences<_$AppDatabase, $CapsulesTable, CapsuleRow>),
+      CapsuleRow,
+      PrefetchHooks Function()
+    >;
+typedef $$CapsuleMediaTableCreateCompanionBuilder =
+    CapsuleMediaCompanion Function({
+      required String capsuleId,
+      required String slot,
+      Value<String?> file,
+      Value<String?> path,
+      Value<int> attempts,
+      Value<DateTime?> nextAttemptAt,
+      Value<bool> failed,
+      Value<int> rowid,
+    });
+typedef $$CapsuleMediaTableUpdateCompanionBuilder =
+    CapsuleMediaCompanion Function({
+      Value<String> capsuleId,
+      Value<String> slot,
+      Value<String?> file,
+      Value<String?> path,
+      Value<int> attempts,
+      Value<DateTime?> nextAttemptAt,
+      Value<bool> failed,
+      Value<int> rowid,
+    });
+
+class $$CapsuleMediaTableFilterComposer
+    extends Composer<_$AppDatabase, $CapsuleMediaTable> {
+  $$CapsuleMediaTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get capsuleId => $composableBuilder(
+    column: $table.capsuleId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get slot => $composableBuilder(
+    column: $table.slot,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get file => $composableBuilder(
+    column: $table.file,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get failed => $composableBuilder(
+    column: $table.failed,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CapsuleMediaTableOrderingComposer
+    extends Composer<_$AppDatabase, $CapsuleMediaTable> {
+  $$CapsuleMediaTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get capsuleId => $composableBuilder(
+    column: $table.capsuleId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get slot => $composableBuilder(
+    column: $table.slot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get file => $composableBuilder(
+    column: $table.file,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get failed => $composableBuilder(
+    column: $table.failed,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CapsuleMediaTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CapsuleMediaTable> {
+  $$CapsuleMediaTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get capsuleId =>
+      $composableBuilder(column: $table.capsuleId, builder: (column) => column);
+
+  GeneratedColumn<String> get slot =>
+      $composableBuilder(column: $table.slot, builder: (column) => column);
+
+  GeneratedColumn<String> get file =>
+      $composableBuilder(column: $table.file, builder: (column) => column);
+
+  GeneratedColumn<String> get path =>
+      $composableBuilder(column: $table.path, builder: (column) => column);
+
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get failed =>
+      $composableBuilder(column: $table.failed, builder: (column) => column);
+}
+
+class $$CapsuleMediaTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CapsuleMediaTable,
+          CapsuleMediaRow,
+          $$CapsuleMediaTableFilterComposer,
+          $$CapsuleMediaTableOrderingComposer,
+          $$CapsuleMediaTableAnnotationComposer,
+          $$CapsuleMediaTableCreateCompanionBuilder,
+          $$CapsuleMediaTableUpdateCompanionBuilder,
+          (
+            CapsuleMediaRow,
+            BaseReferences<_$AppDatabase, $CapsuleMediaTable, CapsuleMediaRow>,
+          ),
+          CapsuleMediaRow,
+          PrefetchHooks Function()
+        > {
+  $$CapsuleMediaTableTableManager(_$AppDatabase db, $CapsuleMediaTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CapsuleMediaTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CapsuleMediaTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CapsuleMediaTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> capsuleId = const Value.absent(),
+                Value<String> slot = const Value.absent(),
+                Value<String?> file = const Value.absent(),
+                Value<String?> path = const Value.absent(),
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> nextAttemptAt = const Value.absent(),
+                Value<bool> failed = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapsuleMediaCompanion(
+                capsuleId: capsuleId,
+                slot: slot,
+                file: file,
+                path: path,
+                attempts: attempts,
+                nextAttemptAt: nextAttemptAt,
+                failed: failed,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String capsuleId,
+                required String slot,
+                Value<String?> file = const Value.absent(),
+                Value<String?> path = const Value.absent(),
+                Value<int> attempts = const Value.absent(),
+                Value<DateTime?> nextAttemptAt = const Value.absent(),
+                Value<bool> failed = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapsuleMediaCompanion.insert(
+                capsuleId: capsuleId,
+                slot: slot,
+                file: file,
+                path: path,
+                attempts: attempts,
+                nextAttemptAt: nextAttemptAt,
+                failed: failed,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CapsuleMediaTable, CapsuleMediaRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CapsuleMediaTable,
+                    CapsuleMediaRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CapsuleMediaTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CapsuleMediaTable,
+      CapsuleMediaRow,
+      $$CapsuleMediaTableFilterComposer,
+      $$CapsuleMediaTableOrderingComposer,
+      $$CapsuleMediaTableAnnotationComposer,
+      $$CapsuleMediaTableCreateCompanionBuilder,
+      $$CapsuleMediaTableUpdateCompanionBuilder,
+      (
+        CapsuleMediaRow,
+        BaseReferences<_$AppDatabase, $CapsuleMediaTable, CapsuleMediaRow>,
+      ),
+      CapsuleMediaRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5394,4 +7807,8 @@ class $AppDatabaseManager {
       $$DeadLettersTableTableManager(_db, _db.deadLetters);
   $$KeyValuesTableTableManager get keyValues =>
       $$KeyValuesTableTableManager(_db, _db.keyValues);
+  $$CapsulesTableTableManager get capsules =>
+      $$CapsulesTableTableManager(_db, _db.capsules);
+  $$CapsuleMediaTableTableManager get capsuleMedia =>
+      $$CapsuleMediaTableTableManager(_db, _db.capsuleMedia);
 }

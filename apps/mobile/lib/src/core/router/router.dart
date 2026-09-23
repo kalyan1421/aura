@@ -15,61 +15,21 @@ import '../../features/onboarding/gate_controller.dart';
 import '../../features/onboarding/language_screen.dart';
 import '../../features/onboarding/trust_screen.dart';
 import '../../features/onboarding/welcome_screen.dart';
+import '../../features/rooms/room_join_screen.dart';
+import '../../features/rooms/room_navigation.dart' show RoomJoinRequest;
+import '../../features/rooms/room_screen.dart';
+import '../../features/rooms/rooms_home_screen.dart';
+import '../../features/safety/safety_center_screen.dart';
+import '../../features/sanctuary/sanctuary_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/shell/app_shell.dart';
 import '../a11y/motion.dart';
-import '../env/env.dart';
+import 'deep_links.dart';
+import 'routes.dart';
+
+export 'routes.dart';
 
 part 'router.g.dart';
-
-abstract final class Routes {
-  static const String root = '/';
-  static const String welcome = '/welcome';
-  static const String trust = '/onboarding/trust';
-  static const String dob = '/onboarding/dob';
-  static const String language = '/onboarding/language';
-  static const String onboardingSignIn = '/onboarding/sign-in';
-  static const String blocked = '/blocked';
-  static const String home = '/home';
-  static const String checkIn = '/checkin';
-  static const String settings = '/settings';
-  static const String deleteAccount = '/settings/delete-account';
-  static const String history = '/history';
-  static String historyEntry(String checkInId) => '/history/$checkInId';
-  static const String signIn = '/sign-in';
-  static const String debugAvatar = '/debug/avatar';
-
-  static String forStage(OnboardingStage s) => switch (s) {
-    OnboardingStage.welcome => welcome,
-    OnboardingStage.trust => trust,
-    OnboardingStage.dob => dob,
-    OnboardingStage.language => language,
-    OnboardingStage.signIn => onboardingSignIn,
-    OnboardingStage.firstCheckIn => checkIn,
-    OnboardingStage.done => home,
-  };
-}
-
-/// Pure redirect rule (unit-testable): the under-13 lock wins over
-/// everything; onboarding steps run in order; after onboarding the
-/// onboarding routes bounce to Home.
-String? gateRedirect(GateState gate, String location) {
-  if (gate.isBlocked) return location == Routes.blocked ? null : Routes.blocked;
-  if (location == Routes.blocked) return Routes.root;
-  if (location.startsWith('/debug')) return Env.debugTools ? null : Routes.root;
-
-  final target = Routes.forStage(gate.stage);
-  if (!gate.onboarded) return location == target ? null : target;
-
-  const onboardingOnly = {
-    Routes.root,
-    Routes.welcome,
-    Routes.trust,
-    Routes.dob,
-    Routes.language,
-    Routes.onboardingSignIn,
-  };
-  return onboardingOnly.contains(location) ? Routes.home : null;
-}
 
 /// Calm transitions: a soft fade with a slight rise. Under reduced motion a
 /// plain crossfade of at most 300 ms (REQ-A11Y-08).
@@ -118,9 +78,14 @@ GoRouter router(Ref ref) {
         _page(state, build(state), reduceMotion: reduceMotionOf(context)),
   );
 
+  StatefulShellBranch tab(String path, Widget screen) =>
+      StatefulShellBranch(routes: [route(path, (_) => screen)]);
+
   return GoRouter(
     initialLocation: Routes.root,
     refreshListenable: gate,
+    onEnter: (context, current, next, router) =>
+        deepLinkOnEnter(router, next.uri, () => gate.value),
     redirect: (context, state) =>
         gateRedirect(gate.value, state.matchedLocation),
     routes: [
@@ -131,19 +96,48 @@ GoRouter router(Ref ref) {
       route(Routes.language, (_) => const LanguageScreen()),
       route(Routes.onboardingSignIn, (_) => const SignInScreen()),
       route(Routes.blocked, (_) => const BlockedScreen()),
-      route(Routes.home, (_) => const HomeScreen()),
+      // Home · Sanctuary · [Check in] · Rooms · Insights. Branch order is
+      // ShellTab's.
+      StatefulShellRoute.indexedStack(
+        pageBuilder: (context, state, shell) => _page(
+          state,
+          AppShell(shell: shell),
+          reduceMotion: reduceMotionOf(context),
+        ),
+        branches: [
+          tab(Routes.home, const HomeScreen()),
+          tab(Routes.sanctuary, const SanctuaryScreen()),
+          tab(Routes.rooms, const RoomsHomeScreen()),
+          tab(Routes.insights, const HistoryScreen()),
+        ],
+      ),
       route(
         Routes.checkIn,
         (_) => CheckInScreen(
           first: gate.value.stage == OnboardingStage.firstCheckIn,
         ),
       ),
+      route(Routes.safety, (_) => const SafetyCenterScreen()),
       route(Routes.settings, (_) => const SettingsScreen()),
       route(Routes.deleteAccount, (_) => const DeleteAccountScreen()),
-      route(Routes.history, (_) => const HistoryScreen()),
+      // The history list is the Insights tab (until F10 gives Insights its
+      // own screen); older links and fallbacks land there.
+      GoRoute(path: Routes.history, redirect: (_, _) => Routes.insights),
       route(
         '${Routes.history}/:id',
         (s) => CheckInDetailScreen(id: s.pathParameters['id']!),
+      ),
+      // F5 Mood Rooms, above the shell. The join screen gets the saved
+      // check-in's quadrant and mood as `extra` (never in the location).
+      route(
+        Routes.roomJoin,
+        (s) => RoomJoinScreen(
+          request: s.extra is RoomJoinRequest ? s.extra! as RoomJoinRequest : null,
+        ),
+      ),
+      route(
+        '${Routes.rooms}/:id',
+        (s) => RoomScreen(roomId: s.pathParameters['id']!),
       ),
       route(Routes.signIn, (_) => const SignInScreen(standalone: true)),
       route(Routes.debugAvatar, (_) => const AvatarDebugScreen()),

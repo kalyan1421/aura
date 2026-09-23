@@ -198,17 +198,30 @@ class CheckInDraft extends ChangeNotifier {
 /// Optional details of a check-in: tag chips (context tags, the person's
 /// recent custom tags, new ones), a custom-tag field, the private note and
 /// an optional voice note (≤ 60 s).
+///
+/// Guided prompt (REQ-CHK-05): [notePrompt] shows only as the empty note's
+/// hint, so typing hides it and it is never saved, synced or counted toward
+/// the 500 characters. "Another prompt" ([onAnotherPrompt]) is offered while
+/// the note is empty.
 class CheckInDetailsEditor extends StatelessWidget {
   const CheckInDetailsEditor({
     super.key,
     required this.draft,
     this.recentTags = const [],
+    this.notePrompt,
+    this.onAnotherPrompt,
   });
 
   final CheckInDraft draft;
 
   /// The person's recent custom tags (most recent first).
   final List<String> recentTags;
+
+  /// The guided prompt for the empty note, or `null` for none.
+  final String? notePrompt;
+
+  /// Shows a different prompt; `null` hides "Another prompt".
+  final VoidCallback? onAnotherPrompt;
 
   @override
   Widget build(BuildContext context) {
@@ -324,8 +337,27 @@ class CheckInDetailsEditor extends StatelessWidget {
                 labelText: l.checkin_noteLabel,
                 helperText: l.checkin_noteHint,
                 alignLabelWithHint: true,
+                // The prompt is only a hint: typing hides it, and it is
+                // never part of the note.
+                hintText: notePrompt,
+                hintMaxLines: 3,
+                floatingLabelBehavior: notePrompt == null
+                    ? null
+                    : FloatingLabelBehavior.always,
               ),
             ),
+            if (notePrompt != null &&
+                onAnotherPrompt != null &&
+                draft.note.text.isEmpty)
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  key: const ValueKey('checkin-prompt-another'),
+                  onPressed: onAnotherPrompt,
+                  icon: const Icon(Icons.autorenew_rounded, size: 18),
+                  label: Text(l.prompt_another),
+                ),
+              ),
             const SizedBox(height: AuraSpace.l),
             VoiceNoteField(draft: draft),
           ],

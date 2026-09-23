@@ -5,39 +5,69 @@ import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
-import '../../core/db/kv_store.dart';
-import '../../core/providers.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
-import '../../core/widgets/copy_fallback_notice.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
-import '../onboarding/gate_controller.dart';
-import 'helplines.dart';
+import '../safety/helpline_list.dart';
+import '../sanctuary/habit_auto_complete.dart';
+import '../safety/safety_center_screen.dart';
 
-/// Opens the support sheet. Works offline from bundled data, with no login.
+/// Opens the support sheet: contextual help that keeps the task underneath
+/// (a crisis-lexicon hit after saving, a custom habit name). "I need help
+/// now" opens the Safety Center instead ([openSafetyCenter]). Works offline
+/// from bundled data, with no login. Shown over everything, the navigation
+/// bar included.
 Future<void> showSupportSheet(BuildContext context, {bool crisis = false}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    useRootNavigator: true,
     builder: (_) => SupportSheet(crisis: crisis),
   );
 }
 
+/// Opens the Safety Center (`/safety`), a full route above everything, from
+/// any screen and gate state. Outside the app's router (a bare navigator)
+/// the same screen is pushed directly. Never opens a second copy on top of
+/// itself.
+void openSafetyCenter(BuildContext context) {
+  final router = GoRouter.maybeOf(context);
+  if (router == null) {
+    unawaited(
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => const SafetyCenterScreen()),
+      ),
+    );
+    return;
+  }
+  final open = router.routerDelegate.currentConfiguration;
+  if (open.isNotEmpty && router.state.matchedLocation == Routes.safety) {
+    return;
+  }
+  unawaited(router.push<void>(Routes.safety));
+}
+
 /// "I need help now" — always visible (Home, and every screen where it
-/// normally appears). Warm lantern tone, never alarm red.
+/// normally appears). Warm lantern tone, never alarm red. Opens the Safety
+/// Center ([openSafetyCenter]).
 ///
 /// A pill while the label fits on one line. When it wraps (a narrow top
 /// bar, 200% text, a longer language) it becomes a rounded rectangle
 /// ([AuraRadius.m]), so a tall button never turns into a near-circle that
 /// clips its label. The label is never cut to a line count.
 class HelpNowButton extends StatelessWidget {
-  const HelpNowButton({super.key, this.compact = false});
+  const HelpNowButton({super.key, this.compact = false, this.onOpen});
 
   final bool compact;
+
+  /// Called just before the Safety Center opens, e.g. to pause a breathing
+  /// pacer underneath (REQ-SAN-08).
+  final VoidCallback? onOpen;
 
   static const double _iconSize = 18;
   static const double _minHeight = 44; // 48 dp tap target (padded)
@@ -93,7 +123,10 @@ class HelpNowButton extends StatelessWidget {
       child: Semantics(
         sortKey: const OrdinalSortKey(1),
         child: OutlinedButton.icon(
-          onPressed: () => showSupportSheet(context),
+          onPressed: () {
+            onOpen?.call();
+            openSafetyCenter(context);
+          },
           icon: const Icon(Icons.favorite_rounded, size: _iconSize),
           // Wrapped lines hug the longest one, so the button stays compact.
           label: Text(
@@ -177,6 +210,9 @@ class _HelpShape extends OutlinedBorder {
   int get hashCode => Object.hash(side, pillUpTo);
 }
 
+/// The support sheet ([showSupportSheet]): the same help as the Safety
+/// Center (helplines, grounding, disclaimer) over the task in progress, with
+/// crisis wording and "Back to my check-in" after a lexicon hit.
 class SupportSheet extends ConsumerStatefulWidget {
   const SupportSheet({super.key, this.crisis = false});
 
@@ -187,72 +223,20 @@ class SupportSheet extends ConsumerStatefulWidget {
 }
 
 class _SupportSheetState extends ConsumerState<SupportSheet> {
-  bool _isMinor = false;
-
   /// Set when the finished minute ticked off today's Breathe habit.
   bool _breatheLogged = false;
 
-  /// The helpline this device couldn't dial (an iPad, a simulator): its
-  /// number shows under it with a Copy action until closed.
-  Helpline? _couldNotCall;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_loadMinor());
-  }
-
-  /// Childline (India) is listed until the 18th birthday, judged on the
-  /// app's shared clock and Aura day (04:00 rollover in the person's zone),
-  /// like every other day in the app. Around midnight that can list it a
-  /// few hours longer, never shorter.
-  Future<void> _loadMinor() async {
-    final raw = await ref.read(kvStoreProvider).get(KvKeys.minorUntil);
-    final until = LocalDay.tryParse(raw);
-    if (until == null || !mounted) return;
-    final today = ref.read(timeContextProvider).today();
-    setState(() => _isMinor = today.isBefore(until));
-  }
-
-  /// Dials at once (nothing is checked first, so a phone that can call is
-  /// never slowed down). If the device can't place calls, the number shows
-  /// under the row with a Copy action.
-  Future<void> _call(Helpline line) async {
-    var placed = false;
-    try {
-      placed = await launchUrl(Uri(scheme: 'tel', path: line.dial));
-    } on Object {
-      placed = false;
-    }
-    if (!mounted) return;
-    setState(() => _couldNotCall = placed ? null : line);
-  }
-
-  /// F2: finishing the 60 s exercise auto-completes today's Breathe habit,
-  /// only for an onboarded person who shows Breathe on Home. Nothing is read
-  /// or written from the Blocked (under-13) screen or before onboarding, and
-  /// a failure here never disturbs the sheet.
   Future<void> _completeBreathe() async {
-    try {
-      final gate = ref.read(gateControllerProvider);
-      if (gate.isBlocked || !gate.onboarded) return;
-      final logged = await ref
-          .read(habitRepositoryProvider)
-          .completeToday(PresetHabitKeys.breathe);
-      if (!logged) return;
-      ref.read(syncControllerProvider).notifyLocalWrite();
-      if (mounted) setState(() => _breatheLogged = true);
-    } on Object catch (e) {
-      debugPrint('support: breathe auto-complete skipped (${e.runtimeType})');
-    }
+    // F2: the finished 60 s grounding ticks off today's Breathe (the shared
+    // auto-complete rule: onboarded, shown on Home, idempotent).
+    final logged = await autoCompleteHabitToday(ref, PresetHabitKeys.breathe);
+    if (logged && mounted) setState(() => _breatheLogged = true);
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final region = ref.watch(deviceRegionProvider);
-    final lines = helplinesFor(region, l, isMinor: _isMinor);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -301,40 +285,8 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
             ),
           ),
           const SizedBox(height: AuraSpace.xl),
-          if (lines.isEmpty)
-            _Card(
-              child: Text(
-                l.help_otherEmergency,
-                style: theme.textTheme.titleMedium,
-              ),
-            )
-          else
-            for (var i = 0; i < lines.length; i++) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: AuraSpace.s),
-                child: _HelplineTile(
-                  line: lines[i],
-                  autofocus: i == 0,
-                  onCall: () => unawaited(_call(lines[i])),
-                ),
-              ),
-              if (_couldNotCall?.dial == lines[i].dial)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AuraSpace.s),
-                  child: CopyFallbackNotice(
-                    key: ValueKey('support-call-failed-${lines[i].dial}'),
-                    message: l.polish_helpCallFailed(lines[i].number),
-                    copyText: lines[i].number,
-                    copyLabel: l.polish_helpCopyNumber,
-                    copiedLabel: l.polish_helpNumberCopied,
-                    onClose: () => setState(() => _couldNotCall = null),
-                  ),
-                ),
-            ],
-          if (lines.isNotEmpty) ...[
-            const SizedBox(height: AuraSpace.s),
-            Text(l.help_otherEmergency, style: theme.textTheme.bodySmall),
-          ],
+          // Focus starts on the first helpline (REQ-A11Y-11).
+          const HelplineList(),
           const SizedBox(height: AuraSpace.xl),
           GroundingExercise(onComplete: _completeBreathe),
           if (_breatheLogged) ...[
@@ -365,97 +317,6 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  const _Card({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(AuraSpace.l),
-    decoration: BoxDecoration(
-      color: AuraColors.surface,
-      borderRadius: BorderRadius.circular(AuraRadius.m),
-      border: Border.all(color: AuraColors.hairline),
-    ),
-    child: child,
-  );
-}
-
-class _HelplineTile extends StatelessWidget {
-  const _HelplineTile({
-    required this.line,
-    required this.onCall,
-    this.autofocus = false,
-  });
-
-  final Helpline line;
-  final VoidCallback onCall;
-  final bool autofocus;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    // The InkWell's semantics are replaced, so the tap action is restored
-    // here: a screen-reader double-tap must place the call.
-    return Semantics(
-      button: true,
-      label: l.help_callSemantic(line.name, line.number),
-      onTap: onCall,
-      excludeSemantics: true,
-      child: Material(
-        color: AuraColors.surface,
-        borderRadius: BorderRadius.circular(AuraRadius.m),
-        child: InkWell(
-          key: ValueKey('support-call-${line.dial}'),
-          autofocus: autofocus,
-          borderRadius: BorderRadius.circular(AuraRadius.m),
-          onTap: onCall,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AuraSpace.l,
-              vertical: AuraSpace.m,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: AuraColors.lantern.withValues(alpha: 0.14),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.call_rounded,
-                    color: AuraColors.lantern,
-                  ),
-                ),
-                const SizedBox(width: AuraSpace.m),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(line.name, style: theme.textTheme.titleSmall),
-                      Text(
-                        line.number,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: AuraColors.lantern,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 import 'api_models.dart';
 
@@ -38,6 +40,14 @@ class ApiException implements Exception {
       status == 409 && code == deletionInProgressCode;
 
   static const String deletionInProgressCode = 'account_deletion_in_progress';
+
+  /// `403 account_closed`: the account was closed for breaking the rules
+  /// (contracts/api/v1.md "Account closed"). Every route but `/v1/account*`
+  /// and the safety reads refuses it; never retried. The app shows the calm
+  /// closed screen (features/auth/account_closed.dart).
+  bool get isAccountClosed => status == 403 && code == accountClosedCode;
+
+  static const String accountClosedCode = 'account_closed';
 
   @override
   String toString() => 'ApiException($status, $code)';
@@ -83,6 +93,7 @@ class AuraApi {
     Dio? dio,
     Dio? mediaDio,
     this._supabaseUrl,
+    this._onAccountClosed,
   }) : _dio =
            dio ??
            Dio(
@@ -112,6 +123,10 @@ class AuraApi {
 
   /// This build's Supabase URL, for [mediaUrlFor].
   final String? _supabaseUrl;
+
+  /// Told (in a microtask) about every `403 account_closed`, whichever call
+  /// got it ([ApiException.isAccountClosed]).
+  final void Function()? _onAccountClosed;
 
   Future<Options> _auth() async {
     final token = await _accessToken();
@@ -259,6 +274,38 @@ class AuraApi {
     }
   }
 
+  /// `GET /v1/account` → `accountClosed: true` when the account was closed
+  /// for breaking the rules (the key is absent otherwise; contracts/api/v1.md
+  /// "Account closed").
+  Future<bool> accountClosed() async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/v1/account',
+        options: await _auth(),
+      );
+      return res.data?['accountClosed'] == true;
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `POST /v1/account/apple-auth` → 204: the one-time Sign in with Apple
+  /// authorization code, so the server can revoke the Apple token when the
+  /// account is deleted (App Review 5.1.1(v)). `503 apple_unavailable` when
+  /// the server has no Apple key; callers ignore every failure. The code is
+  /// never logged.
+  Future<void> postAppleAuth(String authorizationCode) async {
+    try {
+      await _dio.post<void>(
+        '/v1/account/apple-auth',
+        data: {'authorizationCode': authorizationCode},
+        options: await _auth(),
+      );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
   // ---- media: voice notes (F1 · DS-1, contracts/api/v1.md) ------------------
 
   /// `POST /v1/media/upload-url`. [bytes] is the exact ciphertext length
@@ -273,6 +320,35 @@ class AuraApi {
       final res = await _dio.post<Map<String, dynamic>>(
         '/v1/media/upload-url',
         data: {'kind': kind, 'recordId': recordId, 'bytes': bytes},
+        options: await _auth(),
+      );
+      return MediaUploadUrl.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `POST /v1/media/upload-url` for F4 capsule media
+  /// (contracts/api/v1-capsules.md §5): [kind] `capsule_voice` (no [index])
+  /// or `capsule_photo` with [index] 0–2. [bytes] is the exact ciphertext
+  /// length. A slot that already holds an object of a sealed capsule →
+  /// `409 capsule_sealed` (already uploaded); a deleted capsule →
+  /// `409 capsule_deleted`.
+  Future<MediaUploadUrl> capsuleMediaUploadUrl({
+    required String capsuleId,
+    required String kind,
+    required int bytes,
+    int? index,
+  }) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/v1/media/upload-url',
+        data: {
+          'kind': kind,
+          'recordId': capsuleId,
+          'bytes': bytes,
+          'index': ?index,
+        },
         options: await _auth(),
       );
       return MediaUploadUrl.fromJson(res.data ?? const {});
@@ -338,6 +414,18 @@ class AuraApi {
     final code = data is Map && data['code'] is String
         ? data['code'] as String
         : 'http_${res.statusCode}';
-    return ApiException(code: code, status: res.statusCode);
+    final ex = ApiException(code: code, status: res.statusCode);
+    final onClosed = _onAccountClosed;
+    if (onClosed != null && ex.isAccountClosed) {
+      // Outside the caller's error path: a UI hiccup never changes the error.
+      scheduleMicrotask(() {
+        try {
+          onClosed();
+        } on Object catch (e) {
+          debugPrint('api: account closed hook ${e.runtimeType}');
+        }
+      });
+    }
+    return ex;
   }
 }

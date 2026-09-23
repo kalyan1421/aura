@@ -9,6 +9,10 @@
          explainer (PRD 15-permissions). Foreground recording only: no
          foreground service, no background audio. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- F4 capsule "ready to open" notices (flutter_local_notifications):
+         scheduled notifications are restored after a reboot. Inexact
+         scheduling only: no exact-alarm permission (PRD 15-permissions). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- Nothing leaves the phone through OS backup (PRD 16-offline: the
          encrypted DB and voice files are restored from the server, never from
          a backup). allowBackup=false stops cloud backup, but on Android 12+
@@ -49,6 +53,17 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="aura" android:host="auth-callback"/>
             </intent-filter>
+            <!-- App deep links (core/router/deep_links.dart): aura://checkin,
+                 aura://safety, aura://sanctuary. The router applies the
+                 gate (under-13 lock, onboarding) before opening them. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="aura" android:host="checkin"/>
+                <data android:scheme="aura" android:host="safety"/>
+                <data android:scheme="aura" android:host="sanctuary"/>
+            </intent-filter>
         </activity>
         <!-- FCM: no token is created until the user opts in after the first
              check-in (PushService turns auto-init on, and off at sign-out). -->
@@ -59,6 +74,21 @@
         <meta-data
             android:name="firebase_analytics_collection_deactivated"
             android:value="true" />
+        <!-- flutter_local_notifications: shows scheduled notices (F4 capsule
+             unlocks) and re-schedules them after a reboot or an update. -->
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

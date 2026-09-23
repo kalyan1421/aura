@@ -7,6 +7,23 @@ import '../../core/ids/ids.dart';
 import '../../core/sync/outbox_repository.dart';
 import '../../core/time/clock.dart';
 
+// ---- auto-complete rules (F2) -----------------------------------------------
+
+/// A check-in note of at least this many characters auto-completes today's
+/// Journal habit (F2). Characters as people see them (grapheme clusters), so
+/// a Telugu conjunct or an emoji counts once, as everywhere else in the app.
+const int journalNoteMinChars = 50;
+
+/// Whether [note] is long enough to count as journaling (F2): at least
+/// [journalNoteMinChars] characters once trimmed.
+bool noteCompletesJournal(String? note) =>
+    (note?.trim().characters.length ?? 0) >= journalNoteMinChars;
+
+/// Active breathing time that auto-completes today's Breathe habit (F2: "the
+/// 60 s exercise"). Any Sanctuary breathing session counts once it reaches
+/// this, whatever length was picked.
+const Duration breatheAutoCompleteAfter = Duration(seconds: 60);
+
 /// One habit on Home today: a preset (its label comes from l10n) or a
 /// custom habit (its own [name]), and whether it is done this Aura day.
 class HabitToday {
@@ -201,9 +218,11 @@ class HabitRepository {
     return _toggleLog(habit);
   });
 
-  /// Auto-complete (F2: Breathe after the 60 s exercise): marks [presetKey]
-  /// done today unless it is hidden or already done. Never un-marks.
-  /// Returns whether a new completion was written.
+  /// Auto-complete (F2: Breathe after the 60 s exercise, Journal after a
+  /// note of [journalNoteMinChars]+ characters): marks [presetKey] done
+  /// today unless it is hidden or already done. Never un-marks, so calling
+  /// it again the same day is a no-op. Returns whether a new completion was
+  /// written.
   Future<bool> completeToday(String presetKey) => _db.transaction(() async {
     final existing = await _presetRow(presetKey, create: false);
     if (existing != null && !existing.active) return false;

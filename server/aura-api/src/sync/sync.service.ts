@@ -1,5 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MediaStoreError, PrivateMediaStore } from '../account/private-media';
+import {
+  CapsuleSyncHandler,
+  markCapsuleEffects,
+  newCapsuleEffects,
+  rollbackCapsuleEffects,
+  type CapsuleEffects,
+} from '../capsules/capsule-sync';
 import { ApiError } from '../common/api-error';
 import { describeZodError } from '../common/zod';
 import { isUuid, uuidv5 } from '../common/uuid';
@@ -7,6 +14,7 @@ import { CatalogueService } from '../catalogue/catalogue.service';
 import type { Tx } from '../db/db';
 import { DbService } from '../db/db.service';
 import { voiceObjectPath } from '../media/media-paths';
+import { NotificationPrefsSyncHandler } from '../notifications/notification-prefs';
 import { ProfileService } from '../profile/profile.service';
 import type { Snapshot } from '../progression/snapshot';
 import { ProgressionService } from '../progression/progression.service';
@@ -61,6 +69,8 @@ interface Ctx {
   now: Date;
   /** Voice objects whose reference an applied mutation removed (edit to null / delete); deleted after commit. */
   voiceCleanup: string[];
+  /** F4 capsule side effects (unlock-job scheduling, media cleanup); run after commit. */
+  capsuleFx: CapsuleEffects;
 }
 
 interface Timing {
@@ -87,6 +97,17 @@ export class SyncService {
     private readonly progression: ProgressionService,
     /** Storage API client (global QueuesModule) — best-effort voice-object cleanup. */
     private readonly media: PrivateMediaStore,
+    /**
+     * F4 entity `capsule` (contracts/api/v1-capsules.md), from CapsulesModule. Always injected by Nest (explicit
+     * token, so a missing provider fails at boot); optional in the signature only for unit tests that build the
+     * service by hand — without it capsule mutations are `unknown_entity`.
+     */
+    @Inject(CapsuleSyncHandler) private readonly capsules?: CapsuleSyncHandler,
+    /**
+     * F14 entity `notification_prefs` (contracts/api/v1-notifications.md), from NotificationsModule. Same injection
+     * rule as `capsules`: without it (hand-built unit tests) the entity is `unknown_entity`.
+     */
+    @Inject(NotificationPrefsSyncHandler) private readonly notificationPrefs?: NotificationPrefsSyncHandler,
   ) {}
 
   async push(userId: string, body: unknown, now = new Date()): Promise<PushResponse> {
@@ -98,15 +119,16 @@ export class SyncService {
     if (!parsed.success) throw ApiError.badRequest('invalid_request', describeZodError(parsed.error));
     const { timezone: tz } = await this.profiles.require(userId);
 
-    const { results, snapshot, orphans } = await this.db.withTx(async (tx) => {
+    const { results, snapshot, orphans, capsuleFx } = await this.db.withTx(async (tx) => {
       await this.repo.lockUser(tx, userId);
-      const ctx: Ctx = { tx, userId, tz, now, voiceCleanup: [] };
+      const ctx: Ctx = { tx, userId, tz, now, voiceCleanup: [], capsuleFx: newCapsuleEffects() };
       const results: MutationResult[] = [];
       for (const raw of parsed.data.mutations) results.push(await this.applyOne(ctx, raw));
       const snapshot = await this.progression.recompute(tx, userId, tz, now);
-      return { results, snapshot, orphans: await this.unreferenced(ctx) };
+      return { results, snapshot, orphans: await this.unreferenced(ctx), capsuleFx: ctx.capsuleFx };
     });
     await this.removeVoiceObjects(orphans); // only after commit: a rolled-back push never loses a recording
+    await this.capsules?.afterCommit(userId, capsuleFx); // best-effort, never changes the result
     return { results, snapshot };
   }
 
@@ -161,10 +183,12 @@ export class SyncService {
 
     let reason: string | null = null;
     const cleanupMark = ctx.voiceCleanup.length;
+    const capsuleMark = markCapsuleEffects(ctx.capsuleFx);
     try {
       await ctx.tx.savepoint(() => this.dispatch(ctx, raw));
     } catch (err) {
       ctx.voiceCleanup.length = cleanupMark; // the savepoint rolled back: nothing of this mutation stays
+      rollbackCapsuleEffects(ctx.capsuleFx, capsuleMark);
       const r = rejectionReason(err);
       if (r === undefined) throw err; // infrastructure failure → whole push fails, client retries
       reason = r;
@@ -204,6 +228,18 @@ export class SyncService {
         return this.upsertHabitLog(ctx, m);
       case 'habit_log:delete':
         return this.repo.deleteHabitLog(ctx.tx, ctx.userId, this.payload(deletePayloadSchema, m).id);
+      case 'capsule:seal':
+      case 'capsule:open':
+      case 'capsule:fire':
+      case 'capsule:rearm':
+      case 'capsule:delete':
+        if (!this.capsules) return reject('unknown_entity');
+        return this.capsules.apply(ctx, m, ctx.capsuleFx);
+      case 'notification_prefs:upsert':
+        if (!this.notificationPrefs) return reject('unknown_entity');
+        return this.notificationPrefs.apply(ctx, m);
+      default:
+        return reject('unknown_op'); // a valid op the entity doesn't support (e.g. capsule:upsert, check_in:seal)
     }
   }
 

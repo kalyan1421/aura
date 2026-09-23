@@ -14,6 +14,7 @@ import '../net/api_models.dart';
 import '../net/aura_api.dart';
 import '../security/note_cipher.dart';
 import '../time/clock.dart';
+import 'capsule_sync.dart';
 import 'media_sync.dart';
 import 'outbox_repository.dart';
 
@@ -76,11 +77,17 @@ class SyncService implements SyncTrigger {
     this._reconcileHabits,
     this._onDeletionPending,
     this._media,
+    this._capsules,
   });
 
   /// Voice uploads (F1). Without it, a check-in waiting for media is sent
   /// without `voicePath`.
   final MediaSync? _media;
+
+  /// F4 time capsules: a `seal` gets its ciphertext and uploads its media
+  /// first; rejections, media retries and the `public.capsules` pull. Without
+  /// it capsule mutations wait in the outbox (never sent content-less).
+  final CapsuleSync? _capsules;
 
   /// The server refused a push with `403 account_deletion_pending`: the UI
   /// asks "Keep my account?" (features/account). Called once per hold.
@@ -168,8 +175,12 @@ class SyncService implements SyncTrigger {
     _debounce = Timer(const Duration(seconds: 2), kick);
   }
 
-  /// App came back to the foreground.
-  void onResume() => unawaited(kick());
+  /// App came back to the foreground (another phone may have changed a
+  /// capsule meanwhile: pull them too).
+  void onResume() {
+    _capsules?.requestPull();
+    unawaited(kick());
+  }
 
   /// The person tapped "Sync now": items waiting out a retry backoff go
   /// too, not only the ones already due.
@@ -330,6 +341,62 @@ class SyncService implements SyncTrigger {
           continue;
         }
         final payload = jsonDecode(r.payload) as Map<String, dynamic>;
+        if (r.entity == Entities.capsule) {
+          final capsules = _capsules;
+          if (capsules == null) {
+            // Not wired: a seal must never go out without its ciphertext.
+            skipped.add(r.seq);
+            continue;
+          }
+          // Uploads go after what came before in this batch was sent.
+          if (r.needsMedia && ready.isNotEmpty) break;
+          final step = await capsules.prepare(
+            r,
+            payload,
+            api: api,
+            cipher: await key(),
+            userId: user.id,
+            isCurrent: current,
+          );
+          if (!current()) return;
+          switch (step) {
+            case CapsulePushStep.send:
+              break;
+            case CapsulePushStep.waitKey:
+              skipped.add(r.seq); // never sends plaintext
+              continue;
+            case CapsulePushStep.obsolete:
+              await _outbox.drop([r]);
+              readySeqs.add(r.seq); // later rows of this capsule may go
+              continue;
+            case CapsulePushStep.retryMedia:
+              if (!await _outbox.mediaFailed(r, _clock.now())) {
+                skipped.add(r.seq);
+                continue;
+              }
+            // Gave up waiting: the seal goes now, its uploads keep retrying
+            // afterwards (contracts/api/v1-capsules.md §5).
+            case CapsulePushStep.held:
+              _hold(user.id);
+              return;
+            case CapsulePushStep.abort:
+              return;
+          }
+          ready.add(r);
+          readySeqs.add(r.seq);
+          mutations.add(
+            SyncMutation(
+              id: r.mutationId,
+              entity: r.entity,
+              op: r.op,
+              deviceTs: r.deviceTs.toUtc().toIso8601String(),
+              localDay: r.localDay,
+              payload: payload,
+              tz: r.tz,
+            ),
+          );
+          continue;
+        }
         if (r.needsNote) {
           final c = await key();
           if (c == null) {
@@ -448,6 +515,9 @@ class SyncService implements SyncTrigger {
           debugPrint('sync: rejected ${row.entity}/${row.op} (${r.reason})');
           await _outbox.reject([row], r.reason ?? 'rejected', _clock.now());
           if (r.reason == 'duplicate_preset_habit') reconcile = true;
+          if (row.entity == Entities.capsule) {
+            await _capsules?.onRejected(row, r.reason ?? 'rejected');
+          }
         }
       }
       await _outbox.acknowledge(acked);
@@ -462,6 +532,25 @@ class SyncService implements SyncTrigger {
           debugPrint('sync: reconcile ${e.runtimeType}');
         }
       }
+    }
+
+    // 4. Capsules: media a seal went without, then the pull (throttled;
+    //    always after a rejection or a resume).
+    final capsules = _capsules;
+    if (capsules != null && current()) {
+      try {
+        final cipher = await _dataKeys.cipherFor(user.id, api: api);
+        if (!current()) return;
+        await capsules.afterPush(
+          api: api,
+          cipher: cipher,
+          userId: user.id,
+          isCurrent: current,
+        );
+      } catch (e) {
+        debugPrint('sync: capsules ${e.runtimeType}');
+      }
+      if (!current()) return;
     }
 
     final remaining = await _outbox.count();

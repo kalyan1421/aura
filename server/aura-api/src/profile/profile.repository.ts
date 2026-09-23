@@ -49,6 +49,19 @@ export class ProfileRepository {
     return toDto(r.rows[0]);
   }
 
+  /**
+   * A platform signal said "under 18" (F8 REQ-ACC-04/10): invisible under-18 protections until `years` after
+   * `today` (the user's local date). Only ever extended, never shortened. Server-only (`public.minor_signals`).
+   */
+  async extendMinorSignal(q: Queryable, userId: string, today: string, years: number): Promise<void> {
+    await q.query(
+      `insert into public.minor_signals (user_id, minor_until) values ($1, ($2::date + make_interval(years => $3))::date)
+       on conflict (user_id) do update
+         set minor_until = greatest(public.minor_signals.minor_until, excluded.minor_until), updated_at = now()`,
+      [userId, today, years],
+    );
+  }
+
   /** avatar_state + streak_state with schema defaults (streak: 1 welcome rest day). */
   async ensureStateRows(q: Queryable, userId: string): Promise<void> {
     await q.query('insert into public.avatar_state (user_id) values ($1) on conflict (user_id) do nothing', [userId]);

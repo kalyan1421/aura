@@ -163,3 +163,112 @@ class KeyValues extends Table {
   @override
   Set<Column<Object>> get primaryKey => {key};
 }
+
+/// F4 time capsules (schema v5): a mirror of `public.capsules`
+/// (contracts/api/v1-capsules.md §3) plus this phone's own bookkeeping.
+///
+/// **Sealed means sealed**, on the phone too: the content (title, text,
+/// media descriptors, the hard-moment flag) is kept only as [payloadCt], the
+/// ciphertext made with the per-user data key — exactly what the server
+/// stores — and is decrypted in memory to show the title or open it. Only
+/// while no data key is on this phone yet (e.g. offline before the first key
+/// fetch) the payload waits as [payloadClear], inside the encrypted database
+/// like a check-in note; the push seals it before anything leaves the phone.
+///
+/// A deleted capsule stays as a tombstone (content and unlock target
+/// erased): its `cooldownUntil` still holds the global trigger cooldown.
+@DataClassName('CapsuleRow')
+class Capsules extends Table {
+  TextColumn get id => text()();
+
+  /// `date` | `mood`.
+  TextColumn get unlockType => text()();
+
+  /// Date capsules: opens at 10:00 on this date (`YYYY-MM-DD`) in the
+  /// current zone.
+  TextColumn get unlockLocalDate => text().nullable()();
+
+  /// Mood capsules: exactly one of these two.
+  TextColumn get triggerMoodId => text().nullable()();
+  TextColumn get triggerQuadrant => text().nullable()();
+
+  /// DS-1 ciphertext of the payload (AD = the capsule id). `null` on
+  /// tombstones and while [payloadClear] waits for the data key.
+  TextColumn get payloadCt => text().nullable()();
+
+  /// The payload JSON, only until a data key seals it (never synced).
+  TextColumn get payloadClear => text().nullable()();
+
+  /// Device time of sealing, and the zone it was sealed in (the window's
+  /// calendar date).
+  DateTimeColumn get sealedAt => dateTime()();
+  TextColumn get sealTz => text().nullable()();
+
+  /// Mood capsules: may fire from here (seal + 24 h, or the re-arm time).
+  DateTimeColumn get armedAt => dateTime().nullable()();
+
+  /// Re-arms so far ("Keep for next time"); sent with open/fire/rearm.
+  IntColumn get cycle => integer().withDefault(const Constant(0))();
+
+  /// Fire time in the current cycle (earliest wins across devices).
+  DateTimeColumn get firedAt => dateTime().nullable()();
+
+  /// Most recent fire + 168 h. The global cooldown is the max over all rows,
+  /// tombstones included.
+  DateTimeColumn get cooldownUntil => dateTime().nullable()();
+
+  /// First open in the current cycle: the server's time once pulled, this
+  /// phone's until then. One-way.
+  DateTimeColumn get openedAt => dateTime().nullable()();
+  DateTimeColumn get openedDeviceTs => dateTime().nullable()();
+
+  /// Tombstone.
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+
+  /// The server row's `updated_at` (last pull that touched it).
+  DateTimeColumn get serverUpdatedAt => dateTime().nullable()();
+
+  /// The seal reached the server (acknowledged, or pulled).
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
+
+  /// The server refused the seal for good (`trigger_capsule_limit`,
+  /// `invalid_unlock_date`, `date_capsule_limit`): the capsule lives only
+  /// on this phone until the person changes it (e.g. makes it a date
+  /// capsule, which re-seals the same id).
+  TextColumn get rejected => text().nullable()();
+
+  /// When this phone's local "ready to open" notification fires (date
+  /// capsules; `null` when none is scheduled). Lets the push handler skip
+  /// the server's backup push for the same capsule.
+  DateTimeColumn get notifyAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+/// A capsule's media on this phone and on the server (schema v5): one row
+/// per slot (`voice`, `photo-0` … `photo-2`).
+///
+/// [file] is a file name in the capsule's folder of `CapsuleMediaStore`:
+/// `<slot>.enc` is sealed with the data key (AD = `<capsule id>/<slot>`) —
+/// exactly the bytes uploaded; a raw file (`<slot>.m4a` / `.jpg`) only
+/// exists until a data key is on this phone. [path] is the server object
+/// (`<user_id>/capsules/<id>/<slot>`) once uploaded or known to exist.
+@DataClassName('CapsuleMediaRow')
+class CapsuleMedia extends Table {
+  TextColumn get capsuleId => text()();
+  TextColumn get slot => text()();
+  TextColumn get file => text().nullable()();
+  TextColumn get path => text().nullable()();
+
+  /// Failed uploads, and when to try again (uploads keep retrying after the
+  /// seal was pushed without them).
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+  DateTimeColumn get nextAttemptAt => dateTime().nullable()();
+
+  /// The upload can never succeed (e.g. too large): stop trying.
+  BoolColumn get failed => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {capsuleId, slot};
+}

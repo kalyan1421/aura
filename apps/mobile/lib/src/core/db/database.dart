@@ -7,13 +7,22 @@ export 'tables.dart';
 part 'database.g.dart';
 
 @DriftDatabase(
-  tables: [CheckIns, Habits, HabitLogs, Outbox, DeadLetters, KeyValues],
+  tables: [
+    CheckIns,
+    Habits,
+    HabitLogs,
+    Outbox,
+    DeadLetters,
+    KeyValues,
+    Capsules,
+    CapsuleMedia,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -26,6 +35,7 @@ class AppDatabase extends _$AppDatabase {
         'CREATE INDEX IF NOT EXISTS habit_logs_day '
         'ON habit_logs (habit_id, local_day)',
       );
+      await customStatement(_capsulesIndex);
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
@@ -50,11 +60,22 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(outbox, outbox.needsMedia);
         await m.addColumn(outbox, outbox.mediaAttempts);
       }
+      if (from < 5) {
+        // v5: F4 time capsules and their media slots.
+        await m.createTable(capsules);
+        await m.createTable(capsuleMedia);
+        await customStatement(_capsulesIndex);
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
+
+  /// Pending date capsules by date (unlock checks, notifications).
+  static const String _capsulesIndex =
+      'CREATE INDEX IF NOT EXISTS capsules_unlock '
+      'ON capsules (unlock_type, unlock_local_date)';
 
   // ---- sign-out ------------------------------------------------------------
 
