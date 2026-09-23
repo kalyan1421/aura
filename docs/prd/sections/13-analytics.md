@@ -31,21 +31,22 @@ Source: **C** client, **S** server (NestJS API or worker, including store notifi
 | `onboarding_completed` | C | Lands on Home | `first_checkin_done`, `total_duration_ms` | F8 | P0 |
 | `acq_source_answered` | C | One-time "Where did you hear about Aura?" card, after the 2nd check-in `[ASSUMPTION]` | `answer` (reddit / instagram / youtube / discord / friend / store_search / other / skip) | F8 | P1 |
 | `checkin_started` | C | Check-in sheet opened | `source` (home / widget / notification / onboarding) | F1 | P0 |
-| `checkin_completed` | C | Save tapped | `quadrant`, `tag_count`, `has_note`, `has_voice`, `duration_ms`, `source`, `is_offline` | F1 | P0 |
+| `checkin_completed` | C | Save tapped | `quadrant`, `tag_count`, `has_note`, `has_voice`, `duration_ms`, `source`, `is_offline`, `is_backfill`, `prompt_shown` | F1 | P0 |
+| `companion_response_shown` | C | Saved-moment reaction plays | `quadrant`, `motion` (full / still), `moment` (none / wake / evolve). No line or pool id: the neutral after-support pool would reveal a crisis sheet (DS-7) | F2 | P1 |
 | `checkin_abandoned` | C | Closed without saving | `reached_step` (none / mood) | F1 | P1 |
 | `habit_logged` | C | Habit marked done | `habit_key` (preset key or `custom`), `is_backfill` | F2 | P0 |
 | `avatar_stage_reached` | S | Server derives new stage | `stage`, `days_since_signup` | F2 | P0 |
 | `avatar_rest_changed` | C | Enters / leaves Resting Nebula | `state` (resting / woke), `days_away` | F2 | P1 |
 | `rest_day_changed` | S | Rest day earned or applied | `change`, `bank_after`, `streak_bucket` | F3 | P0 |
 | `streak_ended` | S | Streak breaks, bank empty | `streak_bucket`, `lifetime_days_bucket` | F3 | P0 |
-| `capsule_sealed` | C | Seal confirmed | `unlock_type` (date / mood), `trigger_scope` (mood / quadrant), `horizon_bucket`, `has_voice`, `photo_count` | F4 | P0 |
+| `capsule_sealed` | C | Seal confirmed | `unlock_type` (date / mood), `trigger_scope` (mood / quadrant), `horizon_bucket`, `has_voice`, `photo_count`, `prompt_shown` | F4 | P0 |
 | `capsule_unlocked` | C | Unlock fires | `unlock_type`, `days_sealed_bucket`, `is_offline` | F4 | P0 |
 | `capsule_opened` | C | Ceremony viewed | `ceremony_completed` | F4 | P1 |
 | `room_offer_shown` | C | Post-check-in prompt | `quadrant`, `is_lantern_hour` (user's local time), `language_pool` | F5 | P0 |
 | `room_joined` | C | Enters room | `quadrant`, `entry`, `members_bucket`, `cold_start_merged`, `language_pool` (en / te_tenglish / hi_hinglish), `tz_region` (the room's matching key) | F5 | P0 |
 | `room_pool_unavailable` | C | User's language pool isn't open yet (Hindi + Hinglish before it launches) | `language_pool`, `choice` (english_room / notify_me / dismissed) | F5 | P1 |
 | `room_left` | C | Leaves or backgrounds | `dwell_s`, `gestures_sent` | F5 | P0 |
-| `gesture_sent` | C | Gesture tapped | `gesture` (8 keys), `target` (member / reflection / room), `surface` (room / game) | F5 | P0 |
+| `gesture_sent` | C | Gesture tapped | `gesture` (8 keys), `target` (member / reflection / room / session), `surface` (room / game / quiet) | F5 | P0 |
 | `room_survey_answered` | C | "Did you feel less alone?" | `answer` (yes / no / skip) | F5 | P0 |
 | `safety_action_taken` | C | Report / block / mute | `action`, `surface`, `reason` | F9 | P0 |
 | `reflection_submitted` | C | Send tapped | `on_device_block` (none / pii / link), `language_pool` | F6 | P0 |
@@ -56,8 +57,8 @@ Source: **C** client, **S** server (NestJS API or worker, including store notifi
 | `crisis_sheet_shown` | A | Support sheet opens | `trigger` (help_button / lexicon / omni_moderation / report), `surface`, `country` | F9 | P0 |
 | `crisis_helpline_tapped` | A | Call / text tapped | `helpline` (tele_manas / 988 / local_emergency), `country` | F9 | P0 |
 | `grounding_completed` | A | 60 s exercise finished | `surface` | F9 | P1 |
-| `insights_viewed` | C | Aura Sky opened | `view` (sky / patterns), `is_plus_preview` | F10 | P1 |
-| `paywall_viewed` | C | Paywall shown | `trigger` (capsule_limit / voice_limit / theme / insights / settings), `trial_eligible` | F12 | P0 |
+| `insights_viewed` | C | Aura Sky opened | `view` (history / sky / patterns / weekly_card / month / look_back / keepsakes), `is_plus_preview` | F10 | P1 |
+| `paywall_viewed` | C | Paywall shown | `trigger` (capsule_limit / voice_limit / theme / sounds / insights / settings), `trial_eligible` | F12 | P0 |
 | `purchase_started` | C | Buy tapped | `product_type` (plus_monthly / plus_annual / cosmetic / gift), `product_id`, `currency`, `price_local` | F12 | P0 |
 | `purchase_completed` | S | NestJS validates the receipt with the store | same + `store` | F12 | P0 |
 | `purchase_failed` | C | Store returns non-success | `reason` (cancelled / pending / declined / store_error) | F12 | P0 |
@@ -67,10 +68,21 @@ Source: **C** client, **S** server (NestJS API or worker, including store notifi
 | `trial_cancelled` | S | Auto-renew turned off during the trial | `days_into_trial`, `store` | F12 | P0 |
 | `subscription_changed` | S | Store notification after trial | `change` (renewed / cancelled / billing_retry / grace / recovered / expired / refunded), `months_active` | F12 | P0 |
 | `gift_sent` | C | Gift delivered | `gift_key` | F12 | P1 |
-| `share_card_created` | C | Card generated | `card_type` | F13 | P1 |
+| `share_card_created` | C | Card generated | `card_type` (evolution / glow / capsule_anniversary / keepsake) | F13 | P1 |
+| `keepsake_earned` | S | NestJS awards a keepsake | `keepsake_key` | F13 | P1 |
 | `notification_permission_result` | C | OS prompt answered | `result` (granted / denied / provisional) | F14 | P0 |
-| `notification_sent` | S | Push dispatched | `type` (reminder / capsule / room / lantern_hour / trial_ending) | F14 | P0 |
+| `notification_sent` | S | Push dispatched | `type` (reminder / capsule / room / lantern_hour / wind_down / trial_ending) | F14 | P0 |
 | `notification_opened` | C | Push tapped | `type` | F14 | P0 |
+| `sanctuary_activity_started` | C | Breathe, grounding, stillness, savour, Sounds or the night wind-down starts | `activity` (breathe / grounding / stillness / savour / sounds / night_wind_down), `variant` (calm / box / 4_7_8 / 5_4_3_2_1 / hand_on_heart / gratitude / mix / none), `entry` (sanctuary / todays_minute / minute_for_you / wind_down_reminder) | F15 | P0 |
+| `sanctuary_activity_ended` | C | Activity finishes or is left | `activity`, `variant`, `duration_bucket` (< 30 s / 30–59 s / 1–3 / 3–10 / 10–30 / 30+ min), `completed`, `habit_logged`; Sounds only: `stem_count`, `plus_stems`, `timer` (off / 15 / 30 / 60), `played_in_background` | F15 | P0 |
+| `quiet_session_joined` | C | Enters a Quiet Together session | `mode` (study / read / rest), `count_bucket`, `joined_mid_block` | F16 | P1 |
+| `quiet_session_left` | C | Leaves, or the block ends | `mode`, `dwell_bucket`, `sound_on`, `focus_rhythm`, `gestures_sent` | F16 | P1 |
+| `lantern_wind_down_joined` | C | Opts into the Lantern Hour wind-down | `sound_on`, `members_bucket` | F16 | P1 |
+
+**Calm and co-presence events (F2, F15, F16)** follow the same rules: 18+ only, enums and buckets, no content. Three extra rules apply:
+- No client event carries crisis context. `entry` never takes a support-sheet or Safety Center value.
+- "A minute for you" logs only starts (via `sanctuary_activity_started`), never impressions. The card is skipped after a crisis sheet, so a missing impression would reveal the sheet (DS-7).
+- Room lantern levels and Tonight's intention holds are counted per room in Postgres, never as per-user events (no individual counts, F5). Quiet Together events carry no mood.
 
 Gestures received are counted in Postgres, not as a client event. Crisis-flagged reflections never appear as a `reflection_moderated` outcome; they increment the aggregate counter only. Decisions made with the stricter under-18 thresholds, and anything in the "Minors & grooming" lane, are counted in Postgres only.
 
@@ -88,11 +100,12 @@ Gestures received are counted in Postgres, not as a client event. Crisis-flagged
 #### Retention cohorts (PostHog, verified in Postgres)
 - Retained on day N = an **active day** (≥ 1 check-in or habit), the same rule as the glow streak, using the 4 am local day boundary. App opens alone don't count.
 - **Targets:** D1 35% / 45%, D7 18% / 25%, D30 10% / 15%, DAU/MAU 25% / 30%.
-- Splits: room visit on day 0, capsule sealed on day 0, notifications granted, channel, `app_language`, country.
+- Splits: room visit on day 0, capsule sealed on day 0, Sanctuary used in week 1, notifications granted, channel, `app_language`, country.
 
 #### North Star: Weekly Supported Users (Postgres, weekly pg_cron)
 - Users with check-ins on ≥ 3 days in their local week **and** ≥ 1 social moment (gesture given or received, published reflection, or Breath Ripples session).
 - Reported as a count and as % of weekly actives, split 18+ and under-18 (the under-18 figure is an aggregate count only).
+- The definition doesn't change with F15 and F16. A gesture sent in Quiet Together counts as a gesture given; solo Sanctuary use is not a social moment `[ASSUMPTION]`.
 
 #### Room funnel (PostHog)
 `checkin_completed` → `room_offer_shown` → `room_joined` → `gesture_sent` → `room_survey_answered` (yes).
@@ -102,6 +115,16 @@ Gestures received are counted in Postgres, not as a client event. Crisis-flagged
 
 #### Breath Ripples (PostHog)
 - Match wait p50 < 20 s (human or echo); share of sessions with ≥ 1 other human; completion rate; lobby abandons; rejoins within the 10 s window.
+
+#### Sanctuary and the saved moment (PostHog)
+- Weekly reach: share of weekly actives who start ≥ 1 Sanctuary activity.
+- Completion rate by activity; Breathe habit logs that came from Sanctuary.
+- Sounds: background-play share, timer use, base vs Plus stems.
+- "A minute for you": start rate by quadrant. The card is the same for all four, so a large gap points to the copy, not the user.
+- **Guardrail:** room conversion (target ≥ 25%) must not fall once "A minute for you" ships beside the room offer. Compare the 4 weeks before and after.
+
+#### Quiet Together (PostHog, from Milestone C)
+- Joins per block by mode and region, median dwell, share with sound on, gestures per join. Counts shown to users come from the server counter, not PostHog.
 
 #### Monetization (PostHog funnel, Postgres ledger revenue)
 `paywall_viewed` → `purchase_started` → `trial_started` → `trial_converted`, and `paywall_viewed` → `purchase_completed` for cosmetics and gifts.

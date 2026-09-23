@@ -14,6 +14,7 @@ ORDER = [
     "05-user-journey.md",
     "04-user-stories.md",
     "06a-features-core.md",
+    "06d-features-calm.md",
     "06b-features-social.md",
     "06c-features-platform.md",
     "11-competitive.md",

@@ -1,6 +1,17 @@
 # Competitor feature integration plan
 
-Status: **proposal for AK's decision (23 Sep 2026).** Nothing here changes the PRD, contracts or code until approved. Approved items then follow the repo rule: PRD sections (`docs/prd/sections/`) and `contracts/` first, then Dart + TS.
+Status: **approved by AK on 23 Sep 2026** (every recommendation accepted). The PRD sections were updated the same day (PRD v1.2, Decision Record CI-1…CI-14). Next under the repo rule: `contracts/`, then Dart + TS.
+
+**Decisions (AK, 23 Sep 2026):**
+1. **F15 Sanctuary added.** Wave 1: Breathe, grounding, Today's minute. Wave 2: Sounds.
+2. **Soundscape pricing:** base soundscapes free; Plus adds extra stems.
+3. **Audio source:** CC0 / royalty-free recordings plus procedural layering; no binaural or health claims.
+4. **"A minute for you"** is offered for all four quadrants.
+5. **Quiet Together** joins Milestone C as **F16**, with the Lantern Hour wind-down.
+6. **Rejections confirmed;** Pathways deferred to after launch.
+7. **Keepsakes** are never visible to strangers.
+
+AK also settled the screen-plan questions: the Home · Sanctuary · [Check-in] · Rooms · Insights shell, a `/safety` route, 13+ unchanged, F6 reflections kept at B, intensity and body signal post-v1.
 
 Sources: *Aura App – Top 10 Competitors and Unique Features* and *Aura App – Competitor Unique Features & Strategic Integration* (supplied by AK). Competitor descriptions come from those documents and were **not independently verified**. The PRD's own competitive section (`11-competitive.md`) already covers Finch, Daylio, Habitica, Forest, Slowly, Voidpet and Wysa; this plan adds Headspace, Calm, Galaxy, Tandem, Timehop and Amino.
 
@@ -123,7 +134,7 @@ Pathways (#15), narrated wind-down, bring-a-friend rooms with shared intentions 
 ### If a milestone slips
 Cut in this order: Quiet Together → Look back → Keepsakes → extra Sounds stems → room lanterns. **Keep Sanctuary v1 and the companion response**; they're cheap and central to the calm-companion promise. The PRD's existing levers still apply first: gifts, then share cards and widget, then Insights reduced to the calendar.
 
-## 6. Decisions needed from AK
+## 6. Decisions needed from AK (answered 23 Sep 2026: all recommended options accepted; see Status)
 
 1. **Add a Sanctuary feature (F15) to the PRD?** It would cover breathing, grounding and sounds, and turn the screen plan's Sanctuary tab into a spec. *Recommended.*
 2. **Soundscape pricing:** a free base set with Plus adding extra stems? *Recommended* (F12: never sell what helps someone feel better).
@@ -134,6 +145,10 @@ Cut in this order: Quiet Together → Look back → Keepsakes → extra Sounds s
 7. **Keepsakes are never visible to strangers?** *Recommended* (anti-fingerprinting).
 
 ## 7. PRD and contract changes once approved
+
+**Progress (23 Sep 2026):**
+- **PRD: done in v1.2.** F15 and the companion response are in the new `06d-features-calm.md`. F16 Quiet Together is in `06b` (Social Layer), because the stranger-surface rules live there.
+- **`contracts/`: not started.**
 
 - **New `06d` section:** F15 Sanctuary (Breathe, grounding library, Sounds, Today's minute) and the F2 companion response.
 - **`06a`:**

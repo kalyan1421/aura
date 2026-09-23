@@ -32,6 +32,19 @@
 | Error: local write failed | "We couldn't save that. Your phone may be low on space." | Selection kept; Retry |
 | Edge: mic denied | "Voice is off. Type instead, or turn it on in Settings." | Settings deep link |
 | Edge: crisis words in note | Check-in saves; support sheet opens | "Back to my check-in" |
+| Edge: saved after a crisis sheet | Starlight, a neutral line ("Thank you for checking in tonight."), the room offer. No "A minute for you" | None needed |
+| Edge: save wakes or evolves the avatar | The welcome-back or evolution moment replaces the shimmer; one line only | Skippable |
+
+### Sanctuary (F15)
+| State | What the user sees | Recovery |
+|---|---|---|
+| First visit | The avatar orb, Today's minute and the library. Nothing plays | Tap any activity |
+| Paused (call, alarm, app sent to background) | "Paused. Pick up where you left off?" Sounds keep playing | Resume / Done. Time already breathed still counts toward 60 s |
+| Reduce Motion or haptics off | Still orb with phase words; haptics if on | None needed |
+| Sounds not downloaded, offline | "Sounds download once, then work offline. Brown noise works now." | Brown noise; download when online |
+| Storage full | "Sounds need about 8 MB. Free some space, or play brown noise, which needs none." | Brown noise |
+| Headphones disconnected | Playback pauses: "Paused because your headphones disconnected." | Play (the speaker only by choice) |
+| Timer ends | Sound fades out over 30 s; "Sounds stopped" | Play again |
 
 ### Habits
 | State | What the user sees | Recovery |
@@ -63,6 +76,16 @@
 | Offline | "Rooms need a connection. Your check-in is saved." | Retry on reconnect |
 | Error: realtime dropped | "Reconnecting…" chip; gestures queue 30 s | Auto-reconnect; stale gestures dropped quietly |
 | Edge: room closes while viewing | Room dims: "This room has become a memory. You can look back for 7 days." Composer and gestures disabled | "Find a new room" |
+| Edge: Lantern Hour ends before the lantern is full | "Tonight's lantern glowed this bright." No failed or missed copy | None needed |
+
+### Quiet Together (F16)
+| State | What the user sees | Recovery |
+|---|---|---|
+| Offline | "Quiet Together needs a connection. Sanctuary works offline." | Sanctuary; retry on reconnect |
+| Only person here | "Just you right now. Others drop in through the hour." (count 1, never faked) | Stay or leave |
+| Block ending | "The next session starts at 10:00." The next block follows without a countdown | Stay (joins the next block) or leave |
+| Error: realtime dropped | "Reconnecting…" chip; the shared sound keeps playing locally | Auto-reconnect |
+| Shared sound not downloaded | "The shared sound needs a one-time download." Session works silently meanwhile | Download / stay silent |
 
 ### Reflection composer
 | State | What the user sees | Recovery |
@@ -84,7 +107,9 @@
 | Error: connection lost | Pacer continues locally: "You're breathing on your own for a moment." | Silent rejoin within 10 s (see F7); after that the light becomes an echo and the session ends gently |
 | Offline | "Breathing together needs a connection. Breathe solo instead?" | Solo pacer |
 
-### Crisis support sheet
+### Crisis support sheet and Safety Center
+The Safety Center (`/safety`, opened by "I need help now") shows the same content as a full route and has the same states.
+
 | State | What the user sees | Recovery |
 |---|---|---|
 | Edge: country with no listed helpline | "If you're in danger right now, please call your local emergency number." Grounding exercise and "Aura is not a medical or emergency service" still shown; no empty list | Country from device region, never IP or GPS |

@@ -33,6 +33,7 @@ UI may ship first; **the room pool opens only at safety readiness** (until 5,000
 - **No gendered forms.** Aura collects no gender, but Hindi verbs agree with it (*karoge/karogi*) and so do Telugu third-person forms (*ontarivaadu/ontaridi*). Use nouns (*Akelapan*, *Ontaritanam*), impersonal constructions, and the respectful Telugu *meeru*.
 - **Brand terms stay in Latin script** everywhere: Aura, Aura Plus, Lantern Hour, Breath Ripples, Starlight, Stardust `[ASSUMPTION]`.
 - Server-sent strings (pushes, moderation reasons, trial email) use the same catalogue, rendered in NestJS. Pseudo-localized build before each milestone.
+- **Calm copy** (companion lines, "A minute for you", guided prompts, grounding scripts, Tonight's intentions) ships in every alpha language. Each string is native-reviewed and self-reviewed against safe-messaging guidelines like crisis copy, and written in the second person with the respectful Telugu *meeru* and no gendered forms. Line pools are the same size in every language.
 
 ### Translating the 16 moods
 

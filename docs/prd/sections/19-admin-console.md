@@ -78,7 +78,7 @@ Under the IT (Intermediary Guidelines) Rules, 2021 **as amended on 20 Feb 2026**
 
 ### Configuration
 
-Room cap, lifetime, merge thresholds, timezone regions, Lantern Hour window (9–11 pm local) · gestures · pseudonym word lists per language plus an offensive-combination blocklist · **kill switches** (reflections per pool, Hindi + Hinglish pool, Breath Ripples, echoes, gifts, sign-ups, reduced mode) · **lexicons** per language and category incl. Tenglish and Hinglish variants: add, test on samples, publish signed, roll back · under-18 moderation thresholds. Removing a crisis term or loosening under-18 thresholds is Owner-only.
+Room cap, lifetime, merge thresholds, timezone regions, Lantern Hour window (9–11 pm local) · gestures · pseudonym word lists per language plus an offensive-combination blocklist · **kill switches** (reflections per pool, Hindi + Hinglish pool, Breath Ripples, echoes, gifts, sign-ups, reduced mode; from B room lanterns and Tonight's intention; from C Quiet Together and the Lantern Hour wind-down, per region) · the Tonight's intention list per language · **lexicons** per language and category incl. Tenglish and Hinglish variants: add, test on samples, publish signed, roll back · under-18 moderation thresholds. Removing a crisis term or loosening under-18 thresholds is Owner-only.
 
 ### First moderator hire at 5,000 DAU `[ASSUMPTION]`
 

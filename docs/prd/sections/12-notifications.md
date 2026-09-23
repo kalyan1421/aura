@@ -2,7 +2,7 @@
 
 Notifications offer a quiet minute; they never pull people back through guilt or pressure. Many users share or lend their phones (Riya in a hostel, anyone living with family), so **nothing on a lock screen may reveal how someone feels**. The same rules apply to every account, whatever the age.
 
-**Ship order `[ASSUMPTION]`:** daily reminder and date-capsule push at Milestone A; trial-ending reminder with the F12 free month; the rest with F14 at Milestone B. Smart timing is P1. BullMQ delayed jobs in the NestJS worker schedule by the device time zone (refreshed on each open).
+**Ship order `[ASSUMPTION]`:** daily reminder and date-capsule push at Milestone A; trial-ending reminder with the F12 free month; the opt-in wind-down reminder with F15 Sounds; the rest with F14 at Milestone B. Smart timing is P1. BullMQ delayed jobs in the NestJS worker schedule by the device time zone (refreshed on each open).
 
 ### Catalogue
 
@@ -16,6 +16,7 @@ Channels: **Push** (FCM/APNs) · **In-app** (card or banner while Aura is open) 
 | Mood-trigger capsule | Next matching check-in | **In-app only** | "You left a note for a moment like this. Open now or later?" | "Ilanti moment kosam meeru oka note raasukunnaru. Ippude open cheyyala, tarvatha na?" | 7-day cooldown (F4) | P0 |
 | Gestures received | Gesture sent to you in a room | Push (batched) + in-app | "3 people in your room sent you warmth." | "Mee room lo 3 mandi meeku warmth pampaaru." | **1 push per room per day** | P1 |
 | Lantern Hour (opt-in) | When **the user's timezone region's** Lantern Hour starts (21:00 on the region clock, F5; e.g. 9 pm IST for `south_asia`). Up to ±2 h from the device's own 9 pm | Push | "Lantern Hour is on. Others are here tonight." | "Lantern Hour modalaindi. Ee raatri inka kondaru ikkade unnaru." | 1/day; skipped if already in a room today | P1 |
+| Wind-down reminder (opt-in, from B) | User-chosen time (suggested 10:30 pm `[ASSUMPTION]`); opens Sanctuary's night wind-down; skipped if Sanctuary was already opened that evening | Push | "A few quiet minutes before sleep, whenever you want them." | "Padukune mundu konchem quiet time? Aura ikkade undi." | 1/day; counts toward the 2/day cap | P1 |
 | Breath Ripples invite | "Breathe together" tapped in your room | **In-room banner only** | "2 people are about to breathe together. Join?" | "2 mandi kalisi breathe cheyyabotunnaru. Join avutaara?" | 1 per session | P0 |
 | Welcome back | 7 days inactive; again at day 21 | Push | "No catch-up needed. Aura is here whenever you want a quiet minute." | "Catch-up emi avasaram ledu. Meeku eppudu kaavalante appudu Aura ikkade untundi." | **2 per absence, then silence** | P1 |
 | **Aura Plus trial ending** | **48 h before the free month ends** (validated store state in NestJS), outside quiet hours | Push + in-app card + email | "Your free month of Aura Plus ends on {date}. After that it's {price}/month. Keep it or cancel anytime." | "Mee Aura Plus free month {date} tho aipotundi. Tarvatha nelaki {price}. Continue cheyyochu, leda eppudaina cancel cheyyochu." | **Once per account**; exempt from daily cap | P0 once the trial ships |
@@ -47,11 +48,14 @@ Follows the **CCPA Guidelines for Prevention and Regulation of Dark Patterns, 20
 - **Breath Ripples invite:** echoes fill seats after 20 s, so a push arrives too late and only creates a missed-it feeling.
 - **Crisis follow-up:** no push ever mentions distress. (1) In shared households a lock-screen line like "Checking on you after last night" invites the family questions users came to Aura to avoid. (2) An unexpected reminder can re-trigger distress. (3) A push implies Aura is monitoring and will act; **Aura is not an emergency service** `[LEGAL]`. (4) Push is not reliable enough to be a safety channel. The in-app card is private, dismissible and carries "I need help now" plus locale helplines; the daily reminder keeps its usual time and wording.
 - **Moderation outcome:** "Your post was removed" on a lock screen is shaming.
+- **Look back (F10):** a pushed "a year ago today" can land on a hard day and puts the past on the lock screen. Look back is pull-only.
+- **Companion response, "A minute for you", Today's minute:** in-app moments by design; a push version would turn calm into a task.
+- **Quiet Together (F16):** a drop-in with no invites `[ASSUMPTION]`; a push with a live count would be social pressure.
 
 ### Global rules
 
 1. **Quiet hours 11 pm–8 am local** by default for everyone, editable. Nothing system-initiated is sent inside them. A reminder the user deliberately schedules inside quiet hours (night-shift workers) is honoured after a one-time confirmation.
-2. **Max 2 pushes per day**, all types combined. Precedence when capped: capsule unlocked > daily reminder > gestures > Lantern Hour > habit nudge > welcome back. Dropped items stay as in-app cards. The trial-ending reminder is exempt (it fires once per account).
+2. **Max 2 pushes per day**, all types combined. Precedence when capped: capsule unlocked > daily reminder > gestures > Lantern Hour > wind-down reminder > habit nudge > welcome back. Dropped items stay as in-app cards. The trial-ending reminder is exempt (it fires once per account).
 3. **Payloads carry no mood or content**: only a type, an opaque ID and generic copy. Never a mood, quadrant, room theme name ("Rain Sanctuary" reveals the quadrant), capsule or reflection text, pseudonym or habit history. The app fetches details after unlock. Android uses `VISIBILITY_PRIVATE` with a generic public version; iOS uses a generic hidden-preview placeholder.
 4. **Discreet mode** ("Aura · You have a gentle update" for every push): available to everyone, off by default, offered as a one-tap choice on the permission screen `[ASSUMPTION]`.
 5. **Widget** shows the avatar and a "Check in" button; the last mood only if the user opts in.
@@ -59,6 +63,7 @@ Follows the **CCPA Guidelines for Prevention and Regulation of Dark Patterns, 20
 7. **Smart timing (P1):** reminder ignored 5 days in a row → every other day; 14 ignored days → stop and leave it to welcome-back. Any check-in restores the schedule.
 8. Per-type toggles plus a master switch in Settings > Notifications. Copy follows the app language and is rendered server-side from the shared key catalogue.
 9. Events `notification_sent`, `notification_opened`, `notification_setting_changed` are sent for 18+ accounts only; under-18 accounts are counted in aggregate only.
+10. **Lock-screen media controls** (F15 Sounds and the F16 shared sound, from B) show only "Aura · Sounds" with play, pause and stop. They never show a mood, quadrant or stem name ("Rain" is also a quadrant). The Android playback notification uses its own channel and follows Discreet mode.
 
 ### Banned copy patterns
 
@@ -79,3 +84,4 @@ Follows the **CCPA Guidelines for Prevention and Regulation of Dark Patterns, 20
 | REQ-NTF-01 | Copy lint on push templates | CI rejects any template (all five languages) containing a mood, quadrant or room theme name, or miss, lose, streak, broken, fading, last chance, hurry | P0 |
 | REQ-NTF-02 | Cap, quiet hours, private payloads | A third push in one local day is never sent (trial reminder excepted); payloads hold only type, opaque ID and generic copy. Negative: no system push fires 11 pm–8 am local unless the user scheduled it there | P0 |
 | REQ-NTF-03 | Trial-ending reminder | Given a free month ending 3 Nov, push and card arrive on 1 Nov with date, store price and a one-tap store manage link. Negative: not sent when auto-renew is already off | P0 (with F12 trial) |
+| REQ-NTF-04 | Opt-in wind-down reminder | Off until the user picks a time; generic copy passes REQ-NTF-01; counts toward the 2/day cap and ranks below Lantern Hour. Negative: never sent if Sanctuary was opened that evening, and no copy promises better sleep | P1 (with Sounds) |

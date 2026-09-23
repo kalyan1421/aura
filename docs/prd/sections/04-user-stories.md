@@ -23,6 +23,8 @@ Format: *As a [user], I want [capability] so that [benefit].* IDs are stable (ga
 | US-15 | P0 | F14 | As Riya, I want at most one check-in reminder a day, at a time I choose, so that notifications feel like a friend, not a nag `[ASSUMPTION: cap of one]`. |
 | US-16 | P1 | F13 | As Riya, I want to share my avatar's evolution as an image with no mood data so that I can post it on Instagram without revealing how I feel. |
 | US-17 | P2 | — | As Riya, I want a private room with one close friend so that we can support each other the same way (post-v1, "Bring a friend"). |
+| US-53 | P0 | F15 | As Riya on a night I don't want strangers, I want to breathe with a gentle pacer and soft haptics in a private space so that I can settle on my own. **Edge:** works offline; with Reduce Motion the orb is still and words + haptics lead; no score; ≥ 60 s ticks off Breathe. |
+| US-54 | P0 | F2, F1 | As Riya after saving how I feel, I want my Aura to answer with the same warmth whatever I picked, and to offer one small optional minute for me, so that checking in feels heard, not filed. **Edge:** after a crisis sheet the line is neutral and no minute card appears; the minute never replaces help. |
 
 ### Arjun (working professional, 26) and users abroad
 
@@ -39,6 +41,7 @@ Format: *As a [user], I want [capability] so that [benefit].* IDs are stable (ga
 | US-26 | P1 | F12 | As Arjun, when a gift purchase fails or stays pending, I want to know plainly whether I was charged and whether it was sent so that I never pay twice or leave a stranger half a gift. **Edge:** pending purchases deliver once the store confirms, even after the room closes (into the recipient's room memory) `[ASSUMPTION]`; failures show "no charge, nothing sent" with no auto-retry. |
 | US-46 | P0 | F5 | As Arjun's friend in Dubai, I want Lantern Hour at 9–11 pm Dubai time with room-mates who share my evening so that rooms are busy when I'm awake. **Edge:** time zone from the phone, never location; a thin region pool merges with the nearest region `[ASSUMPTION]`. |
 | US-47 | P0 | F9 | As Arjun's friend in Dubai, I want the support sheet to tell me to call my local emergency number, not show numbers I can't use, so that help is real where I am. **Edge:** India shows Tele-MANAS 14416 / 1-800-891-4416, the US 988, everywhere else the local-emergency fallback plus grounding; region from device settings `[ASSUMPTION]`; works offline. |
+| US-55 | P1 | F10 | As Arjun, I want to look back at how the same week felt a year ago, only when I choose, so that I can see how far I've come. **Edge:** hidden right after a Storm or Rain check-in and for a day after a crisis sheet; crisis-flagged entries left out; notes open only on tap; never pushed. |
 
 ### Meera (16, mixed-age rooms)
 
@@ -47,6 +50,7 @@ Format: *As a [user], I want [capability] so that [benefit].* IDs are stable (ga
 | US-31 | P0 | F9 | As Meera, I want help one tap away on every screen, knowing no one (family, coaching centre) is alerted automatically, so that I'm not afraid to use it. **Edge:** nothing appears on the lock screen `[LEGAL: any duty to alert for a minor at imminent risk]`. |
 | US-32 | P0 | F9 | As Meera, when a stranger's reflection makes me uneasy, I want my report handled quickly so that I trust something happens. **(13–17)** Minors & grooming lane, actioned < 4 h; my age is never shown. |
 | US-48 | P0 | F5, F7, F12 | As Meera, I want to join rooms, play Breath Ripples and send a ₹10 Warm Tea like everyone else, with nothing marking me as a teen, so that Aura doesn't feel like a kids' version. **(13–17)** No visible limits. Invisibly: stricter grooming, PII and sexual-content thresholds on reflections I write or can see `[ASSUMPTION]`; no behavioural analytics. Purchases follow any family approval my store account applies `[STORE]`. |
+| US-56 | P1 | F15 | As Meera in a PG with no privacy, I want rain sounds through my earphones with a sleep timer, even offline, so that I can wind down without anyone noticing. **Edge:** silent until I tap; pauses if my earphones disconnect instead of playing aloud; the lock screen shows only "Aura · Sounds". |
 
 ### Sai (19, Telugu-first)
 
@@ -56,6 +60,7 @@ Format: *As a [user], I want [capability] so that [benefit].* IDs are stable (ga
 | US-50 | P0 | F2, F7 | As Sai on a budget Android phone, I want the avatar and Breath Ripples to run smoothly and the app to stay small so that Aura never lags or gets deleted for space. **Edge:** below mid-range, the procedural renderer drops to a lighter quality tier automatically. |
 | US-51 | P1 | F12 | As Sai, I want the free first month of Aura Plus to show its end date (with a reminder 48 h before it ends) and the price after (₹49/month or ₹399/year), and to cancel in Google Play before paying, so that a trial never becomes a surprise charge. **Edge:** one trial per store account `[STORE]`; reminder 3 days before renewal `[ASSUMPTION]`; never offered within 24 h of onboarding or right after a Storm or Rain check-in; sealed capsules still open after it ends. |
 | US-40 | P0 | F9 | As Sai, when a moderation decision feels unfair, I want a named Grievance Officer (AK) I can write to in English or Telugu so that a real person is accountable. **Edge:** acknowledged in 24 h, resolved in 7 days `[LEGAL]`. |
+| US-57 | P1 | F16 | As Sai before placements, I want to study alongside others without talking, with a shared sound and an optional 25/5 rhythm, so that I feel less alone without being watched. **Edge:** I see only a count and gestures, never names; leaving costs nothing; no text anywhere. |
 
 ### AK (only moderator until 5,000 DAU; then Kabir)
 

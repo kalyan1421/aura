@@ -13,9 +13,12 @@
 | Date-capsule unlock when due | Full | Uses device time (see clock rules) |
 | Mood-trigger capsule firing | Full | Fires on the matching offline check-in |
 | Insights (F10) | Full | Computed from local data |
+| Sanctuary: Breathe, grounding, Today's minute (F15); companion response and "A minute for you" | Full | Lines and scripts bundled; session records queue in the outbox |
+| Sounds (F15) | Full after one download | Brown noise needs no download; Plus stems cached once picked |
+| Look back (F10), keepsakes box (F13) | Full | Keepsakes cached; new ones awarded on sync |
 | Crisis sheet (F9) | Full | Helplines and grounding exercise bundled in the app, list refreshed on sync |
 | Aura Plus features | Cached | Honoured until the cached entitlement's expiry date `[ASSUMPTION]` |
-| Rooms and gestures (F5), reflections (F6), Breath Ripples (F7) | Online only | |
+| Rooms and gestures (F5), reflections (F6), Breath Ripples (F7), Quiet Together and the Lantern Hour wind-down (F16) | Online only | The shared sound itself plays from the local cache |
 | Purchases, restore, gifts (F12) | Online only | |
 | Sign-in (F8), data export, account deletion | Online only | |
 | Server push (F14) | Online only | Local reminders still fire |
@@ -30,7 +33,7 @@ One rule keeps this simple: **the app never writes personal tables directly.** S
 
 | What | Goes to | Why |
 |---|---|---|
-| All outbox mutations: check-ins, habit logs and definitions, capsule seal / unlock / delete (ciphertext + unlock metadata), settings, tombstones | **NestJS `POST /v1/sync/push`** (verifies the Supabase JWT) | Most of these earn Starlight or move a streak. NestJS upserts the rows and appends `starlight_ledger` entries in one Postgres transaction, so the server ledger is authoritative (DS-5). Settings use the same path so there is one write path to build and test |
+| All outbox mutations: check-ins, habit logs and definitions, content-free Sanctuary session records, capsule seal / unlock / delete (ciphertext + unlock metadata), settings, tombstones | **NestJS `POST /v1/sync/push`** (verifies the Supabase JWT) | Most of these earn Starlight or move a streak. NestJS upserts the rows and appends `starlight_ledger` entries in one Postgres transaction, so the server ledger is authoritative (DS-5). Settings use the same path so there is one write path to build and test |
 | Voice and photo files (already encrypted on device, DS-1) | **Supabase Storage**, direct upload to a short-lived signed URL issued by NestJS | Keeps large files off the API; private bucket |
 | Purchases, restores, gifts | **NestJS** (store validation, DS-9) | Online only; never queued |
 | Sign-in and session refresh | **Supabase Auth** | |

@@ -17,3 +17,22 @@
 | **Web app** | Mobile-first habit; the widget and push are the engagement surfaces. | Admin console only is web |
 | **Languages beyond English, Telugu, Tenglish, Hindi, Hinglish** | Moderation lexicons and copy quality per language cost too much for one person. | Tamil/Kannada next, by user share (see Localisation) |
 | **Campus partnerships, B2B licences** | Online-first GTM (Q18). | After D30 is proven |
+
+### Competitor features rejected or deferred (AK, 23 Sep 2026)
+From AK's competitor docs (descriptions not independently verified). Each rejection keeps the feature's intent through a safer Aura version where one exists.
+
+| Not in v1 | From | Why | Aura instead / revisit |
+|---|---|---|---|
+| **Letters between strangers** | Slowly | Long-form stranger text is chat by another name. It breaks the mixed-age pool (D2) and gesture-only replies, and Apple 1.2 flags anonymous chat | F4 letters to your future self now. After launch, once there are 3 months of F6 safety data: a one-way "note for the next person" (≤ 200 chars, F6 pipeline, delivered to a random later member of the same quadrant, gesture-only reply) |
+| **Accountability partners with strangers** | Tandem | Pairing creates 1:1 contact (DM-like), pressure and grooming risk in a mixed-age pool | Tonight's intention (F5, B): shared at room level, gestures only. Friends only with bring-a-friend rooms after launch |
+| **Voice or audio circles, listening parties with user audio, anonymous voice chat** | Galaxy | One moderator can't review audio from strangers; CSAM and grooming risk; Apple 1.2 | Never in v1. Shared sound is played locally from a common start (F16); no user audio |
+| **User-created circles; creator-skinned spaces** | Amino | User-run communities need moderation at scale and split thin liquidity; custom looks fingerprint people | Curated life-context room themes ("Exam season", "New in the city", "Night shift") after launch. Personal sky themes (F12) only |
+| **Coaching or tutor marketplace** | Tandem | Clinical and therapy territory; marketplace liability | Only with a clinical partner |
+| **Social-media memory import** | Timehop | Identity-linked data, new permissions, breaks the privacy promise | Never. Look back uses only the user's own Aura history |
+| **HP / party damage, gold or XP economy** | Habitica | Aura is non-punitive by construction (F3); Starlight only goes up and is never sold (REQ-AVA-03) | Never. Group effort only adds (Breath Ripples, room lanterns) |
+| **Nostalgia streaks** | Timehop | Streak pressure; no streak pushes (F3, F14) | Never |
+| **Celebrity-narrated sleep stories** | Calm | Licensing and cost | Procedural night wind-down (F15); no narration in v1 |
+| **Guided meditation videos** | Headspace | Content cost; video is out of scope | After launch |
+| **Binaural beats, frequency or health claims for sounds** | — (Aura's own rule) | Health claims (Apple 1.4.1, Play health policy); Aura is not a medical device | Never. Sounds are described as sounds |
+| **Structured multi-day Pathways** (deferred) | Headspace | Content and safe-messaging review load for one person | After launch: 5–7-day text-first micro-series from existing pieces (a daily prompt, one Sanctuary activity, an optional capsule), starting with "Exam week" and "New in the city". A pilot at C only if capacity allows |
+| **Narrated wind-down** (deferred) | Headspace, Calm | Voice talent in 3–5 languages is a content budget Aura doesn't have | After launch |

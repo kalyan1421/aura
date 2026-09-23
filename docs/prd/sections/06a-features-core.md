@@ -22,12 +22,14 @@ Solo features. All work offline unless stated. Every feature here is the same fo
 **Behaviour**
 - **Tap 1 = mood** from a fixed 4×4 grid grouped by quadrant (glyph + label; never reorders). **Tap 2 = Save.** Optional: tags (10 defaults + ≤ 10 custom, ≤ 20 chars `[ASSUMPTION]`), note ≤ 500 chars, voice ≤ 60 s.
 - **Local-first:** written to encrypted Drift and confirmed before any network call. Starlight, streaks, Nebula wake and capsule triggers all evaluate on device.
-- **After saving, in this order:**
+- **After saving, in this order** (see Calm & Companion):
   1. the crisis sheet, if the note matched the lexicon (F9)
-  2. a mood-trigger capsule, if one fires (F4)
-  3. Starlight, then "Join a room of people feeling this" (F5)
+  2. a mood-trigger capsule, if one fires (F4; held on a crisis-flagged check-in)
+  3. Starlight and the companion response (F2)
+  4. "A minute for you" (not after a crisis sheet) and "Join a room of people feeling this" (F5)
+- **Guided prompts** (P1, Milestone A): an optional prompt rotates in the empty note field as hint text, e.g. "What's one small thing that helped today?". Prompts are localized and skippable, equally warm for every quadrant, and can be switched off in Settings. The prompt is never saved with the note `[ASSUMPTION]`, and no prompt asks for detail about self-harm or asks "why".
 - **Unlimited check-ins;** only Starlight is capped. Edit for 24 h, delete anytime; deleting never removes Starlight or glow days.
-- **Backfill** up to 7 days `[ASSUMPTION]`: shown in Insights only, earns nothing, no streak effect, fires no capsules.
+- **Backfill** up to 7 days (Milestone A; older days are refused by the server): added from History in the Insights tab. A backfill earns nothing, has no streak effect, fires no capsule, auto-completes no habit, and gets no companion response, minute card or room offer.
 - **Voice notes are not crisis-scanned in v1.** "I need help now" stays visible.
 
 | ID | Pri | Requirement | Acceptance criteria |
@@ -36,6 +38,8 @@ Solo features. All work offline unless stated. Every feature here is the same fo
 | REQ-CHK-02 | P0 | Fully offline | In airplane mode, save confirms < 300 ms, credits Starlight, syncs ≤ 60 s after reconnect. Negative: never a spinner, error or retry. |
 | REQ-CHK-03 | P0 | Notes crisis-checked on device | A lexicon hit in any shipped language (English, Telugu, Tenglish; Hindi and Hinglish from beta) shows the support sheet first, and the entry still saves. Negative: a clean note shows no sheet. |
 | REQ-CHK-04 | P0 | Room prompt after save | Shown after every live check-in, to every user 13+. Negative: it never appears before the crisis sheet or a firing capsule (order above). |
+| REQ-CHK-05 | P1 | Guided prompt in the note | Given an empty note field, a prompt shows as hint text; "Another" rotates it and typing hides it. Negative: the prompt is never saved, synced or counted toward the 500 characters; with prompts off in Settings, none shows. |
+| REQ-CHK-06 | P0 | Backfill earns nothing | A check-in added from History for 3 days ago is stored with that `local_day`, earns 0 Starlight, leaves the streak unchanged, fires no capsule and completes no habit. Negative: 8 days back is refused (`backfill_too_old`). |
 
 **Edge cases & states**
 - **Double-tap on Save:** one entry (idempotent client id). **App killed before Save:** nothing saved.
@@ -52,7 +56,11 @@ Solo features. All work offline unless stated. Every feature here is the same fo
 **Habits**
 - 6 defaults (Hydrate, Sleep on time, Move, Breathe/Meditate, Journal, Go outside) + ≤ 3 custom (≤ 30 chars, crisis-scanned); user picks which show.
 - **Binary, self-reported,** per Aura day. No "missed" state, red or cross.
-- **Auto-complete** `[ASSUMPTION]`: Breathe after the 60 s exercise or a Breath Ripples session; Journal after a note ≥ 50 chars or sealing a capsule.
+- **Auto-complete** `[ASSUMPTION]`:
+  - **Breathe:** after ≥ 60 s of Sanctuary Breathe (F15), the 60 s exercise (F9) or a Breath Ripples session.
+  - **Journal:** after a note ≥ 50 chars or sealing a capsule.
+  - Hidden habits are never auto-completed, and backfills never auto-complete anything.
+- **Companion response:** after each live check-in the avatar reacts with a short quadrant-tinted shimmer and one warm line (Calm & Companion, REQ-CMP).
 
 **Starlight** (accepted default, tune in alpha)
 
@@ -92,7 +100,7 @@ Plus does not multiply Starlight.
 | `constellationStars` | int | 0–12 |
 | `equippedCosmetics` | `Set<CosmeticId>` | empty = none; visual only |
 
-- **Moments are events, not state:** `evolve`, `wakeUp` and `celebrate` arrive on a stream with an id and play once per id. Reduce Motion is read from `MediaQuery`, not stored in the state.
+- **Moments are events, not state:** `evolve`, `wakeUp`, `celebrate` and the companion response arrive on a stream with an id and play once per id. Reduce Motion is read from `MediaQuery`, not stored in the state.
 - **Quality tiers** `[ASSUMPTION]`, picked at launch and re-checked while running:
 
 | Tier | Used when | What changes |
@@ -157,6 +165,7 @@ Plus does not multiply Starlight.
 
 **Behaviour**
 - **Contents:** title (≤ 60 chars, visible while sealed) plus text ≤ 2,000 chars, voice ≤ 2 min (Plus 10 min) and/or ≤ 3 photos (2,048 px, EXIF/GPS stripped `[ASSUMPTION]`).
+- **Guided prompts** (P1): an optional prompt rotates in the empty composer, e.g. "What do you want future you to remember about today?". Localized, skippable, and never saved with the capsule `[ASSUMPTION]`; same rules as F1.
 - **Sealing:** a lexicon hit shows the support sheet; the capsule still seals, flagged `sealed_in_hard_moment`.
 - **Date unlock:** 1 week–5 years ahead, at 10:00 local `[ASSUMPTION]`. Local notification scheduled at sealing (works offline); deduplicated server push as backup.
 - **Mood-trigger unlock:** target is one mood or a quadrant. Arms 24 h after sealing `[ASSUMPTION]`, fires on the next matching check-in. After any trigger capsule opens, none fires for 7 days (global cooldown); oldest match first.
@@ -180,6 +189,7 @@ Why: help is time-critical and must never wait behind anything. Capsule content 
 | REQ-CAP-05 | P0 | Voice length by tier | Recording stops at 2:00 on Free and 10:00 on Plus. Old 10-min recordings still play after a downgrade. |
 | REQ-CAP-06 | P0 | Crisis hold | A flagged match shows the support sheet; the capsule stays sealed. "Later" starts no cooldown. |
 | REQ-CAP-07 | P0 | Encrypted on device | The DB row and Storage object hold only ciphertext. Negative: Kabir's moderator tools can't display capsule content. |
+| REQ-CAP-08 | P1 | Guided prompt in the composer | Given an empty composer, a prompt shows as hint text and rotates on "Another". Negative: the prompt text is never part of the sealed payload and never counts toward the 2,000 characters. |
 
 **Edge cases & states**
 - Unlock passes while the phone is off → opens on next launch. After a timezone change → 10:00 in the current zone.
@@ -191,15 +201,31 @@ Why: help is time-critical and must never wait behind anything. Capsule content 
 
 ### F10 Insights ("Aura Sky")
 
-**P1 · Milestone B.** Arjun liked Daylio's Year in Pixels but found it clinical. Aura Sky shows history as a night sky, with plain-language patterns that never diagnose.
+**P1 · Milestone B** (Look back: Milestone C). Arjun liked Daylio's Year in Pixels but found it clinical. Aura Sky shows history as a night sky, with plain-language patterns that never diagnose.
 
 **Behaviour**
+- **Before F10 ships:** the Insights tab shows History (built): every check-in, with the 24 h edit and delete.
 - **Sky calendar:** each day is a star in its most frequent quadrant's colour (split star for mixed days, faint ring for rest days). Inactive days are plain dark sky, never grey or crossed out. Month and year views; tap a day for its entries.
 - **Patterns.** Quadrant mix, time of day, tag × quadrant, habit × quadrant. **Computed on device and never uploaded.**
 - **Thresholds** `[ASSUMPTION]`: under 7 check-ins, calendar only plus "Patterns appear after 7 check-ins (4/7)". Any pattern needs ≥ 7 check-ins over ≥ 5 days; tag/habit patterns also need the item on ≥ 3 days and ≥ 14 check-ins. Weak patterns are hidden, not caveated.
 - **Copy** `[LEGAL]`. Descriptive only: "more often", never "because". No scores, labels or diagnoses.
 - **Care card** `[ASSUMPTION]`: if ≥ 80% of ≥ 7 check-ins in 14 days are Storm/Rain, show "It's been a heavy couple of weeks" with the support sheet and a room. Never pushed.
-- **Free:** full calendar, 30-day patterns, lifetime stats. **Plus:** any range, habit × mood, monthly review. CSV export is free `[LEGAL]`.
+- **Weekly insight card** (Milestone B): once a week, on the first Aura day of the user's week (Monday `[ASSUMPTION]`), it shows one pattern that passes the thresholds, in words only ("Study showed up more often on Storm days this week").
+  - No numbers, percentages, scores or causal words. The "calmness score up 28%" idea from the competitor docs breaks the copy rule.
+  - If nothing passes, there is no card. It lives in Insights and is never pushed.
+  - On Free it draws from free pattern types; Plus can also use habit × mood.
+- **Your month in stars** (Milestone B): on the first Aura day of each month, a recap of the previous month's sky.
+  - **Free:** days checked in, lifetime glow days, and the quadrant mix drawn as a sky.
+  - **Plus:** the deeper monthly review (patterns across the month, habit × mood).
+  - Shared only through F13 templates, so never the sky's colours or any mood. An annual recap comes after launch.
+- **Look back** (P1 · Milestone C): a pull-only part of Insights showing the sky from the same week 1 month, 6 months and 1 year ago. Tapping a day shows its entries; notes and voice open only on a further tap. Safety gates:
+  - hidden for 3 h after a Storm or Rain check-in `[ASSUMPTION]`, and for 24 h after a crisis sheet on that device. The check runs on the device, and nothing about the sheet is stored on the server (DS-7).
+  - crisis-flagged entries never appear. The device re-runs the lexicon on the note when it displays the entry, and also keeps a device-only flag when help was opened from that check-in `[ASSUMPTION]`.
+  - never pushed and never shown on Home, the widget or a notification. It can be hidden in Settings `[ASSUMPTION]`.
+- **Free:**
+  - full calendar, 30-day patterns and lifetime stats;
+  - the weekly card, the basic month in stars and Look back.
+- **Plus:** any range, habit × mood and the deeper monthly review. CSV export is free `[LEGAL]`.
 
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
@@ -208,14 +234,17 @@ Why: help is time-critical and must never wait behind anything. Capsule content 
 | REQ-INS-03 | P1 | Copy rules | A template linter fails the build on banned words ("because", "disorder", "depressed"…). |
 | REQ-INS-04 | P1 | Care card | 8 of 9 recent check-ins in Storm or Rain → the card shows. Negative: no push is sent. |
 | REQ-INS-05 | P1 | Plus gates depth only | Negative: the calendar and history are never gated, whatever the tier. |
+| REQ-INS-06 | P1 | Weekly insight card | Given a week with a pattern that passes the thresholds, one card appears in Insights on the first day of the week; with none, no card appears. Negative: no number, percentage, score or causal word (REQ-INS-03 lint); never pushed. |
+| REQ-INS-07 | P1 | Your month in stars | On 1 Nov every user sees October's basic recap; Plus users also see the deeper review. Negative: the basic recap is never gated (REQ-INS-05); a share card made from it carries no mood or sky colour (REQ-SHR-02). |
+| REQ-INS-08 | P1 (C) | Look back: pull-only, safety-gated | Hidden for 3 h after a Storm or Rain check-in and for 24 h after a crisis sheet; crisis-flagged entries are left out; notes and voice open only on tap. Negative: no push, widget, Home card or share path ever surfaces it. |
 
 **Edge cases & states**
-- Deleted entries leave the sky; lifetime counts stay. Empty state: a quiet sky and a "Check in" button.
+- Deleted entries leave the sky and Look back; lifetime counts stay. Empty state: a quiet sky and a "Check in" button.
 - Year view renders < 500 ms with 2 years of data `[ASSUMPTION]`.
 
 **Under-18 users:** identical. Patterns stay on the phone for everyone, so no server-side profiling exists to switch off. Invisible only: excluded from behavioural analytics.
 
-**Post-v1 (P2):** a Year-in-Stars recap, a therapist PDF export, sleep and step correlations.
+**Post-v1 (P2):** an annual Year-in-Stars recap (after launch), a therapist PDF export, sleep and step correlations.
 
 ### F11 Home-screen widget
 
@@ -243,17 +272,37 @@ Why: help is time-critical and must never wait behind anything. Capsule content 
 
 **Post-v1 (P2):** an iOS 18 Control Center control, watch complications, a Lantern Hour Live Activity.
 
-### F13 Share cards
+### F13 Share cards & Keepsakes
 
-**P1 · Milestone C.** With no public profiles, cards are a key growth channel (K target 0.15–0.3). Riya can post an avatar milestone to her story without revealing how she feels.
+**P1 · Milestone C.** With no public profiles, cards are a key growth channel (K target 0.15–0.3). Riya can post an avatar milestone to her story without revealing how she feels. Keepsakes give small moments a lasting, private mark: earned, never bought.
 
 **Behaviour**
-- **Card types:** Evolution (Ember → Constellation), Glow milestone (7 / 30 / 100 / 365 lifetime days `[ASSUMPTION]`), Capsule anniversary ("Sealed a capsule 1 year ago").
+- **Card types:**
+  - Evolution (Ember → Constellation).
+  - Glow milestone (7 / 30 / 100 / 365 lifetime days `[ASSUMPTION]`).
+  - Capsule anniversary ("Sealed a capsule 1 year ago").
+  - Keepsake: the seal and its line, e.g. "Opened a capsule from past me".
 - **Rendered on device:** `RepaintBoundary` → 1080×1920 PNG, using the Still tier of the avatar renderer. No server rendering or upload.
 - **Shows** avatar (stage, rings, glow, cosmetics), milestone line, wordmark, store link. **Never** moods, quadrants, tags, notes, capsule text, dates, streak count, pseudonyms, usernames or IDs.
 - **Hue:** cards use the template's fixed palette, not the mood-derived hue, since that mapping is visible in-app and could be decoded into moods.
-- **Sharing:** OS share sheet (`share_plus`) or "Save to Photos" (add-only permission) only; no social SDKs, no pixels. Links carry a random share token `[ASSUMPTION]` not derived from the user id.
+- **Sharing:** the OS share sheet (`share_plus`) only; its own "Save image" covers saving, so no photo-library permission is requested (15-permissions). No social SDKs, no pixels. Links carry a random share token `[ASSUMPTION]` not derived from the user id.
 - **Prompt.** Offered once per milestone. No reward for sharing `[STORE]`.
+
+**Keepsakes**
+- **Earned-only seals:**
+  - first capsule sealed, and first capsule opened;
+  - 7 / 30 / 100 / 365 lifetime glow days;
+  - first Breath Ripples session;
+  - Lantern Hours: the first, then 10 and 50 `[ASSUMPTION]`;
+  - Sanctuary minutes: 60, 300 and 1,000 `[ASSUMPTION]`.
+- **Private box** in Insights `[ASSUMPTION]`. It shows only the seals earned, each with the day it was earned. There are no locked slots, progress bars or "next seal" hints, so collecting never becomes a chore `[ASSUMPTION]`. A new seal shows once as a small card on Home.
+- **Never sold, never lost, never visible to strangers.**
+  - No SKU, Stardust, Plus perk or gift grants one, and no Starlight or Stardust comes with one.
+  - Deleting the source (a capsule, a check-in), a downgrade or a refund never removes one.
+  - Seals never appear on silhouettes, member sheets, Breath Ripples lights or Quiet Together. The only way a seal leaves the phone is the user's own share card.
+- **Awarded by NestJS** from records it already holds: capsule metadata, lifetime glow days, game seats, Lantern Hour room joins and Sanctuary session records.
+  - Each is stored as a key and a date only, with no link to rooms, pseudonyms or content.
+  - When F13 ships, seals are awarded for past activity where the records still exist. Room data is purged after 7 days, so Lantern Hour seals count only from when they are recorded `[ASSUMPTION]`.
 
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
@@ -261,10 +310,12 @@ Why: help is time-critical and must never wait behind anything. Capsule content 
 | REQ-SHR-02 | P1 | No mood or identity data | Templates bind only whitelisted fields (stage, traits, cosmetics, milestone). Golden-image test for each type. Negative: injecting a mood field or a pseudonym fails the build. |
 | REQ-SHR-03 | P1 | No reward for sharing | Starlight and Stardust ledgers hold no entry tied to a share. |
 | REQ-SHR-04 | P1 | Under-18 shares are untracked | An under-18 account's share uses a plain store link with no token and sends no analytics event; the card looks identical. Negative: the share action is never hidden or limited by age. |
+| REQ-SHR-05 | P1 | Keepsakes: earned only, never lost | Sealing a first capsule adds that seal once; deleting the capsule, a refund or a downgrade leaves it. Negative: no SKU, Stardust, Plus perk or gift grants a keepsake (checked on every catalogue change, like REQ-AVA-03). |
+| REQ-SHR-06 | P1 | Keepsakes never reach strangers | Contract test: no room, reflection, game or Quiet Together response contains a keepsake field. Negative: a keepsake card binds only whitelisted fields (REQ-SHR-02). |
 
 **Edge cases & states**
 - Low memory → retry at 720×1280. Several milestones at once → one prompt, for the highest.
 
-**Under-18 users:** same cards and share flow. Invisible only: no share token and no analytics (REQ-SHR-04).
+**Under-18 users:** same cards, keepsakes and share flow. Invisible only: no share token and no analytics (REQ-SHR-04).
 
 **Post-v1 (P2):** square and MP4 formats, a yearly "Aura Wrapped" card, a "Bring a friend" invite card.

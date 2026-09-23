@@ -24,6 +24,10 @@ erDiagram
   PROFILE ||--o{ PURCHASE : "validated by NestJS"
   PROFILE ||--o{ STARDUST_LEDGER : "cosmetics currency"
   PROFILE ||--o{ GIFT : sends
+  PROFILE ||--o{ SANCTUARY_SESSION : "content-free"
+  PROFILE ||--o{ KEEPSAKE : "earned only"
+  QUIET_SESSION ||--o{ QUIET_MEMBER : "count only"
+  PROFILE ||--o{ QUIET_MEMBER : joins
 ```
 
 ### Core tables
@@ -38,13 +42,16 @@ erDiagram
 | | `starlight_ledger` | `user_id`, `amount`, `reason`, `source_id`, `local_day` | Append-only; written by NestJS; daily caps enforced server-side (DS-5). |
 | | `avatar_state`, `streak_state` | stage, total Starlight, hue, rings, glow, constellation stars, `is_resting`, equipped cosmetics / glow streak, lifetime glow days, rest-day bank | **Derived by NestJS from the ledgers** (DS-5); the client renders `AuraAvatarState` optimistically offline. |
 | | `capsules` | `unlock_type` (`date` / `mood`), `unlock_at`, `trigger_mood_id` / `trigger_quadrant`, `cooldown_until`, `sealed_at`, `opened_at`, `payload_ct`, `media_paths[]` | Encrypted payload and media (DS-1). Unlocks scheduled as BullMQ jobs. |
-| Social | `rooms` | `quadrant`, `mood_ids[]`, `language_pool` (`en` / `te` / `hi`), `tz_region`, `theme`, `capacity` (24), `opened_at`, `closes_at`, `memory_until`, `status` | **One mixed-age pool (D2).** Partition key: `language_pool × quadrant × tz_region`. |
+| | `sanctuary_sessions` | `id` (client UUID), `user_id`, `activity` (breathe / grounding / stillness / savour / sounds / night_wind_down), `variant`, `duration_s`, `local_day`, `device_ts` | F15. **Content-free**: no text, audio or mood. Written via sync push; feeds the "Sanctuary minutes" keepsake. Included in the account purge `[ASSUMPTION]`. |
+| | `keepsakes` | `user_id`, `keepsake_key`, `earned_at` | F13. **Derived by NestJS** from existing records (like `avatar_state`); never sold or removed; no link to rooms, pseudonyms or content. |
+| Social | `rooms` | `quadrant`, `mood_ids[]`, `language_pool` (`en` / `te` / `hi`), `tz_region`, `theme`, `capacity` (24), `opened_at`, `closes_at`, `memory_until`, `status`; from B `lantern_level`, `intention_key`, `intention_holds` | **One mixed-age pool (D2).** Partition key: `language_pool × quadrant × tz_region`. Lantern and intention fields are room totals only (F5), purged with the room. |
 | | `room_members` | `room_id`, `user_id`, `member_id`, `pseudonym`, `mood_at_join`, `joined_at`, `left_at` | Pseudonyms unique per room (DS-2). `mood_at_join` is shown as a chip (DS-3). `user_id` is never returned to clients. |
 | | `room_events` | `room_id`, `member_id`, `type` (`gesture`), `gesture_type`, `target_reflection_id?` | Rate-limited in NestJS. |
 | | `reflections` | `room_id`, `member_id`, `body`, `status` (`pending` / `published` / `held` / `rejected` / `crisis_diverted`), `mod_scores`, `involves_minor`, `decided_by`, `decided_at` | Only `published` is visible to others. `involves_minor` applies stricter thresholds. |
 | | `blocks` | `blocker_user_id`, `blocked_user_id` | Resolved server-side from a pseudonym; matching keeps blocked pairs apart. |
 | | `game_sessions`, `game_seats` | `language_pool?`, `tz_region`, `room_id?`, seat `kind` (`human` / `echo`), `joined_at`, `left_at`, `completed` | |
 | | `echo_recordings` | `breath_trace` (compressed timings), `duration_s`, `created_at` | **No link back to the source user.** Only from users who haven't opted out. |
+| | `quiet_sessions`, `quiet_members` | `mode` (study / read / rest), `tz_region`, `t0`, `soundscape_seed`, `capacity` / `session_id`, `user_id`, `member_id`, `joined_at`, `left_at` | F16. Clients get **counts only**; `user_id` and `member_id` are never returned (DS-10). Members purged 7 days after the session `[ASSUMPTION]`; reported items go to `evidence_holds`. |
 | Trust & safety | `reports`, `moderation_actions`, `sanctions` | lane (`crisis` / `minors_grooming` / `harassment` / `spam`), SLA timestamps, actor, reason | `moderation_actions` is append-only (audit). |
 | | `evidence_holds` | `item_ref`, `reason`, `hold_until` (**180 days**), `reported_to`, `report_ref` | Overrides the 7-day purge (DS-4); restricted access. |
 | | `moderation_corpus` | `text`, `language`, `label`, `decided_at` | **De-identified**, no user or room link; excludes opted-out users. Used later to train an in-house model. |

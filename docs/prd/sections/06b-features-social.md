@@ -1,6 +1,6 @@
 ## Feature Specification — Social Layer
 
-Covers F5 Mood Rooms, F6 Reflections and F7 Breath Ripples. F8 age gate, F9 safety and moderation, and F12 gift billing are specified elsewhere; this section defines only their hooks.
+Covers F5 Mood Rooms, F6 Reflections, F7 Breath Ripples and F16 Quiet Together. F8 age gate, F9 safety and moderation, F12 gift billing and F15 Sounds are specified elsewhere; this section defines only their hooks.
 
 ### Shared rules for every stranger surface
 
@@ -21,6 +21,7 @@ Covers F5 Mood Rooms, F6 Reflections and F7 Breath Ripples. F8 age gate, F9 safe
 | Member sheet (tap a silhouette) | — | All three | Yes, any 13+ account |
 | Reflection card and composer | Text link under the composer | All three, from the card's ⋯ menu | Yes, from the gesture tray |
 | Breath Ripples HUD | Lifebuoy top-right, whole session | Tap a light: all three | Never; no commerce in the game `[ASSUMPTION]` |
+| Quiet Together session (F16) | Lifebuoy icon, whole session | Session menu: "Report a problem here". Nobody is shown, so there is no per-person block or mute; "Hide gestures" is for yourself | Never |
 
 **Report reasons** (one tap, optional note; lanes per F9): (1) in danger or self-harm → crisis lane, reporter sees helplines; (2) harassment; (3) sexual content or advances; (4) hate; (5) contact or personal info; (6) spam or selling; (7) may be under 13 → Minors & grooming; (8) other.
 
@@ -33,12 +34,14 @@ Covers F5 Mood Rooms, F6 Reflections and F7 Breath Ripples. F8 age gate, F9 safe
 **P0 · Milestone A (closed alpha).** Riya, "Anxious" at 11 pm before an exam, and Arjun, home to an empty flat, need proof in two taps that others feel the same right now. A Mood Room is a small, temporary, pseudonymous space where support is given through gestures.
 
 #### Behaviour
-- **Entry:** every saved check-in (F1) offers "Join a room of people feeling this"; active rooms sit in a Home "Your rooms" strip. No browsing.
+- **Entry:** every saved check-in (F1) offers "Join a room of people feeling this". Active rooms sit in the **Rooms** tab of the app shell and in a Home "Your rooms" strip. There is no browsing of other rooms.
 - **One active room per user per quadrant**; you return to it with the same pseudonym.
 - **Size and life:** up to **24 members** (membership, not concurrency); **24 h** from creation; no new members after 20 h `[ASSUMPTION]`; then read-only **memory** for **7 days**; then purged.
 - **Shows:** theme, silhouettes with mood chips, "5 here now", "18 people have been here today", gestures, reflections (F6). **Counts are real members**, never echoes or staff.
 - **Gestures:** the 8 presets, aimed at a member, a reflection or the room. The recipient sees "Quiet Comet sent you Warm Tea"; others see an unnamed animation. Only authors see counts on their reflections `[ASSUMPTION]`.
-- **Lantern Hour 21:00–23:00 local**, per timezone region: a shared lantern event in open rooms; matching concentrates people.
+- **Lantern Hour 21:00–23:00 local**, per timezone region: a shared lantern event in open rooms, and matching concentrates people.
+  - From Milestone B: **room lanterns** and **Tonight's intention** (below).
+  - From Milestone C: the **Lantern Hour wind-down** (F16).
 - **Leaving** frees the quadrant slot; no rejoining. **Exit micro-survey** "Did you feel less alone?" after ≥30 s, max once a day `[ASSUMPTION]`.
 
 #### State machine
@@ -77,7 +80,26 @@ Closing accepts no members; members can still post ("becomes a memory at 11:40 p
 - **New room spawns** when nothing is joinable, or outside Lantern Hour when the best candidate has ≥12 live `[ASSUMPTION]`. In Lantern Hour rooms fill to 24 first.
 - **Thin-partition merge** `[ASSUMPTION]`: < 12 joins in 24 h → same language and quadrant in the busiest region (expected `south_asia`); if still thin, non-English pools merge into English. Merged rooms keep their home region's Lantern Hour.
 - **Re-entry within 24 h:** server-side `room_members` restores seat and pseudonym via the Your rooms strip, a same-quadrant check-in or a notification (F14).
-- **Realtime (transport unchanged):** private Supabase Realtime Broadcast channel `room:{room_id}`; Presence `{member_id, pseudonym, silhouette_id, mood}`. Writes via the DS-10 layer enforce limits and blocks, then Broadcast IDs only (`gesture_sent`, `reflection_published`, `reflection_removed`, `room_state`); text is fetched through that layer, so blocked pairs never see each other's content.
+- **Realtime (transport unchanged):** private Supabase Realtime Broadcast channel `room:{room_id}`; Presence `{member_id, pseudonym, silhouette_id, mood}`. Writes via the DS-10 layer enforce limits and blocks, then Broadcast IDs only (`gesture_sent`, `reflection_published`, `reflection_removed`, `room_state`); text is fetched through that layer, so blocked pairs never see each other's content. From Milestone B, `room_state` also carries the lantern level and the intention's hold count. Both are room totals, never per member.
+
+#### Room lanterns and Tonight's intention (P1 · Milestone B)
+
+This takes the good part of Habitica's party quests and Tandem's accountability partners without shared damage, pairing or text.
+
+**Room lanterns**
+- During Lantern Hour, each open room has one shared lantern with 5 levels `[ASSUMPTION]`.
+- **What adds light:** gestures from human members (within the rate limits) and breath cycles finished in Breath Ripples sessions started from the room.
+- **Scaled to the room:** the light each level needs scales with the number of live members, so a room of 3 can light it too `[ASSUMPTION]`.
+- **Additive only.** The lantern never dims or resets during the hour.
+  - At 23:00 it keeps the level it reached, shown in the room memory as "Tonight's lantern". There is no "failed", "missed" or "almost" copy.
+  - A fully lit lantern plays one short shared moment for everyone present (lanterns rise). Under Reduce Motion this is a still image with a line of text.
+- **No individual counts.** Nobody sees who added light or how much, not even their own share. Echoes, guide lights, staff, blocked pairs and over-limit gestures add nothing.
+
+**Tonight's intention**
+- At the start of Lantern Hour, each room shows one preset intention. It rotates from a localized list, e.g. "Sleep before midnight", "Be gentle with myself tonight", "Phone down for 10 minutes" `[ASSUMPTION]`.
+- Members can hold it with one tap, and the room sees "12 holding this tonight".
+- **No pairing and no free text.** Holders are never named, and nobody is ever asked the next day whether they kept it.
+- Holding an intention creates no habit, reminder or record beyond the room's total, which is purged with the room.
 
 #### Requirements
 
@@ -94,6 +116,8 @@ Closing accepts no members; members can still post ("becomes a memory at 11:40 p
 | REQ-ROOM-10 | P0 | Partition and merge | A Dallas Telugu partition with < 12 joins in 24 h merges into `south_asia`; a busier one stays. Negative: no Hindi + Hinglish room while the flag is off. |
 | REQ-ROOM-11 | P0 | Regional Lantern Hour | `south_asia` rooms run it 21:00–23:00 IST, `americas` on America/Chicago incl. DST. Negative: never outside the window. |
 | REQ-ROOM-12 | P0 | Age stays server-side | Meera (16) and Arjun (26) can share a room. Negative: no client payload holds age, DOB or an under-18 flag; clients can't unset stricter moderation. |
+| REQ-ROOM-13 | P1 | Room lanterns are additive only | In Lantern Hour, human gestures within limits and room Breath Ripples cycles raise the level, and it never falls. At 23:00 the memory shows the level reached, with no failure copy. Negative: echoes, guides, staff and over-limit gestures add nothing, and no payload holds a per-member contribution. |
+| REQ-ROOM-14 | P1 | Tonight's intention | One preset intention per room per Lantern Hour; one tap to hold it; only the room total shows. Negative: no free text, no pairing, no named holders, and no follow-up question or push the next day. |
 
 #### Abuse and safety hooks
 - **Limits** `[ASSUMPTION]`: 3 new room joins per quadrant per 24 h (re-entry free); gestures 1 per 2 s, 40 per room per hour, same gesture to same member ≤3 per 10 min; 1 "Breathe together" invite per 10 min; reports unlimited for reason 1, 20/day otherwise.
@@ -110,7 +134,8 @@ Closing accepts no members; members can still post ("becomes a memory at 11:40 p
 - **Never fake presence:** no bots, seeded members or inflated counts.
 
 #### Post-v1 (P2)
-- **Bring-a-friend private rooms** (hook: `rooms.kind`). Purge emits a content-free `room_closed` summary for the Shared Universe Album.
+- **Bring-a-friend private rooms** (hook: `rooms.kind`), where friends can share an intention. Purge emits a content-free `room_closed` summary for the Shared Universe Album.
+- **Curated life-context room themes** ("Exam season", "New in the city", "Night shift"), defined by Aura rather than users and bound by the same gesture-first rules, once liquidity allows. This replaces user-created circles (see Out of Scope).
 
 ---
 
@@ -195,7 +220,7 @@ stateDiagram-v2
 - **Visuals:** night ocean, one light per seat; better sync, wider ripples, more fish. **Minimum ripple and 3 fish always.** No score, number, countdown, leaderboard, voice or text.
 - **Contact:** one-tap haptic pulse and 3 gestures: Hug, Deep Breath, You're Not Alone `[ASSUMPTION]`.
 - **Leaving is silent:** your light dims into an echo; others never see "left" or "failed".
-- **End:** "Breathe again", "Back to room", "Done", optional "How do you feel now?" (F1). ≥8 cycles logs the Breathe habit (F2) `[ASSUMPTION]`.
+- **End:** "Breathe again", "Back to room", "Done", optional "How do you feel now?" (F1). ≥6 cycles (60 s, the same threshold as F15 Breathe and the support-sheet grounding) logs the Breathe habit (F2) `[ASSUMPTION]`.
 - **Entry:** "Breathe together" in a room (room pseudonym) or quick-match from Home (fresh pseudonym).
 
 #### State machine
@@ -217,7 +242,7 @@ stateDiagram-v2
 - **Quick-match: one global queue** (no language pool or age split); blocked pairs excluded. Clients poll the NestJS `game-match` endpoint every 2 s; its RPC groups atomically (`FOR UPDATE SKIP LOCKED`).
 - **Start rules:** 4 humans → start; at 8 s with ≥2 humans → start and echo-fill; at 20 s → start with whoever waits plus echoes. **Max wait 20 s**; no "no one found" screen.
 - **Room invite:** "Quiet Comet wants to breathe together · 2/4" shows to live members for 20 s, then starts with echo-fill.
-- **Channel (transport unchanged):** private Supabase Realtime Broadcast `game:{session_id}`, Presence for join/leave. Breath events go client to client; seats, reports and echoes are written via DS-10. Clients estimate server clock offset at lobby; the pacer runs locally from `t0`.
+- **Channel (transport unchanged):** private Supabase Realtime Broadcast `game:{session_id}`, Presence for join/leave. Breath events go client to client; seats, reports and echoes are written via DS-10. Clients estimate server clock offset at lobby; the pacer runs locally from `t0` on the F15 pacer engine (the one Sanctuary Breathe uses).
 
 | Event | Payload | Sender, rate |
 |---|---|---|
@@ -265,3 +290,60 @@ stateDiagram-v2
 
 #### Post-v1 (P2)
 - **Zen Stone Stacking** and **Celestial Melody Weaving** reuse lobby, matching, echo-fill and channel code via `game_type`.
+
+---
+
+### F16 Quiet Together
+
+**P1 · Milestone C (public launch).** In exam season Sai studies alone in a crowded house, and Meera studies in her PG. Both want company without being watched or having to talk. Quiet Together is a drop-in session where people study, read or rest "together": a count, a shared sound and gestures, nothing else. It adapts Galaxy's silent co-presence and inverts Forest: leaving costs nothing. AK approved it on 23 Sep 2026, together with the Lantern Hour wind-down below.
+
+#### Behaviour
+- **Modes:** Study, Read, Rest (presets, localized). Entry is from the Rooms tab; choosing a mode isn't browsing people.
+- **Time-boxed, drop-in.** Sessions are 60-min blocks on the hour of the timezone region's clock (the F5 regions) `[ASSUMPTION]`. You can join or leave at any minute, and when a block ends you move into the next one.
+- **Counts only.** The screen shows "12 here" and nothing else about people: no silhouettes, pseudonyms, mood chips or join/leave messages. Quiet Together carries no mood at all.
+- **Gestures only**, to the whole session and never to a person. They use the F5 presets and show as a soft, unnamed animation ("someone lit a candle"). There is no text input anywhere.
+- **Shared soundscape, played locally.**
+  - Each session has a mix of base Sounds stems (F15), chosen by Aura per mode `[ASSUMPTION]`, and a server start time `t0`.
+  - Each phone plays the mix from its own cache, lined up to `t0`, so everyone hears the same moment. **No user audio, no streaming between users, no microphone.**
+  - Silent until the member taps "Play the shared sound"; volume is per person. Base stems only, so it never leads to a paywall.
+- **Optional 25/5 focus rhythm** (Study), off by default `[ASSUMPTION]`.
+  - It follows the block: focus :00–:25, break :25–:30, focus :30–:55, break :55–:00, so everyone's breaks line up.
+  - Cues are a soft chime (if sound is on), a haptic (if on) and a visual change. The next change shows as a clock time ("Break at 9:25"), never a ticking countdown.
+- **Leaving costs nothing.** Leave at any moment with no "left early" message and nothing withered. Nothing is earned for staying: no Starlight, streak, keepsake or record tied to session time. Others see only the count change.
+- **Online only.** Offline shows "Quiet Together needs a connection. Sanctuary works offline." There are no push invites in v1 `[ASSUMPTION]`.
+
+#### Lantern Hour wind-down (Milestone C)
+- At 22:30 on the region clock `[ASSUMPTION]`, open F5 rooms offer "Wind down together".
+- Members who opt in hear one ambient track of base stems, played locally from a common server `t0`. On screen, the F15 pacer shows breathing cues (Calm 4/6) and a few preset text cues ("Let the day get quieter"). It lasts ~20 min `[ASSUMPTION]`.
+- **No user voice and no narration.** It is silent until the member taps, gestures keep working, and leaving costs nothing. The room sees only "N winding down".
+
+#### Matching and realtime
+- **Partition:** `mode × tz_region`, up to 50 per session `[ASSUMPTION]`. More sessions open as needed, and a thin region merges with the busiest one (as in F5). Blocked pairs are never placed in the same session. Not split by language: nothing in a session is text written by a user, and gestures render in each viewer's language.
+- **Channel:** a private Broadcast channel `quiet:{session_id}`. The server sends `t0`, the soundscape seed, gesture types (never the sender) and a live count every 30 s.
+- **No per-member Presence.** Clients never receive a member list, even a pseudonymous one, and this also keeps Quiet Together inside the Supabase Presence budget (Technical Constraints).
+- **Server-side only:** a `member_id` exists for rate limits, reports and blocks and is never sent to clients (DS-10).
+
+#### Requirements
+
+| ID | Priority | Requirement | Acceptance criteria |
+|---|---|---|---|
+| REQ-QUIET-01 | P1 | Drop-in, time-boxed, counts only | Joining at :40 works and shows the count within 1 s. Negative: no response contains a member list, pseudonym, member_id, account id, age, mood or silhouette. |
+| REQ-QUIET-02 | P1 | Gestures only, to the whole session | Presets reach live members in < 1 s p95 as unnamed animations. Negative: the API rejects any text field and any gesture aimed at a person. |
+| REQ-QUIET-03 | P1 | Shared sound, played locally | Two phones that join 10 min apart play the same point of the mix within ±1 s of each other `[ASSUMPTION]`. Nothing plays until the member taps. Negative: no microphone permission, no audio upload endpoint, no audio relayed between users. |
+| REQ-QUIET-04 | P1 | Leaving costs nothing | Leaving at any point shows no loss or "early" copy. Negative: no Starlight, streak, keepsake or stored record depends on time in a session. |
+| REQ-QUIET-05 | P1 | Optional focus rhythm | Off by default. When on, it follows the shared 25/5 block and shows the next change as a clock time. Negative: no ticking countdown or "stay focused" pressure copy. |
+| REQ-QUIET-06 | P1 | Safety | The help icon stays for the whole session; "Report a problem here" routes like a room report (F9 lanes); a blocked pair is never placed together across 100 simulated joins. |
+| REQ-QUIET-07 | P1 | Lantern Hour wind-down | In Lantern Hour, opted-in members start the same track from the server `t0`, with pacer and text cues. Negative: no user voice or narration; nothing starts without a tap; only an unnamed count shows. |
+
+#### Abuse and safety hooks
+- **Limits** `[ASSUMPTION]`: 1 gesture per 10 s, 20 per session hour. Flooding drops silently and shadow-mutes that account's gestures for 24 h (F5 rules).
+- With no text, no identities and no audio from users, the abuse surface is limited to gesture flooding, which F9 reports and rate limits cover. Kill switches: Quiet Together and the wind-down, each per region (Admin console).
+
+#### Under-18 accounts
+- Same sessions and wind-down. Reports involving an under-18 account route to the Minors & grooming lane as usual. Analytics are aggregate only.
+
+#### Liquidity and cold start
+- **Launch:** mostly `south_asia`. A count of 1 is shown honestly: "Just you right now. Others drop in through the hour." Never fake presence.
+
+#### Post-v1 (P2)
+- Bring-a-friend sessions, more modes (e.g. "Night shift"), and scheduled study blocks for exam weeks.

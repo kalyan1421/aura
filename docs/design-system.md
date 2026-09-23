@@ -8,7 +8,7 @@ Aura uses a dark-only Material 3 theme. Platform conventions may shape behavior,
 
 - **Calm cosmic night.** Depth comes from quiet sky layers, sparse stars, typography and spacing—not alarm colors or heavy elevation.
 - **Feelings have equal dignity.** Sunrise, Rain, Moonlight and Storm are parallel emotional contexts. Never rank, score, moralize or arrange them from “good” to “bad.”
-- **Private by default.** Mood, notes and history are personal. Stranger surfaces use only explicitly shared, predefined gestures in the MVP.
+- **Private by default.** Mood, notes and history are personal. Stranger surfaces use predefined gestures, plus short moderated reflections from Milestone B (F6); never free chat, replies or DMs.
 - **Support without alarm.** Immediate help is always easy to reach, warm and direct. Aura is wellness support, not therapy, diagnosis or an emergency service.
 - **Progress without punishment.** Companion growth, streak language and empty states must not shame inactivity or loss.
 

@@ -21,6 +21,7 @@ Store-policy and regulatory facts below were verified on 23 Sep 2026 (sources in
 | Local store | **Drift** (SQLite), encrypted | Outbox sync with client UUIDs. **DB file excluded from iCloud backup** (Apple 5.1.3 treats health data conservatively) |
 | Art & animation | **Hybrid:** AI-generated character art from AK (`design/avatar/`, transparent PNG → WebP) as the base, with every living effect in code: fragment shaders (`FragmentProgram`) + `CustomPainter` + `flutter_animate`; SVG icon set for gestures | No animator or Rive in v1. Avatar driven by a Dart `AuraAvatarState` + asset `manifest.json` (anchors, baked rings), see F2. **Quality tiers**: fewer particles and shader passes on low-RAM Android; fallback chain shader → painter → plain base image |
 | Widget | `home_widget` 0.10 | **Widget UI must be written natively** (SwiftUI + AppIntents on iOS 17+, Kotlin Glance on Android). iOS 16 gets a tap-to-open widget |
+| Audio (F15, F16; from B) | Background playback plugin with a media session `[ASSUMPTION: e.g. just_audio + audio_service]`; brown noise synthesized on device | Background audio only while the user plays it (iOS `UIBackgroundModes: audio`; Android `mediaPlayback` foreground service). Base stems (≈ 8 MB) download on first use, so they don't add to the install size. No microphone |
 | Min OS | **iOS 16 / Android 7.0 (API 24)** | Target SDK per the current Play requirement `[STORE]` |
 | Data platform | **Supabase Pro, ap-south-1 (Mumbai)**: Postgres + RLS, Auth, Realtime (Broadcast; Presence ≤ 24/room), Storage (private buckets, signed URLs) | **Spend cap off before beta** |
 | Application backend | **NestJS modular monolith** (API service + Worker service) + **Redis / BullMQ**, on **DigitalOcean Mumbai** | Owns ledger-affecting writes, room matching, moderation jobs, purchase validation, admin endpoints, notifications, scheduled jobs (capsule unlocks, room lifecycle). Uses Supabase via the service role; **all stranger-facing reads go through NestJS or reviewed Postgres RPCs that return pseudonyms only** (DS-10) |
@@ -39,7 +40,7 @@ A Supabase broadcast is billed as **1 + number of subscribers**. For a 4-player,
 | Naive stream (10 events/s per player) | ~7,200 | ~36,000 | ~1.1 B/month → **≈ $2,700/month** |
 | **Phase transitions + pulses only** (≈ 46 events per player) | ~184 | ~920 | ~28 M/month → **≈ $57/month** |
 
-**Rule:** clients send *state changes* (inhale/exhale transitions, pulses, gestures) with timestamps and interpolate locally. **10 events/s is a burst ceiling, not a send rate** (F7 specifies < 1 event/s in normal play). Rooms broadcast **IDs only** and fetch text through the NestJS/RPC layer. Room Presence (≤ 24 members per channel) is fine at beta scale with the spend cap off (1,000 Presence msgs/s). **Alert at 50% of the Presence limit**, and have a fallback ready: a server-computed "N here now" counter pushed every 30 s. Users outside India connect to Mumbai; Breath Ripples tolerates up to 1.5 s one-way delay (F7).
+**Rule:** clients send *state changes* (inhale/exhale transitions, pulses, gestures) with timestamps and interpolate locally. **10 events/s is a burst ceiling, not a send rate** (F7 specifies < 1 event/s in normal play). Rooms broadcast **IDs only** and fetch text through the NestJS/RPC layer. Room Presence (≤ 24 members per channel) is fine at beta scale with the spend cap off (1,000 Presence msgs/s). **Alert at 50% of the Presence limit**, and have a fallback ready: a server-computed "N here now" counter pushed every 30 s. Users outside India connect to Mumbai; Breath Ripples tolerates up to 1.5 s one-way delay (F7). **Quiet Together (F16) uses no per-member Presence:** the server broadcasts a count every 30 s plus unnamed gesture events, and each phone plays the shared sound locally from `t0`, so no audio crosses the network.
 
 ### Store policy compliance map
 | Rule | Requirement | Where handled |
@@ -51,6 +52,7 @@ A Supabase broadcast is billed as **1 + number of subscribers**. For a 4-player,
 | Apple 5.1.1(v) | In-app account deletion | F8 |
 | Apple 5.1.1(ix) | Health-adjacent apps submitted by a **legal entity** | **AKVega company accounts** ✔ |
 | Apple 5.1.3 | Health data not used for ads or data mining; not stored in iCloud | No ads; analytics minimised; Drift DB excluded from backup |
+| Apple 2.5.4 / Play foreground-service policy | Background audio only for audible content the user started; Play needs the `mediaPlayback` type declared in Console `[STORE]` | F15 Sounds; review notes; check in weeks 28–29 |
 | Apple age rating | New tiers (4+/9+/13+/16+/18+); social features imply ≥ 13+ | Target **13+**. With unrestricted stranger interaction and UGC, the questionnaire may return **16+ or 18+** `[STORE]`, so check in week 1 |
 | Apple 3.1.1 / Play Billing | Digital goods via IAP; gifts refundable only to the buyer; Play Billing Library v8 | F12 |
 | Play UGC | Users accept terms before posting; in-app reporting; blocking | F8 onboarding, F9 |
@@ -88,7 +90,7 @@ AK chose **13+ with full access, no parental consent and one mixed-age pool (D2)
 | Area | Requirement |
 |---|---|
 | Performance | Cold start < 2.5 s on a mid-range Android (4 GB RAM class); mood-only check-in saved locally < 300 ms; avatar and Breath Ripples at 60 fps on mid-range devices (quality tier drops below that); API p95 < 300 ms from India; reflection auto-moderation p50 < 2 s |
-| Size | Initial download < 60 MB `[ASSUMPTION]` (procedural art keeps assets small) |
+| Size | Initial download < 60 MB `[ASSUMPTION]` (procedural art keeps assets small; Sounds stems download on demand) |
 | Reliability | Backend availability ≥ 99.5% monthly; offline-first personal core; no data loss on app kill (outbox) |
 | Security | RLS on every table with tests in CI; stranger reads only via NestJS/reviewed RPCs; envelope encryption for private content (DS-1); private storage with short-lived signed URLs; 2FA + SSO on admin; OWASP MASVS L1 checklist before launch |
 | Privacy | Full DOB stored (DS-6) and covered in the privacy notice; aggregate-only crisis events; no ad SDKs; SDK inventory matches Data Safety / privacy labels |

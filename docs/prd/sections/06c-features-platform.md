@@ -12,13 +12,18 @@ Covers F8, F9 and F12; other sections enforce these rules.
 
 **Order.** Welcome → date of birth → (under 13: block) → sign in → first check-in. **Everyone 13+ gets the full app, with no feature limits.** DOB comes first so Aura never receives an under-13's email.
 
-**Sign-in.** Sign in with Apple (Apple 4.8), Google, or email magic link. Email scope only; no name, password or profile.
+**Sign-in (Milestone A).** Three options, email scope only, with no name, password or profile:
+- **Native Sign in with Apple** on iOS (Apple 4.8), without the full-name scope.
+- **Native Google Sign-In** on both platforms. The ID token goes into Supabase (`signInWithIdToken`, with a nonce), so there is no browser hop.
+- **Email one-time code or magic link** (built; the same email carries both).
+
+Google's ID token can carry name and picture claims. Aura never shows them and strips them from the auth user's metadata `[ASSUMPTION]`.
 
 **Neutral DOB.** Empty day, month and year pickers, no default year, no copy mentioning 13 or 18. **Full date stored** (DS-6); never shown to others or returned by stranger-facing endpoints (DS-10).
 
 **Under-13 block.** Kind screen with help by region (India: Childline 1098, 112; elsewhere: "talk to an adult you trust"). No account, email or device ID is created. A **device lock** (iOS Keychain; Android Block Store `[ASSUMPTION: confirm persistence across reinstall]`) shows the block screen on every launch for **30 days**. No server-side fingerprinting.
 
-**Platform age signals only block under-13s; they never gate 13–17.** Apple **Declared Age Range** (iOS 26+) and **Play Age Signals** (beta; Texas and Brazil now, global later in 2026) are read where available (≤1 s wait). Signal <13 → block, whatever the DOB. Signal under 18 with an adult DOB → under-18 invisible protections only `[ASSUMPTION]`. Otherwise → DOB alone.
+**Platform age signals only block under-13s; they never gate 13–17** (Milestone A). Apple **Declared Age Range** (iOS 26+) and **Play Age Signals** (beta; Texas and Brazil now, global later in 2026) are read where available (≤1 s wait). Signal <13 → block, whatever the DOB. Signal under 18 with an adult DOB → under-18 invisible protections only `[ASSUMPTION]`. Otherwise → DOB alone.
 
 **Under-18 flag.** `is_minor` (from DOB) never changes what a user sees or does; it drives only invisible protections (analytics exclusion, stricter moderation, minors lane) and clears at 18.
 
@@ -47,7 +52,7 @@ Covers F8, F9 and F12; other sections enforce these rules.
 
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
-| REQ-ACC-01 | P0 | Apple / Google / magic-link sign-in; no name or phone. | Google requests email scope only. **Neg:** no screen asks for name or phone. |
+| REQ-ACC-01 | P0 | Native Apple (iOS) and Google sign-in via ID token, plus email code or magic link; no name or phone. | Apple and Google sign-in finish without leaving the app; Google requests email scope only; Apple asks for no full name. **Neg:** no screen asks for name or phone, and no provider name or photo is stored or shown. |
 | REQ-ACC-02 | P0 | Neutral full-date DOB before any auth call. | Continue disabled until day, month and year are set. **Neg:** zero auth requests before DOB. |
 | REQ-ACC-03 | P0 | Under-13 block, 30-day device lock. | Given DOB <13, when the app is relaunched or reinstalled (iOS), then the block screen shows, not DOB. **Neg:** nothing identifying reaches the server. |
 | REQ-ACC-04 | P0 | Age signals only block under-13s. | Adult DOB + signal <13 → block. No signal → waits ≤1 s. **Neg:** no signal value hides a feature from a 13+ user. |
@@ -61,6 +66,7 @@ Covers F8, F9 and F12; other sections enforce these rules.
 #### Edge cases
 - **Adult enters a wrong DOB:** "Entered the wrong date?" → support; younger at once, older only with evidence `[ASSUMPTION]`.
 - **"Might be under 13" confirmed:** account and data deleted within 7 days (COPPA for US users) `[LEGAL]`.
+- **Apple account moves to Android:** Sign in with Apple is native on iOS only. On Android the person signs in with an email code or link to the same address; if they used Hide My Email, that is the relay address, which forwards to them. If that fails, support links the accounts `[ASSUMPTION]`.
 
 #### Minors (13–17)
 No user-facing difference. Invisible only: `is_minor`, analytics exclusion, stricter moderation, minors lane, Childline 1098 on the India sheet.
@@ -95,7 +101,10 @@ Attach a demo account, a seeded room and a 60-second recording of a report actio
 
 **Mute** hides a pseudonym for that room. **Block** also keeps both accounts out of the same room or game for good (server-side). The blocked person isn't told.
 
-**"I need help now"** on Home, room headers, Breath Ripples pause, note and capsule editors, Settings and the under-13 screen. Opens from bundled data: no login, network, paywall or spinner.
+**"I need help now"** on Home, Sanctuary, room headers, Breath Ripples pause, Quiet Together, note and capsule editors, Settings and the under-13 screen.
+- It opens the **Safety Center**, a full route (`/safety`) with helplines, grounding, the disclaimer and boundary copy, so deep links and assistive navigation don't depend on a modal.
+- The **support sheet** (same content) is kept for contextual interception: a lexicon hit, a crisis-diverted reflection, or report reason 1.
+- Both open from bundled data: no login, network, paywall or spinner. Decided by AK on 23 Sep 2026.
 
 **Crisis detection.** **L0** help button. **L1 on-device lexicon** on notes, reflections and capsule text in **English, Telugu, Tenglish, Hindi and Hinglish**, incl. romanised forms ("marna chahti", "chachipovalani undi"): high-confidence phrase → full sheet; idiom ("mar gaye yaar", "navvi navvi chachipoya") → soft "Help is here" card; entries still save. **L2 OpenAI omni-moderation** on reflections; no LLM classifier. **L3 human** crisis lane. Private text is never sent for classification (DS-1); flagged reflections never publish; nobody is auto-contacted; crisis events aggregate only (DS-7).
 
@@ -141,7 +150,7 @@ Publish only if 1–3 are clear; violation → gentle rejection; self-harm → c
 
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
-| REQ-SAFE-01 | P0 | Help button on every listed surface. | Opens <500 ms in airplane mode or signed out. **Neg:** never behind paywall or login. |
+| REQ-SAFE-01 | P0 | Help button on every listed surface opens the Safety Center. | `/safety` opens <500 ms in airplane mode, signed out and from the under-13 screen; contextual triggers open the support sheet just as fast. **Neg:** never behind paywall or login. |
 | REQ-SAFE-02 | P0 | Region-aware support sheet. | IN → 14416, 1-800-891-4416, 112; US → 988; other → generic. **Neg:** no findahelpline.com data shipped. |
 | REQ-SAFE-03 | P0 | On-device EN/TE/Tenglish/HI/Hinglish lexicon. | ≥90% recall on a 200-phrase set per language `[ASSUMPTION]`. **Neg:** no private text sent for classification. |
 | REQ-SAFE-04 | P0 | Guidelines before first room. | Unaccepted current version → guidelines first. **Neg:** Back doesn't enter the room. |
@@ -186,8 +195,12 @@ In-house classifier; Tamil and Bengali lexicons; licensed global helpline data; 
 |---|---|---|
 | Aura Plus monthly | Auto-renewing, UPI Autopay; **first month free** (introductory offer) | ₹49/month |
 | Aura Plus annual | Same group; first month free | ₹399/year |
-| Cosmetics | Non-consumable, restorable, also buyable with Stardust | ₹10 / ₹29 / ₹49 / ₹99 |
+| Cosmetics | Non-consumable, restorable, also buyable with Stardust. Includes **personal sky themes** (from B) for the user's own Home, Sanctuary and Insights, each optionally paired with a soundscape preset. Never shown to strangers | ₹10 / ₹29 / ₹49 / ₹99 |
 | Gifts | Consumable: Warm Tea / Comfort Lantern / Encouragement Bouquet | ₹10 / ₹29 / ₹49 |
+
+**Aura Plus is "more of", never "better calm":**
+- **Plus adds:** unlimited mood-trigger capsules, 10-min voice capsules, deeper Insights (any range, habit × mood, the deeper month in stars), and from Milestone B extra Sounds stems and themes.
+- **Always free:** every base Sounds stem and the night wind-down, like everything else on the never-paywalled list below (AK, 23 Sep 2026).
 
 **Abroad:** store-local tiers, e.g. **$4.99 / $39.99** `[STORE]`. Free-month eligibility is per store account (a second free month via another store is accepted leakage). **₹10 floor** (Play India minimum); verify Apple's India grid; join Apple's Small Business Program `[STORE]`. Gifts give the recipient 10 / 30 / 50 **Stardust** (never sold directly, cashed, transferred or expired).
 
@@ -197,7 +210,14 @@ In-house classifier; Tamil and Bengali lexicons; licensed global helpline data; 
 
 **Refunds.** Apple refunds gifts only to the purchaser. Detected via App Store `REFUND` notifications and Play's Voided Purchases API (daily). Cosmetic refunded → removed. **Gift refunded → recipient keeps the Stardust**; never told; Aura absorbs ≤₹49. **Abuse:** 2 refunded gifts in 90 days pauses gifting 90 days; a 3rd disables it `[ASSUMPTION]`.
 
-**Paywall never appears:** within 24 h of onboarding; in a crisis flow or the rest of that day; on Nebula wake-up; straight after a Storm or Rain check-in; as a gate on check-in, habits, rest days, rooms, Breath Ripples, date capsules or crisis support. Only on limit screens (4th mood-trigger capsule, long voice, Plus theme, deeper Insights) and Settings, max 1 unprompted per day, always with a free path. Shows "1 month free, then ₹49/month", trial end date, cancel steps, Restore and Terms (Apple 3.1.2); no countdowns.
+**Paywall never appears:**
+- within 24 h of onboarding;
+- in a crisis flow or the rest of that day;
+- on Nebula wake-up;
+- straight after a Storm or Rain check-in;
+- as a gate on the never-paywalled list: check-in, habits, rest days, rooms, Breath Ripples, date capsules and crisis support; Sanctuary (Breathe, grounding, Today's minute, base Sounds and the night wind-down); the companion response and "A minute for you"; Quiet Together and the Lantern Hour wind-down; Look back and keepsakes.
+
+It shows only on limit screens (4th mood-trigger capsule, long voice, Plus theme, extra Sounds stem, deeper Insights) and in Settings, at most once a day unprompted, always with a free path. It shows "1 month free, then ₹49/month", the trial end date, cancel steps, Restore and Terms (Apple 3.1.2). No countdowns.
 
 **States.** **Pending** (UPI mandate, Ask to Buy): "You won't be charged until it's approved"; nothing granted until confirmed; pending gifts deliver into the room memory. **Failed:** "No charge. Nothing was sent." **Trial:** Plus on until the store converts or lapses it. **Grace periods** on `[STORE]`. **Lapse:** nothing made is lost; sealed Plus capsules still open. **Restore** in Settings; Plus follows the account across platforms. Family Sharing off `[ASSUMPTION]`.
 
@@ -223,10 +243,11 @@ Annual ₹399 nets ≈ ₹287 (≈ ₹24/month). The free month earns nothing; s
 | REQ-PAY-03 | P1 | Cosmetics ₹10–₹99. | **Neg:** no product below ₹10. |
 | REQ-PAY-04 | P1 | Gifts for all 13+, pre-checked, no message. | Blocked recipient → gift icon hidden; 6th gift in a day refused pre-sheet. **Neg:** recipient never sees the sender's pseudonym. |
 | REQ-PAY-05 | P1 | Refund handling. | Refunded gift: recipient balance unchanged, sender refund count +1. |
-| REQ-PAY-06 | P0 | Paywall exclusions. | UI tests: no paywall on install day, after a crisis sheet, on Nebula wake-up, or on any never-sold feature. |
+| REQ-PAY-06 | P0 | Paywall exclusions. | UI tests: no paywall on install day, after a crisis sheet, on Nebula wake-up, or on any never-paywalled feature (list above, incl. Sanctuary and base Sounds). |
 | REQ-PAY-07 | P1 | Pending purchases. | Pending UPI mandate → no entitlement; on approval, granted even if app was killed. |
 | REQ-PAY-08 | P1 | Grace, lapse, restore. | Lapsed user's sealed Plus capsule still opens; Restore recovers Plus on a new device. |
 | REQ-PAY-10 | P1 | NestJS validation and entitlements. | Sandbox notifications update `entitlements` within 60 s; duplicates grant nothing; reconciliation repairs a dropped notification. **Neg:** a forged or client-only receipt grants nothing. |
+| REQ-PAY-11 | P1 | Sounds: base free, Plus "more of". | On Free, every base stem, mix and the night wind-down play, offline too. A Plus stem shows the explainer on tap, except straight after a Storm/Rain check-in or in a crisis flow. **Neg:** "A minute for you", Quiet Together and the Lantern Hour wind-down use base stems only and never open a paywall. |
 
 #### Edge cases
 - **Bought on iOS, now on Android:** Plus stays on; "Manage" points to the App Store.
