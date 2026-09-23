@@ -306,6 +306,36 @@ class AuraApi {
     }
   }
 
+  // ---- analytics consent (PRD 13-analytics; contracts/api/v1-analytics.md)
+
+  /// `PUT /v1/analytics/consent` → records "Help improve Aura" for the
+  /// account and answers whether it may be tracked, as which random
+  /// analytics id, and the account's signup day (for `signup_age_bucket`).
+  /// The server never says why tracking is off.
+  Future<({bool tracking, String? distinctId, String? signupDay})>
+  putAnalyticsConsent({
+    required bool granted,
+    required String policyVersion,
+  }) async {
+    try {
+      final res = await _dio.put<Map<String, dynamic>>(
+        '/v1/analytics/consent',
+        data: {'granted': granted, 'policyVersion': policyVersion},
+        options: await _auth(),
+      );
+      final data = res.data ?? const <String, dynamic>{};
+      final id = data['distinctId'];
+      final day = data['signupDay'];
+      return (
+        tracking: data['tracking'] == true && id is String,
+        distinctId: id is String ? id : null,
+        signupDay: day is String ? day : null,
+      );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
   // ---- media: voice notes (F1 · DS-1, contracts/api/v1.md) ------------------
 
   /// `POST /v1/media/upload-url`. [bytes] is the exact ciphertext length

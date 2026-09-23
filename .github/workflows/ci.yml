@@ -1,0 +1,336 @@
+# Aura CI (docs/setup/ci-and-deploy.md).
+#
+# Path-filtered: the `changes` job runs .github/scripts/changed-components.sh on the diff and the other jobs only
+# run for the parts that changed (changing this file or .github/scripts runs everything). `CI result` is the one
+# check to require in branch protection: it passes when every job that ran passed.
+#
+# Every job has a local twin: scripts/ci-local.sh <mobile|goldens|server|e2e|admin|lint>.
+# Third-party and GitHub actions are pinned to commit SHAs (tag in the comment); Dependabot keeps them fresh.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  # Superseded PR runs are cancelled; every commit on main gets a complete result.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  FLUTTER_VERSION: 3.47.2 # what apps/mobile is developed and tested on
+  NODE_VERSION: '22' # engines.node >= 22 (server/aura-api, apps/admin); the Docker images use Node 22 too
+  PYTHON_VERSION: '3.10' # gen_lexicon.py embeds unicodedata 13.0.0 tables (see .github/scripts/check-generated.sh)
+  SUPABASE_CLI_VERSION: 2.75.0 # supabase/LOCAL.md
+  # No analytics or telemetry leaves CI (PRD 13): Next.js, and anything honouring DO_NOT_TRACK. Flutter/Dart
+  # analytics are switched off in each job.
+  DO_NOT_TRACK: '1'
+  NEXT_TELEMETRY_DISABLED: '1'
+
+defaults:
+  run:
+    shell: bash # bash -eo pipefail
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      mobile: ${{ steps.filter.outputs.mobile }}
+      goldens: ${{ steps.filter.outputs.goldens }}
+      server: ${{ steps.filter.outputs.server }}
+      e2e: ${{ steps.filter.outputs.e2e }}
+      admin: ${{ steps.filter.outputs.admin }}
+      vectors: ${{ steps.filter.outputs.vectors }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Classify changed paths
+        id: filter
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_AFTER: ${{ github.sha }}
+        run: |
+          range=''
+          case "$EVENT" in
+            pull_request) range="$PR_BASE...$PR_HEAD" ;;
+            push) if [ -n "$PUSH_BEFORE" ] && ! [[ "$PUSH_BEFORE" =~ ^0+$ ]]; then range="$PUSH_BEFORE..$PUSH_AFTER"; fi ;;
+          esac
+          if [ -n "$range" ] && files="$(git diff --name-only --no-renames "$range")"; then
+            echo "::group::Changed files ($range)"
+            printf '%s\n' "$files"
+            echo "::endgroup::"
+            .github/scripts/changed-components.sh <<<"$files" | tee -a "$GITHUB_OUTPUT"
+          else
+            echo "No usable diff base for this $EVENT run: running every job."
+            .github/scripts/changed-components.sh --all | tee -a "$GITHUB_OUTPUT"
+          fi
+
+  mobile:
+    name: Mobile · codegen, analyze, test
+    needs: changes
+    if: needs.changes.outputs.mobile == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Flutter and Dart analytics off
+        run: |
+          flutter config --no-analytics --no-cli-animations
+          dart --disable-analytics
+          flutter --version
+      - name: dart pub get (workspace root, lockfile enforced)
+        run: dart pub get --enforce-lockfile
+      - name: Generated files are current (ARB + gen-l10n, crisis lexicon, build_runner)
+        run: .github/scripts/check-generated.sh
+      - name: flutter analyze
+        working-directory: apps/mobile
+        run: flutter analyze
+      - name: flutter test (golden tests run in the macOS job)
+        working-directory: apps/mobile
+        run: flutter test --name '^(?!.*golden)'
+      - name: packages/aura_domain · analyze + test (Dart rule vectors, catalogue drift)
+        working-directory: packages/aura_domain
+        run: |
+          dart analyze --fatal-infos
+          dart test
+
+  mobile-goldens:
+    # The avatar goldens were rendered on Apple Silicon macOS; software rasterisation differs slightly on x86 Linux,
+    # so they are compared on a macOS runner, and only when avatar rendering can have changed.
+    name: Mobile · avatar goldens (macOS)
+    needs: changes
+    if: needs.changes.outputs.goldens == 'true'
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Flutter and Dart analytics off
+        run: |
+          flutter config --no-analytics --no-cli-animations
+          dart --disable-analytics
+      - name: dart pub get (workspace root, lockfile enforced)
+        run: dart pub get --enforce-lockfile
+      - name: Golden tests
+        working-directory: apps/mobile
+        run: |
+          files="$(grep -rl matchesGoldenFile test || true)"
+          if [ -z "$files" ]; then echo "No golden tests."; exit 0; fi
+          # shellcheck disable=SC2086 # test file paths have no spaces
+          flutter test --name golden $files
+      - name: Upload golden diffs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: golden-failures
+          path: apps/mobile/test/**/failures/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  server:
+    name: Server · lint, unit, build
+    needs: changes
+    if: needs.changes.outputs.server == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: server/aura-api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          package_json_file: server/aura-api/package.json # pnpm version from "packageManager"
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: server/aura-api/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: pnpm lint (tsc --noEmit + push copy lint, REQ-NTF-01)
+        run: pnpm lint
+      - name: pnpm test (unit, incl. the TS runner of contracts/rules/vectors)
+        run: pnpm test
+      - name: pnpm build (tsconfig.build.json → dist/main.js, dist/worker.js)
+        run: pnpm build
+
+  server-e2e:
+    name: Server · pgTAP, e2e, image
+    needs: changes
+    if: needs.changes.outputs.e2e == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6391:6379 # the dev port (infra/docker-compose.yml)
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: supabase/setup-cli@46f7f98c7f948ad727d22c1e67fab04c223a0520 # v3.0.0
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: Start Supabase (only the services the tests use; ports from supabase/config.toml)
+        run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,postgres-meta,supavisor
+      - name: Test environment from the local stack (the CLI's demo keys, not secrets)
+        run: .github/scripts/e2e-env.sh >> "$GITHUB_ENV"
+      - name: supabase/seed.sql is generated from contracts/moods.json
+        run: |
+          python3 supabase/scripts/gen_seed.py
+          git diff --exit-code -- supabase/seed.sql
+      - name: pgTAP (schema contract, RLS, grants, triggers)
+        run: supabase test db
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          package_json_file: server/aura-api/package.json
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: server/aura-api/pnpm-lock.yaml
+      - name: pnpm install
+        working-directory: server/aura-api
+        run: pnpm install --frozen-lockfile
+      - name: API e2e (real Nest app + GoTrue/TOTP, Realtime, Storage, Mailpit, Redis)
+        working-directory: server/aura-api
+        run: pnpm test:e2e
+      - name: Build the API/worker image
+        run: docker build -t aura-api:ci server/aura-api
+      - name: Image smoke test (API + worker containers against this stack)
+        run: .github/scripts/smoke-api-image.sh aura-api:ci
+      - name: Supabase container logs
+        if: failure()
+        run: |
+          for c in $(docker ps -a --format '{{.Names}}' | grep '^supabase_'); do
+            echo "::group::$c"
+            docker logs --tail 200 "$c" 2>&1 || true
+            echo "::endgroup::"
+          done
+
+  admin:
+    name: Admin console · typecheck, lint, test, build, image
+    needs: changes
+    if: needs.changes.outputs.admin == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/admin
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          package_json_file: apps/admin/package.json
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: apps/admin/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - name: Build + smoke-test the console image
+        working-directory: .
+        run: |
+          docker build -t aura-admin:ci apps/admin
+          .github/scripts/smoke-admin-image.sh aura-admin:ci
+
+  contracts:
+    # The rule vectors run in both stacks: Dart (packages/aura_domain/test/vectors_test.dart, mobile job) and TS
+    # (server/aura-api/test/unit/rules.vectors.spec.ts, server job). A vector change must pass both.
+    name: Contracts · Dart + TS rule vectors
+    needs: [changes, mobile, server]
+    if: always() && needs.changes.outputs.vectors == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: contracts
+      - name: Contract JSON is well-formed
+        run: |
+          find contracts -name '*.json' -print0 | while IFS= read -r -d '' f; do
+            jq empty "$f" || { echo "::error file=$f::not valid JSON"; exit 1; }
+          done
+      - name: Both vector runners ran and passed
+        env:
+          DART_RUNNER: ${{ needs.mobile.result }}
+          TS_RUNNER: ${{ needs.server.result }}
+        run: |
+          echo "Dart runner (mobile job): $DART_RUNNER"
+          echo "TS runner (server job):   $TS_RUNNER"
+          [ "$DART_RUNNER" = success ] && [ "$TS_RUNNER" = success ]
+
+  workflow-lint:
+    name: Workflows and scripts lint
+    needs: changes
+    if: needs.changes.outputs.workflows == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      ACTIONLINT_IMAGE: rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: actionlint (includes shellcheck on every run block)
+        run: docker run --rm -v "$PWD:/repo" -w /repo "$ACTIONLINT_IMAGE" -color
+      - name: shellcheck .github/scripts and scripts
+        run: docker run --rm -v "$PWD:/repo" -w /repo --entrypoint shellcheck "$ACTIONLINT_IMAGE" .github/scripts/*.sh scripts/*.sh
+
+  ci-result:
+    name: CI result
+    if: always()
+    needs: [changes, mobile, mobile-goldens, server, server-e2e, admin, contracts, workflow-lint]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Every job that ran succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$NEEDS" | jq -e 'all(.[]; .result == "success" or .result == "skipped")' > /dev/null

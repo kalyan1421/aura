@@ -58,6 +58,43 @@ abstract final class Env {
     defaultValue: kDebugMode,
   );
 
+  // ---- Analytics & crash reporting (PRD 13-analytics; docs/setup/analytics.md)
+  // Empty → off: no SDK starts and nothing is sent (local dev, tests, CI).
+  // Neither value is a secret (PostHog's project token and Sentry's DSN ship
+  // inside every build).
+
+  /// PostHog Cloud project token (`phc_…`).
+  static const String posthogKey = String.fromEnvironment('AURA_POSTHOG_KEY');
+
+  /// PostHog ingestion host: EU Cloud unless set (PRD `[ASSUMPTION]` EU).
+  static const String posthogHost = String.fromEnvironment(
+    'AURA_POSTHOG_HOST',
+    defaultValue: 'https://eu.i.posthog.com',
+  );
+
+  /// Sentry DSN for crash reports.
+  static const String sentryDsn = String.fromEnvironment('AURA_SENTRY_DSN');
+
+  /// Sentry environment; defaults to `production` in release builds.
+  static const String _sentryEnvironment = String.fromEnvironment(
+    'AURA_SENTRY_ENV',
+  );
+
+  /// "Help improve Aura" before the person has chosen. Off (opt-in) unless
+  /// the build says otherwise: default-on vs opt-in is a `[LEGAL]` decision
+  /// (PRD principle 5), and no consent control is ever pre-ticked by
+  /// default.
+  static const bool analyticsDefaultOn = bool.fromEnvironment(
+    'AURA_ANALYTICS_DEFAULT_ON',
+  );
+
+  static bool get hasPostHog =>
+      posthogKey.trim().isNotEmpty && posthogHost.trim().isNotEmpty;
+  static bool get hasSentry => sentryDsn.trim().isNotEmpty;
+  static String get sentryEnvironment => _sentryEnvironment.isNotEmpty
+      ? _sentryEnvironment
+      : (kReleaseMode ? 'production' : 'development');
+
   /// The CLI's fixed local-dev publishable key (supabase/LOCAL.md). Not a
   /// secret; never used in release builds.
   static const String _localPublishableKey =

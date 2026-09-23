@@ -1,0 +1,8 @@
+# Allow-list: only what the image build needs. Keeps .env (secrets), node_modules, dist and tests out of the
+# build context. Update when the build needs a new file.
+*
+!package.json
+!pnpm-lock.yaml
+!tsconfig.json
+!tsconfig.build.json
+!src/

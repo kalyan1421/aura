@@ -1,0 +1,143 @@
+# Release build of the app, gated by the release-config guard (docs/setup/ci-and-deploy.md, "Release builds").
+#
+# Actions → Release build → Run workflow, with a committed define file, e.g. apps/mobile/env/alpha.json (the
+# values are not secrets: backend URLs, the Supabase publishable key, legal/support links, OAuth client ids).
+#
+# 1. config-guard: compiles .github/release-guard/release_config_test.dart with the SAME --dart-define-from-file and
+#    fails when Env.missingLegalConfig is non-empty (AURA_PRIVACY_URL, AURA_TERMS_URL, AURA_SUPPORT_EMAIL,
+#    AURA_GRIEVANCE_NAME, AURA_GRIEVANCE_EMAIL) or a backend/legal value is local, http or a placeholder.
+# 2. Only then the release builds run, with that file. Store signing is not set up yet (see the doc): the Android
+#    bundle is signed with the debug key and iOS builds without codesigning, so these are compile checks and
+#    artifacts for internal testing, not store uploads.
+name: Release build
+
+on:
+  workflow_dispatch:
+    inputs:
+      defines_file:
+        description: Dart define file (JSON or KEY=VALUE) under apps/mobile/env/
+        type: string
+        required: true
+        default: apps/mobile/env/alpha.json
+      platform:
+        description: What to build after the guard passes
+        type: choice
+        options: [android, ios, both, guard-only]
+        default: android
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: 3.47.2 # keep in step with ci.yml
+  JAVA_VERSION: '17'
+  DO_NOT_TRACK: '1'
+  DEFINES_FILE: ${{ inputs.defines_file }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  config-guard:
+    name: Release config guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: The define file is a committed file under apps/mobile/env/
+        run: |
+          if ! [[ "$DEFINES_FILE" =~ ^apps/mobile/env/[A-Za-z0-9._-]+$ ]] || [ ! -f "$DEFINES_FILE" ]; then
+            echo "::error::defines_file must name a committed file in apps/mobile/env/ (got '$DEFINES_FILE')."
+            exit 1
+          fi
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Flutter and Dart analytics off
+        run: |
+          flutter config --no-analytics --no-cli-animations
+          dart --disable-analytics
+      - run: dart pub get --enforce-lockfile
+      - name: Env.missingLegalConfig is empty; backend and legal values are real
+        run: .github/scripts/check-release-config.sh "$DEFINES_FILE"
+
+  android:
+    name: Android · release app bundle
+    needs: config-guard
+    if: inputs.platform == 'android' || inputs.platform == 'both'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Flutter and Dart analytics off
+        run: |
+          flutter config --no-analytics --no-cli-animations
+          dart --disable-analytics
+      - run: dart pub get --enforce-lockfile
+      - name: flutter build appbundle --release
+        working-directory: apps/mobile
+        run: flutter build appbundle --release --dart-define-from-file="$GITHUB_WORKSPACE/$DEFINES_FILE"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: aura-release-aab
+          path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+      - name: Summary
+        run: |
+          {
+            echo "### Android release bundle"
+            echo "Built with \`$DEFINES_FILE\` (guard passed)."
+            echo "Signed with the **debug key** until release signing is configured (docs/setup/ci-and-deploy.md): not uploadable to Play yet."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  ios:
+    name: iOS · release build (no codesign)
+    needs: config-guard
+    if: inputs.platform == 'ios' || inputs.platform == 'both'
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+      - name: Flutter and Dart analytics off
+        run: |
+          flutter config --no-analytics --no-cli-animations
+          dart --disable-analytics
+          xcodebuild -version
+      - run: dart pub get --enforce-lockfile
+      - name: flutter build ios --release --no-codesign
+        working-directory: apps/mobile
+        run: flutter build ios --release --no-codesign --dart-define-from-file="$GITHUB_WORKSPACE/$DEFINES_FILE"
+      - name: Summary
+        run: |
+          {
+            echo "### iOS release build"
+            echo "Compiled with \`$DEFINES_FILE\` (guard passed), without code signing: TestFlight upload needs signing (docs/setup/ci-and-deploy.md)."
+          } >> "$GITHUB_STEP_SUMMARY"

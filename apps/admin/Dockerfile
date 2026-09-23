@@ -12,12 +12,12 @@
 # server instead (much smaller image) — see docs/setup/ci-and-deploy.md. No other change is needed.
 #
 # Plain Dockerfile syntax (no BuildKit-only features): DigitalOcean App Platform builds Dockerfiles with Kaniko.
-
-# Node 22 LTS on Alpine, pinned by digest (multi-arch index). Dependabot (.github/dependabot.yml) bumps it.
-ARG NODE_IMAGE=node:22-alpine@sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85
+#
+# Base image: Node 22 LTS on Alpine, pinned by digest (multi-arch index) in both FROM lines below. Dependabot
+# (.github/dependabot.yml) proposes digest bumps; keep the two lines identical.
 
 # ---- build --------------------------------------------------------------------------------------------------------
-FROM ${NODE_IMAGE} AS build
+FROM node:22-alpine@sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85 AS build
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0 \
     CI=true \
     NEXT_TELEMETRY_DISABLED=1
@@ -43,7 +43,7 @@ RUN mkdir /out \
  && if [ -d public ]; then cp -a public /out/public; fi
 
 # ---- runtime ------------------------------------------------------------------------------------------------------
-FROM ${NODE_IMAGE} AS runtime
+FROM node:22-alpine@sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85 AS runtime
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3320 \
