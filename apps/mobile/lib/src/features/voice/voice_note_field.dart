@@ -525,6 +525,8 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
 Future<bool?> showVoiceExplainer(BuildContext context) =>
     showModalBottomSheet<bool>(
       context: context,
+      // Over the navigation bar too: a modal never leaves the tabs tappable.
+      useRootNavigator: true,
       useSafeArea: true,
       isScrollControlled: true,
       builder: (_) => const VoiceExplainerSheet(),

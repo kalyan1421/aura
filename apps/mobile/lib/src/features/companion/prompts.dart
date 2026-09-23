@@ -2,6 +2,7 @@ import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/db/kv_store.dart';
 import '../../core/providers.dart';
 
 /// Where a guided prompt is shown.
@@ -106,8 +107,9 @@ int promptSeed(String id) {
 }
 
 /// This phone's switch for guided prompts ([KvStore], "true" = off). A
-/// preference of the phone, not of the account; nothing about it is synced.
-const String guidedPromptsOffKey = 'companion.guided_prompts_off';
+/// preference of the phone, not of the account: nothing about it is synced,
+/// and it survives sign-out ([KvKeys.deviceScoped]).
+const String guidedPromptsOffKey = KvKeys.guidedPromptsOff;
 
 /// Whether guided prompts show (on unless switched off in Settings).
 final guidedPromptsEnabledProvider = StreamProvider<bool>(

@@ -43,6 +43,8 @@ Future<LocalDay?> pickBackfillDay(
   final localeTag = ref.read(localeControllerProvider);
   return showModalBottomSheet<LocalDay>(
     context: context,
+    // Over the navigation bar too: a modal never leaves the tabs tappable.
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => _DayPicker(

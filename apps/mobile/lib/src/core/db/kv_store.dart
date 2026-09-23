@@ -45,6 +45,10 @@ abstract final class KvKeys {
   /// hide streak number. A property of this phone, not of the account.
   static const String comfort = 'comfort.prefs';
 
+  /// Settings › Comfort › Writing prompts: "true" = guided prompts off. A
+  /// property of this phone, like [comfort].
+  static const String guidedPromptsOff = 'companion.guided_prompts_off';
+
   /// The only keys kept when an account signs out. Everything else in the
   /// table belongs to the signed-in person and is wiped (shared phones).
   /// The under-13 lock and the DB key live in secure storage and stay too.
@@ -53,6 +57,7 @@ abstract final class KvKeys {
     deviceId,
     pushDeleteOwed,
     comfort,
+    guidedPromptsOff,
   };
 }
 
@@ -73,9 +78,9 @@ class KvStore {
     return v == null ? null : jsonDecode(v) as Map<String, dynamic>;
   }
 
-  Stream<Map<String, dynamic>?> watchJson(String key) => watch(
-    key,
-  ).map((v) => v == null ? null : jsonDecode(v) as Map<String, dynamic>);
+  Stream<Map<String, dynamic>?> watchJson(String key) =>
+      watch(key)
+          .map((v) => v == null ? null : jsonDecode(v) as Map<String, dynamic>);
 
   Future<void> setJson(String key, Map<String, dynamic>? value) =>
       set(key, value == null ? null : jsonEncode(value));

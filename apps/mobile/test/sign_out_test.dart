@@ -132,6 +132,7 @@ void main() {
       (KvKeys.deviceId, 'device-1'),
       (KvKeys.pushDeleteOwed, '1'),
       (KvKeys.comfort, '{"reduceMotion":true}'),
+      (KvKeys.guidedPromptsOff, 'true'),
     ]) {
       await kv.set(k, v);
     }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../companion/prompts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/env/env.dart';
@@ -123,6 +124,13 @@ class SettingsScreen extends ConsumerWidget {
               value: comfort.hideStreak,
               onChanged: (v) =>
                   comfortCtl.update((c) => c.copyWith(hideStreak: v)),
+            ),
+            toggle(
+              key: 'set-guided-prompts',
+              title: l.prompt_settingsTitle,
+              note: l.prompt_settingsBody,
+              value: ref.watch(guidedPromptsEnabledProvider).value ?? true,
+              onChanged: (v) => setGuidedPromptsEnabled(ref, enabled: v),
             ),
 
             // ---- Account --------------------------------------------------

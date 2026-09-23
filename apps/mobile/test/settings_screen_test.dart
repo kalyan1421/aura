@@ -214,6 +214,30 @@ void main() {
     await _unmount(tester);
   });
 
+  testWidgets('Writing prompts: on by default; switching it off is a device '
+      'preference that survives sign-out', (tester) async {
+    final db = memoryDb();
+    await _pump(tester, db: db);
+    final prompts = find.byKey(const ValueKey('set-guided-prompts'));
+    await tester.scrollUntilVisible(
+      prompts,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(tester.widget<SwitchListTile>(prompts).value, isTrue);
+
+    await tester.tap(prompts);
+    await settleIo(tester);
+
+    expect(tester.widget<SwitchListTile>(prompts).value, isFalse);
+    expect(
+      await io(tester, () => KvStore(db).get(KvKeys.guidedPromptsOff)),
+      'true',
+    );
+    expect(KvKeys.deviceScoped, contains(KvKeys.guidedPromptsOff));
+    await _unmount(tester);
+  });
+
   testWidgets("when the phone already reduces motion the switch is on and "
       'locked', (tester) async {
     tester.platformDispatcher.accessibilityFeaturesTestValue =

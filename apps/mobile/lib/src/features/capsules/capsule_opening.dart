@@ -27,9 +27,10 @@ import 'capsule_providers.dart';
 import 'capsule_repository.dart';
 
 /// Opens capsule [id]: the ceremony, then its content. Resolves when the
-/// person is done (the post-save order of a check-in waits for it).
+/// person is done (the post-save order of a check-in waits for it). Above the
+/// tab bar: the ceremony is full-screen from any tab.
 Future<void> openCapsule(BuildContext context, String id) =>
-    Navigator.of(context).push<void>(
+    Navigator.of(context, rootNavigator: true).push<void>(
       MaterialPageRoute<void>(builder: (_) => CapsuleOpeningScreen(id: id)),
     );
 
@@ -43,6 +44,8 @@ Future<bool> showCapsuleTriggerCard(
 }) async {
   final now = await showModalBottomSheet<bool>(
     context: context,
+    // Over the navigation bar too: a modal never leaves the tabs tappable.
+    useRootNavigator: true,
     useSafeArea: true,
     isScrollControlled: true,
     builder: (_) => CapsuleTriggerCard(held: held),

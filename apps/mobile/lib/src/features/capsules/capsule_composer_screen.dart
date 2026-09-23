@@ -316,6 +316,8 @@ class _CapsuleComposerScreenState extends ConsumerState<CapsuleComposerScreen> {
       if (!mounted) return;
       final allow = await showModalBottomSheet<bool>(
         context: context,
+        // Over the navigation bar too: a modal never leaves the tabs tappable.
+        useRootNavigator: true,
         useSafeArea: true,
         isScrollControlled: true,
         builder: (_) => const CapsuleNotifyAskSheet(),

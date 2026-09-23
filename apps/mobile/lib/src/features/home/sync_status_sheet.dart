@@ -68,6 +68,8 @@ class SyncIndicator extends ConsumerWidget {
 Future<void> showSyncStatusSheet(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      // Over the navigation bar too: a modal never leaves the tabs tappable.
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => const SyncStatusSheet(),

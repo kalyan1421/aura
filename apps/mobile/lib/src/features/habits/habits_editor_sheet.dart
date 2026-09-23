@@ -20,6 +20,8 @@ import 'habits_section.dart';
 Future<void> showHabitsEditor(BuildContext context) =>
     showModalBottomSheet<void>(
       context: context,
+      // Over the navigation bar too: a modal never leaves the tabs tappable.
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => const HabitsEditorSheet(),

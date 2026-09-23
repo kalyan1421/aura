@@ -18,8 +18,10 @@ import 'capsule_repository.dart';
 
 /// Opens "Future you", the capsules list (a Navigator route; the lead can
 /// map it to `/sanctuary/capsules`).
-Future<void> openCapsulesList(BuildContext context) => Navigator.of(context)
-    .push<void>(
+/// Opens the capsules list above the tab bar (a focused, full-screen flow,
+/// like the Sanctuary activities), whichever tab it's opened from.
+Future<void> openCapsulesList(BuildContext context) =>
+    Navigator.of(context, rootNavigator: true).push<void>(
       MaterialPageRoute<void>(builder: (_) => const CapsulesListScreen()),
     );
 
