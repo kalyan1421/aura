@@ -8,42 +8,50 @@ part of 'home_screen.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Check-ins saved on this phone for the current Aura day (deleted ones
+/// excluded), for the history line.
 
-@ProviderFor(habitsToday)
-final habitsTodayProvider = HabitsTodayProvider._();
+@ProviderFor(checkInsToday)
+final checkInsTodayProvider = CheckInsTodayProvider._();
 
-final class HabitsTodayProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<HabitToday>>,
-          List<HabitToday>,
-          Stream<List<HabitToday>>
-        >
-    with $FutureModifier<List<HabitToday>>, $StreamProvider<List<HabitToday>> {
-  HabitsTodayProvider._()
+/// Check-ins saved on this phone for the current Aura day (deleted ones
+/// excluded), for the history line.
+
+final class CheckInsTodayProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  /// Check-ins saved on this phone for the current Aura day (deleted ones
+  /// excluded), for the history line.
+  CheckInsTodayProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'habitsTodayProvider',
+        name: r'checkInsTodayProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$habitsTodayHash();
+  String debugGetCreateSourceHash() => _$checkInsTodayHash();
 
   @$internal
   @override
-  $StreamProviderElement<List<HabitToday>> $createElement(
-    $ProviderPointer pointer,
-  ) => $StreamProviderElement(pointer);
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Stream<List<HabitToday>> create(Ref ref) {
-    return habitsToday(ref);
+  int create(Ref ref) {
+    return checkInsToday(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
   }
 }
 
-String _$habitsTodayHash() => r'7ae453b0ca31c1acf65697c1fc23756f0c07f6c4';
+String _$checkInsTodayHash() => r'd8a0c9f2e116bf2010b2f1b5f591212fc0790dbd';

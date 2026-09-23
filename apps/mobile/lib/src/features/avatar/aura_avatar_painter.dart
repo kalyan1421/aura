@@ -111,7 +111,8 @@ class _Geo {
   /// A size unit that scales with the character.
   double get unit => baseW * scale;
 
-  Rect get imageRect => Rect.fromPoints(map(Offset.zero), map(const Offset(1, 1)));
+  Rect get imageRect =>
+      Rect.fromPoints(map(Offset.zero), map(const Offset(1, 1)));
 }
 
 /// Draws the hybrid avatar: character art as the base + procedural light.
@@ -341,8 +342,11 @@ class AuraAvatarPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = radius * 0.1
-          ..color = Color.lerp(color, Colors.white, 0.35)!
-              .withValues(alpha: 0.35 * halo * a)
+          ..color = Color.lerp(
+            color,
+            Colors.white,
+            0.35,
+          )!.withValues(alpha: 0.35 * halo * a)
           ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.06),
       );
     }
@@ -360,7 +364,10 @@ class AuraAvatarPainter extends CustomPainter {
     required bool front,
   }) {
     final center = geo.mapXY(0.5, 0.80);
-    final radii = Offset(geo.baseW * geo.scale * 0.66, geo.baseH * geo.scale * 0.27);
+    final radii = Offset(
+      geo.baseW * geo.scale * 0.66,
+      geo.baseH * geo.scale * 0.27,
+    );
     // Soft, luminous clouds in the avatar's own hue — never grey or dim.
     final deep = Color.lerp(hue, const Color(0xFF8C82E6), 0.5)!;
     final lit = Color.lerp(hue, const Color(0xFFF8EDFF), 0.68)!;
@@ -404,10 +411,15 @@ class AuraAvatarPainter extends CustomPainter {
     for (var i = 0; i < puffs; i++) {
       final r1 = _rand(i, front ? 71 : 31);
       final r2 = _rand(i, front ? 73 : 37);
-      final drift = tier == AvatarTier.still ? 0.0 : math.sin(t * 0.12 + i) * 0.06;
+      final drift = tier == AvatarTier.still
+          ? 0.0
+          : math.sin(t * 0.12 + i) * 0.06;
       final x = center.dx + (r1 - 0.5 + drift) * radii.dx * 1.6;
-      final y = center.dy +
-          (front ? 0.25 + r2 * 0.45 : r2 - 0.5) * radii.dy * (front ? 1.2 : 1.4);
+      final y =
+          center.dy +
+          (front ? 0.25 + r2 * 0.45 : r2 - 0.5) *
+              radii.dy *
+              (front ? 1.2 : 1.4);
       final w = radii.dx * (0.55 + 0.4 * r2);
       final h = radii.dy * (0.45 + 0.35 * r1);
       canvas.drawOval(
@@ -447,7 +459,11 @@ class AuraAvatarPainter extends CustomPainter {
 
   /// Luminance-preserving hue tint of [strength] (≤ 0.25) times [brightness].
   @visibleForTesting
-  static List<double> tintMatrix(Color tint, double strength, double brightness) {
+  static List<double> tintMatrix(
+    Color tint,
+    double strength,
+    double brightness,
+  ) {
     final k = strength.clamp(0.0, 0.25);
     const lr = 0.2126, lg = 0.7152, lb = 0.0722;
     final tl = lr * tint.r + lg * tint.g + lb * tint.b;
@@ -455,10 +471,26 @@ class AuraAvatarPainter extends CustomPainter {
     final tr = tint.r * gain, tg = tint.g * gain, tb = tint.b * gain;
     final b = brightness;
     return [
-      b * ((1 - k) + k * tr * lr), b * (k * tr * lg), b * (k * tr * lb), 0, 0,
-      b * (k * tg * lr), b * ((1 - k) + k * tg * lg), b * (k * tg * lb), 0, 0,
-      b * (k * tb * lr), b * (k * tb * lg), b * ((1 - k) + k * tb * lb), 0, 0,
-      0, 0, 0, 1, 0,
+      b * ((1 - k) + k * tr * lr),
+      b * (k * tr * lg),
+      b * (k * tr * lb),
+      0,
+      0,
+      b * (k * tg * lr),
+      b * ((1 - k) + k * tg * lg),
+      b * (k * tg * lb),
+      0,
+      0,
+      b * (k * tb * lr),
+      b * (k * tb * lg),
+      b * ((1 - k) + k * tb * lb),
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
     ];
   }
 
@@ -537,7 +569,12 @@ class AuraAvatarPainter extends CustomPainter {
     }
   }
 
-  void _ringLine(Canvas canvas, _Geo geo, RingSpec ring, {required bool front}) {
+  void _ringLine(
+    Canvas canvas,
+    _Geo geo,
+    RingSpec ring, {
+    required bool front,
+  }) {
     final n = ring.samples.length;
     final w = geo.unit * 0.0042;
     final glowPaint = Paint()
@@ -563,7 +600,11 @@ class AuraAvatarPainter extends CustomPainter {
       )!;
       final depth = front ? 1.0 : 0.55;
       glowPaint.color = c.withValues(alpha: 0.28 * depth);
-      line.color = Color.lerp(c, Colors.white, 0.3)!.withValues(alpha: 0.9 * depth);
+      line.color = Color.lerp(
+        c,
+        Colors.white,
+        0.3,
+      )!.withValues(alpha: 0.9 * depth);
       canvas
         ..drawLine(pa, pb, glowPaint)
         ..drawLine(pa, pb, line);
@@ -631,15 +672,26 @@ class AuraAvatarPainter extends CustomPainter {
                     range * _rand(i, 3)) %
                 range;
       final life = math.sin(math.pi * rise / range); // fade in/out
-      final pos = center +
-          Offset(math.cos(a) * rx * rr, math.sin(a) * ry * rr - rise + range / 2);
+      final pos =
+          center +
+          Offset(
+            math.cos(a) * rx * rr,
+            math.sin(a) * ry * rr - rise + range / 2,
+          );
       // Twinkle ≤ 0.4 Hz: never flashes (REQ-A11Y-09).
       final tw = tier == AvatarTier.still
           ? 0.7
-          : 0.35 + 0.65 * math.pow(
-              0.5 + 0.5 * math.sin(t * (0.5 + 2.0 * _rand(i, 6)) + 6.28 * _rand(i, 7)),
-              2,
-            );
+          : 0.35 +
+                0.65 *
+                    math.pow(
+                      0.5 +
+                          0.5 *
+                              math.sin(
+                                t * (0.5 + 2.0 * _rand(i, 6)) +
+                                    6.28 * _rand(i, 7),
+                              ),
+                      2,
+                    );
       final alpha = (life * tw).clamp(0.0, 1.0) * 0.9;
       final pick = _rand(i, 8);
       final color = pick < 0.4
@@ -665,7 +717,8 @@ class AuraAvatarPainter extends CustomPainter {
     const slots = 12;
     final lit = state.constellationStars;
     final pts = [
-      for (var i = 0; i < slots; i++) geo.map(m.constellationArc.slot(i, slots)),
+      for (var i = 0; i < slots; i++)
+        geo.map(m.constellationArc.slot(i, slots)),
     ];
     final showSlots = state.stage == AuraStage.constellation;
     final line = Paint()
@@ -722,7 +775,11 @@ class AuraAvatarPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = geo.unit * 0.03 * fade + 1
-        ..color = Color.lerp(Colors.white, hue, e)!.withValues(alpha: 0.7 * fade)
+        ..color = Color.lerp(
+          Colors.white,
+          hue,
+          e,
+        )!.withValues(alpha: 0.7 * fade)
         ..maskFilter = MaskFilter.blur(BlurStyle.normal, geo.unit * 0.02),
     );
   }
@@ -748,11 +805,16 @@ class AuraAvatarPainter extends CustomPainter {
       c,
       r,
       Paint()
-        ..shader = ui.Gradient.radial(c, r, [
-          Colors.white.withValues(alpha: 0.95 * brightness.clamp(0, 1)),
-          Color.lerp(hue, Colors.white, 0.3)!.withValues(alpha: 0.8),
-          hue.withValues(alpha: 0),
-        ], const [0, 0.35, 1]),
+        ..shader = ui.Gradient.radial(
+          c,
+          r,
+          [
+            Colors.white.withValues(alpha: 0.95 * brightness.clamp(0, 1)),
+            Color.lerp(hue, Colors.white, 0.3)!.withValues(alpha: 0.8),
+            hue.withValues(alpha: 0),
+          ],
+          const [0, 0.35, 1],
+        ),
     );
   }
 

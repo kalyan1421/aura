@@ -126,8 +126,8 @@ class _AuraAvatarViewState extends State<AuraAvatarView>
     }
     _tier = next;
     // Still: one frame, except a slow glow under Reduce Motion.
-    final animate = widget.fixedTime == null &&
-        (next != AvatarTier.still || _reduceMotion);
+    final animate =
+        widget.fixedTime == null && (next != AvatarTier.still || _reduceMotion);
     if (animate) {
       _ticker ??= createTicker(_onTick);
       if (!_ticker!.isActive) _ticker!.start();

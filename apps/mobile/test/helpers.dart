@@ -35,6 +35,7 @@ class FakeSync implements SyncController {
   final ValueNotifier<SyncPhase> _phase = ValueNotifier(SyncPhase.offline);
   final ValueNotifier<bool> _online = ValueNotifier(true);
   int writes = 0;
+  int syncNowCalls = 0;
 
   @override
   ValueListenable<SyncPhase> get phase => _phase;
@@ -44,6 +45,8 @@ class FakeSync implements SyncController {
   void notifyLocalWrite() => writes++;
   @override
   void onResume() {}
+  @override
+  void syncNow() => syncNowCalls++;
   @override
   Future<void> pause() async {}
   @override

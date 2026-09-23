@@ -89,7 +89,7 @@ final class GateControllerProvider
   }
 }
 
-String _$gateControllerHash() => r'8dd55e1812a39c9ad06c67467b167827414f107a';
+String _$gateControllerHash() => r'3d924ad3c424ef25754b815b3153eb28f53059c2';
 
 abstract class _$GateController extends $Notifier<GateState> {
   GateState build();

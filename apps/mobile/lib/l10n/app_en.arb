@@ -292,11 +292,11 @@
   },
   "signin_apple": "Continue with Apple",
   "@signin_apple": {
-    "description": "Sign in with Apple (disabled until enabled by flag)."
+    "description": "Sign in with Apple. Only shown when social sign-in is enabled for the build."
   },
   "signin_google": "Continue with Google",
   "@signin_google": {
-    "description": "Sign in with Google (disabled until enabled by flag)."
+    "description": "Sign in with Google. Only shown when social sign-in is enabled for the build."
   },
   "signin_offline": "You're offline. Pick your first mood now. We'll finish setting up when you're connected.",
   "@signin_offline": {
@@ -799,6 +799,328 @@
   "@push_allow": {
     "description": "Explainer button that opens the system notification prompt."
   },
+  "signin_busy": "One moment",
+  "@signin_busy": {
+    "description": "Screen-reader label of the small progress ring inside a button while sign-in or deletion work runs."
+  },
+  "signin_resendIn": "{seconds, plural, =1{You can ask for a fresh code in 1 s} other{You can ask for a fresh code in {seconds} s}}",
+  "@signin_resendIn": {
+    "description": "Quiet label on the disabled resend button during its 30-second cooldown. 's' = seconds.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "signin_freshSent": "A fresh code is on its way.",
+  "@signin_freshSent": {
+    "description": "Shown after the person asked for a fresh sign-in code and it was sent."
+  },
+  "acct_pendingTitle": "Keep your account?",
+  "@acct_pendingTitle": {
+    "description": "Title of the choice shown when the signed-in account is scheduled for deletion (7-day grace)."
+  },
+  "acct_pendingBody": "Your account is set to be deleted on {date}. Keep it?",
+  "@acct_pendingBody": {
+    "description": "Deletion is scheduled; {date} is a formatted date. Calm, no pressure.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "acct_pendingBodySoon": "Your account is set to be deleted soon. Keep it?",
+  "@acct_pendingBodySoon": {
+    "description": "Deletion is scheduled but the date isn't known yet (offline)."
+  },
+  "acct_keep": "Keep my account",
+  "@acct_keep": {
+    "description": "Cancels the scheduled deletion."
+  },
+  "acct_letGo": "Let it go",
+  "@acct_letGo": {
+    "description": "Leaves the deletion scheduled and signs out of this phone (clears it)."
+  },
+  "acct_keepFailed": "That didn't go through, so nothing has changed yet. Try again when you're connected.",
+  "@acct_keepFailed": {
+    "description": "Cancelling the deletion failed. No blame."
+  },
+  "acct_deleteTitle": "Delete my account",
+  "@acct_deleteTitle": {
+    "description": "Settings row, screen title and the destructive button. Explicit, not softened."
+  },
+  "acct_deleteIntro": "Deleting your account removes:",
+  "@acct_deleteIntro": {
+    "description": "Lead-in to the list of what is deleted."
+  },
+  "acct_itemCheckIns": "Your check-ins and notes",
+  "@acct_itemCheckIns": {
+    "description": "What is deleted (list item)."
+  },
+  "acct_itemHabits": "Your habits",
+  "@acct_itemHabits": {
+    "description": "What is deleted (list item)."
+  },
+  "acct_itemProgress": "Your Starlight and your Aura's growth",
+  "@acct_itemProgress": {
+    "description": "What is deleted (list item). Starlight and Aura are brand terms."
+  },
+  "acct_itemAccount": "Your account and the email you sign in with",
+  "@acct_itemAccount": {
+    "description": "What is deleted (list item)."
+  },
+  "acct_grace": "You have 7 days to change your mind. Sign in again before then and everything stays. After that it's deleted for good and can't be brought back.",
+  "@acct_grace": {
+    "description": "The 7-day grace period."
+  },
+  "acct_store": "If you pay for a subscription through the App Store or Google Play, deleting your account doesn't cancel it. Manage or cancel it in your store's subscription settings.",
+  "@acct_store": {
+    "description": "Store subscription warning (Apple 5.1.1(v)). Store names stay in English."
+  },
+  "acct_phone": "This phone will be cleared and signed out straight away.",
+  "@acct_phone": {
+    "description": "What happens on this phone after the request."
+  },
+  "acct_needsConnection": "Deleting your account needs a connection. Connect to the internet, then try again.",
+  "@acct_needsConnection": {
+    "description": "Offline: the delete button is disabled."
+  },
+  "acct_confirmTitle": "Delete your account?",
+  "@acct_confirmTitle": {
+    "description": "Confirmation dialog title."
+  },
+  "acct_confirmBody": "Your account and everything in it will be deleted in 7 days. Sign in again before then to keep it. This phone will be cleared now.",
+  "@acct_confirmBody": {
+    "description": "Confirmation dialog body."
+  },
+  "acct_failed": "That didn't go through, and nothing has been deleted. Try again in a moment.",
+  "@acct_failed": {
+    "description": "The deletion request failed. Nothing was wiped."
+  },
+  "acct_failedOffline": "We couldn't reach Aura, and nothing has been deleted. Check your connection and try again.",
+  "@acct_failedOffline": {
+    "description": "The deletion request could not reach the server."
+  },
+  "acct_retry": "Try again",
+  "@acct_retry": {
+    "description": "Retry after a failed request."
+  },
+  "acct_scheduledTitle": "Your account is set to be deleted",
+  "@acct_scheduledTitle": {
+    "description": "Shown after the deletion was scheduled."
+  },
+  "acct_scheduledBody": "It will be deleted on {date}. Sign in again before then to keep it.",
+  "@acct_scheduledBody": {
+    "description": "{date} is a formatted date.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "acct_phoneCleared": "This phone has been cleared and signed out.",
+  "@acct_phoneCleared": {
+    "description": "After the deletion was scheduled and the phone wiped."
+  },
+  "acct_signedOut": "You're not signed in, so there's no account to delete. What you've saved lives only on this phone.",
+  "@acct_signedOut": {
+    "description": "Delete screen opened while signed out."
+  },
+  "acct_unavailable": "Account deletion isn't set up in this build.",
+  "@acct_unavailable": {
+    "description": "Dev builds without an API URL."
+  },
+  "set_comfort": "Comfort",
+  "@set_comfort": {
+    "description": "Settings section: motion, haptics, streak number."
+  },
+  "set_reduceMotion": "Reduce motion",
+  "@set_reduceMotion": {
+    "description": "Switch (REQ-A11Y-08)."
+  },
+  "set_reduceMotionNote": "Also follows your phone's setting",
+  "@set_reduceMotionNote": {
+    "description": "Note under Reduce motion; when the phone already reduces motion the switch is on and locked."
+  },
+  "set_haptics": "Haptics",
+  "@set_haptics": {
+    "description": "Switch for gentle vibration feedback."
+  },
+  "set_hapticsNote": "Soft taps when you choose something",
+  "@set_hapticsNote": {
+    "description": "Note under Haptics."
+  },
+  "set_hideStreak": "Hide streak number",
+  "@set_hideStreak": {
+    "description": "Switch (F3): hides the glow-streak day count on Home."
+  },
+  "set_hideStreakNote": "Your glow still grows. Home just won't count the days.",
+  "@set_hideStreakNote": {
+    "description": "Note under Hide streak number. No loss framing."
+  },
+  "set_signOutTitle": "Sign out of Aura?",
+  "@set_signOutTitle": {
+    "description": "Title of the sign-out warning when items haven't synced."
+  },
+  "set_helpSafety": "Help & Safety",
+  "@set_helpSafety": {
+    "description": "Settings section: disclaimer, legal links, Grievance Officer, support."
+  },
+  "set_grievanceOfficer": "Grievance Officer",
+  "@set_grievanceOfficer": {
+    "description": "Row title (F9, IT Rules). Tapping writes an email."
+  },
+  "set_grievanceSubject": "Grievance about Aura",
+  "@set_grievanceSubject": {
+    "description": "Email subject pre-filled when writing to the Grievance Officer."
+  },
+  "set_contactSupport": "Contact support",
+  "@set_contactSupport": {
+    "description": "Row title. Tapping writes an email."
+  },
+  "set_supportSubject": "Aura support",
+  "@set_supportSubject": {
+    "description": "Email subject pre-filled when writing to support."
+  },
+  "set_opensEmail": "Opens your email app",
+  "@set_opensEmail": {
+    "description": "Screen-reader hint on email rows."
+  },
+  "set_emailFailed": "We couldn't open an email app. You can write to {email}.",
+  "@set_emailFailed": {
+    "description": "No mail app could open a mailto link.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "acct_inProgress": "This account is already being deleted, so it can't be kept any more. This phone will be cleared and signed out.",
+  "@acct_inProgress": {
+    "description": "\"Keep my account\" came too late: the 7-day grace is over and deletion has started. Calm, no blame. The only button is Sign out."
+  },
+  "checkin_discardTitle": "Leave without saving?",
+  "@checkin_discardTitle": {
+    "description": "Asked when closing the check-in (or an edit) with a mood, tags or words not yet saved. Calm, no blame."
+  },
+  "checkin_discardKeep": "Keep editing",
+  "@checkin_discardKeep": {
+    "description": "Default choice in the leave-without-saving dialog: stay and keep what was entered."
+  },
+  "checkin_discardConfirm": "Discard",
+  "@checkin_discardConfirm": {
+    "description": "Leave-without-saving dialog: leave and drop what was entered."
+  },
+  "checkin_tagLimit": "{count, plural, =1{Up to 1 tag} other{Up to {count} tags}}",
+  "@checkin_tagLimit": {
+    "description": "Calm hint shown when the tag limit for one check-in is reached.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "checkin_quadrantAxes": "{energy} · {feel}",
+  "@checkin_quadrantAxes": {
+    "description": "Caption under a quadrant name when the mood grid is stacked one quadrant per row (large text). energy = 'More energy'/'Less energy', feel = 'Pleasant'/'Unpleasant'.",
+    "placeholders": {
+      "energy": {
+        "type": "String"
+      },
+      "feel": {
+        "type": "String"
+      }
+    }
+  },
+  "history_title": "Your check-ins",
+  "@history_title": {
+    "description": "Private history screen title."
+  },
+  "history_private": "Only you can see these.",
+  "@history_private": {
+    "description": "Privacy line under the history title."
+  },
+  "history_empty": "Nothing here yet. Your check-ins will gather here, and only you can see them.",
+  "@history_empty": {
+    "description": "History empty state. Calm, no pressure."
+  },
+  "history_today": "Today",
+  "@history_today": {
+    "description": "Day header in history: the current Aura day."
+  },
+  "history_yesterday": "Yesterday",
+  "@history_yesterday": {
+    "description": "Day header in history: the previous Aura day."
+  },
+  "history_tagCount": "{count, plural, =1{1 tag} other{{count} tags}}",
+  "@history_tagCount": {
+    "description": "Discreet tag count on a history row.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "history_hasNote": "Has a note",
+  "@history_hasNote": {
+    "description": "Screen-reader label for the note icon on a history row (the note itself is never shown in the list)."
+  },
+  "history_entryTitle": "Your check-in",
+  "@history_entryTitle": {
+    "description": "Title of one check-in's page."
+  },
+  "history_when": "{day}, {time}",
+  "@history_when": {
+    "description": "When a check-in was made, e.g. 'Today, 3:30 PM'.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "history_tags": "Tags",
+  "@history_tags": {
+    "description": "Section header on a check-in's page."
+  },
+  "history_note": "Your words",
+  "@history_note": {
+    "description": "Section header for the private note on a check-in's page."
+  },
+  "history_synced": "Synced",
+  "@history_synced": {
+    "description": "Sync status: this check-in is safely on the server."
+  },
+  "history_edit": "Edit",
+  "@history_edit": {
+    "description": "Edit a check-in (only within a day)."
+  },
+  "history_editWindowOver": "You can edit a check-in for a day after you make it.",
+  "@history_editWindowOver": {
+    "description": "Shown instead of Edit after 24 hours. Calm, informative."
+  },
+  "history_delete": "Delete",
+  "@history_delete": {
+    "description": "Delete a check-in (asks first)."
+  },
+  "history_deleteTitle": "Delete this check-in?",
+  "@history_deleteTitle": {
+    "description": "Delete confirmation title."
+  },
+  "history_deleteBody": "This doesn't change your Starlight or glow days.",
+  "@history_deleteBody": {
+    "description": "Delete confirmation body: deleting never removes progress (PRD F1)."
+  },
+  "history_missing": "This check-in isn't here anymore.",
+  "@history_missing": {
+    "description": "Shown when a check-in was deleted or can't be found."
+  },
+  "history_editNoteLocked": "This check-in's note hasn't reached this phone yet. You can edit it once it has.",
+  "@history_editNoteLocked": {
+    "description": "Shown instead of Edit when the note is still encrypted-only on this phone. Calm, no blame."
+  },
   "legal_privacy": "Privacy policy",
   "@legal_privacy": {
     "description": "Link to the privacy policy (opens the browser)."
@@ -810,5 +1132,297 @@
   "legal_opensInBrowser": "Opens in your browser",
   "@legal_opensInBrowser": {
     "description": "Screen-reader hint on legal links."
+  },
+  "home_stageProgress": "{stage}, {count} of {target} Starlight toward {next}",
+  "@home_stageProgress": {
+    "description": "Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
+    }
+  },
+  "home_constellationProgress": "{stage}, {count} of {max} stars in your constellation",
+  "@home_constellationProgress": {
+    "description": "Screen-reader label for the constellation stars row (final stage).",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "home_glowTitle": "Your glow",
+  "@home_glowTitle": {
+    "description": "Glow card heading when the streak number is hidden (Settings → Hide streak number)."
+  },
+  "home_restDaysHint": "Learn how rest days work",
+  "@home_restDaysHint": {
+    "description": "Screen-reader hint on the rest-day row (opens a short explainer)."
+  },
+  "home_restInfoTitle": "Rest days",
+  "@home_restInfoTitle": {
+    "description": "Title of the rest-day explainer sheet."
+  },
+  "home_restInfoEarn": "Every {days} glow days earn a rest day. You can keep up to {max}.",
+  "@home_restInfoEarn": {
+    "description": "Rest-day explainer: how they are earned. Numbers come from the rules.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "home_restInfoUse": "When you take a short break, they fill in those days on their own. There's nothing you need to do.",
+  "@home_restInfoUse": {
+    "description": "Rest-day explainer: applied automatically, never prompted."
+  },
+  "home_restInfoKeep": "Every glow day you've had stays with you.",
+  "@home_restInfoKeep": {
+    "description": "Rest-day explainer: lifetime glow days never go down. No loss words."
+  },
+  "home_checkInsToday": "{count, plural, =1{1 check-in today} other{{count} check-ins today}}",
+  "@home_checkInsToday": {
+    "description": "Home line under the stats; opens check-in history.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "home_seeAll": "See all",
+  "@home_seeAll": {
+    "description": "Link to check-in history, after today's count."
+  },
+  "home_yourCheckIns": "Your check-ins",
+  "@home_yourCheckIns": {
+    "description": "Home link to check-in history when there is none today."
+  },
+  "home_syncExplainIdle": "Everything is saved on this phone and in your account.",
+  "@home_syncExplainIdle": {
+    "description": "Sync sheet: all synced."
+  },
+  "home_syncExplainPending": "They're safe on this phone and will sync on their own.",
+  "@home_syncExplainPending": {
+    "description": "Sync sheet: items waiting to sync."
+  },
+  "home_syncExplainOffline": "You're offline. Everything is safe on this phone and syncs when you're back online.",
+  "@home_syncExplainOffline": {
+    "description": "Sync sheet: offline."
+  },
+  "home_syncExplainSignedOut": "You're not signed in, so everything stays on this phone for now.",
+  "@home_syncExplainSignedOut": {
+    "description": "Sync sheet: signed out."
+  },
+  "home_syncExplainUnavailable": "This version keeps everything on this phone.",
+  "@home_syncExplainUnavailable": {
+    "description": "Sync sheet: builds without a server."
+  },
+  "home_syncNow": "Sync now",
+  "@home_syncNow": {
+    "description": "Sync sheet button (online and signed in)."
+  },
+  "home_syncing": "Syncing…",
+  "@home_syncing": {
+    "description": "Sync sheet button while a sync runs."
+  },
+  "home_syncHint": "Show sync details",
+  "@home_syncHint": {
+    "description": "Screen-reader hint on the sync indicator."
+  },
+  "habits_edit": "Edit",
+  "@habits_edit": {
+    "description": "Button next to the habits title; opens the habits editor."
+  },
+  "habits_editSemantic": "Edit small things",
+  "@habits_editSemantic": {
+    "description": "Screen-reader label of the habits Edit button."
+  },
+  "habits_sheetTitle": "Your small things",
+  "@habits_sheetTitle": {
+    "description": "Habits editor title."
+  },
+  "habits_sheetBody": "Choose what shows on Home. Check-ins grow your Aura either way.",
+  "@habits_sheetBody": {
+    "description": "Habits editor intro."
+  },
+  "habits_presetsTitle": "Suggested",
+  "@habits_presetsTitle": {
+    "description": "Habits editor section: the six presets."
+  },
+  "habits_customTitle": "Your own",
+  "@habits_customTitle": {
+    "description": "Habits editor section: custom habits."
+  },
+  "habits_addLabel": "Add your own",
+  "@habits_addLabel": {
+    "description": "Label of the custom-habit name field."
+  },
+  "habits_addHint": "For example, water the plants",
+  "@habits_addHint": {
+    "description": "Hint in the custom-habit name field."
+  },
+  "habits_add": "Add",
+  "@habits_add": {
+    "description": "Adds the typed custom habit."
+  },
+  "habits_limit": "You have {count} custom habits. Swap one to add another.",
+  "@habits_limit": {
+    "description": "Shown at the custom-habit limit (PRD States: Habits).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habits_tooLong": "That name is a little long. Could you try a shorter one?",
+  "@habits_tooLong": {
+    "description": "Custom-habit name over the server limit. No blame."
+  },
+  "habits_saveFailed": "That didn't save. Could you try again?",
+  "@habits_saveFailed": {
+    "description": "A habit change failed to save locally."
+  },
+  "habits_remove": "Remove {name}",
+  "@habits_remove": {
+    "description": "Tooltip / screen-reader label of a custom habit's remove button.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habits_removeTitle": "Remove {name}?",
+  "@habits_removeTitle": {
+    "description": "Confirm dialog title before removing a custom habit.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habits_removeBody": "It leaves your list. Starlight and glow days you earned with it stay.",
+  "@habits_removeBody": {
+    "description": "Confirm dialog body before removing a custom habit."
+  },
+  "habits_removeConfirm": "Remove",
+  "@habits_removeConfirm": {
+    "description": "Confirm removing a custom habit."
+  },
+  "habits_empty": "Pick one small thing to start.",
+  "@habits_empty": {
+    "description": "Home when every habit is hidden (PRD States: Habits empty)."
+  },
+  "help_groundingProgress": "Progress through the minute",
+  "@help_groundingProgress": {
+    "description": "Screen-reader label of the grounding progress ring. No countdown."
+  },
+  "help_progressBegun": "Just begun",
+  "@help_progressBegun": {
+    "description": "Grounding ring value: first third."
+  },
+  "help_progressHalf": "About halfway",
+  "@help_progressHalf": {
+    "description": "Grounding ring value: middle third."
+  },
+  "help_progressNearly": "Nearly through",
+  "@help_progressNearly": {
+    "description": "Grounding ring value: last third. Never pressure."
+  },
+  "help_progressDone": "Complete",
+  "@help_progressDone": {
+    "description": "Grounding ring value: finished."
+  },
+  "help_breatheLogged": "{habit} is marked done for today.",
+  "@help_breatheLogged": {
+    "description": "After the 60 s exercise auto-completes the Breathe habit (F2).",
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      }
+    }
+  },
+  "onb_trustTitle": "Before we begin",
+  "@onb_trustTitle": {
+    "description": "Trust step title (privacy and boundaries). Calm."
+  },
+  "onb_trustBody": "A few things to know about how Aura looks after you.",
+  "@onb_trustBody": {
+    "description": "Trust step intro under the title."
+  },
+  "onb_trustPrivateTitle": "Private by default",
+  "@onb_trustPrivateTitle": {
+    "description": "Trust point heading: privacy."
+  },
+  "onb_trustPrivateBody": "Your check-ins and notes are yours. Notes are encrypted, and nobody else sees how you feel unless you choose to share it.",
+  "@onb_trustPrivateBody": {
+    "description": "Trust point body: privacy. Must stay true: notes are encrypted; moods are shared only by the user's choice (e.g. joining a room)."
+  },
+  "onb_trustCareTitle": "Wellness support, not therapy",
+  "@onb_trustCareTitle": {
+    "description": "Trust point heading: Aura is not therapy or diagnosis (F9 App Review positioning)."
+  },
+  "onb_trustCareBody": "Aura helps you notice how you feel. It doesn't diagnose or treat anything.",
+  "@onb_trustCareBody": {
+    "description": "Trust point body: no diagnosis. Followed by the help_disclaimer sentence as its own line."
+  },
+  "onb_trustHelpTitle": "Help is always one tap away",
+  "@onb_trustHelpTitle": {
+    "description": "Trust point heading: the always-visible help button."
+  },
+  "onb_trustHelpBody": "Tap “{button}” any time to call a helpline or take a minute to breathe.",
+  "@onb_trustHelpBody": {
+    "description": "Trust point body. {button} is the help button's label (help_button), quoted as it appears on screen.",
+    "placeholders": {
+      "button": {
+        "type": "String"
+      }
+    }
+  },
+  "onb_dobYearType": "Type the year",
+  "@onb_dobYearType": {
+    "description": "Label of the optional typed-year field at the top of the year picker. No example year."
+  },
+  "onb_dobYearNoMatch": "No year in the list matches that. Could you check it?",
+  "@onb_dobYearNoMatch": {
+    "description": "Typed year is not in the picker's range. Calm, no blame."
+  },
+  "onb_blockedWrongDate": "Entered the wrong date?",
+  "@onb_blockedWrongDate": {
+    "description": "Text button on the under-13 screen; opens an email to support."
+  },
+  "onb_blockedWrongDateHint": "Opens your email app",
+  "@onb_blockedWrongDateHint": {
+    "description": "Screen-reader hint on the wrong-date button."
+  },
+  "onb_blockedMailSubject": "Aura: I entered the wrong date",
+  "@onb_blockedMailSubject": {
+    "description": "Email subject only. Never add the date of birth or any personal data."
+  },
+  "onb_blockedMailFailed": "We couldn't open an email app. You can write to us at {email}.",
+  "@onb_blockedMailFailed": {
+    "description": "Shown when no email app opens. {email} is the support address.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ NestJS 11 modular monolith for Aura — raw `pg` (no ORM), zod, jose, BullMQ. Tw
 
 ```bash
 cp .env.example .env        # fill AURA_MASTER_KEY (openssl rand -base64 32); local values in supabase/LOCAL.md
+                            # the WORKER also needs SUPABASE_SERVICE_ROLE_KEY (account purge deletes private-media via the Storage API)
 pnpm install
 pnpm test                   # unit: rules vectors, auth, crypto, validation, sync orchestration (no DB)
 pnpm test:e2e               # needs the local Supabase stack (55521/55522) + Redis (6391)
@@ -26,15 +27,16 @@ pnpm lint                   # type-check (tsc --noEmit, strict)
 |---|---|
 | `config/` | zod-validated env (`AppConfig`); `.env` is merged without overriding real env vars |
 | `db/` | `pg` Pool, `withTx`, `Tx.savepoint()`; DATE columns stay `YYYY-MM-DD` strings |
-| `auth/` | global guard; Supabase JWT via `jose`: ES256/RS256 against JWKS (by `kid`), HS256 only if `SUPABASE_JWT_SECRET` is set; `@CurrentUser()`, `@Public()` |
+| `auth/` | global guards: `AuthGuard` (Supabase JWT via `jose`: ES256/RS256 against JWKS (by `kid`), HS256 only if `SUPABASE_JWT_SECRET` is set), then `PendingDeletionGuard` (`403 account_deletion_pending` while a deletion is scheduled; one PK lookup); `@CurrentUser()`, `@Public()`, `@AllowPendingDeletion()` |
 | `rules/` | pure TS port of `contracts/rules/RULES.md` (aura day, eligibility, Starlight, stage, traits, hue, streak, nebula) |
 | `progression/` | derive the `Snapshot` from ledger + active days; persist `avatar_state` / `streak_state` |
 | `profile/` | `POST /v1/profile` (under-13 → 403, nothing stored), `GET /v1/me/snapshot` |
 | `sync/` | `POST /v1/sync/push` — the only personal-data write path |
 | `keys/` | `GET /v1/keys/data-key` — per-user AES-256-GCM-wrapped data key (DS-1) |
 | `devices/` | `PUT` / `DELETE /v1/devices` — FCM token registration (upsert on token, reassigned across accounts; owner-scoped delete). Sending is F14 |
+| `account/` | `GET /v1/account`, `POST` / `DELETE /v1/account/deletion` — 7-day grace (F8 REQ-ACC-11). `account-purge.ts` (worker): personal rows → private-media (Storage API) → GoTrue leftovers + `auth.users` (SQL) |
 | `catalogue/` | cached moods / preset habits from the DB seed |
-| `queues/` | queue registry (`capsule-unlock`, `room-lifecycle`, `moderation`, `notifications` + internal `heartbeat`), skeleton processors, worker host |
+| `queues/` | queue registry (`capsule-unlock`, `room-lifecycle`, `moderation`, `notifications` + internal `heartbeat`, `maintenance`), skeleton processors, worker host. `maintenance` runs job `maintenance` (sync_mutations > 90 days, daily 03:17 UTC) and job `account-purge` (hourly :41 UTC) |
 | `health/` | `GET /health` → `{status, db, redis}` |
 
 ## Sync semantics worth knowing
@@ -50,3 +52,17 @@ pnpm lint                   # type-check (tsc --noEmit, strict)
 - `ringCount` / `glowLevel` count distinct credited aura days with `habit_key` `breathe` / `sleep_on_time`.
 
 Never log request bodies, notes, DOB or job payloads.
+
+## Account deletion (contracts/api/v1.md "Account deletion")
+
+- `POST /v1/account/deletion` schedules the purge 7 × 24 h after the **first** request (repeats return the same date)
+  and deletes the account's FCM tokens; `DELETE` cancels until the date passes, then `409 account_deletion_in_progress`.
+- While scheduled, every route except `/v1/account*` and `/health` → `403 account_deletion_pending`.
+- Purge (`src/account/account-purge.ts`, worker job `account-purge`): per account, (1) one transaction deletes every
+  `PERSONAL_TABLES` row, (2) the user's `private-media` objects go through the **Storage API** (`SUPABASE_SERVICE_ROLE_KEY`;
+  direct `storage.objects` deletes are blocked by `storage.protect_delete()` and would orphan blobs), (3) one transaction
+  scrubs GoTrue audit/flow/refresh rows keyed by the user and deletes `auth.users` **via SQL** (the Admin API delete would
+  log a new audit entry with the email). Idempotent; the schedule row is the retry marker and vanishes with the auth user.
+  Without a service key, accounts with media are deferred (warning) — rows are gone, media + auth user wait.
+- New personal table? Add it to `PERSONAL_TABLES` — the e2e suite compares the list with every public table that has a
+  `user_id` column.

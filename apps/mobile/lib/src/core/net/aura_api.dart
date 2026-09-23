@@ -4,11 +4,7 @@ import 'api_models.dart';
 
 /// A failed API call. Never carries request bodies (notes, DOB) in messages.
 class ApiException implements Exception {
-  const ApiException({
-    required this.code,
-    this.status,
-    this.isNetwork = false,
-  });
+  const ApiException({required this.code, this.status, this.isNetwork = false});
 
   final int? status;
   final String code;
@@ -24,6 +20,22 @@ class ApiException implements Exception {
       status == 429 ||
       status == 401 ||
       status == 408;
+
+  /// `403 account_deletion_pending`: the account is in its 7-day deletion
+  /// grace period and the server refuses every route but `/v1/account*`
+  /// (contracts/api/v1.md "Account deletion"). Retrying won't help; the
+  /// person chooses "Keep my account" or "Let it go".
+  bool get isDeletionPending => status == 403 && code == deletionPendingCode;
+
+  static const String deletionPendingCode = 'account_deletion_pending';
+
+  /// `409 account_deletion_in_progress` from "Keep my account": the grace
+  /// period is over and the purge may be running — the account can't be
+  /// kept. The app explains and signs out; never retried.
+  bool get isDeletionInProgress =>
+      status == 409 && code == deletionInProgressCode;
+
+  static const String deletionInProgressCode = 'account_deletion_in_progress';
 
   @override
   String toString() => 'ApiException($status, $code)';
@@ -46,22 +58,19 @@ class ProfileUnder13 extends ProfileResult {
 
 /// Thin client for NestJS `server/aura-api` (contracts/api/v1.md).
 class AuraApi {
-  AuraApi({
-    required String baseUrl,
-    required this._accessToken,
-    Dio? dio,
-  }) : _dio =
-           dio ??
-           Dio(
-             BaseOptions(
-               baseUrl: baseUrl,
-               connectTimeout: const Duration(seconds: 6),
-               sendTimeout: const Duration(seconds: 15),
-               receiveTimeout: const Duration(seconds: 20),
-               contentType: Headers.jsonContentType,
-               responseType: ResponseType.json,
-             ),
-           );
+  AuraApi({required String baseUrl, required this._accessToken, Dio? dio})
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: baseUrl,
+              connectTimeout: const Duration(seconds: 6),
+              sendTimeout: const Duration(seconds: 15),
+              receiveTimeout: const Duration(seconds: 20),
+              contentType: Headers.jsonContentType,
+              responseType: ResponseType.json,
+            ),
+          );
 
   final Dio _dio;
   final Future<String?> Function() _accessToken;
@@ -163,6 +172,50 @@ class AuraApi {
         data: {'token': token},
         options: await _auth(),
       );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  // ---- account deletion (F8 REQ-ACC-11, contracts/api/v1.md) ---------------
+
+  /// `GET /v1/account` → whether a deletion is scheduled.
+  Future<AccountStatus> account() async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/v1/account',
+        options: await _auth(),
+      );
+      return AccountStatus.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `POST /v1/account/deletion` → 202 with the purge date, 7 days after the
+  /// first request. Idempotent: a repeat returns the same date.
+  Future<AccountStatus> requestDeletion() async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/v1/account/deletion',
+        options: await _auth(),
+      );
+      return AccountStatus.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
+  /// `DELETE /v1/account/deletion` → 200, cancels a scheduled deletion
+  /// ("Keep my account"). Idempotent. After the grace period:
+  /// `409 account_deletion_in_progress` ([ApiException.isDeletionInProgress]).
+  Future<AccountStatus> cancelDeletion() async {
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/v1/account/deletion',
+        options: await _auth(),
+      );
+      return AccountStatus.fromJson(res.data ?? const {});
     } on DioException catch (e) {
       throw _map(e);
     }

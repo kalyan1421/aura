@@ -1,13 +1,18 @@
 import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
-import { Worker } from 'bullmq';
+import { Worker, type Job } from 'bullmq';
+import { purgeDueAccounts } from '../account/account-purge';
+import { PrivateMediaStore } from '../account/private-media';
 import { AppConfig } from '../config/app-config';
 import { DbService } from '../db/db.service';
 import { purgeOldSyncMutations } from './maintenance';
 import { PROCESSORS } from './processors';
 import {
+  ACCOUNT_PURGE_CRON,
+  ACCOUNT_PURGE_JOB,
   HEARTBEAT_EVERY_MS,
   HEARTBEAT_QUEUE,
   MAINTENANCE_CRON,
+  MAINTENANCE_JOB,
   MAINTENANCE_QUEUE,
   QUEUE_NAMES,
   QUEUE_PREFIX,
@@ -26,6 +31,7 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
     private readonly config: AppConfig,
     private readonly queues: QueuesService,
     private readonly db: DbService,
+    private readonly media: PrivateMediaStore,
   ) {}
 
   get queueNames(): string[] {
@@ -52,14 +58,7 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
       ),
     );
     this.workers.push(
-      new Worker(
-        MAINTENANCE_QUEUE,
-        async () => {
-          const removed = await purgeOldSyncMutations(this.db);
-          this.logger.log(`maintenance: purged ${removed} expired sync_mutations`);
-        },
-        { connection, prefix: QUEUE_PREFIX, concurrency: 1 },
-      ),
+      new Worker(MAINTENANCE_QUEUE, (job) => this.maintenance(job), { connection, prefix: QUEUE_PREFIX, concurrency: 1 }),
     );
     for (const w of this.workers) {
       w.on('failed', (job, err) => this.logger.warn(`[${w.name}] job ${job?.name} id=${job?.id} failed: ${err.message}`));
@@ -78,10 +77,35 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
       .upsertJobScheduler(
         'aura-maintenance',
         { pattern: MAINTENANCE_CRON, tz: 'UTC' },
-        { name: 'maintenance', data: {}, opts: { removeOnComplete: 10, removeOnFail: 50 } },
+        { name: MAINTENANCE_JOB, data: {}, opts: { removeOnComplete: 10, removeOnFail: 50 } },
       );
+    await this.queues
+      .queue(MAINTENANCE_QUEUE)
+      .upsertJobScheduler(
+        'aura-account-purge',
+        { pattern: ACCOUNT_PURGE_CRON, tz: 'UTC' },
+        { name: ACCOUNT_PURGE_JOB, data: {}, opts: { removeOnComplete: 10, removeOnFail: 50 } },
+      );
+    if (!this.media.configured) {
+      this.logger.warn('SUPABASE_SERVICE_ROLE_KEY is not set: account purges that find private-media objects are deferred');
+    }
     await Promise.all(this.workers.map((w) => w.waitUntilReady()));
     this.logger.log(`workers ready: ${this.queueNames.join(', ')} (heartbeat every ${HEARTBEAT_EVERY_MS / 1000}s)`);
+  }
+
+  /** Maintenance jobs (one queue, told apart by name). Logs counts only — never user ids or paths. */
+  private async maintenance(job: Job): Promise<void> {
+    if (job.name === ACCOUNT_PURGE_JOB) {
+      const s = await purgeDueAccounts(this.db.pool, this.media);
+      const line =
+        `account-purge: due=${s.due} purged=${s.purged} deferred=${s.deferred} failed=${s.failed} ` +
+        `rows=${s.rows} media=${s.mediaObjects}${s.errors.length ? ` errors=${s.errors.join(',')}` : ''}`;
+      if (s.failed || s.deferred) this.logger.warn(line);
+      else this.logger.log(line);
+      return;
+    }
+    const removed = await purgeOldSyncMutations(this.db);
+    this.logger.log(`maintenance: purged ${removed} expired sync_mutations`);
   }
 
   async onApplicationShutdown(): Promise<void> {

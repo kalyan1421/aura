@@ -5,21 +5,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../support/support_sheet.dart';
 import 'gate_controller.dart';
 import 'onboarding_frame.dart';
 
+/// Language step (after DOB). Each endonym previews its own script; back
+/// returns to the DOB gate, and help stays in the top bar (F9).
 class LanguageScreen extends ConsumerWidget {
   const LanguageScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
+    final gate = ref.read(gateControllerProvider.notifier);
     return OnboardingFrame(
+      onBack: gate.back,
+      trailing: const HelpNowButton(compact: true),
       primary: FilledButton(
         key: const ValueKey('language-continue'),
-        onPressed: () => ref
-            .read(gateControllerProvider.notifier)
-            .goTo(OnboardingStage.signIn),
+        onPressed: () => gate.goTo(OnboardingStage.signIn),
         child: Text(l.common_continue),
       ),
       children: [
@@ -55,11 +59,15 @@ class LanguagePicker extends ConsumerWidget {
               selected: tag == current,
               inMutuallyExclusiveGroup: true,
               child: Material(
-                color: tag == current ? AuraColors.surfaceHigh : AuraColors.surface,
+                color: tag == current
+                    ? AuraColors.surfaceHigh
+                    : AuraColors.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AuraRadius.m),
                   side: BorderSide(
-                    color: tag == current ? AuraColors.lavender : AuraColors.hairline,
+                    color: tag == current
+                        ? AuraColors.lavender
+                        : AuraColors.hairline,
                   ),
                 ),
                 child: InkWell(
@@ -90,7 +98,9 @@ class LanguagePicker extends ConsumerWidget {
                         ),
                         if (beta.contains(tag))
                           Padding(
-                            padding: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsetsDirectional.only(
+                              end: AuraSpace.s,
+                            ),
                             child: Text(l.language_beta, style: t.labelSmall),
                           ),
                         Icon(

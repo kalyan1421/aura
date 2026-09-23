@@ -16,7 +16,11 @@ class LegalLinks extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final links = [
       if (Env.privacyPolicyUrl.isNotEmpty)
-        (l.legal_privacy, Env.privacyPolicyUrl, const ValueKey('legal-privacy')),
+        (
+          l.legal_privacy,
+          Env.privacyPolicyUrl,
+          const ValueKey('legal-privacy'),
+        ),
       if (Env.termsUrl.isNotEmpty)
         (l.legal_terms, Env.termsUrl, const ValueKey('legal-terms')),
     ];
@@ -26,17 +30,21 @@ class LegalLinks extends StatelessWidget {
       runSpacing: AuraSpace.xs,
       children: [
         for (final (label, url, key) in links)
-          Semantics(
-            link: true,
-            hint: l.legal_opensInBrowser,
-            child: TextButton.icon(
-              key: key,
-              onPressed: () => launchUrl(
-                Uri.parse(url),
-                mode: LaunchMode.externalApplication,
+          // Merged so the link role and hint sit on the button's own node
+          // (with its tap action), not on a separate, action-less node.
+          MergeSemantics(
+            child: Semantics(
+              link: true,
+              hint: l.legal_opensInBrowser,
+              child: TextButton.icon(
+                key: key,
+                onPressed: () => launchUrl(
+                  Uri.parse(url),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                label: Text(label),
               ),
-              icon: const Icon(Icons.open_in_new_rounded, size: 18),
-              label: Text(label),
             ),
           ),
       ],

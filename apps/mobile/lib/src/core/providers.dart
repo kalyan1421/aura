@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
+import '../features/account/account_providers.dart';
 import '../features/auth/auth_repository.dart';
 import '../features/auth/sign_out_service.dart';
 import '../features/avatar/moments_controller.dart';
@@ -156,6 +157,10 @@ abstract interface class SyncController implements SyncTrigger {
   ValueListenable<bool> get online;
   void onResume();
 
+  /// "Sync now" from the sync status sheet: pushes everything pending,
+  /// ignoring retry backoff.
+  void syncNow();
+
   /// Sign-out: stop syncing (and wait for an in-flight drain) until [resume].
   Future<void> pause();
   void resume();
@@ -173,6 +178,8 @@ class _ServiceController implements SyncController {
   void notifyLocalWrite() => _s.notifyLocalWrite();
   @override
   void onResume() => _s.onResume();
+  @override
+  void syncNow() => unawaited(_s.syncNow());
   @override
   Future<void> pause() => _s.pause();
   @override
@@ -229,7 +236,14 @@ SyncController syncController(Ref ref) {
       await ref.read(gateControllerProvider.notifier).blockUnder13();
       await auth.signOut();
     },
+    // 403 account_deletion_pending: hold, and ask "Keep my account?".
+    onDeletionPending: () =>
+        unawaited(ref.read(deletionHoldProvider.notifier).reportFromSync()),
   )..start();
+  // "Keep my account" (or a sign-out) clears the hold: push again.
+  ref.listen(deletionHoldProvider, (prev, next) {
+    if (prev != null && next == null) service.releaseDeletionHold();
+  });
   ref.onDispose(() {
     unawaited(service.dispose());
     unawaited(connectivity.close());

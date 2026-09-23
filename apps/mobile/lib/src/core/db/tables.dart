@@ -43,6 +43,12 @@ class CheckIns extends Table {
   /// True once the server acknowledged it (or it came from a pull).
   BoolColumn get synced => boolean().withDefault(const Constant(false))();
 
+  /// The server holds an encrypted note this phone can't read yet (pulled
+  /// before the data key arrived, or undecryptable). An edit rewrites the
+  /// server's note, so editing waits until the note is readable here
+  /// (schema v3).
+  BoolColumn get noteLocked => boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }

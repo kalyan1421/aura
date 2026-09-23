@@ -29,6 +29,9 @@ export async function bootApp(): Promise<INestApplication> {
   const app = ref.createNestApplication({ bodyParser: false });
   configureApp(app);
   await app.init();
+  // Listen once on a fixed ephemeral port: otherwise supertest listen(0)s + closes per request, and a
+  // request can race a closing server onto a port another local process has just taken (flaky 200s).
+  await app.listen(0, '127.0.0.1');
   return app;
 }
 

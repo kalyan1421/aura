@@ -510,13 +510,13 @@ abstract class AppLocalizations {
   /// **'That email doesn\'t look quite right.'**
   String get signin_invalidEmail;
 
-  /// Sign in with Apple (disabled until enabled by flag).
+  /// Sign in with Apple. Only shown when social sign-in is enabled for the build.
   ///
   /// In en, this message translates to:
   /// **'Continue with Apple'**
   String get signin_apple;
 
-  /// Sign in with Google (disabled until enabled by flag).
+  /// Sign in with Google. Only shown when social sign-in is enabled for the build.
   ///
   /// In en, this message translates to:
   /// **'Continue with Google'**
@@ -1133,6 +1133,420 @@ abstract class AppLocalizations {
   /// **'Allow'**
   String get push_allow;
 
+  /// Screen-reader label of the small progress ring inside a button while sign-in or deletion work runs.
+  ///
+  /// In en, this message translates to:
+  /// **'One moment'**
+  String get signin_busy;
+
+  /// Quiet label on the disabled resend button during its 30-second cooldown. 's' = seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds, plural, =1{You can ask for a fresh code in 1 s} other{You can ask for a fresh code in {seconds} s}}'**
+  String signin_resendIn(int seconds);
+
+  /// Shown after the person asked for a fresh sign-in code and it was sent.
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh code is on its way.'**
+  String get signin_freshSent;
+
+  /// Title of the choice shown when the signed-in account is scheduled for deletion (7-day grace).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your account?'**
+  String get acct_pendingTitle;
+
+  /// Deletion is scheduled; {date} is a formatted date. Calm, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is set to be deleted on {date}. Keep it?'**
+  String acct_pendingBody(String date);
+
+  /// Deletion is scheduled but the date isn't known yet (offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is set to be deleted soon. Keep it?'**
+  String get acct_pendingBodySoon;
+
+  /// Cancels the scheduled deletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep my account'**
+  String get acct_keep;
+
+  /// Leaves the deletion scheduled and signs out of this phone (clears it).
+  ///
+  /// In en, this message translates to:
+  /// **'Let it go'**
+  String get acct_letGo;
+
+  /// Cancelling the deletion failed. No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through, so nothing has changed yet. Try again when you\'re connected.'**
+  String get acct_keepFailed;
+
+  /// Settings row, screen title and the destructive button. Explicit, not softened.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my account'**
+  String get acct_deleteTitle;
+
+  /// Lead-in to the list of what is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account removes:'**
+  String get acct_deleteIntro;
+
+  /// What is deleted (list item).
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins and notes'**
+  String get acct_itemCheckIns;
+
+  /// What is deleted (list item).
+  ///
+  /// In en, this message translates to:
+  /// **'Your habits'**
+  String get acct_itemHabits;
+
+  /// What is deleted (list item). Starlight and Aura are brand terms.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Starlight and your Aura\'s growth'**
+  String get acct_itemProgress;
+
+  /// What is deleted (list item).
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and the email you sign in with'**
+  String get acct_itemAccount;
+
+  /// The 7-day grace period.
+  ///
+  /// In en, this message translates to:
+  /// **'You have 7 days to change your mind. Sign in again before then and everything stays. After that it\'s deleted for good and can\'t be brought back.'**
+  String get acct_grace;
+
+  /// Store subscription warning (Apple 5.1.1(v)). Store names stay in English.
+  ///
+  /// In en, this message translates to:
+  /// **'If you pay for a subscription through the App Store or Google Play, deleting your account doesn\'t cancel it. Manage or cancel it in your store\'s subscription settings.'**
+  String get acct_store;
+
+  /// What happens on this phone after the request.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone will be cleared and signed out straight away.'**
+  String get acct_phone;
+
+  /// Offline: the delete button is disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account needs a connection. Connect to the internet, then try again.'**
+  String get acct_needsConnection;
+
+  /// Confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get acct_confirmTitle;
+
+  /// Confirmation dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and everything in it will be deleted in 7 days. Sign in again before then to keep it. This phone will be cleared now.'**
+  String get acct_confirmBody;
+
+  /// The deletion request failed. Nothing was wiped.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through, and nothing has been deleted. Try again in a moment.'**
+  String get acct_failed;
+
+  /// The deletion request could not reach the server.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t reach Aura, and nothing has been deleted. Check your connection and try again.'**
+  String get acct_failedOffline;
+
+  /// Retry after a failed request.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get acct_retry;
+
+  /// Shown after the deletion was scheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is set to be deleted'**
+  String get acct_scheduledTitle;
+
+  /// {date} is a formatted date.
+  ///
+  /// In en, this message translates to:
+  /// **'It will be deleted on {date}. Sign in again before then to keep it.'**
+  String acct_scheduledBody(String date);
+
+  /// After the deletion was scheduled and the phone wiped.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone has been cleared and signed out.'**
+  String get acct_phoneCleared;
+
+  /// Delete screen opened while signed out.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not signed in, so there\'s no account to delete. What you\'ve saved lives only on this phone.'**
+  String get acct_signedOut;
+
+  /// Dev builds without an API URL.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deletion isn\'t set up in this build.'**
+  String get acct_unavailable;
+
+  /// Settings section: motion, haptics, streak number.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfort'**
+  String get set_comfort;
+
+  /// Switch (REQ-A11Y-08).
+  ///
+  /// In en, this message translates to:
+  /// **'Reduce motion'**
+  String get set_reduceMotion;
+
+  /// Note under Reduce motion; when the phone already reduces motion the switch is on and locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Also follows your phone\'s setting'**
+  String get set_reduceMotionNote;
+
+  /// Switch for gentle vibration feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Haptics'**
+  String get set_haptics;
+
+  /// Note under Haptics.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft taps when you choose something'**
+  String get set_hapticsNote;
+
+  /// Switch (F3): hides the glow-streak day count on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide streak number'**
+  String get set_hideStreak;
+
+  /// Note under Hide streak number. No loss framing.
+  ///
+  /// In en, this message translates to:
+  /// **'Your glow still grows. Home just won\'t count the days.'**
+  String get set_hideStreakNote;
+
+  /// Title of the sign-out warning when items haven't synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of Aura?'**
+  String get set_signOutTitle;
+
+  /// Settings section: disclaimer, legal links, Grievance Officer, support.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Safety'**
+  String get set_helpSafety;
+
+  /// Row title (F9, IT Rules). Tapping writes an email.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance Officer'**
+  String get set_grievanceOfficer;
+
+  /// Email subject pre-filled when writing to the Grievance Officer.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance about Aura'**
+  String get set_grievanceSubject;
+
+  /// Row title. Tapping writes an email.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact support'**
+  String get set_contactSupport;
+
+  /// Email subject pre-filled when writing to support.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura support'**
+  String get set_supportSubject;
+
+  /// Screen-reader hint on email rows.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your email app'**
+  String get set_opensEmail;
+
+  /// No mail app could open a mailto link.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open an email app. You can write to {email}.'**
+  String set_emailFailed(String email);
+
+  /// "Keep my account" came too late: the 7-day grace is over and deletion has started. Calm, no blame. The only button is Sign out.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is already being deleted, so it can\'t be kept any more. This phone will be cleared and signed out.'**
+  String get acct_inProgress;
+
+  /// Asked when closing the check-in (or an edit) with a mood, tags or words not yet saved. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without saving?'**
+  String get checkin_discardTitle;
+
+  /// Default choice in the leave-without-saving dialog: stay and keep what was entered.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get checkin_discardKeep;
+
+  /// Leave-without-saving dialog: leave and drop what was entered.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get checkin_discardConfirm;
+
+  /// Calm hint shown when the tag limit for one check-in is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Up to 1 tag} other{Up to {count} tags}}'**
+  String checkin_tagLimit(int count);
+
+  /// Caption under a quadrant name when the mood grid is stacked one quadrant per row (large text). energy = 'More energy'/'Less energy', feel = 'Pleasant'/'Unpleasant'.
+  ///
+  /// In en, this message translates to:
+  /// **'{energy} · {feel}'**
+  String checkin_quadrantAxes(String energy, String feel);
+
+  /// Private history screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins'**
+  String get history_title;
+
+  /// Privacy line under the history title.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see these.'**
+  String get history_private;
+
+  /// History empty state. Calm, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet. Your check-ins will gather here, and only you can see them.'**
+  String get history_empty;
+
+  /// Day header in history: the current Aura day.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get history_today;
+
+  /// Day header in history: the previous Aura day.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get history_yesterday;
+
+  /// Discreet tag count on a history row.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 tag} other{{count} tags}}'**
+  String history_tagCount(int count);
+
+  /// Screen-reader label for the note icon on a history row (the note itself is never shown in the list).
+  ///
+  /// In en, this message translates to:
+  /// **'Has a note'**
+  String get history_hasNote;
+
+  /// Title of one check-in's page.
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-in'**
+  String get history_entryTitle;
+
+  /// When a check-in was made, e.g. 'Today, 3:30 PM'.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {time}'**
+  String history_when(String day, String time);
+
+  /// Section header on a check-in's page.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get history_tags;
+
+  /// Section header for the private note on a check-in's page.
+  ///
+  /// In en, this message translates to:
+  /// **'Your words'**
+  String get history_note;
+
+  /// Sync status: this check-in is safely on the server.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get history_synced;
+
+  /// Edit a check-in (only within a day).
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get history_edit;
+
+  /// Shown instead of Edit after 24 hours. Calm, informative.
+  ///
+  /// In en, this message translates to:
+  /// **'You can edit a check-in for a day after you make it.'**
+  String get history_editWindowOver;
+
+  /// Delete a check-in (asks first).
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get history_delete;
+
+  /// Delete confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this check-in?'**
+  String get history_deleteTitle;
+
+  /// Delete confirmation body: deleting never removes progress (PRD F1).
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t change your Starlight or glow days.'**
+  String get history_deleteBody;
+
+  /// Shown when a check-in was deleted or can't be found.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in isn\'t here anymore.'**
+  String get history_missing;
+
+  /// Shown instead of Edit when the note is still encrypted-only on this phone. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'This check-in\'s note hasn\'t reached this phone yet. You can edit it once it has.'**
+  String get history_editNoteLocked;
+
   /// Link to the privacy policy (opens the browser).
   ///
   /// In en, this message translates to:
@@ -1150,6 +1564,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Opens in your browser'**
   String get legal_opensInBrowser;
+
+  /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'{stage}, {count} of {target} Starlight toward {next}'**
+  String home_stageProgress(String stage, String next, int count, int target);
+
+  /// Screen-reader label for the constellation stars row (final stage).
+  ///
+  /// In en, this message translates to:
+  /// **'{stage}, {count} of {max} stars in your constellation'**
+  String home_constellationProgress(String stage, int count, int max);
+
+  /// Glow card heading when the streak number is hidden (Settings → Hide streak number).
+  ///
+  /// In en, this message translates to:
+  /// **'Your glow'**
+  String get home_glowTitle;
+
+  /// Screen-reader hint on the rest-day row (opens a short explainer).
+  ///
+  /// In en, this message translates to:
+  /// **'Learn how rest days work'**
+  String get home_restDaysHint;
+
+  /// Title of the rest-day explainer sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest days'**
+  String get home_restInfoTitle;
+
+  /// Rest-day explainer: how they are earned. Numbers come from the rules.
+  ///
+  /// In en, this message translates to:
+  /// **'Every {days} glow days earn a rest day. You can keep up to {max}.'**
+  String home_restInfoEarn(int days, int max);
+
+  /// Rest-day explainer: applied automatically, never prompted.
+  ///
+  /// In en, this message translates to:
+  /// **'When you take a short break, they fill in those days on their own. There\'s nothing you need to do.'**
+  String get home_restInfoUse;
+
+  /// Rest-day explainer: lifetime glow days never go down. No loss words.
+  ///
+  /// In en, this message translates to:
+  /// **'Every glow day you\'ve had stays with you.'**
+  String get home_restInfoKeep;
+
+  /// Home line under the stats; opens check-in history.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 check-in today} other{{count} check-ins today}}'**
+  String home_checkInsToday(int count);
+
+  /// Link to check-in history, after today's count.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get home_seeAll;
+
+  /// Home link to check-in history when there is none today.
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins'**
+  String get home_yourCheckIns;
+
+  /// Sync sheet: all synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is saved on this phone and in your account.'**
+  String get home_syncExplainIdle;
+
+  /// Sync sheet: items waiting to sync.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'re safe on this phone and will sync on their own.'**
+  String get home_syncExplainPending;
+
+  /// Sync sheet: offline.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Everything is safe on this phone and syncs when you\'re back online.'**
+  String get home_syncExplainOffline;
+
+  /// Sync sheet: signed out.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not signed in, so everything stays on this phone for now.'**
+  String get home_syncExplainSignedOut;
+
+  /// Sync sheet: builds without a server.
+  ///
+  /// In en, this message translates to:
+  /// **'This version keeps everything on this phone.'**
+  String get home_syncExplainUnavailable;
+
+  /// Sync sheet button (online and signed in).
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get home_syncNow;
+
+  /// Sync sheet button while a sync runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get home_syncing;
+
+  /// Screen-reader hint on the sync indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Show sync details'**
+  String get home_syncHint;
+
+  /// Button next to the habits title; opens the habits editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get habits_edit;
+
+  /// Screen-reader label of the habits Edit button.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit small things'**
+  String get habits_editSemantic;
+
+  /// Habits editor title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your small things'**
+  String get habits_sheetTitle;
+
+  /// Habits editor intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what shows on Home. Check-ins grow your Aura either way.'**
+  String get habits_sheetBody;
+
+  /// Habits editor section: the six presets.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested'**
+  String get habits_presetsTitle;
+
+  /// Habits editor section: custom habits.
+  ///
+  /// In en, this message translates to:
+  /// **'Your own'**
+  String get habits_customTitle;
+
+  /// Label of the custom-habit name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your own'**
+  String get habits_addLabel;
+
+  /// Hint in the custom-habit name field.
+  ///
+  /// In en, this message translates to:
+  /// **'For example, water the plants'**
+  String get habits_addHint;
+
+  /// Adds the typed custom habit.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get habits_add;
+
+  /// Shown at the custom-habit limit (PRD States: Habits).
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} custom habits. Swap one to add another.'**
+  String habits_limit(int count);
+
+  /// Custom-habit name over the server limit. No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That name is a little long. Could you try a shorter one?'**
+  String get habits_tooLong;
+
+  /// A habit change failed to save locally.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t save. Could you try again?'**
+  String get habits_saveFailed;
+
+  /// Tooltip / screen-reader label of a custom habit's remove button.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}'**
+  String habits_remove(String name);
+
+  /// Confirm dialog title before removing a custom habit.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String habits_removeTitle(String name);
+
+  /// Confirm dialog body before removing a custom habit.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves your list. Starlight and glow days you earned with it stay.'**
+  String get habits_removeBody;
+
+  /// Confirm removing a custom habit.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get habits_removeConfirm;
+
+  /// Home when every habit is hidden (PRD States: Habits empty).
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one small thing to start.'**
+  String get habits_empty;
+
+  /// Screen-reader label of the grounding progress ring. No countdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress through the minute'**
+  String get help_groundingProgress;
+
+  /// Grounding ring value: first third.
+  ///
+  /// In en, this message translates to:
+  /// **'Just begun'**
+  String get help_progressBegun;
+
+  /// Grounding ring value: middle third.
+  ///
+  /// In en, this message translates to:
+  /// **'About halfway'**
+  String get help_progressHalf;
+
+  /// Grounding ring value: last third. Never pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearly through'**
+  String get help_progressNearly;
+
+  /// Grounding ring value: finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get help_progressDone;
+
+  /// After the 60 s exercise auto-completes the Breathe habit (F2).
+  ///
+  /// In en, this message translates to:
+  /// **'{habit} is marked done for today.'**
+  String help_breatheLogged(String habit);
+
+  /// Trust step title (privacy and boundaries). Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Before we begin'**
+  String get onb_trustTitle;
+
+  /// Trust step intro under the title.
+  ///
+  /// In en, this message translates to:
+  /// **'A few things to know about how Aura looks after you.'**
+  String get onb_trustBody;
+
+  /// Trust point heading: privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Private by default'**
+  String get onb_trustPrivateTitle;
+
+  /// Trust point body: privacy. Must stay true: notes are encrypted; moods are shared only by the user's choice (e.g. joining a room).
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins and notes are yours. Notes are encrypted, and nobody else sees how you feel unless you choose to share it.'**
+  String get onb_trustPrivateBody;
+
+  /// Trust point heading: Aura is not therapy or diagnosis (F9 App Review positioning).
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness support, not therapy'**
+  String get onb_trustCareTitle;
+
+  /// Trust point body: no diagnosis. Followed by the help_disclaimer sentence as its own line.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura helps you notice how you feel. It doesn\'t diagnose or treat anything.'**
+  String get onb_trustCareBody;
+
+  /// Trust point heading: the always-visible help button.
+  ///
+  /// In en, this message translates to:
+  /// **'Help is always one tap away'**
+  String get onb_trustHelpTitle;
+
+  /// Trust point body. {button} is the help button's label (help_button), quoted as it appears on screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap “{button}” any time to call a helpline or take a minute to breathe.'**
+  String onb_trustHelpBody(String button);
+
+  /// Label of the optional typed-year field at the top of the year picker. No example year.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the year'**
+  String get onb_dobYearType;
+
+  /// Typed year is not in the picker's range. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'No year in the list matches that. Could you check it?'**
+  String get onb_dobYearNoMatch;
+
+  /// Text button on the under-13 screen; opens an email to support.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered the wrong date?'**
+  String get onb_blockedWrongDate;
+
+  /// Screen-reader hint on the wrong-date button.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens your email app'**
+  String get onb_blockedWrongDateHint;
+
+  /// Email subject only. Never add the date of birth or any personal data.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura: I entered the wrong date'**
+  String get onb_blockedMailSubject;
+
+  /// Shown when no email app opens. {email} is the support address.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open an email app. You can write to us at {email}.'**
+  String onb_blockedMailFailed(String email);
 }
 
 class _AppLocalizationsDelegate

@@ -6,9 +6,14 @@ export type QueueName = (typeof QUEUE_NAMES)[number];
 export const HEARTBEAT_QUEUE = 'heartbeat';
 export const HEARTBEAT_EVERY_MS = 60_000;
 
-/** Internal queue for daily housekeeping (e.g. purging expired sync_mutations). 03:17 UTC daily. */
+/** Internal queue for housekeeping. Jobs are told apart by name (one scheduler each). */
 export const MAINTENANCE_QUEUE = 'maintenance';
+/** Job `maintenance`: purge expired sync_mutations. 03:17 UTC daily. */
+export const MAINTENANCE_JOB = 'maintenance';
 export const MAINTENANCE_CRON = '17 3 * * *';
+/** Job `account-purge`: purge accounts whose 7-day deletion grace has ended (F8 REQ-ACC-11). Hourly at :41 UTC. */
+export const ACCOUNT_PURGE_JOB = 'account-purge';
+export const ACCOUNT_PURGE_CRON = '41 * * * *';
 
 /** Prefix keeps Aura's keys apart from other apps on a shared Redis. */
 export const QUEUE_PREFIX = 'aura';

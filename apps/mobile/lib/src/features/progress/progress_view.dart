@@ -42,6 +42,45 @@ class ProgressView {
   /// Provisional Starlight per local event id (for the "+10" moment).
   final Map<String, int> awards;
   final double? localHue;
+
+  /// How far all-time Starlight is toward the next stage; `null` at
+  /// Constellation, which grows stars instead (F2).
+  StageProgress? get stageProgress =>
+      stageProgressFor(avatar.stage, totalStarlight);
+}
+
+/// Progress from the shown [stage] toward the next one (Home's quiet bar).
+@immutable
+class StageProgress {
+  const StageProgress({
+    required this.next,
+    required this.total,
+    required this.fraction,
+  });
+
+  final AuraStage next;
+
+  /// All-time Starlight so far; `next.threshold` is the target.
+  final int total;
+
+  /// 0–1 across the current stage's span.
+  final double fraction;
+}
+
+/// The next stage after [stage] and the share of the way there for an
+/// all-time [total]; `null` at the last stage. Thresholds come from
+/// [AuraStage] (RULES.md §4). The shown stage can be ahead of [total] (the
+/// server's stage never regresses on screen), so the share is clamped.
+StageProgress? stageProgressFor(AuraStage stage, int total) {
+  final next = stage.next;
+  if (next == null) return null;
+  final span = next.threshold - stage.threshold;
+  final into = total - stage.threshold;
+  return StageProgress(
+    next: next,
+    total: total,
+    fraction: span <= 0 ? 1 : (into / span).clamp(0.0, 1.0),
+  );
 }
 
 /// Combines the on-device projection with the last server snapshot.

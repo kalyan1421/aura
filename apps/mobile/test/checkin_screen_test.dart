@@ -10,6 +10,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
 
+/// Scrolls a mood tile into view (large layouts scroll), then taps it.
+Future<void> tapMood(WidgetTester tester, String id) async {
+  final tile = find.byKey(ValueKey('mood-$id'));
+  await tester.ensureVisible(tile);
+  await tester.pump();
+  await tester.tap(tile);
+}
+
 void main() {
   testWidgets('mood-only check-in: 2 taps saves locally and queues one '
       'outbox mutation (REQ-CHK-01/02)', (tester) async {
@@ -28,7 +36,7 @@ void main() {
     await tester.pump();
 
     // Tap 1: a mood. Tap 2: Save.
-    await tester.tap(find.byKey(const ValueKey('mood-calm')));
+    await tapMood(tester, 'calm');
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('checkin-save')));
     await settleIo(tester);
@@ -56,7 +64,8 @@ void main() {
 
     // The reward moment: the first check-in of the day earns 10.
     expect(find.text('+10 Starlight'), findsOneWidget);
-    expect(find.text('Join a room of people feeling this'), findsOneWidget);
+    // F5 Mood Rooms don't exist yet: no disabled "coming soon" button.
+    expect(find.text('Join a room of people feeling this'), findsNothing);
 
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
@@ -81,7 +90,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    await tester.tap(find.byKey(const ValueKey('mood-joyful')));
+    await tapMood(tester, 'joyful');
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('checkin-save')));
     await settleIo(tester);
@@ -118,7 +127,7 @@ void main() {
     // Nothing at launch.
     expect(find.byKey(const ValueKey('push-allow')), findsNothing);
 
-    await tester.tap(find.byKey(const ValueKey('mood-calm')));
+    await tapMood(tester, 'calm');
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('checkin-save')));
     await settleIo(tester);
@@ -155,7 +164,7 @@ void main() {
     final save = find.byKey(const ValueKey('checkin-save'));
     expect(tester.widget<FilledButton>(save).onPressed, isNull);
 
-    await tester.tap(find.byKey(const ValueKey('mood-anxious')));
+    await tapMood(tester, 'anxious');
     await tester.pump();
     await tester.tap(save);
     await tester.tap(save, warnIfMissed: false);
@@ -183,7 +192,7 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.byKey(const ValueKey('mood-grateful')));
+    await tapMood(tester, 'grateful');
     // The details row grows in (AnimatedSize) before it can be tapped.
     await tester.pumpAndSettle();
     final list = find.byType(ListView).first;

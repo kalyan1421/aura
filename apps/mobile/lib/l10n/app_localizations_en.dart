@@ -640,6 +640,264 @@ class AppLocalizationsEn extends AppLocalizations {
   String get push_allow => 'Allow';
 
   @override
+  String get signin_busy => 'One moment';
+
+  @override
+  String signin_resendIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: 'You can ask for a fresh code in $seconds s',
+      one: 'You can ask for a fresh code in 1 s',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signin_freshSent => 'A fresh code is on its way.';
+
+  @override
+  String get acct_pendingTitle => 'Keep your account?';
+
+  @override
+  String acct_pendingBody(String date) {
+    return 'Your account is set to be deleted on $date. Keep it?';
+  }
+
+  @override
+  String get acct_pendingBodySoon =>
+      'Your account is set to be deleted soon. Keep it?';
+
+  @override
+  String get acct_keep => 'Keep my account';
+
+  @override
+  String get acct_letGo => 'Let it go';
+
+  @override
+  String get acct_keepFailed =>
+      'That didn\'t go through, so nothing has changed yet. Try again when you\'re connected.';
+
+  @override
+  String get acct_deleteTitle => 'Delete my account';
+
+  @override
+  String get acct_deleteIntro => 'Deleting your account removes:';
+
+  @override
+  String get acct_itemCheckIns => 'Your check-ins and notes';
+
+  @override
+  String get acct_itemHabits => 'Your habits';
+
+  @override
+  String get acct_itemProgress => 'Your Starlight and your Aura\'s growth';
+
+  @override
+  String get acct_itemAccount => 'Your account and the email you sign in with';
+
+  @override
+  String get acct_grace =>
+      'You have 7 days to change your mind. Sign in again before then and everything stays. After that it\'s deleted for good and can\'t be brought back.';
+
+  @override
+  String get acct_store =>
+      'If you pay for a subscription through the App Store or Google Play, deleting your account doesn\'t cancel it. Manage or cancel it in your store\'s subscription settings.';
+
+  @override
+  String get acct_phone =>
+      'This phone will be cleared and signed out straight away.';
+
+  @override
+  String get acct_needsConnection =>
+      'Deleting your account needs a connection. Connect to the internet, then try again.';
+
+  @override
+  String get acct_confirmTitle => 'Delete your account?';
+
+  @override
+  String get acct_confirmBody =>
+      'Your account and everything in it will be deleted in 7 days. Sign in again before then to keep it. This phone will be cleared now.';
+
+  @override
+  String get acct_failed =>
+      'That didn\'t go through, and nothing has been deleted. Try again in a moment.';
+
+  @override
+  String get acct_failedOffline =>
+      'We couldn\'t reach Aura, and nothing has been deleted. Check your connection and try again.';
+
+  @override
+  String get acct_retry => 'Try again';
+
+  @override
+  String get acct_scheduledTitle => 'Your account is set to be deleted';
+
+  @override
+  String acct_scheduledBody(String date) {
+    return 'It will be deleted on $date. Sign in again before then to keep it.';
+  }
+
+  @override
+  String get acct_phoneCleared => 'This phone has been cleared and signed out.';
+
+  @override
+  String get acct_signedOut =>
+      'You\'re not signed in, so there\'s no account to delete. What you\'ve saved lives only on this phone.';
+
+  @override
+  String get acct_unavailable =>
+      'Account deletion isn\'t set up in this build.';
+
+  @override
+  String get set_comfort => 'Comfort';
+
+  @override
+  String get set_reduceMotion => 'Reduce motion';
+
+  @override
+  String get set_reduceMotionNote => 'Also follows your phone\'s setting';
+
+  @override
+  String get set_haptics => 'Haptics';
+
+  @override
+  String get set_hapticsNote => 'Soft taps when you choose something';
+
+  @override
+  String get set_hideStreak => 'Hide streak number';
+
+  @override
+  String get set_hideStreakNote =>
+      'Your glow still grows. Home just won\'t count the days.';
+
+  @override
+  String get set_signOutTitle => 'Sign out of Aura?';
+
+  @override
+  String get set_helpSafety => 'Help & Safety';
+
+  @override
+  String get set_grievanceOfficer => 'Grievance Officer';
+
+  @override
+  String get set_grievanceSubject => 'Grievance about Aura';
+
+  @override
+  String get set_contactSupport => 'Contact support';
+
+  @override
+  String get set_supportSubject => 'Aura support';
+
+  @override
+  String get set_opensEmail => 'Opens your email app';
+
+  @override
+  String set_emailFailed(String email) {
+    return 'We couldn\'t open an email app. You can write to $email.';
+  }
+
+  @override
+  String get acct_inProgress =>
+      'This account is already being deleted, so it can\'t be kept any more. This phone will be cleared and signed out.';
+
+  @override
+  String get checkin_discardTitle => 'Leave without saving?';
+
+  @override
+  String get checkin_discardKeep => 'Keep editing';
+
+  @override
+  String get checkin_discardConfirm => 'Discard';
+
+  @override
+  String checkin_tagLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Up to $count tags',
+      one: 'Up to 1 tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String checkin_quadrantAxes(String energy, String feel) {
+    return '$energy · $feel';
+  }
+
+  @override
+  String get history_title => 'Your check-ins';
+
+  @override
+  String get history_private => 'Only you can see these.';
+
+  @override
+  String get history_empty =>
+      'Nothing here yet. Your check-ins will gather here, and only you can see them.';
+
+  @override
+  String get history_today => 'Today';
+
+  @override
+  String get history_yesterday => 'Yesterday';
+
+  @override
+  String history_tagCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tags',
+      one: '1 tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get history_hasNote => 'Has a note';
+
+  @override
+  String get history_entryTitle => 'Your check-in';
+
+  @override
+  String history_when(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get history_tags => 'Tags';
+
+  @override
+  String get history_note => 'Your words';
+
+  @override
+  String get history_synced => 'Synced';
+
+  @override
+  String get history_edit => 'Edit';
+
+  @override
+  String get history_editWindowOver =>
+      'You can edit a check-in for a day after you make it.';
+
+  @override
+  String get history_delete => 'Delete';
+
+  @override
+  String get history_deleteTitle => 'Delete this check-in?';
+
+  @override
+  String get history_deleteBody =>
+      'This doesn\'t change your Starlight or glow days.';
+
+  @override
+  String get history_missing => 'This check-in isn\'t here anymore.';
+
+  @override
+  String get history_editNoteLocked =>
+      'This check-in\'s note hasn\'t reached this phone yet. You can edit it once it has.';
+
+  @override
   String get legal_privacy => 'Privacy policy';
 
   @override
@@ -647,4 +905,211 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legal_opensInBrowser => 'Opens in your browser';
+
+  @override
+  String home_stageProgress(String stage, String next, int count, int target) {
+    return '$stage, $count of $target Starlight toward $next';
+  }
+
+  @override
+  String home_constellationProgress(String stage, int count, int max) {
+    return '$stage, $count of $max stars in your constellation';
+  }
+
+  @override
+  String get home_glowTitle => 'Your glow';
+
+  @override
+  String get home_restDaysHint => 'Learn how rest days work';
+
+  @override
+  String get home_restInfoTitle => 'Rest days';
+
+  @override
+  String home_restInfoEarn(int days, int max) {
+    return 'Every $days glow days earn a rest day. You can keep up to $max.';
+  }
+
+  @override
+  String get home_restInfoUse =>
+      'When you take a short break, they fill in those days on their own. There\'s nothing you need to do.';
+
+  @override
+  String get home_restInfoKeep => 'Every glow day you\'ve had stays with you.';
+
+  @override
+  String home_checkInsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins today',
+      one: '1 check-in today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get home_seeAll => 'See all';
+
+  @override
+  String get home_yourCheckIns => 'Your check-ins';
+
+  @override
+  String get home_syncExplainIdle =>
+      'Everything is saved on this phone and in your account.';
+
+  @override
+  String get home_syncExplainPending =>
+      'They\'re safe on this phone and will sync on their own.';
+
+  @override
+  String get home_syncExplainOffline =>
+      'You\'re offline. Everything is safe on this phone and syncs when you\'re back online.';
+
+  @override
+  String get home_syncExplainSignedOut =>
+      'You\'re not signed in, so everything stays on this phone for now.';
+
+  @override
+  String get home_syncExplainUnavailable =>
+      'This version keeps everything on this phone.';
+
+  @override
+  String get home_syncNow => 'Sync now';
+
+  @override
+  String get home_syncing => 'Syncing…';
+
+  @override
+  String get home_syncHint => 'Show sync details';
+
+  @override
+  String get habits_edit => 'Edit';
+
+  @override
+  String get habits_editSemantic => 'Edit small things';
+
+  @override
+  String get habits_sheetTitle => 'Your small things';
+
+  @override
+  String get habits_sheetBody =>
+      'Choose what shows on Home. Check-ins grow your Aura either way.';
+
+  @override
+  String get habits_presetsTitle => 'Suggested';
+
+  @override
+  String get habits_customTitle => 'Your own';
+
+  @override
+  String get habits_addLabel => 'Add your own';
+
+  @override
+  String get habits_addHint => 'For example, water the plants';
+
+  @override
+  String get habits_add => 'Add';
+
+  @override
+  String habits_limit(int count) {
+    return 'You have $count custom habits. Swap one to add another.';
+  }
+
+  @override
+  String get habits_tooLong =>
+      'That name is a little long. Could you try a shorter one?';
+
+  @override
+  String get habits_saveFailed => 'That didn\'t save. Could you try again?';
+
+  @override
+  String habits_remove(String name) {
+    return 'Remove $name';
+  }
+
+  @override
+  String habits_removeTitle(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get habits_removeBody =>
+      'It leaves your list. Starlight and glow days you earned with it stay.';
+
+  @override
+  String get habits_removeConfirm => 'Remove';
+
+  @override
+  String get habits_empty => 'Pick one small thing to start.';
+
+  @override
+  String get help_groundingProgress => 'Progress through the minute';
+
+  @override
+  String get help_progressBegun => 'Just begun';
+
+  @override
+  String get help_progressHalf => 'About halfway';
+
+  @override
+  String get help_progressNearly => 'Nearly through';
+
+  @override
+  String get help_progressDone => 'Complete';
+
+  @override
+  String help_breatheLogged(String habit) {
+    return '$habit is marked done for today.';
+  }
+
+  @override
+  String get onb_trustTitle => 'Before we begin';
+
+  @override
+  String get onb_trustBody =>
+      'A few things to know about how Aura looks after you.';
+
+  @override
+  String get onb_trustPrivateTitle => 'Private by default';
+
+  @override
+  String get onb_trustPrivateBody =>
+      'Your check-ins and notes are yours. Notes are encrypted, and nobody else sees how you feel unless you choose to share it.';
+
+  @override
+  String get onb_trustCareTitle => 'Wellness support, not therapy';
+
+  @override
+  String get onb_trustCareBody =>
+      'Aura helps you notice how you feel. It doesn\'t diagnose or treat anything.';
+
+  @override
+  String get onb_trustHelpTitle => 'Help is always one tap away';
+
+  @override
+  String onb_trustHelpBody(String button) {
+    return 'Tap “$button” any time to call a helpline or take a minute to breathe.';
+  }
+
+  @override
+  String get onb_dobYearType => 'Type the year';
+
+  @override
+  String get onb_dobYearNoMatch =>
+      'No year in the list matches that. Could you check it?';
+
+  @override
+  String get onb_blockedWrongDate => 'Entered the wrong date?';
+
+  @override
+  String get onb_blockedWrongDateHint => 'Opens your email app';
+
+  @override
+  String get onb_blockedMailSubject => 'Aura: I entered the wrong date';
+
+  @override
+  String onb_blockedMailFailed(String email) {
+    return 'We couldn\'t open an email app. You can write to us at $email.';
+  }
 }

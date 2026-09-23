@@ -44,6 +44,11 @@ abstract interface class SyncTrigger {
 /// 1-minute heartbeat while items are pending. Network/5xx errors back off
 /// exponentially (up to 1 h); validation rejections go to the dead-letter
 /// table. Nothing here ever blocks the UI: the app works fully offline.
+///
+/// A `403 account_deletion_pending` (the account is in its 7-day deletion
+/// grace, F8 REQ-ACC-11) holds sync for that account: nothing is dead-lettered
+/// or retried until the person chooses "Keep my account" ([releaseDeletionHold])
+/// or signs out / another account signs in.
 class SyncService implements SyncTrigger {
   SyncService({
     required this._auth,
@@ -61,7 +66,12 @@ class SyncService implements SyncTrigger {
     required this._alreadyPulled,
     required this._onUnder13,
     this._reconcileHabits,
+    this._onDeletionPending,
   });
+
+  /// The server refused a push with `403 account_deletion_pending`: the UI
+  /// asks "Keep my account?" (features/account). Called once per hold.
+  final void Function()? _onDeletionPending;
 
   /// Adopts the server's habit id when a preset exists twice (e.g. created
   /// offline on two phones) and re-queues the affected habit logs.
@@ -98,6 +108,11 @@ class SyncService implements SyncTrigger {
   /// Set by [pause] (sign-out): nothing new starts.
   bool _paused = false;
 
+  /// The account whose deletion is pending ([ApiException.isDeletionPending]):
+  /// while it is signed in nothing is pulled, flushed or pushed. Another
+  /// account (or none) is never held.
+  String? _heldFor;
+
   /// Bumped by [pause]: an in-flight drain from before it writes nothing
   /// more locally (so a signed-out account's data can't reappear after the
   /// wipe).
@@ -113,7 +128,9 @@ class SyncService implements SyncTrigger {
     _authSub = _auth.watchUser().listen((user) {
       if (user == null) {
         _dataKeys.forget();
-        _setPhase(_auth.isAvailable ? SyncPhase.signedOut : SyncPhase.unavailable);
+        _setPhase(
+          _auth.isAvailable ? SyncPhase.signedOut : SyncPhase.unavailable,
+        );
       } else {
         unawaited(kick());
       }
@@ -141,6 +158,14 @@ class SyncService implements SyncTrigger {
   /// App came back to the foreground.
   void onResume() => unawaited(kick());
 
+  /// The person tapped "Sync now": items waiting out a retry backoff go
+  /// too, not only the ones already due.
+  Future<void> syncNow() async {
+    if (_disposed || _paused) return;
+    await _outbox.resetBackoff();
+    await kick();
+  }
+
   /// Sign-out: stops syncing and waits (up to [timeout]) for an in-flight
   /// drain; whatever it still receives is dropped. Call [resume] after the
   /// local data is wiped.
@@ -158,6 +183,18 @@ class SyncService implements SyncTrigger {
   void resume() {
     if (!_paused) return;
     _paused = false;
+    unawaited(kick());
+  }
+
+  /// True while pushing waits for the "Keep my account?" choice.
+  bool get isHeldForDeletion =>
+      _heldFor != null && _heldFor == _auth.currentUser?.id;
+
+  /// "Keep my account" succeeded (or the server no longer has a deletion
+  /// scheduled): the held rows go out now.
+  void releaseDeletionHold() {
+    if (_heldFor == null) return;
+    _heldFor = null;
     unawaited(kick());
   }
 
@@ -202,6 +239,14 @@ class SyncService implements SyncTrigger {
     if (!_online.value) {
       _setPhase(SyncPhase.offline);
       return;
+    }
+    if (_heldFor != null) {
+      if (_heldFor == user.id) {
+        // Deletion pending: the server writes nothing for this account.
+        _setPhase(SyncPhase.waiting);
+        return;
+      }
+      _heldFor = null; // a different account signed in
     }
     _setPhase(SyncPhase.syncing);
 
@@ -289,6 +334,16 @@ class SyncService implements SyncTrigger {
         res = await api.push(deviceId: deviceId, mutations: mutations);
       } on ApiException catch (e) {
         if (!current()) return;
+        if (e.isDeletionPending) {
+          // The account is in its deletion grace period: keep every row as
+          // it is (no backoff, no dead letter) and stop until the person
+          // decides. Retrying would only be refused again.
+          _heldFor = user.id;
+          _retry?.cancel();
+          _setPhase(SyncPhase.waiting);
+          _onDeletionPending?.call();
+          return;
+        }
         // A request-level error says nothing about the rows: they are never
         // dead-lettered for it (only per-mutation `rejected` results are).
         final now = _clock.now();
@@ -369,9 +424,9 @@ class SyncService implements SyncTrigger {
     final wait = next == null
         ? const Duration(seconds: 30)
         : next.difference(_clock.now());
-    _scheduleRetry(wait < const Duration(seconds: 2)
-        ? const Duration(seconds: 2)
-        : wait);
+    _scheduleRetry(
+      wait < const Duration(seconds: 2) ? const Duration(seconds: 2) : wait,
+    );
   }
 
   void _scheduleRetry(Duration wait) {

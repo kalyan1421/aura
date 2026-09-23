@@ -45,7 +45,11 @@ class SignOutService {
 
   static const Duration _pushTimeout = Duration(seconds: 12);
 
-  Future<void> signOut() async {
+  /// [onWiped] runs after the wipe and before the app returns to Welcome —
+  /// account deletion shows its scheduled date there, so the phone is already
+  /// clear if the app is closed on that screen. Its errors never stop the
+  /// reset.
+  Future<void> signOut({Future<void> Function()? onWiped}) async {
     final userId = _auth.currentUser?.id;
     await _pauseSync();
     try {
@@ -67,6 +71,14 @@ class SignOutService {
       // The per-user note key (Keychain/Keystore + memory).
       _dataKeys.forget();
       if (userId != null) await _secure.delete(SecureKeys.dataKey(userId));
+      // 5. Optional caller step on the wiped phone.
+      if (onWiped != null) {
+        try {
+          await onWiped();
+        } catch (e) {
+          debugPrint('sign-out: onWiped ${e.runtimeType}');
+        }
+      }
       // 6. Back to Welcome (the under-13 lock is untouched).
       await _afterWipe();
     } finally {

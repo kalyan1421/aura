@@ -154,7 +154,9 @@ class PushService {
       await m.setAutoInitEnabled(true);
       _autoInitOn = true;
     }
-    if (refreshed == null && m.needsApnsToken && await _waitForApns(m) == null) {
+    if (refreshed == null &&
+        m.needsApnsToken &&
+        await _waitForApns(m) == null) {
       // e.g. a simulator without APNs, or no network yet.
       debugPrint('push: no APNs token yet; will retry');
       return _owe(epoch);

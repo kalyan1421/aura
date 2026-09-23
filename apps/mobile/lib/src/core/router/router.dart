@@ -16,6 +16,7 @@ import '../../features/onboarding/language_screen.dart';
 import '../../features/onboarding/trust_screen.dart';
 import '../../features/onboarding/welcome_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../a11y/motion.dart';
 import '../env/env.dart';
 
 part 'router.g.dart';
@@ -70,29 +71,40 @@ String? gateRedirect(GateState gate, String location) {
   return onboardingOnly.contains(location) ? Routes.home : null;
 }
 
-/// Calm transitions: a soft fade with a slight rise.
-CustomTransitionPage<void> _page(GoRouterState state, Widget child) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 380),
-      reverseTransitionDuration: const Duration(milliseconds: 260),
-      transitionsBuilder: (context, animation, _, child) {
-        final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
-        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-        if (reduce) return FadeTransition(opacity: curved, child: child);
-        return FadeTransition(
-          opacity: curved,
-          child: SlideTransition(
-            position: Tween(
-              begin: const Offset(0, 0.03),
-              end: Offset.zero,
-            ).animate(curved),
-            child: child,
-          ),
-        );
-      },
+/// Calm transitions: a soft fade with a slight rise. Under reduced motion a
+/// plain crossfade of at most 300 ms (REQ-A11Y-08).
+CustomTransitionPage<void> _page(
+  GoRouterState state,
+  Widget child, {
+  required bool reduceMotion,
+}) => CustomTransitionPage<void>(
+  key: state.pageKey,
+  child: child,
+  transitionDuration: reduceMotion
+      ? reducedMotionFade
+      : const Duration(milliseconds: 380),
+  reverseTransitionDuration: reduceMotion
+      ? const Duration(milliseconds: 200)
+      : const Duration(milliseconds: 260),
+  transitionsBuilder: (context, animation, _, child) {
+    final reduce = reduceMotionOf(context);
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
     );
+    if (reduce) return FadeTransition(opacity: curved, child: child);
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween(
+          begin: const Offset(0, 0.03),
+          end: Offset.zero,
+        ).animate(curved),
+        child: child,
+      ),
+    );
+  },
+);
 
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
@@ -102,13 +114,15 @@ GoRouter router(Ref ref) {
 
   GoRoute route(String path, Widget Function(GoRouterState s) build) => GoRoute(
     path: path,
-    pageBuilder: (context, state) => _page(state, build(state)),
+    pageBuilder: (context, state) =>
+        _page(state, build(state), reduceMotion: reduceMotionOf(context)),
   );
 
   return GoRouter(
     initialLocation: Routes.root,
     refreshListenable: gate,
-    redirect: (context, state) => gateRedirect(gate.value, state.matchedLocation),
+    redirect: (context, state) =>
+        gateRedirect(gate.value, state.matchedLocation),
     routes: [
       route(Routes.root, (_) => const SizedBox.shrink()),
       route(Routes.welcome, (_) => const WelcomeScreen()),

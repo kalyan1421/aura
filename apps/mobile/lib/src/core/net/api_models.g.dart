@@ -155,3 +155,11 @@ _DataKeyResponse _$DataKeyResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$DataKeyResponseToJson(_DataKeyResponse instance) =>
     <String, dynamic>{'keyId': instance.keyId, 'dataKey': instance.dataKey};
+
+_AccountStatus _$AccountStatusFromJson(Map<String, dynamic> json) =>
+    _AccountStatus(
+      deletionScheduledFor: json['deletionScheduledFor'] as String?,
+    );
+
+Map<String, dynamic> _$AccountStatusToJson(_AccountStatus instance) =>
+    <String, dynamic>{'deletionScheduledFor': instance.deletionScheduledFor};

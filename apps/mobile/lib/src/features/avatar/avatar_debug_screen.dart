@@ -30,9 +30,8 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
   int _momentSeq = 0;
   static const _cosmetics = ['halo', 'comet_tail', 'stardust_veil'];
 
-  void _play(AvatarMomentKind kind) => setState(
-    () => _moment = AvatarMoment('debug-${_momentSeq++}', kind),
-  );
+  void _play(AvatarMomentKind kind) =>
+      setState(() => _moment = AvatarMoment('debug-${_momentSeq++}', kind));
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +64,10 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Avatar lab'), backgroundColor: AuraColors.sky),
+      appBar: AppBar(
+        title: const Text('Avatar lab'),
+        backgroundColor: AuraColors.sky,
+      ),
       body: CosmicBackground(
         tint: glowColorForHue(_s.hue),
         child: Column(
@@ -100,7 +102,8 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
                     _s.stage.index.toDouble(),
                     4,
                     (v) => setState(
-                      () => _s = _s.copyWith(stage: AuraStage.values[v.round()]),
+                      () =>
+                          _s = _s.copyWith(stage: AuraStage.values[v.round()]),
                     ),
                     divisions: 4,
                     display: _s.stage.name,
@@ -119,9 +122,8 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
                           padding: const EdgeInsets.only(right: 6),
                           child: ActionChip(
                             label: Text(q.name),
-                            onPressed: () => setState(
-                              () => _s = _s.copyWith(hue: q.hueDeg),
-                            ),
+                            onPressed: () =>
+                                setState(() => _s = _s.copyWith(hue: q.hueDeg)),
                           ),
                         ),
                     ],
@@ -129,20 +131,23 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
                   SwitchListTile(
                     title: const Text('isResting'),
                     value: _s.isResting,
-                    onChanged: (v) => setState(() => _s = _s.copyWith(isResting: v)),
+                    onChanged: (v) =>
+                        setState(() => _s = _s.copyWith(isResting: v)),
                   ),
                   slider(
                     'ringCount',
                     _s.ringCount.toDouble(),
                     3,
-                    (v) => setState(() => _s = _s.copyWith(ringCount: v.round())),
+                    (v) =>
+                        setState(() => _s = _s.copyWith(ringCount: v.round())),
                     divisions: 3,
                   ),
                   slider(
                     'glowLevel',
                     _s.glowLevel.toDouble(),
                     3,
-                    (v) => setState(() => _s = _s.copyWith(glowLevel: v.round())),
+                    (v) =>
+                        setState(() => _s = _s.copyWith(glowLevel: v.round())),
                     divisions: 3,
                   ),
                   slider(
@@ -174,9 +179,15 @@ class _AvatarDebugScreenState extends ConsumerState<AvatarDebugScreen> {
                   SegmentedButton<AvatarTier?>(
                     segments: const [
                       ButtonSegment(value: null, label: Text('auto')),
-                      ButtonSegment(value: AvatarTier.high, label: Text('High')),
+                      ButtonSegment(
+                        value: AvatarTier.high,
+                        label: Text('High'),
+                      ),
                       ButtonSegment(value: AvatarTier.low, label: Text('Low')),
-                      ButtonSegment(value: AvatarTier.still, label: Text('Still')),
+                      ButtonSegment(
+                        value: AvatarTier.still,
+                        label: Text('Still'),
+                      ),
                     ],
                     selected: {_tier},
                     onSelectionChanged: (s) => setState(() => _tier = s.first),

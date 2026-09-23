@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/motion.dart';
 import '../../core/env/env.dart';
+import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
+import '../../core/router/router.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/legal_links.dart';
+import '../account/deletion_pending.dart';
 import '../onboarding/language_screen.dart';
 import '../support/support_sheet.dart';
 
+/// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
+/// Haptics, Hide streak number F3) · Account (sign in/out, "Delete my
+/// account" F8 REQ-ACC-11) · Help & Safety (disclaimer REQ-SAFE-12, legal
+/// links, Grievance Officer REQ-SAFE-11, support) · About.
+///
+/// A deletion that sync found pending (`403 account_deletion_pending`) is
+/// surfaced at the top with "Keep my account" / "Let it go".
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -19,11 +32,48 @@ class SettingsScreen extends ConsumerWidget {
     final t = Theme.of(context).textTheme;
     final auth = ref.watch(authRepositoryProvider);
     final user = ref.watch(authUserProvider).value;
+    final comfort = ref.watch(comfortControllerProvider);
+    final comfortCtl = ref.read(comfortControllerProvider.notifier);
 
-    Widget section(String title) => Padding(
-      padding: const EdgeInsets.only(top: AuraSpace.xl, bottom: AuraSpace.m),
-      child: Semantics(header: true, child: Text(title, style: t.titleSmall)),
+    // The phone already reduces motion: `AuraApp` folds the in-app switch
+    // into the same MediaQuery flag, so check the platform too.
+    final osReducesMotion =
+        View.of(context)
+            .platformDispatcher
+            .accessibilityFeatures
+            .disableAnimations ||
+        (reduceMotionOf(context) && !comfort.reduceMotion);
+
+    Widget section(String title, String key) => Padding(
+      padding: const EdgeInsets.only(top: AuraSpace.xl, bottom: AuraSpace.s),
+      child: Semantics(
+        header: true,
+        child: Text(
+          title,
+          key: ValueKey('set-section-$key'),
+          style: t.titleSmall,
+        ),
+      ),
     );
+
+    Widget toggle({
+      required String key,
+      required String title,
+      required String note,
+      required bool value,
+      required ValueChanged<bool>? onChanged,
+    }) => SwitchListTile(
+      key: ValueKey(key),
+      contentPadding: EdgeInsets.zero,
+      value: value,
+      onChanged: onChanged,
+      title: Text(title),
+      subtitle: Text(note),
+    );
+
+    final grievanceName = Env.grievanceOfficerName;
+    final grievanceEmail = Env.grievanceOfficerEmail;
+    final supportEmail = Env.supportEmail;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
         backgroundColor: AuraColors.sky,
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsetsDirectional.only(end: AuraSpace.s),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 230),
               child: const HelpNowButton(compact: true),
@@ -41,41 +91,133 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: CosmicBackground(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(
+          padding: const EdgeInsetsDirectional.fromSTEB(
             AuraSpace.gutter,
-            0,
+            AuraSpace.s,
             AuraSpace.gutter,
             AuraSpace.xxl,
           ),
           children: [
-            section(l.settings_language),
+            const DeletionPendingCard(),
+
+            // ---- Language -------------------------------------------------
+            section(l.settings_language, 'language'),
             const LanguagePicker(),
+
+            // ---- Comfort --------------------------------------------------
+            section(l.set_comfort, 'comfort'),
+            toggle(
+              key: 'set-reduce-motion',
+              title: l.set_reduceMotion,
+              note: l.set_reduceMotionNote,
+              // On (and locked) while the phone's own setting reduces motion.
+              value: osReducesMotion || comfort.reduceMotion,
+              onChanged: osReducesMotion
+                  ? null
+                  : (v) =>
+                        comfortCtl.update((c) => c.copyWith(reduceMotion: v)),
+            ),
+            toggle(
+              key: 'set-haptics',
+              title: l.set_haptics,
+              note: l.set_hapticsNote,
+              value: comfort.haptics,
+              onChanged: (v) =>
+                  comfortCtl.update((c) => c.copyWith(haptics: v)),
+            ),
+            toggle(
+              key: 'set-hide-streak',
+              title: l.set_hideStreak,
+              note: l.set_hideStreakNote,
+              value: comfort.hideStreak,
+              onChanged: (v) =>
+                  comfortCtl.update((c) => c.copyWith(hideStreak: v)),
+            ),
+
+            // ---- Account --------------------------------------------------
             if (auth.isAvailable) ...[
-              section(l.settings_account),
+              section(l.settings_account, 'account'),
               if (user == null)
                 FilledButton(
-                  onPressed: () => context.push('/sign-in'),
+                  key: const ValueKey('set-sign-in'),
+                  onPressed: () => context.push(Routes.signIn),
                   child: Text(l.settings_signIn),
                 )
               else ...[
-                Text(l.settings_signedInAs(user.email ?? ''), style: t.bodyLarge),
-                const SizedBox(height: AuraSpace.m),
-                OutlinedButton(
-                  onPressed: () => _signOut(context, ref),
-                  child: Text(l.settings_signOut),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AuraSpace.s),
+                  child: Text(
+                    l.settings_signedInAs(user.email ?? ''),
+                    key: const ValueKey('set-signed-in-as'),
+                    style: t.bodyLarge,
+                  ),
+                ),
+                ListTile(
+                  key: const ValueKey('set-sign-out'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.logout_rounded),
+                  title: Text(l.settings_signOut),
+                  onTap: () => _signOut(context, ref),
+                ),
+                ListTile(
+                  key: const ValueKey('set-delete-account'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.delete_outline_rounded),
+                  title: Text(l.acct_deleteTitle),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(Routes.deleteAccount),
                 ),
               ],
             ],
-            section(l.settings_about),
-            Text(l.help_disclaimer, style: t.bodyMedium),
+
+            // ---- Help & Safety ------------------------------------------------
+            section(l.set_helpSafety, 'help'),
+            Text(
+              l.help_disclaimer,
+              key: const ValueKey('set-disclaimer'),
+              style: t.bodyMedium,
+            ),
             const SizedBox(height: AuraSpace.s),
-            Text(l.settings_version(Env.appVersion), style: t.bodySmall),
+            const LegalLinks(),
+            if (grievanceName.isNotEmpty || grievanceEmail.isNotEmpty)
+              _EmailRow(
+                key: const ValueKey('set-grievance'),
+                icon: Icons.gavel_rounded,
+                title: l.set_grievanceOfficer,
+                lines: [
+                  if (grievanceName.isNotEmpty) grievanceName,
+                  if (grievanceEmail.isNotEmpty) grievanceEmail,
+                ],
+                email: grievanceEmail,
+                subject: l.set_grievanceSubject,
+              ),
+            if (supportEmail.isNotEmpty)
+              _EmailRow(
+                key: const ValueKey('set-support'),
+                icon: Icons.mail_outline_rounded,
+                title: l.set_contactSupport,
+                lines: [supportEmail],
+                email: supportEmail,
+                subject: l.set_supportSubject,
+              ),
+
+            // ---- About ------------------------------------------------------
+            section(l.settings_about, 'about'),
+            Text(
+              l.settings_version(Env.appVersion),
+              key: const ValueKey('set-version'),
+              style: t.bodySmall,
+            ),
             if (Env.debugTools) ...[
               const SizedBox(height: AuraSpace.l),
-              TextButton.icon(
-                onPressed: () => context.push('/debug/avatar'),
-                icon: const Icon(Icons.science_outlined),
-                label: Text(l.settings_avatarLab),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton.icon(
+                  key: const ValueKey('set-avatar-lab'),
+                  onPressed: () => context.push(Routes.debugAvatar),
+                  icon: const Icon(Icons.science_outlined),
+                  label: Text(l.settings_avatarLab),
+                ),
               ),
             ],
           ],
@@ -93,13 +235,18 @@ class SettingsScreen extends ConsumerWidget {
       final leave = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
+          key: const ValueKey('set-sign-out-dialog'),
+          title: Semantics(header: true, child: Text(l.set_signOutTitle)),
           content: Text(l.settings_signOutPending(pending)),
           actions: [
             TextButton(
+              key: const ValueKey('set-stay'),
+              autofocus: true,
               onPressed: () => Navigator.pop(context, false),
               child: Text(l.settings_stay),
             ),
             TextButton(
+              key: const ValueKey('set-sign-out-anyway'),
               onPressed: () => Navigator.pop(context, true),
               child: Text(l.settings_signOutAnyway),
             ),
@@ -109,5 +256,65 @@ class SettingsScreen extends ConsumerWidget {
       if (leave != true) return;
     }
     await ref.read(signOutServiceProvider).signOut();
+  }
+}
+
+/// A row that writes an email (subject only — nothing about the person is
+/// pre-filled). Not tappable without an address.
+class _EmailRow extends StatelessWidget {
+  const _EmailRow({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.lines,
+    required this.email,
+    required this.subject,
+  });
+
+  final IconData icon;
+  final String title;
+  final List<String> lines;
+  final String email;
+  final String subject;
+
+  Future<void> _open(BuildContext context) async {
+    final l = AppLocalizations.of(context);
+    final uri = Uri(
+      scheme: 'mailto',
+      path: email,
+      // Encoded by hand: `queryParameters` turns spaces into '+'.
+      query: 'subject=${Uri.encodeComponent(subject)}',
+    );
+    var opened = false;
+    try {
+      opened = await launchUrl(uri);
+    } catch (_) {
+      opened = false;
+    }
+    if (!opened && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l.set_emailFailed(email)),
+          duration: const Duration(seconds: 8),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Semantics(
+      link: email.isNotEmpty,
+      hint: email.isNotEmpty ? l.set_opensEmail : null,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(lines.join('\n')),
+        isThreeLine: lines.length > 1,
+        onTap: email.isEmpty ? null : () => _open(context),
+      ),
+    );
   }
 }

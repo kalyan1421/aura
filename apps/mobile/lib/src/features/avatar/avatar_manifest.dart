@@ -136,7 +136,8 @@ class AvatarManifest {
       heart: off(anchors['heart']),
       center: off(anchors['center']),
       rings: [
-        for (final r in (j['rings'] as List<dynamic>).cast<Map<String, dynamic>>())
+        for (final r
+            in (j['rings'] as List<dynamic>).cast<Map<String, dynamic>>())
           _ring(r, imageSize),
       ],
       constellationArc: ArcSpec(

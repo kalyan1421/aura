@@ -3,7 +3,11 @@ import '../../../l10n/app_localizations.dart';
 /// A tap-to-call helpline. Bundled in the app so the sheet works offline, with
 /// no login, network, paywall or spinner (F9).
 class Helpline {
-  const Helpline({required this.name, required this.number, required this.dial});
+  const Helpline({
+    required this.name,
+    required this.number,
+    required this.dial,
+  });
 
   final String name;
   final String number;

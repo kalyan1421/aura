@@ -640,6 +640,263 @@ class AppLocalizationsTe extends AppLocalizations {
   String get push_allow => 'అనుమతించండి';
 
   @override
+  String get signin_busy => 'ఒక్క క్షణం';
+
+  @override
+  String signin_resendIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds సెకన్లలో కొత్త కోడ్ అడగవచ్చు',
+      one: '1 సెకనులో కొత్త కోడ్ అడగవచ్చు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signin_freshSent => 'కొత్త కోడ్ వస్తోంది.';
+
+  @override
+  String get acct_pendingTitle => 'మీ ఖాతాను ఉంచుకుంటారా?';
+
+  @override
+  String acct_pendingBody(String date) {
+    return 'మీ ఖాతా $dateన తొలగించబడేలా సెట్ అయి ఉంది. దాన్ని ఉంచుకుంటారా?';
+  }
+
+  @override
+  String get acct_pendingBodySoon =>
+      'మీ ఖాతా త్వరలో తొలగించబడేలా సెట్ అయి ఉంది. దాన్ని ఉంచుకుంటారా?';
+
+  @override
+  String get acct_keep => 'నా ఖాతాను ఉంచండి';
+
+  @override
+  String get acct_letGo => 'వదిలేయండి';
+
+  @override
+  String get acct_keepFailed =>
+      'అది జరగలేదు, కాబట్టి ఇంకా ఏమీ మారలేదు. కనెక్ట్ అయ్యాక మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get acct_deleteTitle => 'నా ఖాతాను తొలగించండి';
+
+  @override
+  String get acct_deleteIntro => 'మీ ఖాతాను తొలగిస్తే ఇవి పోతాయి:';
+
+  @override
+  String get acct_itemCheckIns => 'మీ చెక్-ఇన్‌లు, నోట్స్';
+
+  @override
+  String get acct_itemHabits => 'మీ అలవాట్లు';
+
+  @override
+  String get acct_itemProgress => 'మీ Starlight, మీ Aura ఎదుగుదల';
+
+  @override
+  String get acct_itemAccount => 'మీ ఖాతా, మీరు సైన్ ఇన్ చేసే ఈమెయిల్';
+
+  @override
+  String get acct_grace =>
+      'మనసు మార్చుకోవడానికి మీకు 7 రోజులు ఉన్నాయి. ఆలోపు మళ్ళీ సైన్ ఇన్ చేస్తే అన్నీ అలాగే ఉంటాయి. ఆ తర్వాత అది శాశ్వతంగా తొలగిపోతుంది, తిరిగి తీసుకురాలేం.';
+
+  @override
+  String get acct_store =>
+      'మీరు App Store లేదా Google Play ద్వారా సబ్‌స్క్రిప్షన్ చెల్లిస్తుంటే, ఖాతాను తొలగించినా అది రద్దు కాదు. దాన్ని మీ స్టోర్ సబ్‌స్క్రిప్షన్ సెట్టింగ్‌లలో నిర్వహించండి లేదా రద్దు చేయండి.';
+
+  @override
+  String get acct_phone =>
+      'ఈ ఫోన్‌లోని మీ డేటా వెంటనే క్లియర్ అవుతుంది, సైన్ అవుట్ అవుతుంది.';
+
+  @override
+  String get acct_needsConnection =>
+      'ఖాతాను తొలగించడానికి ఇంటర్నెట్ కనెక్షన్ కావాలి. కనెక్ట్ అయ్యాక మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get acct_confirmTitle => 'మీ ఖాతాను తొలగించాలా?';
+
+  @override
+  String get acct_confirmBody =>
+      'మీ ఖాతా, అందులోని ప్రతిదీ 7 రోజుల్లో తొలగించబడతాయి. దాన్ని ఉంచుకోవాలంటే ఆలోపు మళ్ళీ సైన్ ఇన్ చేయండి. ఈ ఫోన్ ఇప్పుడే క్లియర్ అవుతుంది.';
+
+  @override
+  String get acct_failed =>
+      'అది జరగలేదు, ఏదీ తొలగించబడలేదు. కొద్దిసేపట్లో మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get acct_failedOffline =>
+      'Auraని చేరుకోలేకపోయాం, ఏదీ తొలగించబడలేదు. మీ కనెక్షన్ చూసుకుని మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get acct_retry => 'మళ్ళీ ప్రయత్నించండి';
+
+  @override
+  String get acct_scheduledTitle => 'మీ ఖాతా తొలగింపుకు సెట్ అయింది';
+
+  @override
+  String acct_scheduledBody(String date) {
+    return 'అది $dateన తొలగించబడుతుంది. దాన్ని ఉంచుకోవాలంటే ఆలోపు మళ్ళీ సైన్ ఇన్ చేయండి.';
+  }
+
+  @override
+  String get acct_phoneCleared => 'ఈ ఫోన్ క్లియర్ అయింది, సైన్ అవుట్ అయింది.';
+
+  @override
+  String get acct_signedOut =>
+      'మీరు సైన్ ఇన్ చేయలేదు, కాబట్టి తొలగించడానికి ఖాతా లేదు. మీరు సేవ్ చేసినవి ఈ ఫోన్‌లో మాత్రమే ఉన్నాయి.';
+
+  @override
+  String get acct_unavailable => 'ఈ బిల్డ్‌లో ఖాతా తొలగింపు ఇంకా సెట్ కాలేదు.';
+
+  @override
+  String get set_comfort => 'సౌకర్యం';
+
+  @override
+  String get set_reduceMotion => 'కదలికలు తగ్గించండి';
+
+  @override
+  String get set_reduceMotionNote => 'మీ ఫోన్ సెట్టింగ్‌ను కూడా అనుసరిస్తుంది';
+
+  @override
+  String get set_haptics => 'వైబ్రేషన్ స్పందన';
+
+  @override
+  String get set_hapticsNote => 'మీరు ఏదైనా ఎంచుకున్నప్పుడు మెల్లని వైబ్రేషన్';
+
+  @override
+  String get set_hideStreak => 'వరుస సంఖ్యను దాచండి';
+
+  @override
+  String get set_hideStreakNote =>
+      'మీ వెలుగు పెరుగుతూనే ఉంటుంది. హోమ్‌లో రోజుల లెక్క మాత్రం కనిపించదు.';
+
+  @override
+  String get set_signOutTitle => 'Aura నుండి సైన్ అవుట్ చేయాలా?';
+
+  @override
+  String get set_helpSafety => 'సహాయం & భద్రత';
+
+  @override
+  String get set_grievanceOfficer => 'ఫిర్యాదుల అధికారి';
+
+  @override
+  String get set_grievanceSubject => 'Aura గురించి ఫిర్యాదు';
+
+  @override
+  String get set_contactSupport => 'సపోర్ట్‌ను సంప్రదించండి';
+
+  @override
+  String get set_supportSubject => 'Aura సపోర్ట్';
+
+  @override
+  String get set_opensEmail => 'మీ ఈమెయిల్ యాప్ తెరుచుకుంటుంది';
+
+  @override
+  String set_emailFailed(String email) {
+    return 'ఈమెయిల్ యాప్‌ను తెరవలేకపోయాం. మీరు $emailకి రాయవచ్చు.';
+  }
+
+  @override
+  String get acct_inProgress =>
+      'ఈ ఖాతా తొలగింపు ఇప్పటికే మొదలైంది, కాబట్టి దాన్ని ఇక ఉంచలేం. ఈ ఫోన్ క్లియర్ అయి సైన్ అవుట్ అవుతుంది.';
+
+  @override
+  String get checkin_discardTitle => 'సేవ్ చేయకుండా వెళ్ళిపోతారా?';
+
+  @override
+  String get checkin_discardKeep => 'ఇక్కడే కొనసాగిస్తాను';
+
+  @override
+  String get checkin_discardConfirm => 'వదిలేయండి';
+
+  @override
+  String checkin_tagLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ట్యాగ్‌ల వరకు',
+      one: '1 ట్యాగ్ వరకు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String checkin_quadrantAxes(String energy, String feel) {
+    return '$energy · $feel';
+  }
+
+  @override
+  String get history_title => 'మీ చెక్-ఇన్‌లు';
+
+  @override
+  String get history_private => 'ఇవి మీకు మాత్రమే కనిపిస్తాయి.';
+
+  @override
+  String get history_empty =>
+      'ఇక్కడ ఇంకా ఏమీ లేదు. మీ చెక్-ఇన్‌లు ఇక్కడ చేరుతాయి, అవి మీకు మాత్రమే కనిపిస్తాయి.';
+
+  @override
+  String get history_today => 'ఈరోజు';
+
+  @override
+  String get history_yesterday => 'నిన్న';
+
+  @override
+  String history_tagCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ట్యాగ్‌లు',
+      one: '1 ట్యాగ్',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get history_hasNote => 'ఒక నోట్ ఉంది';
+
+  @override
+  String get history_entryTitle => 'మీ చెక్-ఇన్';
+
+  @override
+  String history_when(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get history_tags => 'ట్యాగ్‌లు';
+
+  @override
+  String get history_note => 'మీ మాటలు';
+
+  @override
+  String get history_synced => 'సింక్ అయింది';
+
+  @override
+  String get history_edit => 'మార్చండి';
+
+  @override
+  String get history_editWindowOver =>
+      'చెక్-ఇన్ చేసిన ఒక రోజు వరకు దాన్ని మార్చుకోవచ్చు.';
+
+  @override
+  String get history_delete => 'తొలగించండి';
+
+  @override
+  String get history_deleteTitle => 'ఈ చెక్-ఇన్‌ను తొలగించాలా?';
+
+  @override
+  String get history_deleteBody =>
+      'దీనివల్ల మీ Starlight గానీ వెలుగు రోజులు గానీ మారవు.';
+
+  @override
+  String get history_missing => 'ఈ చెక్-ఇన్ ఇప్పుడు ఇక్కడ లేదు.';
+
+  @override
+  String get history_editNoteLocked =>
+      'ఈ చెక్-ఇన్ నోట్ ఇంకా ఈ ఫోన్‌కు రాలేదు. అది వచ్చాక మీరు దీన్ని మార్చవచ్చు.';
+
+  @override
   String get legal_privacy => 'గోప్యతా విధానం';
 
   @override
@@ -647,6 +904,213 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get legal_opensInBrowser => 'మీ బ్రౌజర్‌లో తెరుచుకుంటుంది';
+
+  @override
+  String home_stageProgress(String stage, String next, int count, int target) {
+    return '$stage, $next వైపు $targetలో $count Starlight';
+  }
+
+  @override
+  String home_constellationProgress(String stage, int count, int max) {
+    return '$stage, మీ నక్షత్ర మండలంలో $maxలో $count నక్షత్రాలు';
+  }
+
+  @override
+  String get home_glowTitle => 'మీ వెలుగు';
+
+  @override
+  String get home_restDaysHint =>
+      'విశ్రాంతి రోజులు ఎలా పనిచేస్తాయో తెలుసుకోండి';
+
+  @override
+  String get home_restInfoTitle => 'విశ్రాంతి రోజులు';
+
+  @override
+  String home_restInfoEarn(int days, int max) {
+    return 'ప్రతి $days వెలుగు రోజులకు ఒక విశ్రాంతి రోజు వస్తుంది. $max వరకు దాచుకోవచ్చు.';
+  }
+
+  @override
+  String get home_restInfoUse =>
+      'మీరు కొంచెం విరామం తీసుకున్నప్పుడు, అవి ఆ రోజులను తమంతట తామే నింపుతాయి. మీరు ఏమీ చేయాల్సిన అవసరం లేదు.';
+
+  @override
+  String get home_restInfoKeep =>
+      'మీకు వచ్చిన ప్రతి వెలుగు రోజూ మీతోనే ఉంటుంది.';
+
+  @override
+  String home_checkInsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఈరోజు $count చెక్-ఇన్‌లు',
+      one: 'ఈరోజు 1 చెక్-ఇన్',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get home_seeAll => 'అన్నీ చూడండి';
+
+  @override
+  String get home_yourCheckIns => 'మీ చెక్-ఇన్‌లు';
+
+  @override
+  String get home_syncExplainIdle => 'అన్నీ ఈ ఫోన్‌లో, మీ ఖాతాలో సేవ్ అయ్యాయి.';
+
+  @override
+  String get home_syncExplainPending =>
+      'అవి ఈ ఫోన్‌లో భద్రంగా ఉన్నాయి, తమంతట తామే సింక్ అవుతాయి.';
+
+  @override
+  String get home_syncExplainOffline =>
+      'మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. అన్నీ ఈ ఫోన్‌లో భద్రంగా ఉన్నాయి, మళ్ళీ ఆన్‌లైన్ అయ్యాక సింక్ అవుతాయి.';
+
+  @override
+  String get home_syncExplainSignedOut =>
+      'మీరు సైన్ ఇన్ కాలేదు, కాబట్టి ప్రస్తుతానికి అన్నీ ఈ ఫోన్‌లోనే ఉంటాయి.';
+
+  @override
+  String get home_syncExplainUnavailable =>
+      'ఈ వెర్షన్ అన్నింటినీ ఈ ఫోన్‌లోనే ఉంచుతుంది.';
+
+  @override
+  String get home_syncNow => 'ఇప్పుడే సింక్ చేయండి';
+
+  @override
+  String get home_syncing => 'సింక్ అవుతోంది…';
+
+  @override
+  String get home_syncHint => 'సింక్ వివరాలు చూపించండి';
+
+  @override
+  String get habits_edit => 'మార్చండి';
+
+  @override
+  String get habits_editSemantic => 'చిన్న పనులను మార్చండి';
+
+  @override
+  String get habits_sheetTitle => 'మీ చిన్న పనులు';
+
+  @override
+  String get habits_sheetBody =>
+      'Homeలో ఏవి కనిపించాలో ఎంచుకోండి. ఎలాగైనా చెక్-ఇన్‌లతో మీ Aura పెరుగుతుంది.';
+
+  @override
+  String get habits_presetsTitle => 'సూచనలు';
+
+  @override
+  String get habits_customTitle => 'మీ సొంతవి';
+
+  @override
+  String get habits_addLabel => 'మీ సొంతది జోడించండి';
+
+  @override
+  String get habits_addHint => 'ఉదాహరణకు, మొక్కలకు నీళ్ళు';
+
+  @override
+  String get habits_add => 'జోడించండి';
+
+  @override
+  String habits_limit(int count) {
+    return 'మీకు $count సొంత అలవాట్లు ఉన్నాయి. ఇంకొకటి జోడించడానికి ఒకదాన్ని మార్చండి.';
+  }
+
+  @override
+  String get habits_tooLong =>
+      'ఆ పేరు కొంచెం పొడవుగా ఉంది. ఇంకొంచెం చిన్నది ప్రయత్నిస్తారా?';
+
+  @override
+  String get habits_saveFailed => 'అది సేవ్ కాలేదు. మళ్ళీ ప్రయత్నిస్తారా?';
+
+  @override
+  String habits_remove(String name) {
+    return '$name తీసేయండి';
+  }
+
+  @override
+  String habits_removeTitle(String name) {
+    return '$name తీసేయాలా?';
+  }
+
+  @override
+  String get habits_removeBody =>
+      'ఇది మీ జాబితా నుండి వెళ్ళిపోతుంది. దీనితో వచ్చిన Starlight, వెలుగు రోజులు అలాగే ఉంటాయి.';
+
+  @override
+  String get habits_removeConfirm => 'తీసేయండి';
+
+  @override
+  String get habits_empty => 'మొదలుపెట్టడానికి ఒక చిన్న పని ఎంచుకోండి.';
+
+  @override
+  String get help_groundingProgress => 'ఈ నిమిషంలో ఎంతవరకు వచ్చారు';
+
+  @override
+  String get help_progressBegun => 'ఇప్పుడే మొదలైంది';
+
+  @override
+  String get help_progressHalf => 'దాదాపు సగం';
+
+  @override
+  String get help_progressNearly => 'దాదాపు పూర్తయింది';
+
+  @override
+  String get help_progressDone => 'పూర్తయింది';
+
+  @override
+  String help_breatheLogged(String habit) {
+    return 'ఈరోజు $habit అయినట్టు గుర్తించాం.';
+  }
+
+  @override
+  String get onb_trustTitle => 'మొదలుపెట్టే ముందు';
+
+  @override
+  String get onb_trustBody => 'Aura మిమ్మల్ని ఎలా చూసుకుంటుందో కొన్ని విషయాలు.';
+
+  @override
+  String get onb_trustPrivateTitle => 'మొదటి నుంచీ గోప్యంగా';
+
+  @override
+  String get onb_trustPrivateBody =>
+      'మీ చెక్-ఇన్‌లు, నోట్స్ మీవే. నోట్స్ ఎన్‌క్రిప్ట్ అవుతాయి. మీరు పంచుకోవాలని ఎంచుకుంటే తప్ప, మీకు ఎలా అనిపిస్తోందో వేరే ఎవరికీ కనిపించదు.';
+
+  @override
+  String get onb_trustCareTitle => 'ఇది వెల్‌నెస్ తోడు, థెరపీ కాదు';
+
+  @override
+  String get onb_trustCareBody =>
+      'మీకు ఎలా అనిపిస్తోందో గమనించుకోవడానికి Aura సహాయపడుతుంది. ఇది ఏ రోగనిర్ధారణ గానీ, చికిత్స గానీ చేయదు.';
+
+  @override
+  String get onb_trustHelpTitle => 'సహాయం ఎప్పుడూ ఒక్క ట్యాప్ దూరంలోనే';
+
+  @override
+  String onb_trustHelpBody(String button) {
+    return 'హెల్ప్‌లైన్‌కు కాల్ చేయడానికి లేదా ఒక నిమిషం శ్వాస మీద ధ్యాస పెట్టడానికి, ఎప్పుడైనా “$button” నొక్కండి.';
+  }
+
+  @override
+  String get onb_dobYearType => 'సంవత్సరం టైప్ చేయండి';
+
+  @override
+  String get onb_dobYearNoMatch =>
+      'దానికి సరిపోయే సంవత్సరం లిస్ట్‌లో లేదు. ఒకసారి చూసుకుంటారా?';
+
+  @override
+  String get onb_blockedWrongDate => 'తప్పు తేదీ ఇచ్చారా?';
+
+  @override
+  String get onb_blockedWrongDateHint => 'మీ ఈమెయిల్ యాప్ తెరుచుకుంటుంది';
+
+  @override
+  String get onb_blockedMailSubject => 'Aura: నేను తప్పు తేదీ ఇచ్చాను';
+
+  @override
+  String onb_blockedMailFailed(String email) {
+    return 'ఈమెయిల్ యాప్ తెరవలేకపోయాం. $emailకి మాకు రాయవచ్చు.';
+  }
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -1172,10 +1636,10 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get habit_move => 'Kadalika';
 
   @override
-  String get habit_breathe => 'Breathe';
+  String get habit_breathe => 'Shwaasa';
 
   @override
-  String get habit_journal => 'Journal';
+  String get habit_journal => 'Diary';
 
   @override
   String get habit_go_outside => 'Bayataki';
@@ -1289,6 +1753,266 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get push_allow => 'Allow cheyandi';
 
   @override
+  String get signin_busy => 'Oka kshanam';
+
+  @override
+  String signin_resendIn(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds seconds lo kotta code adagochu',
+      one: '1 second lo kotta code adagochu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get signin_freshSent => 'Kotta code vastondi.';
+
+  @override
+  String get acct_pendingTitle => 'Mee account ni unchukuntaara?';
+
+  @override
+  String acct_pendingBody(String date) {
+    return 'Mee account $date na delete ayyela set ayyi undi. Daanni unchukuntaara?';
+  }
+
+  @override
+  String get acct_pendingBodySoon =>
+      'Mee account tvaralo delete ayyela set ayyi undi. Daanni unchukuntaara?';
+
+  @override
+  String get acct_keep => 'Naa account ni unchandi';
+
+  @override
+  String get acct_letGo => 'Vadileyandi';
+
+  @override
+  String get acct_keepFailed =>
+      'Adi jaragaledu, kabatti inka emi maaraledu. Connect ayyaaka malli try cheyandi.';
+
+  @override
+  String get acct_deleteTitle => 'Naa account ni delete cheyandi';
+
+  @override
+  String get acct_deleteIntro => 'Mee account delete cheste ivi pothaayi:';
+
+  @override
+  String get acct_itemCheckIns => 'Mee check-ins, notes';
+
+  @override
+  String get acct_itemHabits => 'Mee habits';
+
+  @override
+  String get acct_itemProgress => 'Mee Starlight, mee Aura edugudala';
+
+  @override
+  String get acct_itemAccount => 'Mee account, meeru sign in chese email';
+
+  @override
+  String get acct_grace =>
+      'Manasu maarchukovadaaniki meeku 7 rojulu unnaayi. Aalopu malli sign in cheste anni alaage untaayi. Aa tarvaata adi shaashvatanga delete aipotundi, tirigi teesukuraalemu.';
+
+  @override
+  String get acct_store =>
+      'Meeru App Store leda Google Play dwaara subscription pay chestunte, account delete chesina adi cancel avvadu. Daanni mee store subscription settings lo manage cheyandi leda cancel cheyandi.';
+
+  @override
+  String get acct_phone =>
+      'Ee phone lo mee data ventane clear avutundi, sign out avutundi.';
+
+  @override
+  String get acct_needsConnection =>
+      'Account delete cheyadaaniki internet connection kaavali. Connect ayyaaka malli try cheyandi.';
+
+  @override
+  String get acct_confirmTitle => 'Mee account ni delete cheyaalaa?';
+
+  @override
+  String get acct_confirmBody =>
+      'Mee account, andulo unna pratidi 7 rojullo delete avutaayi. Daanni unchukovaalante aalopu malli sign in cheyandi. Ee phone ippude clear avutundi.';
+
+  @override
+  String get acct_failed =>
+      'Adi jaragaledu, edi delete avvaledu. Koddisepatlo malli try cheyandi.';
+
+  @override
+  String get acct_failedOffline =>
+      'Aura ni reach avvalekapoyaam, edi delete avvaledu. Mee connection choosukuni malli try cheyandi.';
+
+  @override
+  String get acct_retry => 'Malli try cheyandi';
+
+  @override
+  String get acct_scheduledTitle => 'Mee account delete ki set ayyindi';
+
+  @override
+  String acct_scheduledBody(String date) {
+    return 'Adi $date na delete avutundi. Daanni unchukovaalante aalopu malli sign in cheyandi.';
+  }
+
+  @override
+  String get acct_phoneCleared => 'Ee phone clear ayyindi, sign out ayyindi.';
+
+  @override
+  String get acct_signedOut =>
+      'Meeru sign in cheyaledu, kabatti delete cheyadaaniki account ledu. Meeru save chesinavi ee phone lo maatrame unnaayi.';
+
+  @override
+  String get acct_unavailable =>
+      'Ee build lo account delete inka set avvaledu.';
+
+  @override
+  String get set_comfort => 'Comfort';
+
+  @override
+  String get set_reduceMotion => 'Motion tagginchandi';
+
+  @override
+  String get set_reduceMotionNote =>
+      'Mee phone setting ni kooda follow avutundi';
+
+  @override
+  String get set_haptics => 'Haptics';
+
+  @override
+  String get set_hapticsNote =>
+      'Meeru edaina select chesinappudu mellani vibration';
+
+  @override
+  String get set_hideStreak => 'Streak number daachandi';
+
+  @override
+  String get set_hideStreakNote =>
+      'Mee glow perugutune untundi. Home lo rojula lekka maatram kanipinchadu.';
+
+  @override
+  String get set_signOutTitle => 'Aura nundi sign out cheyaalaa?';
+
+  @override
+  String get set_helpSafety => 'Help & Safety';
+
+  @override
+  String get set_grievanceOfficer => 'Grievance Officer';
+
+  @override
+  String get set_grievanceSubject => 'Aura gurinchi complaint';
+
+  @override
+  String get set_contactSupport => 'Support ni contact cheyandi';
+
+  @override
+  String get set_supportSubject => 'Aura support';
+
+  @override
+  String get set_opensEmail => 'Mee email app open avutundi';
+
+  @override
+  String set_emailFailed(String email) {
+    return 'Email app open cheyalekapoyaam. Meeru $email ki raayochu.';
+  }
+
+  @override
+  String get acct_inProgress =>
+      'Ee account delete avvadam ippatike modalaindi, kabatti daanni inka unchalemu. Ee phone clear ayyi sign out avutundi.';
+
+  @override
+  String get checkin_discardTitle => 'Save cheyakunda vellipotaara?';
+
+  @override
+  String get checkin_discardKeep => 'Ikkade continue chestaanu';
+
+  @override
+  String get checkin_discardConfirm => 'Vadileyandi';
+
+  @override
+  String checkin_tagLimit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tags varaku',
+      one: '1 tag varaku',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String checkin_quadrantAxes(String energy, String feel) {
+    return '$energy · $feel';
+  }
+
+  @override
+  String get history_title => 'Mee check-ins';
+
+  @override
+  String get history_private => 'Ivi meeku maatrame kanipistaayi.';
+
+  @override
+  String get history_empty =>
+      'Ikkada inka emi ledu. Mee check-ins ikkada cherutaayi, avi meeku maatrame kanipistaayi.';
+
+  @override
+  String get history_today => 'Ee roju';
+
+  @override
+  String get history_yesterday => 'Ninna';
+
+  @override
+  String history_tagCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tags',
+      one: '1 tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get history_hasNote => 'Oka note undi';
+
+  @override
+  String get history_entryTitle => 'Mee check-in';
+
+  @override
+  String history_when(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get history_tags => 'Tags';
+
+  @override
+  String get history_note => 'Mee maatalu';
+
+  @override
+  String get history_synced => 'Sync ayyindi';
+
+  @override
+  String get history_edit => 'Edit cheyandi';
+
+  @override
+  String get history_editWindowOver =>
+      'Check-in chesina oka roju varaku daanni maarchukovachu.';
+
+  @override
+  String get history_delete => 'Delete cheyandi';
+
+  @override
+  String get history_deleteTitle => 'Ee check-in delete cheyyaalaa?';
+
+  @override
+  String get history_deleteBody =>
+      'Deeni valla mee Starlight gaani glow days gaani maaravu.';
+
+  @override
+  String get history_missing => 'Ee check-in ippudu ikkada ledu.';
+
+  @override
+  String get history_editNoteLocked =>
+      'Ee check-in note inka ee phone ki raaledu. Adi vachaaka meeru dinni edit cheyochu.';
+
+  @override
   String get legal_privacy => 'Privacy policy';
 
   @override
@@ -1296,4 +2020,213 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get legal_opensInBrowser => 'Mee browser lo open avutundi';
+
+  @override
+  String home_stageProgress(String stage, String next, int count, int target) {
+    return '$stage, $next vaipu $target lo $count Starlight';
+  }
+
+  @override
+  String home_constellationProgress(String stage, int count, int max) {
+    return '$stage, mee constellation lo $max lo $count stars';
+  }
+
+  @override
+  String get home_glowTitle => 'Mee glow';
+
+  @override
+  String get home_restDaysHint => 'Rest days ela pani chestaayo telusukondi';
+
+  @override
+  String get home_restInfoTitle => 'Rest days';
+
+  @override
+  String home_restInfoEarn(int days, int max) {
+    return 'Prati $days glow days ki oka rest day vastundi. $max varaku daachukovachu.';
+  }
+
+  @override
+  String get home_restInfoUse =>
+      'Meeru konchem break teesukunnappudu, avi aa rojulni vaatantha avey nimputaayi. Meeru emi cheyyalsina avasaram ledu.';
+
+  @override
+  String get home_restInfoKeep =>
+      'Meeku vachina prati glow day meethone untundi.';
+
+  @override
+  String home_checkInsToday(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ee roju $count check-ins',
+      one: 'Ee roju 1 check-in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get home_seeAll => 'Anni choodandi';
+
+  @override
+  String get home_yourCheckIns => 'Mee check-ins';
+
+  @override
+  String get home_syncExplainIdle =>
+      'Anni ee phone lo, mee account lo save ayyaayi.';
+
+  @override
+  String get home_syncExplainPending =>
+      'Avi ee phone lo safe ga unnaayi, vaatante sync avutaayi.';
+
+  @override
+  String get home_syncExplainOffline =>
+      'Meeru offline lo unnaru. Anni ee phone lo safe ga unnaayi, malli online ayyaaka sync avutaayi.';
+
+  @override
+  String get home_syncExplainSignedOut =>
+      'Meeru sign in avvaledu, kabatti prastutaaniki anni ee phone lone untaayi.';
+
+  @override
+  String get home_syncExplainUnavailable =>
+      'Ee version anni ee phone lone unchutundi.';
+
+  @override
+  String get home_syncNow => 'Ippude sync cheyandi';
+
+  @override
+  String get home_syncing => 'Sync avutondi…';
+
+  @override
+  String get home_syncHint => 'Sync details choopinchandi';
+
+  @override
+  String get habits_edit => 'Edit cheyandi';
+
+  @override
+  String get habits_editSemantic => 'Chinna panulni edit cheyandi';
+
+  @override
+  String get habits_sheetTitle => 'Mee chinna panulu';
+
+  @override
+  String get habits_sheetBody =>
+      'Home lo evi kanipinchaalo select cheyandi. Elaagaina check-ins tho mee Aura perugutundi.';
+
+  @override
+  String get habits_presetsTitle => 'Suggestions';
+
+  @override
+  String get habits_customTitle => 'Mee sontavi';
+
+  @override
+  String get habits_addLabel => 'Mee sontadi add cheyandi';
+
+  @override
+  String get habits_addHint => 'Udaaharanaki, mokkalaki neellu';
+
+  @override
+  String get habits_add => 'Add cheyandi';
+
+  @override
+  String habits_limit(int count) {
+    return 'Meeku $count custom habits unnaayi. Inkokati add cheyadaaniki okadaanni swap cheyandi.';
+  }
+
+  @override
+  String get habits_tooLong =>
+      'Aa peru konchem podavuga undi. Inkonchem chinnadi try chestaara?';
+
+  @override
+  String get habits_saveFailed => 'Adi save avvaledu. Malli try chestaara?';
+
+  @override
+  String habits_remove(String name) {
+    return '$name teeseyandi';
+  }
+
+  @override
+  String habits_removeTitle(String name) {
+    return '$name teeseyaalaa?';
+  }
+
+  @override
+  String get habits_removeBody =>
+      'Idi mee list nundi vellipotundi. Deenitho vachina Starlight, glow days alaage untaayi.';
+
+  @override
+  String get habits_removeConfirm => 'Teeseyandi';
+
+  @override
+  String get habits_empty =>
+      'Modalupettadaaniki oka chinna pani select cheyandi.';
+
+  @override
+  String get help_groundingProgress => 'Ee nimisham lo entavaraku vachaaru';
+
+  @override
+  String get help_progressBegun => 'Ippude modalaindi';
+
+  @override
+  String get help_progressHalf => 'Daadaapu sagam';
+
+  @override
+  String get help_progressNearly => 'Daadaapu purtayindi';
+
+  @override
+  String get help_progressDone => 'Purtayindi';
+
+  @override
+  String help_breatheLogged(String habit) {
+    return 'Ee roju $habit ayyindani mark chesaam.';
+  }
+
+  @override
+  String get onb_trustTitle => 'Modalupette mundu';
+
+  @override
+  String get onb_trustBody =>
+      'Aura mimmalni ela choosukuntundo konni vishayaalu.';
+
+  @override
+  String get onb_trustPrivateTitle => 'Modati nunchi private ga';
+
+  @override
+  String get onb_trustPrivateBody =>
+      'Mee check-ins, notes meeve. Notes encrypt avutaayi. Meeru share cheyaalani enchukunte tappa, meeku ela anipistondo vere evariki kanipinchadu.';
+
+  @override
+  String get onb_trustCareTitle => 'Idi wellness support, therapy kaadu';
+
+  @override
+  String get onb_trustCareBody =>
+      'Meeku ela anipistondo gamaninchukovadaaniki Aura help chestundi. Idi e diagnosis gaani, treatment gaani cheyadu.';
+
+  @override
+  String get onb_trustHelpTitle => 'Help eppudu oka tap dooramlone';
+
+  @override
+  String onb_trustHelpBody(String button) {
+    return 'Helpline ki call cheyadaaniki leda oka nimisham breath meeda dhyaasa pettadaaniki, eppudaina “$button” tap cheyandi.';
+  }
+
+  @override
+  String get onb_dobYearType => 'Samvatsaram type cheyandi';
+
+  @override
+  String get onb_dobYearNoMatch =>
+      'Daaniki saripoye samvatsaram list lo ledu. Okasari choosukuntaara?';
+
+  @override
+  String get onb_blockedWrongDate => 'Tappu date icchaara?';
+
+  @override
+  String get onb_blockedWrongDateHint => 'Mee email app open avutundi';
+
+  @override
+  String get onb_blockedMailSubject => 'Aura: nenu tappu date icchaanu';
+
+  @override
+  String onb_blockedMailFailed(String email) {
+    return 'Email app open cheyyalekapoyaam. $email ki maaku raayochu.';
+  }
 }

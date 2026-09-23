@@ -1,0 +1,478 @@
+import 'package:aura/l10n/app_localizations.dart';
+import 'package:aura/src/core/db/database.dart';
+import 'package:aura/src/core/ids/ids.dart';
+import 'package:aura/src/core/l10n/locale_controller.dart';
+import 'package:aura/src/core/prefs/comfort_prefs.dart';
+import 'package:aura/src/core/router/router.dart';
+import 'package:aura/src/core/sync/outbox_repository.dart';
+import 'package:aura/src/core/sync/sync_service.dart';
+import 'package:aura/src/core/theme/app_theme.dart';
+import 'package:aura/src/features/account/account_providers.dart';
+import 'package:aura/src/features/auth/auth_repository.dart';
+import 'package:aura/src/features/checkin/checkin_repository.dart';
+import 'package:aura/src/features/home/home_screen.dart';
+import 'package:aura/src/features/progress/progress_view.dart';
+import 'package:aura_domain/aura_domain.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+
+import 'helpers.dart';
+
+/// Home inside a minimal router (history/check-in/settings are stubs).
+Widget _app(List<Override> overrides) {
+  const locale = Locale('en');
+  return ProviderScope(
+    overrides: overrides,
+    child: MaterialApp.router(
+      theme: buildAuraTheme(locale),
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        ...systemLocalizationDelegates,
+      ],
+      routerConfig: GoRouter(
+        initialLocation: Routes.home,
+        routes: [
+          GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen()),
+          GoRoute(
+            path: Routes.history,
+            builder: (_, _) => const Scaffold(body: Text('history-page')),
+          ),
+          GoRoute(path: Routes.checkIn, builder: (_, _) => const Scaffold()),
+          GoRoute(path: Routes.settings, builder: (_, _) => const Scaffold()),
+        ],
+      ),
+    ),
+  );
+}
+
+void _setSize(WidgetTester tester, Size logical) {
+  tester.view.physicalSize = logical * 3;
+  tester.view.devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+}
+
+Future<void> _checkIn(WidgetTester tester, AppDatabase db) => io(
+  tester,
+  () => CheckInRepository(
+    db,
+    OutboxRepository(db, const Ids()),
+    testTime(),
+  ).save(id: const Ids().v7(), mood: moodById('calm')!),
+);
+
+ProgressView _view({
+  AuraStage stage = AuraStage.spark,
+  int total = 15,
+  int today = 15,
+  int stars = 0,
+  bool hasActivity = true,
+  StreakState streak = const StreakState(
+    glowStreak: 3,
+    lifetimeGlowDays: 5,
+    restBank: 2,
+  ),
+  GlowStatus glow = GlowStatus.activeToday,
+}) => ProgressView(
+  loaded: true,
+  today: const LocalDay(2026, 10, 8),
+  avatar: AuraAvatarState(stage: stage, constellationStars: stars),
+  todayStarlight: today,
+  totalStarlight: total,
+  streak: streak,
+  glow: glow,
+  provisional: false,
+  hasActivity: hasActivity,
+  awards: const {},
+  localHue: null,
+);
+
+class _Held extends DeletionHold {
+  @override
+  DeletionPending? build() => const DeletionPending(userId: 'u1');
+}
+
+class _HiddenStreak extends ComfortController {
+  @override
+  ComfortPrefs build() => const ComfortPrefs(hideStreak: true);
+}
+
+/// Counts "Sync now" (an immediate push that skips retry backoff).
+class _KickSync extends FakeSync {
+  int get kicks => syncNowCalls;
+
+  void setPhase(SyncPhase p) => (phase as ValueNotifier<SyncPhase>).value = p;
+}
+
+class _SignedIn implements AuthRepository {
+  static const _user = AuthUser(id: 'u1');
+
+  @override
+  bool get isAvailable => true;
+  @override
+  AuthUser? get currentUser => _user;
+  @override
+  Stream<AuthUser?> watchUser() => Stream.value(_user);
+  @override
+  Future<String?> accessToken() async => 'token';
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// The avatar animates forever, so `pumpAndSettle` never settles: pump
+/// long enough for a sheet to open or close.
+Future<void> _sheet(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 500));
+  await tester.pump(const Duration(milliseconds: 500));
+}
+
+Future<void> _close(WidgetTester tester) async {
+  await tester.pumpWidget(const SizedBox());
+  await tester.pump(const Duration(seconds: 1));
+}
+
+void main() {
+  group('layout (item 1)', () {
+    test('avatar height follows the viewport, clamped 200–340', () {
+      expect(homeAvatarHeight(300), 200);
+      expect(homeAvatarHeight(704), closeTo(281.6, 0.01));
+      expect(homeAvatarHeight(2000), 340);
+    });
+
+    for (final size in const [Size(375, 667), Size(390, 844)]) {
+      testWidgets('no overflow at ${size.width.toInt()}×${size.height.toInt()}',
+          (tester) async {
+        _setSize(tester, size);
+        final db = memoryDb();
+        await _checkIn(tester, db);
+        await tester.pumpWidget(_app(testOverrides(db: db)));
+        await settleIo(tester);
+
+        expect(tester.takeException(), isNull);
+        final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
+        expect(avatar.height, inInclusiveRange(200, 340));
+        await _close(tester);
+      });
+    }
+
+    testWidgets('390×844: stats row, glow card and first habit row are above '
+        'the fold', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await _checkIn(tester, db);
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+
+      final fold = tester.getRect(find.byType(ListView)).bottom;
+      for (final key in ['home-stage-progress', 'home-glow-card', 'habit-hydrate']) {
+        final rect = tester.getRect(find.byKey(ValueKey(key)));
+        expect(rect.bottom, lessThanOrEqualTo(fold), reason: key);
+      }
+      await _close(tester);
+    });
+
+    testWidgets('200% text: nothing overflows and Home still scrolls to the '
+        'habits', (tester) async {
+      _setSize(tester, const Size(375, 667));
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final db = memoryDb();
+      await _checkIn(tester, db);
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+      expect(tester.takeException(), isNull);
+
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('habit-go_outside')),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      await _close(tester);
+    });
+  });
+
+  group('Starlight row (item 2)', () {
+    test('progress toward the next stage uses the domain thresholds', () {
+      final p = stageProgressFor(AuraStage.spark, 15)!;
+      expect(p.next, AuraStage.ember);
+      expect(p.next.threshold, AuraStage.ember.threshold);
+      expect(p.fraction, closeTo(15 / AuraStage.ember.threshold, 1e-9));
+      // The shown stage can be ahead of the local total: clamped, never < 0.
+      expect(stageProgressFor(AuraStage.glow, 120)!.fraction, 0);
+      expect(stageProgressFor(AuraStage.constellation, 5000), isNull);
+    });
+
+    testWidgets('day one: stage name, quiet bar toward Ember, today\'s '
+        'Starlight; no repeated total', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final semantics = tester.ensureSemantics();
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db),
+          progressViewProvider.overrideWithValue(_view()),
+        ]),
+      );
+      await settleIo(tester);
+
+      expect(find.text('Spark'), findsOneWidget);
+      expect(find.text('Ember'), findsOneWidget);
+      expect(find.text('15 Starlight today'), findsOneWidget);
+      expect(find.text('15 in all'), findsNothing);
+      final bar = tester.widget<LinearProgressIndicator>(
+        find.byKey(const ValueKey('home-stage-progress')),
+      );
+      expect(bar.value, closeTo(0.15, 1e-9));
+      expect(
+        find.bySemanticsLabel(RegExp('Spark, 15 of 100 Starlight toward Ember')),
+        findsOneWidget,
+      );
+      semantics.dispose();
+      await _close(tester);
+    });
+
+    testWidgets('Constellation shows its stars instead of a bar',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final semantics = tester.ensureSemantics();
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db),
+          progressViewProvider.overrideWithValue(
+            _view(stage: AuraStage.constellation, total: 4200, stars: 2),
+          ),
+        ]),
+      );
+      await settleIo(tester);
+
+      expect(find.byKey(const ValueKey('home-stage-progress')), findsNothing);
+      expect(find.byIcon(Icons.star_outline_rounded), findsNWidgets(10));
+      expect(
+        find.bySemanticsLabel(RegExp('Constellation, 2 of 12 stars')),
+        findsOneWidget,
+      );
+      semantics.dispose();
+      await _close(tester);
+    });
+  });
+
+  group('glow card (item 3)', () {
+    testWidgets('star icon, not fire; the rest-day row explains rest days',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db),
+          progressViewProvider.overrideWithValue(_view()),
+        ]),
+      );
+      await settleIo(tester);
+
+      expect(find.byIcon(Icons.local_fire_department_outlined), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey('home-glow-card')),
+          matching: find.byIcon(Icons.star_rounded),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Glow streak · 3 days'), findsOneWidget);
+      final row = find.byKey(const ValueKey('home-rest-days'));
+      expect(tester.getSize(row).height, greaterThanOrEqualTo(48));
+
+      await tester.tap(row);
+      await _sheet(tester);
+      expect(find.text('Rest days'), findsOneWidget);
+      expect(
+        find.text('Every 4 glow days earn a rest day. You can keep up to 3.'),
+        findsOneWidget,
+      );
+      expect(find.text("Every glow day you've had stays with you."), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('rest-close')));
+      await _sheet(tester);
+      expect(find.text('Rest days'), findsNothing);
+      await _close(tester);
+    });
+
+    testWidgets('Hide streak number keeps glow days and rest days',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db),
+          progressViewProvider.overrideWithValue(_view()),
+          comfortControllerProvider.overrideWith(_HiddenStreak.new),
+        ]),
+      );
+      await settleIo(tester);
+
+      expect(find.textContaining('Glow streak'), findsNothing);
+      expect(find.text('Your glow'), findsOneWidget);
+      expect(find.text('5 glow days in all'), findsOneWidget);
+      expect(find.text('2 rest days saved'), findsOneWidget);
+      await _close(tester);
+    });
+  });
+
+  group('history line (item 4)', () {
+    testWidgets('"Your check-ins" when none today; opens history',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+
+      final line = find.byKey(const ValueKey('home-history'));
+      expect(find.text('Your check-ins'), findsOneWidget);
+      expect(tester.getSize(line).height, greaterThanOrEqualTo(48));
+      await tester.tap(line);
+      await settleIo(tester);
+      expect(find.text('history-page'), findsOneWidget);
+      await _close(tester);
+    });
+
+    testWidgets('counts today\'s check-ins', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await _checkIn(tester, db);
+      await _checkIn(tester, db);
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+
+      expect(find.text('2 check-ins today'), findsOneWidget);
+      expect(find.text('See all'), findsOneWidget);
+      await _close(tester);
+    });
+  });
+
+  group('sync indicator (item 7)', () {
+    testWidgets('signed in and online: state, explanation and Sync now',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      final sync = _KickSync()..setPhase(SyncPhase.idle);
+      await tester.pumpWidget(
+        _app(testOverrides(db: db, sync: sync, auth: _SignedIn())),
+      );
+      await settleIo(tester);
+
+      final indicator = find.byKey(const ValueKey('home-sync'));
+      expect(tester.getSize(indicator).width, greaterThanOrEqualTo(48));
+      expect(tester.getSize(indicator).height, greaterThanOrEqualTo(48));
+      await tester.tap(indicator);
+      await _sheet(tester);
+
+      expect(find.byKey(const ValueKey('sync-sheet-status')), findsOneWidget);
+      expect(find.text('Everything is saved on this phone and in your account.'),
+          findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('sync-now')));
+      await tester.pump();
+      expect(sync.kicks, 1);
+
+      sync.setPhase(SyncPhase.syncing);
+      await tester.pump();
+      expect(find.text('Syncing…'), findsOneWidget);
+      final button = tester.widget<ButtonStyleButton>(
+        find.byKey(const ValueKey('sync-now')),
+      );
+      expect(button.onPressed, isNull);
+      await _close(tester);
+    });
+
+    testWidgets('offline: "Saved on this phone", no Sync now', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(_app(testOverrides(db: db))); // phase offline
+      await settleIo(tester);
+
+      await tester.tap(find.byKey(const ValueKey('home-sync')));
+      await _sheet(tester);
+      expect(find.text('Saved on this phone'), findsWidgets);
+      expect(
+        find.text("You're offline. Everything is safe on this phone and syncs "
+            "when you're back online."),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('sync-now')), findsNothing);
+      await _close(tester);
+    });
+  });
+
+  group('account deletion hold', () {
+    testWidgets('a scheduled deletion shows "Keep my account?" on Home',
+        (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db, auth: _SignedIn()),
+          deletionHoldProvider.overrideWith(_Held.new),
+        ]),
+      );
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('acct-pending-card')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await _close(tester);
+    });
+
+    testWidgets('no hold: no card', (tester) async {
+      _setSize(tester, const Size(390, 844));
+      final db = memoryDb();
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('acct-pending-card')), findsNothing);
+      await _close(tester);
+    });
+  });
+
+  group('reduce motion (item 8)', () {
+    Future<bool> pulses(WidgetTester tester, {required bool reduce}) async {
+      _setSize(tester, const Size(390, 844));
+      if (reduce) {
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures(disableAnimations: true);
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+      }
+      final db = memoryDb();
+      await tester.pumpWidget(
+        _app([
+          ...testOverrides(db: db),
+          progressViewProvider.overrideWithValue(
+            _view(hasActivity: false, total: 0, today: 0),
+          ),
+        ]),
+      );
+      await settleIo(tester);
+      final animated = find
+          .ancestor(
+            of: find.byKey(const ValueKey('home-checkin')),
+            matching: find.byType(Animate),
+          )
+          .evaluate()
+          .isNotEmpty;
+      await _close(tester);
+      return animated;
+    }
+
+    testWidgets('the new-user check-in pulse plays normally', (tester) async {
+      expect(await pulses(tester, reduce: false), isTrue);
+    });
+
+    testWidgets('no pulse under Reduce Motion', (tester) async {
+      expect(await pulses(tester, reduce: true), isFalse);
+    });
+  });
+}

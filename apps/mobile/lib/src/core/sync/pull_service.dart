@@ -86,11 +86,22 @@ class PullService {
         final existing = await (_db.select(
           _db.checkIns,
         )..where((t) => t.id.equals(id))).getSingleOrNull();
+        final serverHasNote = c['note_ct'] != null;
         if (existing != null) {
           // A later pull may bring a note the first one could not decrypt.
           if (existing.note == null && notes[id] != null) {
             await (_db.update(_db.checkIns)..where((t) => t.id.equals(id)))
-                .write(CheckInsCompanion(note: Value(notes[id])));
+                .write(
+                  CheckInsCompanion(
+                    note: Value(notes[id]),
+                    noteLocked: const Value(false),
+                  ),
+                );
+          } else if (existing.note == null &&
+              serverHasNote &&
+              !existing.noteLocked) {
+            await (_db.update(_db.checkIns)..where((t) => t.id.equals(id)))
+                .write(const CheckInsCompanion(noteLocked: Value(true)));
           }
           continue;
         }
@@ -104,7 +115,8 @@ class PullService {
                 tags: Value(
                   ((c['tags'] as List<dynamic>?) ?? const []).cast<String>(),
                 ),
-                note: Value(notes[c['id']]),
+                note: Value(notes[id]),
+                noteLocked: Value(serverHasNote && notes[id] == null),
                 localDay: c['local_day'] as String,
                 deviceTs: ts,
                 tzOffsetMinutes: 0,

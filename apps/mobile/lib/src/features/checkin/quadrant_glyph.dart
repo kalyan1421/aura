@@ -50,25 +50,53 @@ class _GlyphPainter extends CustomPainter {
           ..lineTo(w * 0.62, w * 0.92)
           ..close();
         canvas.drawPath(tower, stroke);
-        canvas.drawRect(Rect.fromLTRB(w * 0.42, w * 0.24, w * 0.58, w * 0.38), stroke);
+        canvas.drawRect(
+          Rect.fromLTRB(w * 0.42, w * 0.24, w * 0.58, w * 0.38),
+          stroke,
+        );
         canvas.drawCircle(Offset(w * 0.5, w * 0.31), w * 0.04, fill);
-        canvas.drawLine(Offset(w * 0.62, w * 0.28), Offset(w * 0.92, w * 0.18), stroke);
-        canvas.drawLine(Offset(w * 0.38, w * 0.28), Offset(w * 0.08, w * 0.18), stroke);
-        canvas.drawLine(Offset(w * 0.25, w * 0.92), Offset(w * 0.75, w * 0.92), stroke);
+        canvas.drawLine(
+          Offset(w * 0.62, w * 0.28),
+          Offset(w * 0.92, w * 0.18),
+          stroke,
+        );
+        canvas.drawLine(
+          Offset(w * 0.38, w * 0.28),
+          Offset(w * 0.08, w * 0.18),
+          stroke,
+        );
+        canvas.drawLine(
+          Offset(w * 0.25, w * 0.92),
+          Offset(w * 0.75, w * 0.92),
+          stroke,
+        );
       case Quadrant.rain: // raindrop
         final drop = Path()
           ..moveTo(w * 0.5, w * 0.1)
           ..quadraticBezierTo(w * 0.86, w * 0.52, w * 0.78, w * 0.68)
-          ..arcToPoint(Offset(w * 0.22, w * 0.68), radius: Radius.circular(w * 0.29))
+          ..arcToPoint(
+            Offset(w * 0.22, w * 0.68),
+            radius: Radius.circular(w * 0.29),
+          )
           ..quadraticBezierTo(w * 0.14, w * 0.52, w * 0.5, w * 0.1)
           ..close();
         canvas.drawPath(drop, stroke);
       case Quadrant.moonlight: // crescent moon
         final moon = Path()
-          ..addOval(Rect.fromCircle(center: Offset(w * 0.5, w * 0.5), radius: w * 0.38));
+          ..addOval(
+            Rect.fromCircle(center: Offset(w * 0.5, w * 0.5), radius: w * 0.38),
+          );
         final bite = Path()
-          ..addOval(Rect.fromCircle(center: Offset(w * 0.68, w * 0.36), radius: w * 0.32));
-        canvas.drawPath(Path.combine(PathOperation.difference, moon, bite), stroke);
+          ..addOval(
+            Rect.fromCircle(
+              center: Offset(w * 0.68, w * 0.36),
+              radius: w * 0.32,
+            ),
+          );
+        canvas.drawPath(
+          Path.combine(PathOperation.difference, moon, bite),
+          stroke,
+        );
       case Quadrant.sunrise: // sun
         canvas.drawCircle(Offset(w * 0.5, w * 0.5), w * 0.2, stroke);
         for (var i = 0; i < 8; i++) {

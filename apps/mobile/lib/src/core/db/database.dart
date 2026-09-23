@@ -13,7 +13,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -36,6 +36,10 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(deadLetters, deadLetters.deviceTs);
         await m.addColumn(deadLetters, deadLetters.localDay);
         await m.addColumn(deadLetters, deadLetters.tz);
+      }
+      if (from < 3) {
+        // v3: a pulled note this phone can't read yet blocks edits.
+        await m.addColumn(checkIns, checkIns.noteLocked);
       }
     },
     beforeOpen: (details) async {

@@ -889,7 +889,7 @@ final class SyncControllerProvider
   }
 }
 
-String _$syncControllerHash() => r'15bfa067df6274dcf674a5173faf323e75b39867';
+String _$syncControllerHash() => r'f9f72d6579a206eebdc8d575f72860f7c96782b1';
 
 /// The FCM adapter, or `null` when Firebase did not initialise (main.dart
 /// overrides it). Push is then simply off; the app works fully without it.

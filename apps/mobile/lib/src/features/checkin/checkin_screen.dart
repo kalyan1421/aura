@@ -6,27 +6,41 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/haptics.dart';
+import '../../core/a11y/motion.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
 import '../../core/sync/sync_service.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/inline_notice.dart';
 import '../avatar/aura_avatar.dart';
 import '../onboarding/gate_controller.dart';
 import '../progress/progress_view.dart';
 import '../push/push_explainer.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
-import 'checkin_repository.dart';
+import 'checkin_details.dart';
+import 'checkin_providers.dart';
 import 'mood_grid.dart';
-import 'quadrant_glyph.dart';
+
+/// How far the Save button leans towards the picked quadrant's colour.
+const double checkInSaveTint = 0.45;
+
+/// Save button fill once a mood is picked. `onAccent` text on it stays
+/// ≥ 4.5:1 for every quadrant (REQ-A11Y-03; test/checkin_contrast_test.dart).
+Color checkInSaveColor(Quadrant q) =>
+    Color.lerp(AuraColors.accent, AuraColors.quadrant(q), checkInSaveTint)!;
 
 /// F1 Mood Check-in. Tap 1 = mood, tap 2 = Save. Tags and a note are
 /// optional. Saved locally first — no spinner, no network wait.
+///
+/// Unsaved input is never dropped silently: ✕ and the system back gesture
+/// ask "Leave without saving?" first.
 class CheckInScreen extends ConsumerStatefulWidget {
   const CheckInScreen({super.key, this.first = false});
 
-  /// The first check-in at the end of onboarding.
+  /// The first check-in at the end of onboarding (no close button).
   final bool first;
 
   @override
@@ -36,27 +50,37 @@ class CheckInScreen extends ConsumerStatefulWidget {
 class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   /// Client id, fixed for this screen: a double-tap on Save is one entry.
   late final String _id = ref.read(idsProvider).v7();
-  final _note = TextEditingController();
-  final _customTag = TextEditingController();
+  final _draft = CheckInDraft();
 
-  Mood? _mood;
-  final Set<String> _tags = {};
-  final List<String> _customTags = [];
   bool _details = false;
   bool _saving = false;
   bool _saved = false;
   bool _failed = false;
 
+  /// The person chose to leave (Discard): popping is allowed again.
+  bool _leaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _draft.addListener(_onDraft);
+  }
+
+  void _onDraft() => setState(() {});
+
   @override
   void dispose() {
-    _note.dispose();
-    _customTag.dispose();
+    _draft.dispose();
     super.dispose();
   }
 
+  /// Picked or typed something that is not saved yet.
+  bool get _hasInput => !_saved && !_leaving && _draft.isDirty;
+
   Future<void> _save() async {
-    final mood = _mood;
+    final mood = _draft.mood;
     if (mood == null || _saving || _saved) return;
+    final note = _draft.note.text;
     setState(() {
       _saving = true;
       _failed = false;
@@ -64,7 +88,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     try {
       await ref
           .read(checkInRepositoryProvider)
-          .save(id: _id, mood: mood, tags: _tags.toList(), note: _note.text);
+          .save(id: _id, mood: mood, tags: _draft.tags.toList(), note: note);
       ref.read(syncControllerProvider).notifyLocalWrite();
     } catch (_) {
       // Selection and text are kept; the user can retry.
@@ -73,10 +97,10 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
-    HapticFeedback.lightImpact();
+    AuraHaptics.light();
     if (!mounted) return;
-    // Order after saving (F1): crisis sheet first, then Starlight + room.
-    if (noteNeedsSupport(_note.text)) {
+    // Order after saving (F1): crisis sheet first, then Starlight.
+    if (noteNeedsSupport(note)) {
       await showSupportSheet(context, crisis: true);
     }
     if (mounted) setState(() => _saved = true);
@@ -100,33 +124,52 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     }
   }
 
-  void _addCustomTag() {
-    final t = _customTag.text.trim();
-    if (t.isEmpty || _customTags.contains(t)) return;
-    setState(() {
-      _customTags.add(t);
-      if (_tags.length < maxTagsPerCheckIn) _tags.add(t);
-      _customTag.clear();
-    });
+  /// ✕: asks first when something is picked or typed.
+  Future<void> _close() async {
+    if (_hasInput && !await confirmDiscard(context)) return;
+    if (!mounted) return;
+    setState(() => _leaving = true);
+    await _finish();
+  }
+
+  /// System back while there is unsaved input.
+  Future<void> _onBlockedPop() async {
+    if (!await confirmDiscard(context) || !mounted) return;
+    setState(() => _leaving = true);
+    if (widget.first) {
+      // The onboarding check-in is the only route: back leaves the app.
+      await SystemNavigator.pop();
+      return;
+    }
+    await _finish();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final tint = _mood == null ? null : AuraColors.quadrant(_mood!.quadrant);
-    return Scaffold(
-      body: CosmicBackground(
-        tint: tint,
-        child: SafeArea(
-          child: AnimatedSwitcher(
-            duration: AuraMotion.calm,
-            child: _saved
-                ? _SavedMoment(
-                    key: const ValueKey('saved'),
-                    checkInId: _id,
-                    onDone: _finish,
-                  )
-                : _buildPicker(context, l),
+    final mood = _draft.mood;
+    final tint = mood == null ? null : AuraColors.quadrant(mood.quadrant);
+    return PopScope(
+      canPop: !_hasInput,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onBlockedPop();
+      },
+      child: Scaffold(
+        body: CosmicBackground(
+          tint: tint,
+          child: SafeArea(
+            child: AnimatedSwitcher(
+              duration: reduceMotionOf(context)
+                  ? reducedMotionFade
+                  : AuraMotion.calm,
+              child: _saved
+                  ? _SavedMoment(
+                      key: const ValueKey('saved'),
+                      checkInId: _id,
+                      onDone: _finish,
+                    )
+                  : _buildPicker(context, l),
+            ),
           ),
         ),
       ),
@@ -136,6 +179,20 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   Widget _buildPicker(BuildContext context, AppLocalizations l) {
     final theme = Theme.of(context);
     final localeTag = ref.watch(localeControllerProvider);
+    final recentTags = ref.watch(recentCustomTagsProvider).value ?? const [];
+    final mood = _draft.mood;
+    final Widget details = mood == null
+        ? const SizedBox(width: double.infinity)
+        : _details
+        ? CheckInDetailsEditor(draft: _draft, recentTags: recentTags)
+        : Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              onPressed: () => setState(() => _details = true),
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l.checkin_addDetails),
+            ),
+          );
     return Column(
       key: const ValueKey('picker'),
       children: [
@@ -145,8 +202,9 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
             children: [
               if (!widget.first)
                 IconButton(
+                  key: const ValueKey('checkin-close'),
                   tooltip: l.common_close,
-                  onPressed: _finish,
+                  onPressed: _close,
                   icon: const Icon(Icons.close_rounded),
                 )
               else
@@ -170,7 +228,14 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
               AuraSpace.xl,
             ),
             children: [
-              Text(l.checkin_title, style: theme.textTheme.headlineSmall),
+              Semantics(
+                header: true,
+                container: true,
+                child: Text(
+                  l.checkin_title,
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ),
               const SizedBox(height: AuraSpace.xs),
               Text(
                 l.checkin_subtitle,
@@ -180,36 +245,25 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
               ),
               const SizedBox(height: AuraSpace.l),
               MoodGrid(
-                selected: _mood,
+                selected: mood,
                 localeTag: localeTag,
-                onSelected: (m) => setState(() => _mood = m),
+                onSelected: (m) => _draft.mood = m,
               ),
               const SizedBox(height: AuraSpace.l),
-              AnimatedSize(
-                duration: AuraMotion.calm,
-                curve: AuraMotion.ease,
-                alignment: Alignment.topCenter,
-                child: _mood == null
-                    ? const SizedBox(width: double.infinity)
-                    : _details
-                    ? _buildDetails(context, l)
-                    : Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: TextButton.icon(
-                          onPressed: () => setState(() => _details = true),
-                          icon: const Icon(Icons.add_rounded),
-                          label: Text(l.checkin_addDetails),
-                        ),
-                      ),
-              ),
+              // The details grow in; under Reduce Motion they just appear.
+              if (reduceMotionOf(context))
+                details
+              else
+                AnimatedSize(
+                  duration: AuraMotion.calm,
+                  curve: AuraMotion.ease,
+                  alignment: Alignment.topCenter,
+                  child: details,
+                ),
               if (_failed) ...[
                 const SizedBox(height: AuraSpace.m),
-                Text(
-                  l.checkin_saveFailed,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AuraColors.lantern,
-                  ),
-                ),
+                // Ordinary recovery, not a support cue: no lantern tone.
+                InlineNotice(l.checkin_saveFailed),
               ],
             ],
           ),
@@ -225,15 +279,11 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
             width: double.infinity,
             child: FilledButton(
               key: const ValueKey('checkin-save'),
-              onPressed: _mood == null || _saving ? null : _save,
-              style: _mood == null
+              onPressed: mood == null || _saving ? null : _save,
+              style: mood == null
                   ? null
                   : FilledButton.styleFrom(
-                      backgroundColor: Color.lerp(
-                        AuraColors.accent,
-                        AuraColors.quadrant(_mood!.quadrant),
-                        0.45,
-                      ),
+                      backgroundColor: checkInSaveColor(mood.quadrant),
                     ),
               child: Text(l.checkin_save),
             ),
@@ -242,77 +292,16 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
       ],
     );
   }
-
-  Widget _buildDetails(BuildContext context, AppLocalizations l) {
-    final theme = Theme.of(context);
-    final allTags = [...contextTags, ..._customTags];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l.checkin_tagsTitle, style: theme.textTheme.titleSmall),
-        const SizedBox(height: AuraSpace.s),
-        Wrap(
-          spacing: AuraSpace.s,
-          runSpacing: AuraSpace.s,
-          children: [
-            for (final t in allTags)
-              FilterChip(
-                label: Text(tagLabel(l, t)),
-                selected: _tags.contains(t),
-                onSelected: (on) => setState(() {
-                  if (on && _tags.length < maxTagsPerCheckIn) {
-                    _tags.add(t);
-                  } else {
-                    _tags.remove(t);
-                  }
-                }),
-              ),
-          ],
-        ),
-        const SizedBox(height: AuraSpace.m),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _customTag,
-                maxLength: maxCustomTagLength,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _addCustomTag(),
-                decoration: InputDecoration(
-                  hintText: l.checkin_customTag,
-                  counterText: '',
-                ),
-              ),
-            ),
-            const SizedBox(width: AuraSpace.s),
-            IconButton.filledTonal(
-              tooltip: l.checkin_customTagAdd,
-              onPressed: _addCustomTag,
-              icon: const Icon(Icons.add_rounded),
-            ),
-          ],
-        ),
-        const SizedBox(height: AuraSpace.l),
-        TextField(
-          controller: _note,
-          maxLength: maxNoteLength,
-          minLines: 3,
-          maxLines: 6,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            labelText: l.checkin_noteLabel,
-            helperText: l.checkin_noteHint,
-            alignLabelWithHint: true,
-          ),
-        ),
-      ],
-    );
-  }
 }
 
-/// "+10 Starlight", then the (coming soon) room prompt.
+/// "+10 Starlight" and a calm "Saved" line. Help stays one tap away.
+/// (The room prompt returns when F5 Mood Rooms exist.)
 class _SavedMoment extends ConsumerWidget {
-  const _SavedMoment({super.key, required this.checkInId, required this.onDone});
+  const _SavedMoment({
+    super.key,
+    required this.checkInId,
+    required this.onDone,
+  });
 
   final String checkInId;
   final VoidCallback onDone;
@@ -324,128 +313,128 @@ class _SavedMoment extends ConsumerWidget {
     final view = ref.watch(progressViewProvider);
     final award = view.awards[checkInId];
     final sync = ref.watch(syncControllerProvider);
+    final reduce = reduceMotionOf(context);
 
     return ValueListenableBuilder<SyncPhase>(
       valueListenable: sync.phase,
       builder: (context, phase, _) {
-        final localOnly = phase == SyncPhase.offline ||
+        final localOnly =
+            phase == SyncPhase.offline ||
             phase == SyncPhase.unavailable ||
             phase == SyncPhase.signedOut;
-        return Padding(
-          padding: const EdgeInsets.all(AuraSpace.gutter),
-          child: Column(
-            children: [
-              const Spacer(),
-              AuraAvatar(state: view.avatar, size: const Size.square(230)),
-              const SizedBox(height: AuraSpace.l),
-              if (award == null)
-                const SizedBox(height: 44)
-              else if (award > 0)
-                Text(
-                      l.checkin_savedStarlight(award),
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        color: AuraColors.starlight,
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 400.ms)
-                    .scale(
-                      begin: const Offset(0.85, 0.85),
-                      curve: Curves.easeOutBack,
-                      duration: 600.ms,
-                    )
-                    .then(delay: 200.ms)
-                    .shimmer(
-                      duration: 1400.ms,
-                      color: Colors.white.withValues(alpha: 0.7),
-                    )
-              else
-                Text(
-                  l.checkin_savedFull,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium,
-                ).animate().fadeIn(duration: 400.ms),
-              const SizedBox(height: AuraSpace.s),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.check_circle_outline_rounded,
-                    size: 18,
-                    color: AuraColors.textSoft,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    localOnly ? l.checkin_savedOffline : l.checkin_saved,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AuraColors.textSoft,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AuraSpace.xs),
-              Text(
-                l.checkin_savedThanks,
-                style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const Spacer(),
-              // F5 Mood Rooms are not built yet: shown, disabled.
-              _RoomPrompt(label: l.checkin_roomButton, badge: l.common_comingSoon)
-                  .animate()
-                  .fadeIn(delay: 700.ms, duration: 500.ms),
-              const SizedBox(height: AuraSpace.m),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  key: const ValueKey('checkin-done'),
-                  onPressed: onDone,
-                  child: Text(l.common_done),
-                ),
-              ),
-            ],
+        final starlight = Text(
+          l.checkin_savedStarlight(award ?? 0),
+          key: const ValueKey('checkin-starlight'),
+          textAlign: TextAlign.center,
+          style: theme.textTheme.displaySmall?.copyWith(
+            color: AuraColors.starlight,
           ),
         );
-      },
-    );
-  }
-}
-
-class _RoomPrompt extends StatelessWidget {
-  const _RoomPrompt({required this.label, required this.badge});
-
-  final String label;
-  final String badge;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: null,
-        style: OutlinedButton.styleFrom(
-          disabledForegroundColor: AuraColors.textSoft,
-          side: const BorderSide(color: AuraColors.outline),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.groups_2_outlined, size: 20),
-            const SizedBox(width: AuraSpace.s),
-            Flexible(child: Text(label, textAlign: TextAlign.center)),
-            const SizedBox(width: AuraSpace.s),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AuraColors.surfaceHigh,
-                borderRadius: BorderRadius.circular(AuraRadius.pill),
+        return CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                  AuraSpace.gutter,
+                  AuraSpace.xs,
+                  AuraSpace.gutter,
+                  AuraSpace.l,
+                ),
+                child: Column(
+                  children: [
+                    const Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: HelpNowButton(compact: true),
+                    ),
+                    const Spacer(),
+                    AuraAvatar(
+                      state: view.avatar,
+                      size: const Size.square(230),
+                    ),
+                    const SizedBox(height: AuraSpace.l),
+                    if (award == null)
+                      const SizedBox(height: 44)
+                    else if (award > 0)
+                      reduce
+                          // Reduce Motion: a plain short fade, no scale or
+                          // shimmer (REQ-A11Y-08).
+                          ? starlight.animate().fadeIn(
+                              duration: reducedMotionFade,
+                            )
+                          : starlight
+                                .animate()
+                                .fadeIn(duration: 400.ms)
+                                .scale(
+                                  begin: const Offset(0.85, 0.85),
+                                  curve: Curves.easeOutBack,
+                                  duration: 600.ms,
+                                )
+                                .then(delay: 200.ms)
+                                .shimmer(
+                                  duration: 1400.ms,
+                                  color: Colors.white.withValues(alpha: 0.7),
+                                )
+                    else
+                      Text(
+                        l.checkin_savedFull,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium,
+                      ).animate().fadeIn(
+                        duration: reduce ? reducedMotionFade : 400.ms,
+                      ),
+                    const SizedBox(height: AuraSpace.s),
+                    Semantics(
+                      liveRegion: true,
+                      container: true,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const ExcludeSemantics(
+                            child: Icon(
+                              Icons.check_circle_outline_rounded,
+                              size: 18,
+                              color: AuraColors.textSoft,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              localOnly
+                                  ? l.checkin_savedOffline
+                                  : l.checkin_saved,
+                              key: const ValueKey('checkin-saved-line'),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: AuraColors.textSoft,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AuraSpace.xs),
+                    Text(
+                      l.checkin_savedThanks,
+                      style: theme.textTheme.bodyLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Spacer(),
+                    const SizedBox(height: AuraSpace.l),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        key: const ValueKey('checkin-done'),
+                        onPressed: onDone,
+                        child: Text(l.common_done),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Text(badge, style: theme.textTheme.labelSmall),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

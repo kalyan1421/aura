@@ -133,6 +133,21 @@ class $CheckInsTable extends CheckIns
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _noteLockedMeta = const VerificationMeta(
+    'noteLocked',
+  );
+  @override
+  late final GeneratedColumn<bool> noteLocked = GeneratedColumn<bool>(
+    'note_locked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("note_locked" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -147,6 +162,7 @@ class $CheckInsTable extends CheckIns
     source,
     deletedAt,
     synced,
+    noteLocked,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -235,6 +251,12 @@ class $CheckInsTable extends CheckIns
         synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
       );
     }
+    if (data.containsKey('note_locked')) {
+      context.handle(
+        _noteLockedMeta,
+        noteLocked.isAcceptableOrUnknown(data['note_locked']!, _noteLockedMeta),
+      );
+    }
     return context;
   }
 
@@ -294,6 +316,10 @@ class $CheckInsTable extends CheckIns
         DriftSqlType.bool,
         data['${effectivePrefix}synced'],
       )!,
+      noteLocked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}note_locked'],
+      )!,
     );
   }
 
@@ -328,6 +354,12 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
 
   /// True once the server acknowledged it (or it came from a pull).
   final bool synced;
+
+  /// The server holds an encrypted note this phone can't read yet (pulled
+  /// before the data key arrived, or undecryptable). An edit rewrites the
+  /// server's note, so editing waits until the note is readable here
+  /// (schema v3).
+  final bool noteLocked;
   const CheckInRow({
     required this.id,
     required this.moodId,
@@ -341,6 +373,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     required this.source,
     this.deletedAt,
     required this.synced,
+    required this.noteLocked,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -365,6 +398,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       map['deleted_at'] = Variable<DateTime>(deletedAt);
     }
     map['synced'] = Variable<bool>(synced);
+    map['note_locked'] = Variable<bool>(noteLocked);
     return map;
   }
 
@@ -384,6 +418,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           ? const Value.absent()
           : Value(deletedAt),
       synced: Value(synced),
+      noteLocked: Value(noteLocked),
     );
   }
 
@@ -405,6 +440,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       source: serializer.fromJson<String>(json['source']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       synced: serializer.fromJson<bool>(json['synced']),
+      noteLocked: serializer.fromJson<bool>(json['noteLocked']),
     );
   }
   @override
@@ -423,6 +459,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       'source': serializer.toJson<String>(source),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'synced': serializer.toJson<bool>(synced),
+      'noteLocked': serializer.toJson<bool>(noteLocked),
     };
   }
 
@@ -439,6 +476,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     String? source,
     Value<DateTime?> deletedAt = const Value.absent(),
     bool? synced,
+    bool? noteLocked,
   }) => CheckInRow(
     id: id ?? this.id,
     moodId: moodId ?? this.moodId,
@@ -452,6 +490,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     source: source ?? this.source,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
     synced: synced ?? this.synced,
+    noteLocked: noteLocked ?? this.noteLocked,
   );
   CheckInRow copyWithCompanion(CheckInsCompanion data) {
     return CheckInRow(
@@ -469,6 +508,9 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
       source: data.source.present ? data.source.value : this.source,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
       synced: data.synced.present ? data.synced.value : this.synced,
+      noteLocked: data.noteLocked.present
+          ? data.noteLocked.value
+          : this.noteLocked,
     );
   }
 
@@ -486,7 +528,8 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           ..write('tz: $tz, ')
           ..write('source: $source, ')
           ..write('deletedAt: $deletedAt, ')
-          ..write('synced: $synced')
+          ..write('synced: $synced, ')
+          ..write('noteLocked: $noteLocked')
           ..write(')'))
         .toString();
   }
@@ -505,6 +548,7 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
     source,
     deletedAt,
     synced,
+    noteLocked,
   );
   @override
   bool operator ==(Object other) =>
@@ -521,7 +565,8 @@ class CheckInRow extends DataClass implements Insertable<CheckInRow> {
           other.tz == this.tz &&
           other.source == this.source &&
           other.deletedAt == this.deletedAt &&
-          other.synced == this.synced);
+          other.synced == this.synced &&
+          other.noteLocked == this.noteLocked);
 }
 
 class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
@@ -537,6 +582,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
   final Value<String> source;
   final Value<DateTime?> deletedAt;
   final Value<bool> synced;
+  final Value<bool> noteLocked;
   final Value<int> rowid;
   const CheckInsCompanion({
     this.id = const Value.absent(),
@@ -551,6 +597,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     this.source = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.synced = const Value.absent(),
+    this.noteLocked = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CheckInsCompanion.insert({
@@ -566,6 +613,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     this.source = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.synced = const Value.absent(),
+    this.noteLocked = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        moodId = Value(moodId),
@@ -586,6 +634,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     Expression<String>? source,
     Expression<DateTime>? deletedAt,
     Expression<bool>? synced,
+    Expression<bool>? noteLocked,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -601,6 +650,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
       if (source != null) 'source': source,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (synced != null) 'synced': synced,
+      if (noteLocked != null) 'note_locked': noteLocked,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -618,6 +668,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     Value<String>? source,
     Value<DateTime?>? deletedAt,
     Value<bool>? synced,
+    Value<bool>? noteLocked,
     Value<int>? rowid,
   }) {
     return CheckInsCompanion(
@@ -633,6 +684,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
       source: source ?? this.source,
       deletedAt: deletedAt ?? this.deletedAt,
       synced: synced ?? this.synced,
+      noteLocked: noteLocked ?? this.noteLocked,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -678,6 +730,9 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
+    if (noteLocked.present) {
+      map['note_locked'] = Variable<bool>(noteLocked.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -699,6 +754,7 @@ class CheckInsCompanion extends UpdateCompanion<CheckInRow> {
           ..write('source: $source, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('synced: $synced, ')
+          ..write('noteLocked: $noteLocked, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3292,6 +3348,7 @@ typedef $$CheckInsTableCreateCompanionBuilder = CheckInsCompanion Function({
   Value<String> source,
   Value<DateTime?> deletedAt,
   Value<bool> synced,
+  Value<bool> noteLocked,
   Value<int> rowid,
 });
 typedef $$CheckInsTableUpdateCompanionBuilder = CheckInsCompanion Function({
@@ -3307,6 +3364,7 @@ typedef $$CheckInsTableUpdateCompanionBuilder = CheckInsCompanion Function({
   Value<String> source,
   Value<DateTime?> deletedAt,
   Value<bool> synced,
+  Value<bool> noteLocked,
   Value<int> rowid,
 });
 
@@ -3379,6 +3437,11 @@ class $$CheckInsTableFilterComposer
     column: $table.synced,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<bool> get noteLocked => $composableBuilder(
+    column: $table.noteLocked,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$CheckInsTableOrderingComposer
@@ -3449,6 +3512,11 @@ class $$CheckInsTableOrderingComposer
     column: $table.synced,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get noteLocked => $composableBuilder(
+    column: $table.noteLocked,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CheckInsTableAnnotationComposer
@@ -3497,6 +3565,11 @@ class $$CheckInsTableAnnotationComposer
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<bool> get noteLocked => $composableBuilder(
+    column: $table.noteLocked,
+    builder: (column) => column,
+  );
 }
 
 class $$CheckInsTableTableManager
@@ -3542,6 +3615,7 @@ class $$CheckInsTableTableManager
                 Value<String> source = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<bool> noteLocked = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CheckInsCompanion(
                 id: id,
@@ -3556,6 +3630,7 @@ class $$CheckInsTableTableManager
                 source: source,
                 deletedAt: deletedAt,
                 synced: synced,
+                noteLocked: noteLocked,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3572,6 +3647,7 @@ class $$CheckInsTableTableManager
                 Value<String> source = const Value.absent(),
                 Value<DateTime?> deletedAt = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<bool> noteLocked = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CheckInsCompanion.insert(
                 id: id,
@@ -3586,6 +3662,7 @@ class $$CheckInsTableTableManager
                 source: source,
                 deletedAt: deletedAt,
                 synced: synced,
+                noteLocked: noteLocked,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

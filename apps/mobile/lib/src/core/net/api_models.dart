@@ -150,3 +150,22 @@ abstract class DataKeyResponse with _$DataKeyResponse {
   factory DataKeyResponse.fromJson(Map<String, dynamic> json) =>
       _$DataKeyResponseFromJson(json);
 }
+
+/// `GET /v1/account`, `POST /v1/account/deletion` (202) and
+/// `DELETE /v1/account/deletion`: when the account's scheduled purge runs,
+/// or `null` when none is scheduled (F8 REQ-ACC-11, 7-day grace).
+@freezed
+abstract class AccountStatus with _$AccountStatus {
+  const factory AccountStatus({String? deletionScheduledFor}) = _AccountStatus;
+
+  const AccountStatus._();
+
+  factory AccountStatus.fromJson(Map<String, dynamic> json) =>
+      _$AccountStatusFromJson(json);
+
+  /// The scheduled purge time, or `null` (none, or unreadable).
+  DateTime? get scheduledFor {
+    final raw = deletionScheduledFor;
+    return raw == null ? null : DateTime.tryParse(raw);
+  }
+}

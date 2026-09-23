@@ -99,7 +99,7 @@ The magic link in the same email redirects to `site_url` = `aura://auth-callback
   Tables added by future migrations inherit this via default privileges.
 - `authenticated` reads **own rows only** in `profiles, user_consents, check_ins, habits, habit_logs, starlight_ledger,
   active_days, avatar_state, streak_state, notification_prefs`. `anon` reads none of them (`[]`).
-- `user_data_keys, sync_mutations, device_tokens, crisis_events`: no client privileges at all (`403`).
+- `user_data_keys, sync_mutations, device_tokens, crisis_events, account_deletions`: no client privileges at all (`403`).
 - `moods`, `preset_habits`, `feature_flags`: readable by `anon` and `authenticated`.
 - `public.user_is_minor(uuid)`: server only (postgres / service_role); clients get `403`.
 - NestJS connects with the DB URL as `postgres` (owner, bypasses RLS) or uses the service_role key.

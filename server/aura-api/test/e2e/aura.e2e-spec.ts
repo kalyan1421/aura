@@ -1,6 +1,9 @@
+import { randomBytes } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import type { Pool } from 'pg';
 import request from 'supertest';
+import { PERSONAL_TABLES, purgeAccount, purgeDueAccounts } from '../../src/account/account-purge';
+import { PrivateMediaStore } from '../../src/account/private-media';
 import { ApiError } from '../../src/common/api-error';
 import { uuidv7 } from '../../src/common/uuid';
 import { AppConfig } from '../../src/config/app-config';
@@ -8,7 +11,7 @@ import { unwrapDataKey } from '../../src/keys/envelope';
 import { purgeOldSyncMutations } from '../../src/queues/maintenance';
 import { ProfileService } from '../../src/profile/profile.service';
 import { addDays, auraDay, isLocalDay, localDate } from '../../src/rules';
-import { bootApp, createUser, dbPool, deleteUser, localAnonKey, localServiceKey, type TestUser } from './support';
+import { bootApp, createUser, dbPool, deleteUser, localAnonKey, localServiceKey, SUPABASE_URL, type TestUser } from './support';
 
 const TZ = 'Asia/Kolkata';
 const DEVICE = uuidv7();
@@ -90,6 +93,9 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       ['get', '/v1/keys/data-key'],
       ['put', '/v1/devices'],
       ['delete', '/v1/devices'],
+      ['get', '/v1/account'],
+      ['post', '/v1/account/deletion'],
+      ['delete', '/v1/account/deletion'],
     ] as const) {
       const r = await http()[method](path).expect(401);
       expect(r.body).toEqual({ code: 'unauthorized', message: expect.any(String) });
@@ -537,6 +543,227 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       const d = await deleteDevice(u, {}).expect(400);
       expect(d.body.code).toBe('invalid_request');
       expect(await count('device_tokens', u.id)).toBe(0);
+    });
+  });
+
+  // ---------------------------------------------------------------- account deletion (F8 REQ-ACC-11)
+  describe('account deletion', () => {
+    const as = (u: TestUser, r: request.Test) => r.set('Authorization', `Bearer ${u.token}`);
+    const status = (u: TestUser) => as(u, http().get('/v1/account'));
+    const requestDeletion = (u: TestUser) => as(u, http().post('/v1/account/deletion'));
+    const cancelDeletion = (u: TestUser) => as(u, http().delete('/v1/account/deletion'));
+    const fcmToken = (): string => `e2e-fcm:${uuidv7()}:APA91b${'z'.repeat(40)}`;
+    const makeDue = (u: TestUser) =>
+      db.query(
+        `update public.account_deletions
+            set requested_at = now() - interval '8 days', scheduled_for = now() - interval '1 day'
+          where user_id = $1`,
+        [u.id],
+      );
+    const storageHeaders = () => ({ apikey: localServiceKey(), Authorization: `Bearer ${localServiceKey()}` });
+    /** Stands in for a NestJS-signed upload (client-encrypted bytes under `<user_id>/…`). */
+    const upload = async (path: string): Promise<void> => {
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/private-media/${path}`, {
+        method: 'POST',
+        headers: { ...storageHeaders(), 'Content-Type': 'application/octet-stream' },
+        body: randomBytes(64),
+      });
+      if (!res.ok) throw new Error(`upload failed: ${res.status}`);
+    };
+    const blobStatus = async (path: string): Promise<number> => {
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/private-media/${path}`, { headers: storageHeaders() });
+      await res.arrayBuffer();
+      return res.status;
+    };
+    const mediaOf = async (userId: string): Promise<string[]> =>
+      (
+        await db.query<{ name: string }>(
+          `select name from storage.objects where bucket_id = 'private-media' and name like $1 || '/%' order by name`,
+          [userId],
+        )
+      ).rows.map((r) => r.name);
+    const countsFor = async (userId: string): Promise<Record<string, number>> => {
+      const out: Record<string, number> = {};
+      for (const t of PERSONAL_TABLES) out[t] = await count(t, userId);
+      return out;
+    };
+    const authRows = async (userId: string) =>
+      (
+        await db.query<{ users: string; identities: string; sessions: string; audit: string }>(
+          `select (select count(*) from auth.users where id = $1) as users,
+                  (select count(*) from auth.identities where user_id = $1) as identities,
+                  (select count(*) from auth.sessions where user_id = $1) as sessions,
+                  (select count(*) from auth.audit_log_entries
+                    where payload->>'actor_id' = $1::text or payload->'traits'->>'user_id' = $1::text) as audit`,
+          [userId],
+        )
+      ).rows[0];
+    /** A user with data in every personal table + two private-media objects. */
+    const populate = async (u: TestUser): Promise<string[]> => {
+      await onboard(u).expect(200);
+      const h = uuidv7();
+      const r = await pushAs(u, [checkIn(), habit(h, 'breathe'), log(h)]).expect(200);
+      expect(r.body.results.map((x: { status: string }) => x.status)).toEqual(['applied', 'applied', 'applied']);
+      await as(u, http().get('/v1/keys/data-key')).expect(200);
+      await as(u, http().put('/v1/devices')).send({ token: fcmToken(), platform: 'ios' }).expect(204);
+      await db.query('insert into public.notification_prefs (user_id, reminder_time) values ($1, $2)', [u.id, '21:00']);
+      await db.query(`insert into public.user_consents (user_id, purpose, policy_version) values ($1, 'core', 'v1')`, [u.id]);
+      const paths = [`${u.id}/voice/${uuidv7()}.bin`, `${u.id}/capsules/${uuidv7()}/0.bin`];
+      for (const p of paths) await upload(p);
+      return paths;
+    };
+
+    it('PERSONAL_TABLES covers every public table with a user_id column (add new personal tables to the purge)', async () => {
+      const r = await db.query<{ table_name: string }>(
+        `select table_name from information_schema.columns
+          where table_schema = 'public' and column_name = 'user_id' and table_name <> 'account_deletions'
+          order by table_name`,
+      );
+      expect(r.rows.map((x) => x.table_name)).toEqual([...PERSONAL_TABLES].sort());
+    });
+
+    it('request → 202 +7 days (idempotent), tokens removed, every other /v1 route 403 until cancelled', async () => {
+      const u = await newUser('delete-grace');
+      await onboard(u).expect(200);
+      await as(u, http().put('/v1/devices')).send({ token: fcmToken(), platform: 'android' }).expect(204);
+      await status(u).expect(200, { deletionScheduledFor: null });
+
+      const t0 = Date.now();
+      const first = await requestDeletion(u).expect(202);
+      const when = new Date(first.body.deletionScheduledFor).getTime();
+      expect(first.body).toEqual({ deletionScheduledFor: new Date(when).toISOString() });
+      expect(Math.abs(when - (t0 + 7 * 86_400_000))).toBeLessThan(60_000);
+      expect(await count('device_tokens', u.id)).toBe(0);
+
+      const again = await requestDeletion(u).send({}).expect(202);
+      expect(again.body).toEqual(first.body); // a repeat never moves the date
+      const st = await status(u).expect(200);
+      expect(st.headers['cache-control']).toBe('no-store');
+      expect(st.body).toEqual(first.body);
+
+      for (const call of [
+        () => pushAs(u, [checkIn()]),
+        () => onboard(u),
+        () => as(u, http().get('/v1/me/snapshot')),
+        () => as(u, http().get('/v1/keys/data-key')),
+        () => as(u, http().put('/v1/devices')).send({ token: fcmToken(), platform: 'ios' }),
+        () => as(u, http().delete('/v1/devices')).send({ token: 'x' }),
+      ]) {
+        const r = await call().expect(403);
+        expect(r.body).toEqual({ code: 'account_deletion_pending', message: expect.any(String) });
+      }
+      expect(await count('check_ins', u.id)).toBe(0); // nothing new was written
+      expect(await count('device_tokens', u.id)).toBe(0);
+      await http().get('/health').expect(200);
+
+      await cancelDeletion(u).expect(200, { deletionScheduledFor: null });
+      await cancelDeletion(u).expect(200, { deletionScheduledFor: null }); // idempotent
+      await status(u).expect(200, { deletionScheduledFor: null });
+      expect((await pushAs(u, [checkIn()]).expect(200)).body.results[0].status).toBe('applied');
+      await onboard(u).expect(200);
+    });
+
+    it('works for an account that never finished onboarding', async () => {
+      const u = await newUser('delete-noprofile');
+      await requestDeletion(u).expect(202);
+      await status(u).expect(200).expect((r) => expect(r.body.deletionScheduledFor).toEqual(expect.any(String)));
+      await onboard(u).expect(403);
+      await cancelDeletion(u).expect(200, { deletionScheduledFor: null });
+      await onboard(u).expect(200);
+    });
+
+    it('rejects a non-object body → 400 invalid_request, nothing scheduled', async () => {
+      const u = await newUser('delete-badbody');
+      const r = await requestDeletion(u).send([1, 2]).expect(400);
+      expect(r.body.code).toBe('invalid_request');
+      await status(u).expect(200, { deletionScheduledFor: null });
+    });
+
+    it('once the grace period has ended, cancel → 409 account_deletion_in_progress', async () => {
+      const u = await newUser('delete-late');
+      await requestDeletion(u).expect(202);
+      await makeDue(u);
+      const r = await cancelDeletion(u).expect(409);
+      expect(r.body).toEqual({ code: 'account_deletion_in_progress', message: expect.any(String) });
+      await status(u).expect(200).expect((x) => expect(x.body.deletionScheduledFor).not.toBeNull());
+      await pushAs(u, []).expect(403);
+    });
+
+    it('purge removes every personal row, private-media object and the auth user — and nobody else’s', async () => {
+      const media = app.get(PrivateMediaStore);
+      expect(media.configured).toBe(true);
+
+      const victim = await newUser('delete-victim');
+      const bystander = await newUser('delete-bystander');
+      const notYet = await newUser('delete-notyet');
+      const victimPaths = await populate(victim);
+      const bystanderPaths = await populate(bystander);
+      await requestDeletion(notYet).expect(202);
+
+      await requestDeletion(victim).expect(202);
+      // a token that slipped in during the grace period (e.g. written by a future F14 job) goes too
+      await db.query(`insert into public.device_tokens (user_id, platform, token) values ($1, 'ios', $2)`, [victim.id, fcmToken()]);
+      await makeDue(victim);
+
+      const before = await countsFor(victim.id);
+      expect(Object.entries(before).filter(([, n]) => n === 0)).toEqual([]);
+      expect(await mediaOf(victim.id)).toEqual([...victimPaths].sort());
+      const bystanderBefore = await countsFor(bystander.id);
+
+      const summary = await purgeDueAccounts(db, media);
+      expect(summary).toMatchObject({ failed: 0, deferred: 0, errors: [] });
+      expect(summary.purged).toBeGreaterThanOrEqual(1);
+      expect(summary.mediaObjects).toBeGreaterThanOrEqual(2);
+
+      // victim: nothing left — rows, schedule, media (row AND blob), auth user, identities, sessions, audit trail
+      expect(Object.values(await countsFor(victim.id)).every((n) => n === 0)).toBe(true);
+      expect(await count('account_deletions', victim.id)).toBe(0);
+      expect(await mediaOf(victim.id)).toEqual([]);
+      for (const p of victimPaths) expect(await blobStatus(p)).not.toBe(200);
+      expect(await authRows(victim.id)).toEqual({ users: '0', identities: '0', sessions: '0', audit: '0' });
+
+      // bystander untouched (rows, media, auth); not-yet-due account still scheduled
+      expect(await countsFor(bystander.id)).toEqual(bystanderBefore);
+      expect(await mediaOf(bystander.id)).toEqual([...bystanderPaths].sort());
+      for (const p of bystanderPaths) expect(await blobStatus(p)).toBe(200);
+      expect((await authRows(bystander.id)).users).toBe('1');
+      await as(bystander, http().get('/v1/me/snapshot')).expect(200);
+      expect(await count('account_deletions', notYet.id)).toBe(1);
+      expect((await authRows(notYet.id)).users).toBe('1');
+
+      // idempotent / safe to re-run
+      await expect(purgeAccount(db, media, victim.id)).resolves.toEqual({ status: 'skipped' });
+      const rerun = await purgeDueAccounts(db, media);
+      expect(rerun).toMatchObject({ failed: 0 });
+
+      // the victim's still-unexpired access token can't resurrect anything
+      await status(victim).expect(200, { deletionScheduledFor: null });
+      await requestDeletion(victim).expect(401).expect((r) => expect(r.body.code).toBe('unknown_user'));
+      await onboard(victim).expect(401);
+
+      await media.remove(await mediaOf(bystander.id));
+    });
+
+    it('a purge that finds media but has no service key defers the account (nothing of its auth user is lost)', async () => {
+      const u = await newUser('delete-nokey');
+      await onboard(u).expect(200);
+      const path = `${u.id}/voice/${uuidv7()}.bin`;
+      await upload(path);
+      await requestDeletion(u).expect(202);
+      await makeDue(u);
+
+      const keyless = new PrivateMediaStore({ supabaseUrl: SUPABASE_URL });
+      const s = await purgeDueAccounts(db, keyless);
+      expect(s.deferred).toBeGreaterThanOrEqual(1);
+      expect(await count('profiles', u.id)).toBe(0); // personal rows already gone (step 1)
+      expect(await mediaOf(u.id)).toEqual([path]); // media and auth user wait for a configured run
+      expect((await authRows(u.id)).users).toBe('1');
+      expect(await count('account_deletions', u.id)).toBe(1);
+
+      const s2 = await purgeDueAccounts(db, app.get(PrivateMediaStore)); // resumes
+      expect(s2).toMatchObject({ failed: 0, deferred: 0 });
+      expect(await mediaOf(u.id)).toEqual([]);
+      expect((await authRows(u.id)).users).toBe('0');
     });
   });
 });

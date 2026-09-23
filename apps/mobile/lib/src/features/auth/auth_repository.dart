@@ -14,6 +14,9 @@ class AuthUser {
 
 enum AuthFailureKind { invalidEmail, invalidCode, expired, network, other }
 
+/// Social sign-in providers, offered only when `AURA_SOCIAL_SIGNIN` is on.
+enum SocialProvider { apple, google }
+
 class AuthFailure implements Exception {
   const AuthFailure(this.kind);
   final AuthFailureKind kind;
@@ -106,6 +109,29 @@ class SupabaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() => _auth.signOut();
+
+  /// Browser OAuth with Apple or Google. Like the magic link, it comes back
+  /// through `aura://auth-callback` and the sign-in screen finishes when the
+  /// session arrives (`authUserProvider`). Only offered when
+  /// `AURA_SOCIAL_SIGNIN` is on.
+  // TODO(auth): native Sign in with Apple on iOS (Apple 4.8) and Google
+  // limited to the email scope (REQ-ACC-01) before the flag ships.
+  Future<void> signInWithProvider(SocialProvider provider) async {
+    try {
+      await _auth.signInWithOAuth(
+        switch (provider) {
+          SocialProvider.apple => sb.OAuthProvider.apple,
+          SocialProvider.google => sb.OAuthProvider.google,
+        },
+        redirectTo: Env.authRedirect,
+        scopes: 'email',
+      );
+    } on sb.AuthException catch (e) {
+      throw AuthFailure(_kind(e));
+    } catch (_) {
+      throw const AuthFailure(AuthFailureKind.network);
+    }
+  }
 
   AuthFailureKind _kind(sb.AuthException e) {
     final code = e.code ?? '';
