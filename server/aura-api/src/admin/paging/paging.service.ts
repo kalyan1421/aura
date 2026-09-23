@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { Queryable } from '../../db/db';
 import { DbService } from '../../db/db.service';
+import type { UrgentPager } from '../../safety/urgent-pager';
 import { AdminConfig } from '../admin-config';
 import { SYSTEM_ACTORS, auditConsole } from '../admin-audit';
 import { PAGE_CHANNELS } from './channels';
@@ -47,6 +48,9 @@ interface ClaimedPage {
   created_at: Date;
 }
 
+/** Pages claimed per dispatch batch. */
+export const DISPATCH_BATCH = 20;
+
 export interface PagingRunSummary {
   claimed: number;
   delivered: number;
@@ -61,8 +65,22 @@ interface RefState {
   itemAt: Date | null;
 }
 
+/**
+ * Page reasons for reports (the same names from the API's fast path and the worker's sweep; one page per report, ever).
+ *  - `crisis_lantern_hour`: L0 filed in India's (or its room region's) Lantern Hour — pages at once (REQ-ADM-05);
+ *  - `crisis_unassigned`: any other L0 item still open `PAGING_CRISIS_AFTER_MINUTES` (5) after it arrived, or within 5
+ *    minutes of its SLA — 24×7, no overnight exception (06c F9 "24×7 paging … crisis items unassigned 5 min");
+ *  - `minors_urgent`: L1 sexual content / grooming involving a minor (24×7, REQ-ADM-13 / REQ-ADM-15);
+ *  - `report_urgent`: anything else the safety module flagged `pages`.
+ */
+export function reportPageReason(lane: string, pages: boolean): string {
+  if (lane === 'crisis') return pages ? 'crisis_lantern_hour' : 'crisis_unassigned';
+  if (lane === 'minors_grooming') return 'minors_urgent';
+  return 'report_urgent';
+}
+
 @Injectable()
-export class PagingService {
+export class PagingService implements UrgentPager {
   private readonly logger = new Logger('Pager');
   private running: Promise<void> | null = null;
   private rerun = false;
@@ -105,6 +123,32 @@ export class PagingService {
     });
   }
 
+  /**
+   * UrgentPager (src/safety/urgent-pager.ts): a report that must page was just filed → raise its page and deliver the
+   * first round now, in the background (REQ-ADM-05: the Owner's phone within 60 s). Never throws; if this fails, the
+   * worker's 30-second sweep raises the same page (one per report).
+   */
+  reportFiled(reportId: string): void {
+    void (async () => {
+      const r = (
+        await this.db.query<{ id: string; lane: string; pages: boolean; involves_minor: boolean; sla_due_at: Date; status: string }>(
+          'select id, lane, pages, involves_minor, sla_due_at, status from public.reports where id = $1',
+          [reportId],
+        )
+      ).rows[0];
+      if (!r || !r.pages || r.status !== 'open') return;
+      await this.raise({
+        kind: 'report',
+        refId: r.id,
+        reason: reportPageReason(r.lane, r.pages),
+        lane: r.lane,
+        minorInvolved: r.involves_minor,
+        dueAt: r.sla_due_at,
+      });
+      this.kick();
+    })().catch((e: unknown) => this.logger.warn(`report page not raised yet (${(e as Error).name}); the worker sweep will raise it`));
+  }
+
   /** In-process fast path after raising a page: deliver now (the worker tick is the safety net). */
   kick(): void {
     if (this.running) {
@@ -115,7 +159,7 @@ export class PagingService {
       do {
         this.rerun = false;
         try {
-          await this.runDue();
+          await this.drain();
         } catch (e) {
           this.logger.warn(`dispatch failed: ${(e as Error).name}`);
         }
@@ -125,20 +169,37 @@ export class PagingService {
     });
   }
 
+  /**
+   * Deliver due pages batch after batch until a batch comes back short (at most `maxBatches`), so a fresh urgent page
+   * never waits behind a backlog of repeats for the next tick (REQ-ADM-05: the phone within 60 s).
+   */
+  async drain(now?: Date, maxBatches = 10): Promise<PagingRunSummary> {
+    const total: PagingRunSummary = { claimed: 0, delivered: 0, failed: 0, resolved: 0, expired: 0 };
+    for (let i = 0; i < maxBatches; i++) {
+      const s = await this.runDue(now ?? new Date(), DISPATCH_BATCH);
+      for (const k of Object.keys(total) as Array<keyof PagingRunSummary>) total[k] += s[k];
+      if (s.claimed < DISPATCH_BATCH) break;
+    }
+    return total;
+  }
+
   /** Resolves once no in-process dispatch is running (tests, shutdown). */
   async idle(): Promise<void> {
     while (this.running) await this.running;
   }
 
-  /** Deliver every due page once. `now` is injectable so tests can fast-forward repeats and escalation. */
-  async runDue(now: Date = new Date(), limit = 20): Promise<PagingRunSummary> {
+  /**
+   * Deliver up to `limit` due pages once — first deliveries (round 0) before repeats, then the longest-waiting. `now` is
+   * injectable so tests can fast-forward repeats and escalation.
+   */
+  async runDue(now: Date = new Date(), limit = DISPATCH_BATCH): Promise<PagingRunSummary> {
     const s: PagingRunSummary = { claimed: 0, delivered: 0, failed: 0, resolved: 0, expired: 0 };
     const claimed = await this.db.query<ClaimedPage>(
       `update public.admin_pages p set lease_until = $1::timestamptz + interval '2 minutes'
         where p.id in (select x.id from public.admin_pages x
                         where x.status = 'open' and x.next_attempt_at <= $1::timestamptz
                           and (x.lease_until is null or x.lease_until < $1::timestamptz)
-                        order by x.next_attempt_at, x.id limit $2 for update skip locked)
+                        order by (x.round = 0) desc, x.next_attempt_at, x.id limit $2 for update skip locked)
         returning p.id, p.kind, p.ref_id, p.reason, p.lane, p.minor_involved, p.is_test, p.due_at, p.round,
                   p.escalation_level, p.created_at`,
       [now, limit],
@@ -254,8 +315,9 @@ export class PagingService {
 
   /**
    * Items that must page and have no page yet (the worker's tick; idempotent): reports the safety module flagged
-   * `pages` (L1 sexual / contact involving a minor; L0 crisis in India's Lantern Hour), crisis reports within 5 minutes
-   * of their SLA or past it, open 2-hour grievances (nudity / CSAM / NCII) and open legal orders.
+   * `pages` (L1 sexual / contact involving a minor; L0 crisis in Lantern Hour — normally already paged by the API's
+   * fast path), crisis reports still open `crisisAfterMinutes` after they arrived or within 5 minutes of their SLA (24×7),
+   * open 2-hour grievances (nudity / CSAM / NCII) and open legal orders.
    */
   async sweep(now: Date = new Date()): Promise<number> {
     const r = await this.db.query<{
@@ -269,13 +331,15 @@ export class PagingService {
     }>(
       `(select 'report' as kind, r.id as ref_id,
                case when r.lane = 'crisis' and r.pages then 'crisis_lantern_hour'
-                    when r.lane = 'crisis' then 'crisis_near_sla'
+                    when r.lane = 'crisis' then 'crisis_unassigned'
                     when r.lane = 'minors_grooming' then 'minors_urgent'
                     else 'report_urgent' end as reason,
                r.lane, r.involves_minor as minor, false as is_test, r.sla_due_at as due_at
           from public.reports r
          where r.status = 'open'
-           and (r.pages or (r.lane = 'crisis' and r.sla_due_at <= $1::timestamptz + interval '5 minutes'))
+           and (r.pages
+                or (r.lane = 'crisis' and (r.created_at <= $1::timestamptz - make_interval(mins => $2::int)
+                                           or r.sla_due_at <= $1::timestamptz + interval '5 minutes')))
            and not exists (select 1 from public.admin_pages p where p.kind = 'report' and p.ref_id = r.id)
          limit 50)
        union all
@@ -290,7 +354,7 @@ export class PagingService {
          where o.status = 'open'
            and not exists (select 1 from public.admin_pages p where p.kind = 'legal_order' and p.ref_id = o.id)
          limit 50)`,
-      [now],
+      [now, this.config.paging.crisisAfterMinutes],
     );
     let created = 0;
     for (const x of r.rows) {

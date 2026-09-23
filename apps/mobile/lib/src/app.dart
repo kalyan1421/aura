@@ -6,6 +6,7 @@ import 'core/a11y/haptics.dart';
 import 'core/l10n/locale_controller.dart';
 import 'core/prefs/comfort_prefs.dart';
 import 'core/providers.dart';
+import 'core/remote_config/remote_config_providers.dart';
 import 'core/router/router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/avatar/moments_controller.dart';
@@ -58,6 +59,9 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     ref.watch(momentsControllerProvider);
     // Capsule unlock scheduling and trigger arming (F4) for the whole session.
     ref.watch(capsuleCoordinatorProvider);
+    // Remote flags + the signed crisis lexicon (PRD 19 REQ-ADM-12): kept copy
+    // at start, then polled while in the foreground.
+    ref.watch(remoteConfigControllerProvider);
     final router = ref.watch(routerProvider);
     final comfort = ref.watch(comfortControllerProvider);
     AuraHaptics.enabled = comfort.haptics;

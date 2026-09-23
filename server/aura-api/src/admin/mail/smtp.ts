@@ -61,6 +61,15 @@ export interface OutgoingMail {
   /** Adds `Auto-Submitted: auto-generated` (acknowledgements, pages). */
   autoSubmitted?: boolean;
   date?: Date;
+  /** Files sent with the text (multipart/mixed, base64): only the nightly audit export uses this. */
+  attachments?: readonly MailAttachment[];
+}
+
+export interface MailAttachment {
+  /** ASCII file name (anything else is replaced by `_`). */
+  filename: string;
+  contentType: string;
+  content: Buffer;
 }
 
 /** The bare address inside `Name <addr>` (or the whole string). */
@@ -84,10 +93,13 @@ function wrap76(b64: string): string {
   return out.join('\r\n');
 }
 
-/** RFC 5322 message: plain text, UTF-8, base64 body, CRLF line ends. */
+const safeFilename = (s: string): string => s.replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 120) || 'attachment';
+const safeContentType = (s: string): string => (/^[a-z0-9.+-]+\/[a-z0-9.+-]+(; ?charset=[a-z0-9-]+)?$/i.test(s) ? s : 'application/octet-stream');
+
+/** RFC 5322 message: plain text, UTF-8, base64 body, CRLF line ends; multipart/mixed when there are attachments. */
 export function buildMessage(m: OutgoingMail): string {
   const domain = addrSpec(m.from).split('@')[1] ?? 'localhost';
-  const headers = [
+  const common = [
     `From: ${noLineBreaks(m.from)}`,
     `To: ${m.to.map(noLineBreaks).join(', ')}`,
     ...(m.replyTo ? [`Reply-To: ${noLineBreaks(m.replyTo)}`] : []),
@@ -95,12 +107,28 @@ export function buildMessage(m: OutgoingMail): string {
     `Date: ${(m.date ?? new Date()).toUTCString()}`,
     `Message-ID: <${randomBytes(12).toString('hex')}@${noLineBreaks(domain)}>`,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=utf-8',
-    'Content-Transfer-Encoding: base64',
-    ...(m.autoSubmitted ? ['Auto-Submitted: auto-generated'] : []),
   ];
-  const body = wrap76(Buffer.from(m.text.replace(/\r?\n/g, '\r\n'), 'utf8').toString('base64'));
-  return `${headers.join('\r\n')}\r\n\r\n${body}\r\n`;
+  const auto = m.autoSubmitted ? ['Auto-Submitted: auto-generated'] : [];
+  const text = wrap76(Buffer.from(m.text.replace(/\r?\n/g, '\r\n'), 'utf8').toString('base64'));
+  if (!m.attachments || m.attachments.length === 0) {
+    const headers = [...common, 'Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', ...auto];
+    return `${headers.join('\r\n')}\r\n\r\n${text}\r\n`;
+  }
+  const boundary = `aura-${randomBytes(12).toString('hex')}`;
+  const parts = [
+    ['Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '', text].join('\r\n'),
+    ...m.attachments.map((a) =>
+      [
+        `Content-Type: ${safeContentType(a.contentType)}`,
+        'Content-Transfer-Encoding: base64',
+        `Content-Disposition: attachment; filename="${safeFilename(a.filename)}"`,
+        '',
+        wrap76(a.content.toString('base64')),
+      ].join('\r\n'),
+    ),
+  ];
+  const headers = [...common, `Content-Type: multipart/mixed; boundary="${boundary}"`, ...auto];
+  return `${headers.join('\r\n')}\r\n\r\n${parts.map((p) => `--${boundary}\r\n${p}\r\n`).join('')}--${boundary}--\r\n`;
 }
 
 /** Leading dots doubled (RFC 5321 §4.5.2), bare LFs normalised. */

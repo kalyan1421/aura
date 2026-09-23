@@ -27,6 +27,8 @@ import 'db/kv_store.dart';
 import 'env/env.dart';
 import 'ids/ids.dart';
 import 'net/aura_api.dart';
+import 'remote_config/device_ban.dart';
+import 'remote_config/remote_config_providers.dart';
 import 'security/note_cipher.dart';
 import 'security/secure_store.dart';
 import 'sync/media_sync.dart';
@@ -219,6 +221,7 @@ ProfileService profileService(Ref ref) {
 AuraApi? auraApi(Ref ref) {
   if (!Env.hasApi) return null;
   final auth = ref.watch(authRepositoryProvider);
+  final install = ref.watch(installIdProvider);
   return AuraApi(
     baseUrl: Env.apiUrl,
     accessToken: auth.accessToken,
@@ -229,6 +232,13 @@ AuraApi? auraApi(Ref ref) {
     // screen (features/auth/account_closed.dart).
     onAccountClosed: () {
       if (ref.mounted) ref.read(accountClosedProvider.notifier).report();
+    },
+    // REQ-ADM-14: this install's id on the profile and push registration;
+    // 403 device_banned → the calm "This device can't use Aura" screen
+    // (core/remote_config/device_ban.dart).
+    deviceHeaders: install.headers,
+    onDeviceBanned: () {
+      if (ref.mounted) ref.read(deviceBannedProvider.notifier).report();
     },
   );
 }

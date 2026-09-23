@@ -25,6 +25,8 @@ export const PERSONAL_TABLES = [
   'sync_mutations',
   'user_data_keys',
   'device_tokens',
+  // REQ-ADM-14: the (hashed) app installs the account used; bans themselves (device_bans) hold no account link.
+  'device_installs',
   'notification_prefs',
   'user_consents',
   // F5 rooms: memberships (pseudonyms, heartbeats, survey marks); their gestures — incl. limit-hit rows — and mutes

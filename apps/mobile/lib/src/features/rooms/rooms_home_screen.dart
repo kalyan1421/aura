@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
@@ -82,6 +83,14 @@ class RoomsHomeScreen extends ConsumerWidget {
                 const DeletionPendingCard(),
                 const SizedBox(height: AuraSpace.l),
               ],
+              // Kill switch `rooms_enabled` (remote flag, PRD 19).
+              if (!ref.watch(remoteFlagsProvider).roomsEnabled) ...[
+                InlineNotice(
+                  l.rooms_paused,
+                  key: const ValueKey('rooms-paused'),
+                ),
+                const SizedBox(height: AuraSpace.l),
+              ],
               if (auth.isAvailable && !signedIn) ...[
                 InlineNotice(
                   l.rooms_signedOut,
@@ -128,12 +137,15 @@ class RoomsHomeScreen extends ConsumerWidget {
                 const SizedBox(height: AuraSpace.l),
               ],
               const _WhatRoomsAre(),
-              const SizedBox(height: AuraSpace.l),
-              FilledButton(
-                key: const ValueKey('rooms-check-in'),
-                onPressed: () => openRoomCheckIn(context),
-                child: Text(l.rooms_checkInCta, textAlign: TextAlign.center),
-              ),
+              // Paused rooms: no join offer (the notice above says why).
+              if (ref.watch(remoteFlagsProvider).roomsEnabled) ...[
+                const SizedBox(height: AuraSpace.l),
+                FilledButton(
+                  key: const ValueKey('rooms-check-in'),
+                  onPressed: () => openRoomCheckIn(context),
+                  child: Text(l.rooms_checkInCta, textAlign: TextAlign.center),
+                ),
+              ],
             ],
           ),
         ),

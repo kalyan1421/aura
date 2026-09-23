@@ -27,7 +27,8 @@ export default async function MfaPage() {
       <div className="panel stack">
         <h1>Two-factor verification</h1>
         <p className="muted">
-          Signed in as {info.staff.displayName} ({info.staff.role}). The console needs a code from your authenticator app every sign-in.
+          Signed in as {info.staff.displayName} ({info.staff.role}){info.firstFactor === 'sso' ? ' with Google Workspace' : ' with the development sign-in'}. The
+          console needs a code from your authenticator app every sign-in.
         </p>
         {info.mfa === 'enroll' ? (
           <Enroll start={startEnroll} confirm={confirmTotp} />

@@ -11,13 +11,15 @@ export class ApiFailure extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    /** Machine-readable refusal details when the API sends them (e.g. lexicon problems or failed vectors). */
+    readonly details?: unknown,
   ) {
     super(message);
     this.name = 'ApiFailure';
   }
 }
 
-const SIGN_IN_AGAIN = new Set(['unauthorized', 'session_expired', 'mfa_required', 'not_staff', 'staff_account_is_app_account']);
+const SIGN_IN_AGAIN = new Set(['unauthorized', 'session_expired', 'mfa_required', 'not_staff', 'staff_account_is_app_account', 'sso_required']);
 
 async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown, token?: string): Promise<T> {
   const at = token ?? (await requireSession()).at;
@@ -33,7 +35,7 @@ async function request<T>(method: 'GET' | 'POST', path: string, body?: unknown, 
   if (!res.ok) {
     const code = typeof json.code === 'string' ? json.code : 'error';
     if (!token && (res.status === 401 || (res.status === 403 && SIGN_IN_AGAIN.has(code)))) redirect(`/login?reason=${encodeURIComponent(code)}`);
-    throw new ApiFailure(res.status, code, typeof json.message === 'string' ? json.message : 'Request failed.');
+    throw new ApiFailure(res.status, code, typeof json.message === 'string' ? json.message : 'Request failed.', json.details);
   }
   return json as T;
 }

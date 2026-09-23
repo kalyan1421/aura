@@ -2,12 +2,101 @@
 export type StaffRole = 'owner' | 'moderator' | 'analyst';
 export type Lane = 'crisis' | 'minors_grooming' | 'harassment' | 'spam';
 
+export interface QueueSessionView {
+  active: boolean;
+  startedAt: string | null;
+  minutesLeft: number;
+  capped: boolean;
+  breakUntil: string | null;
+  maxMinutes: number;
+  breakMinutes: number;
+}
+
 export interface SessionInfo {
   staff: { id: string; displayName: string; role: StaffRole; email: string | null };
   mfa: 'verified' | 'challenge' | 'enroll';
+  /** REQ-ADM-01: Google Workspace SSO, or the development email sign-in. */
+  firstFactor: 'sso' | 'dev';
   sessionStartedAt: string;
   sessionExpiresAt: string;
+  /** PRD 19 "Queue sessions capped at 2 h"; null for analysts. */
+  queueSession: QueueSessionView | null;
 }
+
+export interface StaffMember {
+  staffId: string;
+  displayName: string;
+  role: StaffRole;
+  disabled: boolean;
+  email: string | null;
+  lastSignInAt: string | null;
+  totpEnrolled: boolean;
+  sso: { provider: 'google'; domains: string[]; allowed: boolean };
+  otherProviders: string[];
+  createdAt: string;
+  updatedAt: string;
+  isMe: boolean;
+}
+
+export interface StaffList {
+  staff: StaffMember[];
+  sso: { configured: boolean; provider: string | null; domains: string[] };
+}
+
+export type DeletionCaseStatus =
+  | 'awaiting_verification'
+  | 'verified'
+  | 'declined'
+  | 'deletion_scheduled'
+  | 'completed'
+  | 'closed'
+  | 'no_account'
+  | 'staff_account';
+
+export interface DeletionCase {
+  caseId: string;
+  ticket: string;
+  channel: string;
+  grievanceId: string | null;
+  grievanceTicket: string | null;
+  receivedAt: string;
+  status: DeletionCaseStatus;
+  accountEmailMasked: string | null;
+  subjectHash: string | null;
+  verification: { sentAt: string | null; expiresAt: string | null; attempts: number; verifiedAt: string | null; declinedAt: string | null };
+  deletion: { mode: 'grace' | 'immediate'; reasonCode: string | null; requestedAt: string; requestedBy: string | null; scheduledFor: string | null; pending: boolean } | null;
+  legalHold: { records: number; until: string | null };
+  completedAt: string | null;
+  closedAt: string | null;
+  closedBy: string | null;
+  closeOutcome: string | null;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  allowed: { resend: boolean; startDeletion: boolean; close: boolean };
+  linkEmailed?: boolean | null;
+}
+
+export interface AuditExportStatus {
+  configured: { dir: boolean; email: boolean; nightly: string | null; timezone: string };
+  last: Array<{
+    id: number;
+    createdAt: string;
+    actor: string;
+    trigger: string | null;
+    fromId: number | null;
+    toId: number | null;
+    rows: number | null;
+    sha256: string | null;
+    destinations: string[];
+    chainVerified: boolean | null;
+  }>;
+}
+
+export type AuditExportResult =
+  | { status: 'exported'; manifest: { fromId: number; toId: number; rows: number; ndjsonSha256: string; chainVerified: boolean; filename: string }; destinations: string[]; failed: string[] }
+  | { status: 'skipped'; reason: 'not_configured' | 'nothing_new' }
+  | { status: 'failed'; failed: string[] };
 
 export interface WorkEntry {
   kind: 'legal_order' | 'report' | 'grievance';
@@ -243,7 +332,7 @@ export interface AuditEntry {
 }
 
 export interface ConsoleConfig {
-  flags: Array<{ key: string; enabled: boolean }>;
+  flags: Array<{ key: string; enabled: boolean; description: string | null; updatedAt: string | null }>;
   matching: Record<string, unknown>;
   safety: Record<string, unknown>;
 }
@@ -254,4 +343,65 @@ export interface Stats {
   legalOrders: { open: number; overdue: number };
   pagesOpen: number;
   generatedAt: string;
+}
+
+/** Crisis lexicon versions (contracts/api/v1.md "Crisis lexicon versions"; src/remote-config). */
+export interface LexiconVersionSummary {
+  version: number;
+  contentSha256: string;
+  entries: number;
+  note: string | null;
+  createdAt: string;
+  createdBy: string;
+  live: boolean;
+}
+
+export interface LexiconOverview {
+  kind: string;
+  live: { version: number; seq: number; keyId: string; publishedAt: string; publishedBy: string } | null;
+  bundledVersion: number;
+  signing: { available: boolean; keyId: string | null; devKey: boolean; offReason: string | null };
+  versions: LexiconVersionSummary[];
+  history: Array<{ id: number; createdAt: string; actor: string; action: string; reasonCode: string | null; detail: Record<string, unknown> }>;
+}
+
+export interface LexiconVersion {
+  version: number;
+  contentSha256: string;
+  lexicon: unknown;
+  vectors: unknown[];
+  note: string | null;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface LexiconDiff {
+  from: number | null;
+  added: string[];
+  removed: string[];
+  changed: string[];
+  crisisFormsRemoved: number;
+  crisisFormsAdded: number;
+}
+
+export type LexiconVerdict = 'none' | 'soft' | 'crisis';
+
+/** Device bans (contracts/api/v1.md "Device bans"; src/devices). A device id is the install HMAC, never a raw id. */
+export interface ReportDevices {
+  reportId: string;
+  subjectHash: string;
+  devices: Array<{ deviceId: string; platform: string | null; firstSeenAt: string; lastSeenAt: string; banId: string | null }>;
+}
+
+export interface DeviceBan {
+  banId: string;
+  deviceId: string;
+  reasonCode: string;
+  reportId: string | null;
+  subjectHash: string | null;
+  createdAt: string;
+  createdBy: string;
+  liftedAt: string | null;
+  liftedBy: string | null;
+  liftReason: string | null;
 }

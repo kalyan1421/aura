@@ -788,5 +788,10 @@
   "voice_offline": "Meeru malli online ki vachaaka voice note play avutundi.",
   "voice_failed": "Ee voice note ippudu play avvaledu. Kaasepaagi malli try cheyandi.",
   "voice_section": "Mee gonthu",
-  "voice_hasVoice": "Oka voice note undi"
+  "voice_hasVoice": "Oka voice note undi",
+  "device_bannedTitle": "Ee device lo Aura use cheyyalemu",
+  "device_bannedBody": "Ee phone lo Aura available ledu.",
+  "device_bannedReviewSubject": "Device review",
+  "rooms_paused": "Rooms konchem sepu rest teesukuntunnayi. Taruvaata malli try cheyandi.",
+  "rooms_pausedJoin": "Rooms konchem sepu rest teesukuntunnayi. Mee check-in save ayyindi."
 }

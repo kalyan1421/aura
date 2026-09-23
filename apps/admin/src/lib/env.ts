@@ -1,3 +1,5 @@
+import { signInModes, type SignInModes } from './sign-in-modes';
+
 /**
  * Server-side configuration, read lazily (the build needs none of it). Nothing here is sent to the browser: the
  * console has no NEXT_PUBLIC_ variables at all.
@@ -9,6 +11,10 @@ export interface ConsoleEnv {
   cookieSecret: string;
   sessionMaxHours: number;
   secureCookies: boolean;
+  /** The console's own public URL (the SSO callback is `${consoleUrl}/login/callback`). */
+  consoleUrl: string;
+  /** REQ-ADM-01: Google Workspace SSO (+ TOTP), and whether the development email-code sign-in is offered. */
+  signIn: SignInModes;
 }
 
 let cached: ConsoleEnv | null = null;
@@ -31,6 +37,8 @@ export function env(): ConsoleEnv {
     cookieSecret: secret,
     sessionMaxHours: Number.isFinite(hours) && hours >= 1 && hours <= 24 ? hours : 12,
     secureCookies: process.env.NODE_ENV === 'production',
+    consoleUrl: (process.env.ADMIN_CONSOLE_URL ?? 'http://localhost:3320').replace(/\/+$/, ''),
+    signIn: signInModes(process.env),
   };
   return cached;
 }

@@ -1,7 +1,9 @@
 import type { Queryable } from '../db/db';
+import { loadMatchingConfig } from '../rooms/matching-config';
+import { isTzRegion } from '../rooms/regions';
 import { appendAudit, subjectHash } from './audit';
 import { createEvidenceHold, type EvidenceItemKind } from './evidence';
-import { laneFor, slaFor } from './lanes';
+import { laneFor, slaFor, type SlaContext } from './lanes';
 import { REPORT_REASONS, UNDER_13_REASON, type Lane, type ReportReason } from './safety-types';
 import { hasActiveSanction, type SafetyConfig } from './safety.queries';
 
@@ -31,11 +33,20 @@ export interface CreatedReport {
   id: string;
   lane: Lane;
   evidenceHoldId: string;
+  /** Pages the Owner at once (REQ-ADM-05 / REQ-ADM-13): the caller hands it to the pager after commit. */
+  pages: boolean;
+}
+
+/** Crisis clock context: the room's region (its own Lantern Hour) and the configured Lantern Hour window. */
+async function crisisContext(q: Queryable, roomId: string | null): Promise<SlaContext> {
+  const cfg = await loadMatchingConfig(q);
+  const region = roomId ? (await q.query<{ tz_region: string }>('select tz_region from public.rooms where id = $1', [roomId])).rows[0]?.tz_region : null;
+  return { roomRegion: isTzRegion(region) ? region : null, lanternStart: cfg.lanternStart, lanternEnd: cfg.lanternEnd };
 }
 
 export async function insertReport(q: Queryable, r: NewReport, cfg: Pick<SafetyConfig, 'evidenceHoldDays'>, now = new Date()): Promise<CreatedReport> {
   const lane = laneFor(r.reason, r.involvesMinor);
-  const sla = slaFor(lane, r.reason, r.involvesMinor, now);
+  const sla = slaFor(lane, r.reason, r.involvesMinor, now, lane === 'crisis' ? await crisisContext(q, r.roomId) : {});
   const ins = await q.query<{ id: string }>(
     `insert into public.reports (source, auto_signal, reporter_user_id, reporter_member_id, reason, lane, involves_minor, pages,
                                  target_kind, room_id, target_member_id, target_gesture_id, target_user_id, target_ref, note,
@@ -85,7 +96,7 @@ export async function insertReport(q: Queryable, r: NewReport, cfg: Pick<SafetyC
     },
   });
   await q.query('update public.reports set evidence_hold_id = $2 where id = $1', [id, evidenceHoldId]);
-  return { id, lane, evidenceHoldId };
+  return { id, lane, evidenceHoldId, pages: sla.pages };
 }
 
 /**

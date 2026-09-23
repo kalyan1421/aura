@@ -103,6 +103,7 @@ String roomsFailureText(
   RoomsFailureKind.closed => l.rooms_accountClosed,
   RoomsFailureKind.joinLimit => l.rooms_joinLimit,
   RoomsFailureKind.poolUnavailable => l.rooms_poolUnavailable,
+  RoomsFailureKind.paused => joining ? l.rooms_pausedJoin : l.rooms_paused,
   RoomsFailureKind.notFound => l.rooms_gone,
   RoomsFailureKind.reportLimit => l.rooms_reportLimit,
   _ => joining ? l.rooms_joinFailed : l.rooms_loadFailed,

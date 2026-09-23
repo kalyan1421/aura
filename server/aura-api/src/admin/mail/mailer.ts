@@ -1,12 +1,13 @@
-import { SmtpError, sendMail, smtpOptionsFromUrl, type SmtpOptions } from './smtp';
+import { SmtpError, sendMail, smtpOptionsFromUrl, type MailAttachment, type SmtpOptions } from './smtp';
 
-/** Plain-text email out of the console (grievance acknowledgements and replies, pages). */
+/** Plain-text email out of the console (grievance acknowledgements and replies, pages, deletion links, audit exports). */
 export interface MailMessage {
   to: readonly string[];
   subject: string;
   text: string;
   replyTo?: string | null;
   autoSubmitted?: boolean;
+  attachments?: readonly MailAttachment[];
 }
 
 export interface Mailer {
@@ -30,7 +31,15 @@ export class SmtpMailer implements Mailer {
   }
 
   send(m: MailMessage): Promise<void> {
-    return sendMail(this.options, { from: this.from, to: m.to, subject: m.subject, text: m.text, replyTo: m.replyTo, autoSubmitted: m.autoSubmitted });
+    return sendMail(this.options, {
+      from: this.from,
+      to: m.to,
+      subject: m.subject,
+      text: m.text,
+      replyTo: m.replyTo,
+      autoSubmitted: m.autoSubmitted,
+      attachments: m.attachments,
+    });
   }
 }
 

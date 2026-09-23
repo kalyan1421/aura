@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ActionForm } from '@/components/client';
 import { Empty, Forbidden, Hash, PageHead, When } from '@/components/ui';
 import { apiGet } from '@/lib/api';
 import { isForbidden, load } from '@/lib/load';
-import type { AuditEntry } from '@/lib/types';
+import type { AuditEntry, AuditExportStatus } from '@/lib/types';
+import { exportNow } from './actions';
 
 export const metadata: Metadata = { title: 'Audit log' };
 
@@ -15,8 +17,12 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
   const before = typeof sp.before === 'string' && /^\d+$/.test(sp.before) ? sp.before : null;
   const data = await load<{ entries: AuditEntry[] }>(`/admin/audit?limit=${PAGE}${before ? `&beforeId=${before}` : ''}`);
   if (isForbidden(data)) return <Forbidden what="The audit log" />;
-  const chain = await apiGet<{ ok: boolean; checkedAt: string }>('/admin/audit/verify');
+  const [chain, exports] = await Promise.all([
+    apiGet<{ ok: boolean; checkedAt: string }>('/admin/audit/verify'),
+    apiGet<AuditExportStatus>('/admin/audit/exports'),
+  ]);
   const last = data.entries[data.entries.length - 1];
+  const lastExport = exports.last[0];
   return (
     <>
       <PageHead title="Audit log">
@@ -25,6 +31,36 @@ export default async function AuditPage({ searchParams }: { searchParams: Promis
         </span>
       </PageHead>
       <p className="muted small">Rows never hold content, emails or raw app account ids; people appear as a hashed id.</p>
+      <section className="panel" aria-labelledby="h-export">
+        <h2 id="h-export">Nightly export</h2>
+        <p className="small">
+          {exports.configured.dir || exports.configured.email ? (
+            <>
+              To {[exports.configured.dir ? 'the export directory' : null, exports.configured.email ? 'the archive mailbox' : null].filter(Boolean).join(' and ')}
+              {exports.configured.nightly ? ` · schedule ${exports.configured.nightly} (${exports.configured.timezone}, worker)` : ' · no nightly schedule'}.
+            </>
+          ) : (
+            <span className="sla-overdue">Not configured: set ADMIN_AUDIT_EXPORT_DIR and/or ADMIN_AUDIT_EXPORT_EMAIL on the API and worker.</span>
+          )}{' '}
+          {lastExport ? (
+            <>
+              Last: <When iso={lastExport.createdAt} /> ·{' '}
+              {lastExport.fromId !== null ? `rows ${lastExport.fromId}–${lastExport.toId} (${lastExport.rows})` : 'failed'}
+              {lastExport.destinations.length ? ` → ${lastExport.destinations.join(', ')}` : ''}
+              {lastExport.chainVerified === false ? ' · chain NOT verified' : ''}
+              {lastExport.sha256 ? (
+                <>
+                  {' '}
+                  · SHA-256 <code title={lastExport.sha256}>{lastExport.sha256.slice(0, 16)}…</code>
+                </>
+              ) : null}
+            </>
+          ) : (
+            'No export yet.'
+          )}
+        </p>
+        <ActionForm action={exportNow} submitLabel="Export now" className="row" />
+      </section>
       <div className="table-wrap">
         {data.entries.length === 0 ? (
           <Empty>No entries.</Empty>

@@ -8,7 +8,7 @@ import { Test } from '@nestjs/testing';
 import { SignJWT, type JWTPayload } from 'jose';
 import request from 'supertest';
 import { AdminConfig, parseAdminConfig } from '../../src/admin/admin-config';
-import { AdminGuard, AdminRoles, AllowBeforeMfa, CurrentStaff } from '../../src/admin/admin.guard';
+import { AdminGuard, AdminRoles, AllowBeforeMfa, CurrentStaff, firstFactor } from '../../src/admin/admin.guard';
 import type { StaffUser } from '../../src/admin/admin-types';
 import { RateLimiter } from '../../src/admin/rate-limit';
 import { JwtVerifier } from '../../src/auth/jwt-verifier';
@@ -27,8 +27,8 @@ class ProbeController {
   @Get('session')
   @AdminRoles('owner', 'moderator', 'analyst')
   @AllowBeforeMfa()
-  session(@CurrentStaff() s: StaffUser): Pick<StaffUser, 'role' | 'mfa' | 'actor'> {
-    return { role: s.role, mfa: s.mfa, actor: s.actor };
+  session(@CurrentStaff() s: StaffUser): Pick<StaffUser, 'role' | 'mfa' | 'actor' | 'firstFactor'> {
+    return { role: s.role, mfa: s.mfa, actor: s.actor, firstFactor: s.firstFactor };
   }
 
   @Get('owner')
@@ -57,6 +57,8 @@ interface GuardRow {
   session_not_after: Date | null;
   has_totp: boolean;
   is_app_account: boolean;
+  google_domains?: string[];
+  providers?: string[];
 }
 
 const OWNER_ROW = (): GuardRow => ({
@@ -114,16 +116,17 @@ class FakeLimiter {
   }
 }
 
-type TokenOpts = { aal?: string; totp?: boolean; email?: string; sub?: string; session?: string | null; secret?: string };
+type TokenOpts = { aal?: string; totp?: boolean; email?: string; sub?: string; session?: string | null; secret?: string; first?: string };
 
 async function token(o: TokenOpts = {}): Promise<string> {
+  const first = o.first ?? 'otp';
   const claims: JWTPayload = {
     sub: o.sub ?? STAFF_ID,
     role: 'authenticated',
     aud: 'authenticated',
     email: o.email ?? 'ak@akvega.test',
     aal: o.aal ?? 'aal2',
-    amr: o.totp === false ? [{ method: 'otp', timestamp: 1 }] : [{ method: 'totp', timestamp: 2 }, { method: 'otp', timestamp: 1 }],
+    amr: o.totp === false ? [{ method: first, timestamp: 1 }] : [{ method: 'totp', timestamp: 2 }, { method: first, timestamp: 1 }],
   };
   if (o.session !== null) claims.session_id = o.session ?? SESSION_ID;
   return new SignJWT(claims)
@@ -255,6 +258,11 @@ describe('AdminGuard', () => {
     expect((await get('unconfigured', await token()).expect(403)).body.code).toBe('forbidden_role');
   });
 
+  it('outside production the development sign-in (email code) is accepted and reported as such', async () => {
+    const t = await token({ aal: 'aal1', totp: false });
+    expect((await get('session', t).expect(200)).body).toMatchObject({ mfa: 'challenge', firstFactor: 'dev' });
+  });
+
   it('ADMIN_ALLOWED_EMAILS is a second gate on top of the table', async () => {
     const other = await boot({ ADMIN_ALLOWED_EMAILS: 'ak@akvega.test' });
     try {
@@ -268,5 +276,104 @@ describe('AdminGuard', () => {
     } finally {
       await other.app.close();
     }
+  });
+});
+
+// ================================================================== REQ-ADM-01: SSO first factor + TOTP
+describe('AdminGuard — SSO (Google Workspace) + TOTP, as in production', () => {
+  let app: INestApplication;
+  let db: FakeDb;
+  const SSO_ROW = (): GuardRow => ({ ...OWNER_ROW(), google_domains: ['akvega.test'], providers: ['google'] });
+
+  beforeAll(async () => {
+    ({ app, db } = await boot({ NODE_ENV: 'production', ADMIN_SSO_PROVIDER: 'google', ADMIN_SSO_ALLOWED_DOMAINS: 'AKVega.test' }));
+  });
+  afterAll(() => app.close());
+  beforeEach(() => {
+    db.row = SSO_ROW();
+    db.audits = [];
+  });
+
+  const get = (path: string, t: string) => request(app.getHttpServer()).get(`/admin/probe/${path}`).set('Authorization', `Bearer ${t}`);
+
+  it('SSO first factor (oauth, allowed Workspace domain) + TOTP → allowed, reported as sso', async () => {
+    expect((await get('owner', await token({ first: 'oauth' })).expect(200)).body).toEqual({ actor: `staff:${STAFF_ID}` });
+    expect((await get('session', await token({ first: 'oauth' })).expect(200)).body).toMatchObject({ mfa: 'verified', firstFactor: 'sso' });
+  });
+
+  it('REQ-ADM-01: SSO login without MFA is denied (only the sign-in preflight answers, to start TOTP)', async () => {
+    const aal1 = await token({ first: 'oauth', aal: 'aal1', totp: false });
+    expect((await get('owner', aal1).expect(401)).body.code).toBe('mfa_required');
+    expect((await get('work', aal1).expect(401)).body.code).toBe('mfa_required');
+    expect((await get('session', aal1).expect(200)).body).toMatchObject({ mfa: 'challenge', firstFactor: 'sso' });
+  });
+
+  it('in production the email-code (or password) sign-in is refused: 403 sso_required, audited once per session', async () => {
+    for (const first of ['otp', 'magiclink', 'password']) {
+      const r = await get('owner', await token({ first }));
+      expect(r.status).toBe(403);
+      expect(r.body.code).toBe('sso_required');
+    }
+    expect((await get('session', await token({ first: 'otp', aal: 'aal1', totp: false })).expect(403)).body.code).toBe('sso_required');
+    expect(db.audits).toHaveLength(1);
+    expect(db.audits[0]).toMatchObject({ actor: 'unknown', action: 'access_denied', reasonCode: 'sso_required' });
+    expect(JSON.stringify(db.audits)).not.toContain(STAFF_ID);
+  });
+
+  it('a Google account outside the Workspace domain (or a consumer account without `hd`) is refused', async () => {
+    db.row = { ...SSO_ROW(), google_domains: ['gmail-lookalike.test'] };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(403)).body.code).toBe('sso_required');
+    db.row = { ...SSO_ROW(), google_domains: [] };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(403)).body.code).toBe('sso_required');
+  });
+
+  it('an OAuth sign-in by an account that also has another external identity (e.g. Apple) is not trusted as SSO', async () => {
+    db.row = { ...SSO_ROW(), providers: ['google', 'apple'] };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(403)).body.code).toBe('sso_required');
+    db.row = { ...SSO_ROW(), providers: ['google', 'email'] };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(200)).body).toEqual({ actor: `staff:${STAFF_ID}` });
+  });
+
+  it('REQ-ADM-01 negative: an app user account can never sign in, even with a valid SSO + TOTP session', async () => {
+    db.row = { ...SSO_ROW(), is_app_account: true };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(403)).body.code).toBe('staff_account_is_app_account');
+    db.row = { ...SSO_ROW(), role: null, display_name: null, disabled: null };
+    expect((await get('owner', await token({ first: 'oauth' })).expect(403)).body.code).toBe('not_staff');
+  });
+});
+
+describe('firstFactor (pure)', () => {
+  const sso = { provider: 'google' as const, domains: new Set(['akvega.test']) };
+  const claims = (...methods: string[]): JWTPayload => ({ amr: methods.map((method, i) => ({ method, timestamp: i })) });
+  const row = { google_domains: ['akvega.test'], providers: ['google'] };
+
+  it('sso needs the oauth method, an allowed domain and no other external identity', () => {
+    expect(firstFactor(claims('totp', 'oauth'), row, { sso, allowEmailLogin: false })).toBe('sso');
+    expect(firstFactor(claims('totp', 'otp'), row, { sso, allowEmailLogin: false })).toBeNull();
+    expect(firstFactor(claims('oauth'), { google_domains: ['other.test'], providers: ['google'] }, { sso, allowEmailLogin: false })).toBeNull();
+  });
+
+  it('the development sign-in only while allowed; second factors and refreshes never count as a first factor', () => {
+    expect(firstFactor(claims('otp'), row, { sso: null, allowEmailLogin: true })).toBe('dev');
+    expect(firstFactor(claims('otp'), row, { sso: null, allowEmailLogin: false })).toBeNull();
+    expect(firstFactor(claims('totp', 'token_refresh'), row, { sso: null, allowEmailLogin: true })).toBeNull();
+    expect(firstFactor(claims('oauth'), row, { sso: null, allowEmailLogin: false })).toBeNull(); // SSO not configured
+  });
+});
+
+describe('admin config: sign-in defaults', () => {
+  it('email sign-in is on outside production and off by default in production; SSO needs its domains', () => {
+    expect(parseAdminConfig({}).allowEmailLogin).toBe(true);
+    const prod = parseAdminConfig({ NODE_ENV: 'production' });
+    expect(prod.allowEmailLogin).toBe(false);
+    expect(prod.warnings()).toEqual([expect.stringContaining('no console sign-in is configured')]);
+    expect(parseAdminConfig({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).warnings()).toEqual([
+      expect.stringContaining('development only'),
+    ]);
+    expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'google' })).toThrow(/ADMIN_SSO_ALLOWED_DOMAINS/);
+    expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'okta', ADMIN_SSO_ALLOWED_DOMAINS: 'akvega.test' })).toThrow(/ADMIN_SSO_PROVIDER/);
+    const c = parseAdminConfig({ NODE_ENV: 'production', ADMIN_SSO_PROVIDER: 'google', ADMIN_SSO_ALLOWED_DOMAINS: 'AKVega.com, akvega.in' });
+    expect(c.sso).toEqual({ provider: 'google', domains: new Set(['akvega.com', 'akvega.in']) });
+    expect(c.warnings()).toEqual([]);
   });
 });

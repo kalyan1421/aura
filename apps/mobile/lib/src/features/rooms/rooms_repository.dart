@@ -36,6 +36,10 @@ enum RoomsFailureKind {
   /// `409 language_pool_unavailable`: Hindi + Hinglish rooms aren't open.
   poolUnavailable,
 
+  /// `503 rooms_paused`: the rooms kill switch is off (flag `rooms_enabled`,
+  /// PRD 19). Not retried on its own; the remote flags say when it's back.
+  paused,
+
   /// `409 guidelines_required` (REQ-SAFE-04): the community guidelines in
   /// [RoomsFailure.guidelinesVersion] must be accepted before a room.
   guidelinesRequired,
@@ -80,6 +84,7 @@ class RoomsFailure implements Exception {
       (403, 'account_closed') => RoomsFailureKind.closed,
       (409, 'profile_required') => RoomsFailureKind.profileRequired,
       (409, 'language_pool_unavailable') => RoomsFailureKind.poolUnavailable,
+      (503, 'rooms_paused') => RoomsFailureKind.paused,
       (409, GuidelinesRequiredException.guidelinesRequiredCode) =>
         RoomsFailureKind.guidelinesRequired,
       (409, 'room_read_only') => RoomsFailureKind.readOnly,

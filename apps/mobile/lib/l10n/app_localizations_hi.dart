@@ -2920,6 +2920,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get voice_hasVoice => 'Has a voice note';
+
+  @override
+  String get device_bannedTitle => 'This device can\'t use Aura';
+
+  @override
+  String get device_bannedBody => 'Aura isn\'t available on this phone.';
+
+  @override
+  String get device_bannedReviewSubject => 'Review of a device';
+
+  @override
+  String get rooms_paused => 'Rooms are resting for a bit. Try again later.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'Rooms are resting for a bit. Your check-in is saved.';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).

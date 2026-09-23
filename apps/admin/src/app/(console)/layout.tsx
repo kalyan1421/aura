@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { NavLinks } from '@/components/client';
 import { apiGet } from '@/lib/api';
-import { ist } from '@/lib/format';
+import { ROLE_LABEL, ist, queueSessionText } from '@/lib/format';
 import { requireSession } from '@/lib/session';
 import type { SessionInfo, StaffRole } from '@/lib/types';
 import { signOutAction } from './session-actions';
@@ -15,25 +15,28 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
     { href: '/queue', label: 'Queue' },
     { href: '/sanctions', label: 'Sanctions' },
   ];
-  if (role === 'moderator') return [...common, { href: '/stats', label: 'Stats' }];
+  if (role === 'moderator') return [...common, { href: '/lexicons', label: 'Lexicon' }, { href: '/stats', label: 'Stats' }];
   return [
     ...common,
     { href: '/mandatory', label: 'Mandatory reports' },
     { href: '/grievances', label: 'Grievances' },
+    { href: '/deletion-cases', label: 'Deletion cases' },
     { href: '/legal-orders', label: 'Legal orders' },
     { href: '/paging', label: 'Paging' },
     { href: '/audit', label: 'Audit log' },
     { href: '/config', label: 'Kill switches' },
+    { href: '/lexicons', label: 'Lexicon' },
+    { href: '/devices', label: 'Device bans' },
+    { href: '/staff', label: 'Staff' },
     { href: '/stats', label: 'Stats' },
   ];
 }
-
-const ROLE_LABEL: Record<StaffRole, string> = { owner: 'Owner', moderator: 'Moderator', analyst: 'Read-only analyst' };
 
 export default async function ConsoleLayout({ children }: { children: ReactNode }) {
   await requireSession();
   const me = await apiGet<SessionInfo>('/admin/session');
   if (me.mfa !== 'verified') redirect('/mfa');
+  const queue = queueSessionText(me.queueSession);
   return (
     <>
       <header className="top">
@@ -43,7 +46,9 @@ export default async function ConsoleLayout({ children }: { children: ReactNode 
         <NavLinks items={navFor(me.staff.role)} />
         <div className="me">
           <span>
-            {me.staff.displayName} · {ROLE_LABEL[me.staff.role]} · session ends {ist(me.sessionExpiresAt)}
+            {me.staff.displayName} · {ROLE_LABEL[me.staff.role]} · {me.firstFactor === 'sso' ? 'Google Workspace + TOTP' : 'development sign-in + TOTP'} ·
+            session ends {ist(me.sessionExpiresAt)}
+            {queue ? <span className={me.queueSession?.capped ? 'sla-overdue' : 'muted'}> · {queue}</span> : null}
           </span>
           <form action={signOutAction}>
             <button type="submit" className="btn btn-quiet">

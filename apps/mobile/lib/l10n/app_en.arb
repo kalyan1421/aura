@@ -3719,5 +3719,25 @@
   "voice_hasVoice": "Has a voice note",
   "@voice_hasVoice": {
     "description": "Screen-reader label for the voice icon on a history row."
+  },
+  "device_bannedTitle": "This device can't use Aura",
+  "@device_bannedTitle": {
+    "description": "Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off)."
+  },
+  "device_bannedBody": "Aura isn't available on this phone.",
+  "@device_bannedBody": {
+    "description": "Body under device_bannedTitle. No reason, no blame."
+  },
+  "device_bannedReviewSubject": "Review of a device",
+  "@device_bannedReviewSubject": {
+    "description": "Email subject when asking for a review of a device ban. Nothing about the person or the phone."
+  },
+  "rooms_paused": "Rooms are resting for a bit. Try again later.",
+  "@rooms_paused": {
+    "description": "Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame."
+  },
+  "rooms_pausedJoin": "Rooms are resting for a bit. Your check-in is saved.",
+  "@rooms_pausedJoin": {
+    "description": "After a check-in, when the rooms kill switch is off."
   }
 }

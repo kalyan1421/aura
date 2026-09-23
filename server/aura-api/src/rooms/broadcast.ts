@@ -58,4 +58,17 @@ export const Broadcast = {
   lanternHour(q: Queryable, roomId: string, lanternHour: LanternHourView, at: Date): Promise<void> {
     return send(q, roomTopic(roomId), 'lantern_hour', { lanternHour, at: iso(at) });
   },
+
+  /**
+   * Admin-triggered: a moderation sanction just took this account's room access away → `member_left` (same payload as
+   * `memberLeft`, fresh counts) to every live room it sits in. Built and sent inside Postgres by the SECURITY DEFINER
+   * `public.admin_hide_account_from_rooms` (migration 20261005000016), because the console's `aura_admin` role can
+   * neither see the account behind a membership nor use the realtime schema; it sends nothing for an account that isn't
+   * hidden. Runs in the caller's transaction (delivered only if the sanction commits). Returns how many rooms were told.
+   * The payload shape is covered by test/e2e/rooms.e2e-spec.ts (suspend → member_left, DS-10 scan).
+   */
+  async accountHidden(q: Queryable, userId: string, at: Date): Promise<number> {
+    const r = await q.query<{ n: number }>('select public.admin_hide_account_from_rooms($1, $2) as n', [userId, at]);
+    return r.rows[0]?.n ?? 0;
+  },
 };

@@ -25,7 +25,13 @@ export async function actOnReport(reportId: string, _prev: ActionResult, fd: For
   if (action === 'shadow_mute') body.hours = Number(field(fd, 'muteHours') || '168');
   if (action === 'suspend') body.hours = Number(field(fd, 'suspendHours') || '24');
   if (action === 'ban' && field(fd, 'confirmBan') !== 'yes') return { ok: false, message: 'Tick the confirmation before banning.' };
-  let out: { status: string; activeStrikes: number | null; mandatoryReport: { evidenceHoldId: string } | null };
+  let out: {
+    status: string;
+    activeStrikes: number | null;
+    mandatoryReport: { evidenceHoldId: string } | null;
+    autoBan?: { sanctionId: string | null; alreadyBanned: boolean; evidenceHolds: number } | null;
+    devices?: { devices: number; newlyBanned: number; snapshotted: boolean } | null;
+  };
   try {
     out = await apiPost(`/admin/reports/${reportId}/actions`, body);
   } catch (e) {
@@ -33,8 +39,20 @@ export async function actOnReport(reportId: string, _prev: ActionResult, fd: For
     return { ok: false, message: failureMessage(e) };
   }
   refresh();
+  const devices = out.devices
+    ? ` ${out.devices.devices === 0 ? 'No devices were recorded for the account.' : `${out.devices.newlyBanned} of ${out.devices.devices} device${out.devices.devices === 1 ? '' : 's'} newly banned${out.devices.snapshotted ? ' (hashed ids added to the evidence)' : ''}.`}`
+    : '';
   if (out.mandatoryReport) {
-    return { ok: true, message: 'Account closed. Evidence is held 180 days and the mandatory-report task is open (Mandatory reports).' };
+    return { ok: true, message: `Account closed.${devices} Evidence is held 180 days and the mandatory-report task is open (Mandatory reports).` };
+  }
+  if (action === 'ban') return { ok: true, message: `Account closed.${devices}` };
+  if (out.autoBan) {
+    return {
+      ok: true,
+      message: out.autoBan.alreadyBanned
+        ? `Strike recorded (${out.activeStrikes} active); the account is already banned.`
+        : `4th active strike: the account is now permanently banned from rooms (automatic, audited as the strike ladder); evidence behind the strikes is held 180 days.`,
+    };
   }
   const strikes = out.activeStrikes !== null ? ` Active strikes: ${out.activeStrikes}.` : '';
   return { ok: true, message: `${ACTION_LABEL[action]} applied; the report is ${out.status}.${strikes}` };

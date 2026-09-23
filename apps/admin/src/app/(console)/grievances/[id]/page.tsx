@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { ActionForm, SlaTimer } from '@/components/client';
 import { Badge, Forbidden, PageHead, When, YesNo } from '@/components/ui';
 import { isForbidden, load } from '@/lib/load';
@@ -100,6 +101,15 @@ export default async function GrievancePage({
         <section className="panel">
           <ActionForm action={acknowledgeGrievance.bind(null, g.grievanceId)} submitLabel="Acknowledge (emails the complainant)" />
         </section>
+      ) : null}
+      {g.category === 'data_request' && !resolved ? (
+        <p className="callout" role="note">
+          A request about data or an account. To delete an account, open a{' '}
+          <Link href={`/deletion-cases?grievance=${g.grievanceId}`} prefetch={false}>
+            deletion case from this grievance
+          </Link>{' '}
+          — the account holder confirms through a link sent to the account’s own email (REQ-ADM-11).
+        </p>
       ) : null}
       {resolved ? (
         <section className="panel" aria-labelledby="h-reply">

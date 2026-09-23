@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { parseOrThrow } from '../common/zod';
 import { LANES } from '../safety/safety-types';
+import { STAFF_ROLES } from './admin-types';
 import { GRIEVANCE_CATEGORIES } from './clocks';
 
 /** Request bodies of the console routes and the two public intakes (validated; errors never echo input). */
@@ -103,5 +104,37 @@ export const sanctionsQuerySchema = z.object({
 });
 
 export const pagesQuerySchema = z.object({ status: z.enum(['open', 'acknowledged', 'resolved', 'expired', 'all']).optional() });
+
+// ------------------------------------------------------------------------------------------------ staff editor
+export const staffAddSchema = z.object({
+  email: z.email().max(254),
+  role: z.enum(STAFF_ROLES),
+  displayName: text(1, 60),
+});
+
+export const staffUpdateSchema = z
+  .object({ role: z.enum(STAFF_ROLES).optional(), displayName: text(1, 60).optional(), disabled: z.boolean().optional() })
+  .refine((v) => v.role !== undefined || v.displayName !== undefined || v.disabled !== undefined, 'nothing to change');
+
+// ------------------------------------------------------------------------------------------------ deletion cases (REQ-ADM-11)
+export const DELETION_CHANNELS = ['email', 'grievance', 'post', 'other'] as const;
+export const deletionCaseSchema = z.object({
+  /** The address the requester says the account signs in with. The link only ever goes to the address ON the account. */
+  email: z.email().max(254),
+  channel: z.enum(DELETION_CHANNELS),
+  receivedAt: pastInstant,
+  grievanceId: z.uuid().optional(),
+});
+
+/** Immediate deletion skips the 7-day grace, so it needs one of these audited reasons (PRD F8 / 19 SOP step 5). */
+export const IMMEDIATE_DELETION_REASONS = ['under_13_confirmed', 'requester_asked_immediate', 'legal_requirement'] as const;
+export const deletionScheduleSchema = z.discriminatedUnion('mode', [
+  z.object({ mode: z.literal('grace') }),
+  z.object({ mode: z.literal('immediate'), reasonCode: z.enum(IMMEDIATE_DELETION_REASONS) }),
+]);
+
+export const DELETION_CLOSE_OUTCOMES = ['withdrawn', 'unverified', 'duplicate', 'declined_by_holder', 'restored_by_holder', 'other'] as const;
+export const deletionCloseSchema = z.object({ outcome: z.enum(DELETION_CLOSE_OUTCOMES) });
+export const deletionListSchema = z.object({ status: z.enum(['open', 'closed', 'all']).optional() });
 
 export const parse = parseOrThrow;

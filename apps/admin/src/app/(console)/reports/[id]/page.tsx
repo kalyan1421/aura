@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { unstable_rethrow } from 'next/navigation';
 import { ActionForm, SlaTimer } from '@/components/client';
 import { SanctionsTable } from '@/components/sanctions';
 import { Badge, Empty, Hash, LaneBadge, PageHead, When, YesNo } from '@/components/ui';
-import { apiGet } from '@/lib/api';
-import { ACTION_LABEL, REASON_LABEL, durationText, label } from '@/lib/format';
-import { isForbidden, load } from '@/lib/load';
-import type { ItemView, SessionInfo } from '@/lib/types';
+import { ApiFailure, apiGet } from '@/lib/api';
+import { ACTION_LABEL, REASON_LABEL, durationText, label, shortHash } from '@/lib/format';
+import { isForbidden, load, type Forbidden } from '@/lib/load';
+import type { ItemView, ReportDevices, SessionInfo } from '@/lib/types';
+import { banAccountDevices, banDevice } from '../../devices/actions';
 import { actOnReport } from './actions';
 
 export const metadata: Metadata = { title: 'Report' };
@@ -32,11 +34,12 @@ const REASON_CODES = [
 const ACTION_HELP: Record<string, string> = {
   dismiss: 'No violation. The reporter’s inbox shows “reviewed, no action”.',
   warn: 'A visible notice to the person with the reason code.',
-  strike: 'The ladder: warning → 24 h shadow-mute → 7-day room suspension → social ban. Strikes stop counting after 90 days. Never for crisis reports.',
+  strike:
+    'The ladder: warning → 24 h shadow-mute → 7-day room suspension → the 4th active strike bans automatically (permanent social ban). Strikes stop counting after 90 days. Never on a crisis-flagged item.',
   shadow_mute: 'Their gestures silently stop reaching anyone. They are not told.',
   suspend: 'Rooms off for 24 h or 7 days; solo features keep working.',
   pause: 'Rooms paused pending review; the report stays open.',
-  ban: 'Permanent account closure. The person sees only “This account was closed for breaking Aura’s rules”.',
+  ban: 'Permanent account closure, and every device seen for the account is banned in the same action (their hashed ids join the evidence). The person sees only “This account was closed for breaking Aura’s rules”.',
 };
 
 /** PRD 19 "Item view and the privacy boundary": the item, room context, reporter count and reasons, the subject by
@@ -44,10 +47,34 @@ const ACTION_HELP: Record<string, string> = {
  * email or phone — the API has no route to them. */
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [data, me] = await Promise.all([load<ItemView>(`/admin/reports/${encodeURIComponent(id)}`), apiGet<SessionInfo>('/admin/session')]);
+  let data: ItemView | Forbidden;
+  try {
+    data = await load<ItemView>(`/admin/reports/${encodeURIComponent(id)}`);
+  } catch (e) {
+    unstable_rethrow(e);
+    // PRD 19 "Queue sessions capped at 2 h": non-urgent items wait for a break; crisis and paging items stay open.
+    if (e instanceof ApiFailure && e.code === 'queue_session_cap') {
+      return (
+        <section className="panel" aria-labelledby="h-break">
+          <h1 id="h-break">Time for a break</h1>
+          <p>{e.message}</p>
+          <p className="muted small">
+            Crisis and paging items stay open to you. The{' '}
+            <Link href="/now" prefetch={false}>
+              Now
+            </Link>{' '}
+            list and the queue keep showing deadlines.
+          </p>
+        </section>
+      );
+    }
+    throw e;
+  }
+  const me = await apiGet<SessionInfo>('/admin/session');
   if (isForbidden(data)) return <Empty>Your role cannot open reports.</Empty>;
   const { report: r, subject, room, evidence } = data;
   const minors = r.lane === 'minors_grooming';
+  const devices = me.staff.role === 'owner' && subject ? await devicesFor(r.reportId) : null;
 
   return (
     <>
@@ -199,6 +226,87 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       ) : (
         <p className="callout ok">{r.status === 'open' ? 'Your role has no actions on this report.' : 'This report is closed.'}</p>
       )}
+
+      {devices ? (
+        <section className="panel" aria-labelledby="h-devices">
+          <h2 id="h-devices">Devices (Owner)</h2>
+          <p className="small muted">
+            Installs this account used, as hashed ids (never a raw or hardware id). A banned phone sees “This device can’t use Aura” and can still delete
+            its account. Lifting a ban is under{' '}
+            <Link href="/devices" prefetch={false}>
+              Device bans
+            </Link>
+            .
+          </p>
+          {devices.devices.length === 0 ? (
+            <Empty>No installs recorded for this account.</Empty>
+          ) : (
+            <>
+              <div className="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Device</th>
+                      <th scope="col">Platform</th>
+                      <th scope="col">First seen</th>
+                      <th scope="col">Last seen</th>
+                      <th scope="col">Ban</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {devices.devices.map((d) => (
+                      <tr key={d.deviceId}>
+                        <td>
+                          <code title={d.deviceId}>{shortHash(d.deviceId)}</code>
+                        </td>
+                        <td>{d.platform ?? '—'}</td>
+                        <td className="small">
+                          <When iso={d.firstSeenAt} />
+                        </td>
+                        <td className="small">
+                          <When iso={d.lastSeenAt} />
+                        </td>
+                        <td>
+                          {d.banId ? (
+                            <Badge tone="alert">banned</Badge>
+                          ) : (
+                            <ActionForm
+                              action={banDevice.bind(null, d.deviceId, r.reportId)}
+                              submitLabel="Ban device"
+                              confirm="Ban this device? The phone can no longer use Aura."
+                              danger
+                              className="stack small"
+                            >
+                              <label htmlFor={`dev-${d.deviceId}`} className="hint">
+                                Reason code
+                              </label>
+                              <input id={`dev-${d.deviceId}`} name="reasonCode" type="text" required pattern="[a-z0-9_]{1,40}" defaultValue={r.reasonKey} />
+                            </ActionForm>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {devices.devices.some((d) => !d.banId) ? (
+                <ActionForm
+                  action={banAccountDevices.bind(null, r.reportId)}
+                  submitLabel="Ban all devices of this account"
+                  confirm="Ban every device this account used?"
+                  danger
+                  className="row"
+                >
+                  <label htmlFor="dev-all" className="hint">
+                    Reason code
+                  </label>
+                  <input id="dev-all" name="reasonCode" type="text" required pattern="[a-z0-9_]{1,40}" defaultValue={r.reasonKey} style={{ maxWidth: '14rem' }} />
+                </ActionForm>
+              ) : null}
+            </>
+          )}
+        </section>
+      ) : null}
 
       {subject ? (
         <section aria-labelledby="h-history">
@@ -364,4 +472,15 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       </section>
     </>
   );
+}
+
+/** The report subject's devices (Owner only); null when the account is gone or the lookup is refused. */
+async function devicesFor(reportId: string): Promise<ReportDevices | null> {
+  try {
+    return await apiGet<ReportDevices>(`/admin/devices?reportId=${encodeURIComponent(reportId)}`);
+  } catch (e) {
+    unstable_rethrow(e);
+    if (e instanceof ApiFailure && (e.status === 403 || e.status === 404 || e.status === 409)) return null;
+    throw e;
+  }
 }

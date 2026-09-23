@@ -168,6 +168,9 @@ legend { font-weight: 600; padding: 0 0.3rem; }
 .msg { margin: 0; font-size: 0.9rem; }
 .msg-ok { color: var(--ok); }
 .msg-err { color: var(--danger); font-weight: 600; }
+.result-lines { margin: 0.2rem 0 0; padding-left: 1.2rem; max-height: 16rem; overflow: auto; }
+textarea.json { font-family: var(--mono); font-size: 0.85rem; min-height: 16rem; max-width: 100%; }
+pre.json { font-family: var(--mono); font-size: 0.8rem; background: var(--surface-2); border-radius: 6px; padding: 0.6rem; max-height: 28rem; overflow: auto; white-space: pre-wrap; word-break: break-word; }
 .inline-form { display: inline; }
 .inline-form .row { display: inline-flex; }
 

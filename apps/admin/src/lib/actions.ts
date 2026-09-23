@@ -3,7 +3,7 @@ import { unstable_rethrow } from 'next/navigation';
 import { failureMessage } from './api';
 
 /** Result shape of every console form. */
-export type ActionResult = { ok: boolean; message: string } | null;
+export type ActionResult = { ok: boolean; message: string; lines?: string[] } | null;
 
 /**
  * Runs a mutation from a server action: on success refreshes the page's server data and reports `ok`; on failure

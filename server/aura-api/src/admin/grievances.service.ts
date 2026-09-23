@@ -24,7 +24,7 @@ import { RateLimiter } from './rate-limit';
  */
 const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 
-export function newTicket(prefix: 'GRV' | 'LO'): string {
+export function newTicket(prefix: 'GRV' | 'LO' | 'DEL'): string {
   let s = '';
   for (let i = 0; i < 8; i++) s += CROCKFORD[randomInt(32)];
   return `${prefix}-${s}`;

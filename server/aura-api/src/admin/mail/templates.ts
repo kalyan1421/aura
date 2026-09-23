@@ -94,6 +94,37 @@ export function grievanceReplyMail(
   };
 }
 
+/**
+ * REQ-ADM-11: the one-time confirmation link for an emailed / grievance deletion request, sent to the address ON THE
+ * ACCOUNT (never to wherever the request came from). No personal data in the link: a random token only.
+ */
+export function deletionVerificationMail(
+  c: { ticket: string; link: string; expiresAt: Date; graceDays: number },
+  officer: GrievanceOfficer,
+): { subject: string; text: string } {
+  return {
+    subject: `Aura: confirm the request to delete your account (${c.ticket})`,
+    text: [
+      'Hello,',
+      '',
+      `Aura's Grievance Officer received a request to delete the Aura account that signs in with this email address (request ${c.ticket}).`,
+      '',
+      'If you made this request, open the link below and press "Delete my account":',
+      c.link,
+      '',
+      `The link works once, until ${istTime(c.expiresAt)}.`,
+      '',
+      "If you did not ask for this, you don't need to do anything: nothing is deleted without your confirmation. You can also open the link and press \"This wasn't me\".",
+      '',
+      `What happens next: once you confirm, Aura starts the same deletion as the in-app option. The account is switched off straight away and deleted for good within 30 days (normally after ${c.graceDays} days, during which signing in to the app lets you keep it). Records the law requires us to keep (for example about reported content) are kept only as long as required.`,
+      '',
+      ...officerLines(officer),
+      '',
+      SAFETY_LINE,
+    ].join('\n'),
+  };
+}
+
 export function officerNewGrievanceMail(
   g: { ticket: string; category: GrievanceCategory; channel: string; receivedAt: Date; resolveDueAt: Date },
   link: string,

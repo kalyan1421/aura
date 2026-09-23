@@ -128,6 +128,8 @@ region, pool or the adjacent quadrant).
 | `403 account_closed` | the account was closed for breaking the rules ("This account was closed for breaking Aura's rules.") |
 | `409 guidelines_required` | the community guidelines in force aren't accepted yet (REQ-SAFE-04). Body: `{ "code": "guidelines_required", "message": "…", "version": 1 }` — the app shows the guidelines, calls `POST /v1/safety/guidelines/accept` (§2.4) and retries the match. Checked after `profile_required` / `rooms_suspended` / `account_closed` and before `language_pool_unavailable`; nothing is seated. If `version` is newer than the copy the app carries, the app asks for an update instead |
 | `409 language_pool_unavailable` | Hindi + Hinglish rooms aren't open yet (`feature_flags.rooms_pool_hi` off) and `allowPoolFallback` was not true → the app offers "Join English room" (retry with `allowPoolFallback: true`) / "Tell me when they open" / close (14-states) |
+| `503 rooms_paused` | the `rooms_enabled` kill switch is off (v1.md "Remote config"); nothing is seated. The app says "Rooms are resting for a bit" and hides join offers; rooms already joined keep working |
+| `403 device_banned` | this install is banned (v1.md, device bans); the app shows "This device can't use Aura" |
 | `429 room_join_limit` | 3 **new** rooms joined for this quadrant in the last 24 h. Returning to your room (step 0) is always free |
 
 Only this route is gated by the guidelines: rooms you already joined keep working after the required version

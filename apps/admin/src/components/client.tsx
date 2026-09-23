@@ -98,6 +98,13 @@ export function ActionForm({
           {state?.message ?? ''}
         </p>
       </div>
+      {state?.lines?.length ? (
+        <ul className="small result-lines">
+          {state.lines.map((l, i) => (
+            <li key={i}>{l}</li>
+          ))}
+        </ul>
+      ) : null}
     </form>
   );
 }

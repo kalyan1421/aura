@@ -924,6 +924,8 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       // F8 follow-ups: an under-18 platform-signal flag and a (sealed-looking) Sign in with Apple token, as the API
       // writes them (test/e2e/account-followups.e2e-spec.ts covers the real flows).
       await db.query(`insert into public.minor_signals (user_id, minor_until) values ($1, current_date + 1)`, [u.id]);
+      // REQ-ADM-14 (migration 20261005000017): an app install the account used (hashed id).
+      await db.query(`insert into public.device_installs (user_id, install_hash, platform) values ($1, $2, 'ios')`, [u.id, randomBytes(32).toString('hex')]);
       await db.query(`insert into public.apple_auth_tokens (user_id, client_id, wrapped_refresh_token) values ($1, 'com.akvega.aura', $2)`, [
         u.id,
         randomBytes(64).toString('base64'),

@@ -4840,6 +4840,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Has a voice note'**
   String get voice_hasVoice;
+
+  /// Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off).
+  ///
+  /// In en, this message translates to:
+  /// **'This device can\'t use Aura'**
+  String get device_bannedTitle;
+
+  /// Body under device_bannedTitle. No reason, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura isn\'t available on this phone.'**
+  String get device_bannedBody;
+
+  /// Email subject when asking for a review of a device ban. Nothing about the person or the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Review of a device'**
+  String get device_bannedReviewSubject;
+
+  /// Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are resting for a bit. Try again later.'**
+  String get rooms_paused;
+
+  /// After a check-in, when the rooms kill switch is off.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are resting for a bit. Your check-in is saved.'**
+  String get rooms_pausedJoin;
 }
 
 class _AppLocalizationsDelegate

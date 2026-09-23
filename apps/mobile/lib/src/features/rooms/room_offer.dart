@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/db/database.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../onboarding/gate_controller.dart';
@@ -91,6 +92,10 @@ class _RoomOfferButtonState extends ConsumerState<RoomOfferButton> {
         key: const ValueKey('room-offer-offline'),
         icon: Icons.cloud_off_outlined,
       );
+    }
+    // Kill switch `rooms_enabled` (remote flag; the server refuses joins too).
+    if (!ref.watch(remoteFlagsProvider).roomsEnabled) {
+      return _Note(l.rooms_paused, key: const ValueKey('room-offer-paused'));
     }
     // One node: the button's label and action plus the hint.
     return MergeSemantics(

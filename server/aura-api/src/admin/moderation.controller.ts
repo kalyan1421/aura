@@ -1,18 +1,18 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Query, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import type { Response } from 'express';
 import type { QueueItem } from '../safety/moderation.service';
-import { AdminDb } from './admin-db';
-import { auditConsole } from './admin-audit';
-import { AdminErrors } from './admin-errors';
 import { AdminGuard, AdminRoles, CurrentStaff } from './admin.guard';
 import { NoStoreInterceptor, uuidParam } from './admin-http';
 import { parse, queueQuerySchema, sanctionsQuerySchema } from './admin.schemas';
 import type { StaffUser } from './admin-types';
 import { ModerationConsoleService, type ItemView, type LaneSummary, type SanctionView, type WorkEntry } from './moderation-console.service';
+import { QueueSessionService, type QueueSessionView } from './queue-session';
 
 /**
  * Moderation routes of the console (Owner + Moderator; the analyst gets `/admin/stats` only). Actions are role-checked
- * again per action inside the service (a Moderator can't ban or unban), and every refusal is audited.
+ * again per action inside the service (a Moderator can't ban or unban), and every refusal is audited. Opening an item
+ * and acting on it is review work, which counts toward the 2-hour queue session (PRD 19); crisis and paging items are
+ * never capped. Device bans live in src/devices (`/admin/devices*`, Owner only).
  */
 @Controller('admin')
 @UseGuards(AdminGuard)
@@ -20,7 +20,7 @@ import { ModerationConsoleService, type ItemView, type LaneSummary, type Sanctio
 export class ModerationController {
   constructor(
     private readonly console: ModerationConsoleService,
-    private readonly adminDb: AdminDb,
+    private readonly queueSessions: QueueSessionService,
   ) {}
 
   @Get('work')
@@ -37,22 +37,30 @@ export class ModerationController {
 
   @Get('queue')
   @AdminRoles('owner', 'moderator')
-  queue(@Query() query: unknown): Promise<{ items: QueueItem[]; lanes: LaneSummary[]; generatedAt: string }> {
+  async queue(
+    @CurrentStaff() staff: StaffUser,
+    @Query() query: unknown,
+  ): Promise<{ items: QueueItem[]; lanes: LaneSummary[]; generatedAt: string; queueSession: QueueSessionView }> {
     const q = parse(queueQuerySchema, query);
-    return this.console.queue({ lane: q.lane, limit: q.limit });
+    const [out, queueSession] = await Promise.all([this.console.queue({ lane: q.lane, limit: q.limit }), this.queueSessions.peek(staff)]);
+    return { ...out, queueSession };
   }
 
   @Get('reports/:reportId')
   @AdminRoles('owner', 'moderator')
-  item(@CurrentStaff() staff: StaffUser, @Param('reportId') reportId: string): Promise<ItemView> {
-    return this.console.item(staff, uuidParam(reportId));
+  async item(@CurrentStaff() staff: StaffUser, @Param('reportId') reportId: string): Promise<ItemView> {
+    const id = uuidParam(reportId);
+    await this.queueSessions.gate(staff, { urgent: await this.console.isUrgent(id) });
+    return this.console.item(staff, id);
   }
 
   @Post('reports/:reportId/actions')
   @HttpCode(200)
   @AdminRoles('owner', 'moderator')
-  act(@CurrentStaff() staff: StaffUser, @Param('reportId') reportId: string, @Body() body: unknown): Promise<unknown> {
-    return this.console.act(staff, uuidParam(reportId), body);
+  async act(@CurrentStaff() staff: StaffUser, @Param('reportId') reportId: string, @Body() body: unknown): Promise<unknown> {
+    const id = uuidParam(reportId);
+    await this.queueSessions.gate(staff, { urgent: await this.console.isUrgent(id) });
+    return this.console.act(staff, id, body);
   }
 
   @Get('sanctions')
@@ -102,17 +110,5 @@ export class ModerationController {
     const out = await this.console.exportEvidence(staff, uuidParam(holdId), body);
     res.setHeader('Content-Disposition', `attachment; filename="${out.filename}"`);
     return out.bundle;
-  }
-
-  /**
-   * Device bans (Owner only in the PRD) need Apple DeviceCheck / Play Integrity, which v0 does not have yet. The route
-   * exists so the role boundary is real (REQ-ADM-02: a Moderator gets 403 and the attempt is audited); the Owner
-   * gets 501 until device attestation lands.
-   */
-  @Post('devices/:deviceId/ban')
-  @AdminRoles('owner')
-  async banDevice(@CurrentStaff() staff: StaffUser, @Param('deviceId') deviceId: string): Promise<never> {
-    await auditConsole(this.adminDb, staff.actor, { action: 'device_ban_unavailable', detail: { hasDeviceId: deviceId.length > 0 } });
-    throw AdminErrors.notImplemented('Device bans need DeviceCheck / Play Integrity, which are not built yet.');
   }
 }

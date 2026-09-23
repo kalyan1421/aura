@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import { AppConfig } from '../config/app-config';
 import type { Queryable } from '../db/db';
 import { DbService } from '../db/db.service';
@@ -7,6 +7,7 @@ import { applyUnder13PauseIfDue, insertReport } from './reports.core';
 import { CRISIS_REASON, TARGETING_MINOR_REASON, UNDER_13_REASON, type ReportReason, type ReportTargetKind } from './safety-types';
 import { invalidTarget, notFound, parseReportRequest, reportLimit } from './safety.schema';
 import { anyMinor, assertNotClosed, loadSafetyConfig } from './safety.queries';
+import { URGENT_PAGER, type UrgentPager } from './urgent-pager';
 
 export interface ReportCreated {
   reportId: string;
@@ -37,12 +38,25 @@ interface MembershipRow {
  */
 @Injectable()
 export class ReportsService {
+  /** The clock for SLA and Lantern Hour decisions (tests pin it to a moment inside or outside Lantern Hour). */
+  clock: () => Date = () => new Date();
+
   constructor(
     private readonly db: DbService,
     private readonly config: AppConfig,
+    /** The admin console's pager (AdminCoreModule); absent → the pager worker's sweep raises the page within 30 s. */
+    @Optional() @Inject(URGENT_PAGER) private readonly pager?: UrgentPager,
   ) {}
 
   async create(userId: string, body: unknown): Promise<ReportCreated> {
+    const out = await this.file(userId, body);
+    // After commit: a report that must page (L0 in Lantern Hour, L1 sexual / grooming involving a minor) reaches the
+    // Owner's phone now (REQ-ADM-05 "within 60 s"), not at the worker's next sweep.
+    if (out.pages) this.pager?.reportFiled(out.reportId);
+    return { reportId: out.reportId, showHelplines: out.showHelplines, created: out.created };
+  }
+
+  private async file(userId: string, body: unknown): Promise<ReportCreated & { pages: boolean }> {
     const req = parseReportRequest(body);
     await assertNotClosed(this.db, userId); // suspended accounts can still report ("help is never locked")
     return this.db.withTx(async (tx) => {
@@ -82,7 +96,7 @@ export class ReportsService {
           where reporter_user_id = $1 and target_ref = $2 and reason = $3 and status = 'open' and source = 'user'`,
         [userId, targetRef, req.reason],
       );
-      if (existing.rows[0]) return { reportId: existing.rows[0].id, showHelplines: req.reason === CRISIS_REASON, created: false };
+      if (existing.rows[0]) return { reportId: existing.rows[0].id, showHelplines: req.reason === CRISIS_REASON, created: false, pages: false };
 
       if (req.reason !== CRISIS_REASON) {
         const n = await tx.query<{ n: number }>(
@@ -123,6 +137,7 @@ export class ReportsService {
           involvesMinor: await anyMinor(tx, involved),
         },
         cfg,
+        this.clock(),
       );
 
       // The item hides for the reporter at once: a reported member is muted for them in this room (not for a
@@ -137,7 +152,7 @@ export class ReportsService {
       if (req.reason === UNDER_13_REASON && targetUserId) {
         await applyUnder13PauseIfDue(tx, targetUserId, created.id, cfg, this.config.masterKey);
       }
-      return { reportId: created.id, showHelplines: req.reason === CRISIS_REASON, created: true };
+      return { reportId: created.id, showHelplines: req.reason === CRISIS_REASON, created: true, pages: created.pages };
     });
   }
 

@@ -12,6 +12,7 @@ import { MediaModule } from './media/media.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProgressionModule } from './progression/progression.module';
 import { QueuesModule } from './queues/queues.module';
+import { RemoteConfigModule } from './remote-config/remote-config.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { SafetyModule } from './safety/safety.module';
 import { SyncModule } from './sync/sync.module';
@@ -35,6 +36,7 @@ import { SyncModule } from './sync/sync.module';
     RoomsModule, // F5 Mood Rooms — contracts/api/v1-rooms.md
     SafetyModule, // F9 core safety (reports, blocks, standing; internal ModerationService)
     AdminModule, // admin console v0: /admin/*, public grievance form, legal-order intake (docs/setup/admin-console.md)
+    RemoteConfigModule, // REQ-ADM-12: GET /v1/config (flags, kill switches), signed lexicon versions (docs/setup/lexicon-and-flags.md)
   ],
 })
 export class AppModule {}

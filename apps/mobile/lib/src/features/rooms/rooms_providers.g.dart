@@ -52,7 +52,7 @@ final class RoomsApiProvider
   }
 }
 
-String _$roomsApiHash() => r'817a87ed58ddcfa4afa8178e158cc8a0ee2761ca';
+String _$roomsApiHash() => r'8d9d9c48dd647963c4134ac8503897905fbbc8df';
 
 @ProviderFor(roomsRepository)
 final roomsRepositoryProvider = RoomsRepositoryProvider._();

@@ -2940,6 +2940,23 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get voice_hasVoice => 'ఒక వాయిస్ నోట్ ఉంది';
+
+  @override
+  String get device_bannedTitle => 'ఈ పరికరంలో Aura ఉపయోగించలేరు';
+
+  @override
+  String get device_bannedBody => 'ఈ ఫోన్‌లో Aura అందుబాటులో లేదు.';
+
+  @override
+  String get device_bannedReviewSubject => 'పరికరం పునఃపరిశీలన';
+
+  @override
+  String get rooms_paused =>
+      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. తర్వాత మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. మీ చెక్-ఇన్ సేవ్ అయింది.';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -5912,4 +5929,21 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get voice_hasVoice => 'Oka voice note undi';
+
+  @override
+  String get device_bannedTitle => 'Ee device lo Aura use cheyyalemu';
+
+  @override
+  String get device_bannedBody => 'Ee phone lo Aura available ledu.';
+
+  @override
+  String get device_bannedReviewSubject => 'Device review';
+
+  @override
+  String get rooms_paused =>
+      'Rooms konchem sepu rest teesukuntunnayi. Taruvaata malli try cheyandi.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'Rooms konchem sepu rest teesukuntunnayi. Mee check-in save ayyindi.';
 }

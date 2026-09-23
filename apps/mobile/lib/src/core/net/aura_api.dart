@@ -49,6 +49,14 @@ class ApiException implements Exception {
 
   static const String accountClosedCode = 'account_closed';
 
+  /// `403 device_banned`: this phone's install id is banned (PRD 19
+  /// REQ-ADM-14; contracts/api/v1.md "Device bans"). Never retried; the app
+  /// shows the calm "This device can't use Aura" screen
+  /// (core/remote_config/device_ban.dart).
+  bool get isDeviceBanned => status == 403 && code == deviceBannedCode;
+
+  static const String deviceBannedCode = 'device_banned';
+
   @override
   String toString() => 'ApiException($status, $code)';
 }
@@ -94,6 +102,8 @@ class AuraApi {
     Dio? mediaDio,
     this._supabaseUrl,
     this._onAccountClosed,
+    this._deviceHeaders,
+    this._onDeviceBanned,
   }) : _dio =
            dio ??
            Dio(
@@ -128,6 +138,23 @@ class AuraApi {
   /// got it ([ApiException.isAccountClosed]).
   final void Function()? _onAccountClosed;
 
+  /// This install's id headers (`X-Aura-Install`, `X-Aura-Platform`; see
+  /// core/remote_config/install_id.dart), sent only on the calls that decide
+  /// whether this phone may use Aura: the profile (sign-in / onboarding) and
+  /// push registration. Never logged.
+  final Future<Map<String, String>> Function()? _deviceHeaders;
+
+  /// Told (in a microtask) about every `403 device_banned`
+  /// ([ApiException.isDeviceBanned]).
+  final void Function()? _onDeviceBanned;
+
+  /// [_auth] plus the install headers.
+  Future<Options> _authWithDevice() async {
+    final options = await _auth();
+    final extra = await _deviceHeaders?.call() ?? const <String, String>{};
+    return options.copyWith(headers: {...?options.headers, ...extra});
+  }
+
   Future<Options> _auth() async {
     final token = await _accessToken();
     if (token == null) {
@@ -141,7 +168,7 @@ class AuraApi {
       final res = await _dio.post<Map<String, dynamic>>(
         '/v1/profile',
         data: body.toJson(),
-        options: await _auth(),
+        options: await _authWithDevice(),
       );
       final snap = res.data?['snapshot'];
       return ProfileSaved(
@@ -210,7 +237,7 @@ class AuraApi {
       await _dio.put<void>(
         '/v1/devices',
         data: {'token': token, 'platform': platform},
-        options: await _auth(),
+        options: await _authWithDevice(),
       );
     } on DioException catch (e) {
       throw _map(e);
@@ -415,6 +442,16 @@ class AuraApi {
         ? data['code'] as String
         : 'http_${res.statusCode}';
     final ex = ApiException(code: code, status: res.statusCode);
+    final onBanned = _onDeviceBanned;
+    if (onBanned != null && ex.isDeviceBanned) {
+      scheduleMicrotask(() {
+        try {
+          onBanned();
+        } on Object catch (e) {
+          debugPrint('api: device banned hook ${e.runtimeType}');
+        }
+      });
+    }
     final onClosed = _onAccountClosed;
     if (onClosed != null && ex.isAccountClosed) {
       // Outside the caller's error path: a UI hiccup never changes the error.

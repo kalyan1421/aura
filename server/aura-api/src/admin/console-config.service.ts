@@ -32,9 +32,18 @@ export class ConsoleConfigService {
     private readonly moderation: ModerationService,
   ) {}
 
-  async get(): Promise<{ flags: Array<{ key: string; enabled: boolean }>; matching: Record<string, unknown>; safety: Record<string, unknown> }> {
+  async get(): Promise<{
+    flags: Array<{ key: string; enabled: boolean; description: string | null; updatedAt: string | null }>;
+    matching: Record<string, unknown>;
+    safety: Record<string, unknown>;
+  }> {
     return this.adminDb.withTx(async (tx) => {
-      const flags = await tx.query<{ key: string; enabled: boolean }>('select key, enabled from public.feature_flags order by key');
+      // `description` / `updated_at` arrive with the remote-config migration (20261005000017); read through to_jsonb so
+      // this works with or without them.
+      const flags = await tx.query<{ key: string; enabled: boolean; description: string | null; updatedAt: string | null }>(
+        `select f.key, f.enabled, to_jsonb(f) ->> 'description' as description, to_jsonb(f) ->> 'updated_at' as "updatedAt"
+           from public.feature_flags f order by f.key`,
+      );
       const matching = (await tx.query<Record<string, unknown>>('select * from public.matching_config where id')).rows[0] ?? {};
       const safety = (await tx.query<Record<string, unknown>>('select * from public.safety_config where id')).rows[0] ?? {};
       delete matching.id;

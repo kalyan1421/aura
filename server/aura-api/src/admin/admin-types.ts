@@ -8,6 +8,9 @@ export const isStaffRole = (v: unknown): v is StaffRole => typeof v === 'string'
 /** Where the staff member is in the two-factor flow (Supabase MFA, TOTP). */
 export type MfaState = 'verified' | 'challenge' | 'enroll';
 
+/** How the session's first factor happened: SSO (Google Workspace) or the development email sign-in (REQ-ADM-01). */
+export type FirstFactor = 'sso' | 'dev';
+
 /** A verified console caller (AdminGuard). Staff accounts are Supabase Auth users that are not app accounts. */
 export interface StaffUser {
   id: string;
@@ -19,6 +22,8 @@ export interface StaffUser {
   /** When the guard stops accepting this session (sign-in + ADMIN_SESSION_MAX_HOURS). */
   sessionExpiresAt: string;
   mfa: MfaState;
+  /** Set by AdminGuard: `sso` (Google Workspace) or `dev` (the email sign-in, development only). */
+  firstFactor?: FirstFactor;
   /** The audit actor for this person: `staff:<auth user id>`. */
   actor: string;
 }

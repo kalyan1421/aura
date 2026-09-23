@@ -96,6 +96,44 @@ export const GRIEVANCE_LABEL: Record<string, string> = {
   moderation_appeal: 'Moderation appeal',
 };
 
+export const DELETION_STATUS_LABEL: Record<string, string> = {
+  awaiting_verification: 'Waiting for the account holder',
+  verified: 'Confirmed by the account holder',
+  declined: 'Declined by the account holder',
+  deletion_scheduled: 'Deletion started',
+  completed: 'Deleted',
+  closed: 'Closed',
+  no_account: 'No app account for that email',
+  staff_account: 'Staff account (refused)',
+};
+
+export const CLOSE_OUTCOME_LABEL: Record<string, string> = {
+  withdrawn: 'Withdrawn by the requester',
+  unverified: 'Never confirmed',
+  duplicate: 'Duplicate request',
+  declined_by_holder: '“This wasn’t me”',
+  restored_by_holder: 'Account holder kept the account',
+  no_account: 'No app account',
+  staff_account: 'Staff account',
+  account_gone: 'Account already deleted',
+  other: 'Other',
+};
+
+export const IMMEDIATE_REASON_LABEL: Record<string, string> = {
+  requester_asked_immediate: 'The account holder asked for deletion without the 7-day grace period',
+  under_13_confirmed: 'Under 13 confirmed (delete without the grace period)',
+  legal_requirement: 'A legal requirement',
+};
+
+export const ROLE_LABEL: Record<string, string> = { owner: 'Owner', moderator: 'Moderator', analyst: 'Read-only analyst' };
+
+/** "1 h 20 min left in this queue session" / "Queue session limit reached — back at 9:40 pm IST". */
+export function queueSessionText(q: { active: boolean; capped: boolean; minutesLeft: number; breakUntil: string | null } | null | undefined): string | null {
+  if (!q || !q.active) return null;
+  if (q.capped) return `Queue session limit reached — non-urgent items open again at ${ist(q.breakUntil)}`;
+  return `${durationText(q.minutesLeft)} left in this queue session`;
+}
+
 export const PAGE_KIND_LABEL: Record<string, string> = {
   legal_order: 'Legal order',
   grievance: 'Grievance',
@@ -106,4 +144,37 @@ export const PAGE_KIND_LABEL: Record<string, string> = {
 export function label(map: Record<string, string>, key: string | null | undefined): string {
   if (!key) return '—';
   return map[key] ?? key.replace(/_/g, ' ');
+}
+
+/** "Test on samples" verdicts of the crisis lexicon (what the app would do with that text). */
+export const VERDICT_LABEL: Record<string, string> = {
+  crisis: 'crisis — the full support sheet',
+  soft: 'soft — the “Help is here” card',
+  none: 'none — nothing shown',
+};
+
+export const LEXICON_ACTION_LABEL: Record<string, string> = {
+  lexicon_upload: 'Stored',
+  lexicon_publish: 'Published',
+  lexicon_rollback: 'Rolled back',
+};
+
+/**
+ * A refusal's `details` as short lines for a form (lexicon problems, failed vectors). Strings stay as they are;
+ * objects become `key: value` pairs; at most `max` lines.
+ */
+export function refusalLines(details: unknown, max = 30): string[] {
+  if (!Array.isArray(details)) return [];
+  const lines = details.slice(0, max).map((d) => {
+    if (typeof d === 'string') return d;
+    if (d && typeof d === 'object') {
+      return Object.entries(d as Record<string, unknown>)
+        .filter(([, v]) => v !== undefined && v !== null && v !== '')
+        .map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : String(v)}`)
+        .join(' · ');
+    }
+    return String(d);
+  });
+  if (details.length > max) lines.push(`…and ${details.length - max} more`);
+  return lines;
 }

@@ -4,8 +4,9 @@
 
 | File | What |
 |---|---|
-| `crisis_lexicon.v1.json` | The on-device crisis lexicon (PRD F9 "L1"), versioned. Source of truth for the app and, later, the NestJS worker. |
-| `crisis_lexicon.vectors.json` | Text → verdict cases every matcher must pass (Dart now, TypeScript later). |
+| `crisis_lexicon.v1.json` | The on-device crisis lexicon (PRD F9 "L1"), versioned. The reviewed baseline every app build bundles, and what NestJS checks new versions against. |
+| `crisis_lexicon.vectors.json` | Text → verdict cases every matcher must pass: the app's Dart matcher and NestJS's TypeScript one (`server/aura-api/src/remote-config/lexicon/`), and every signed version before it is published. |
+| `fixtures/crisis_lexicon.v1.dev-signed.json` | The baseline as a signed bundle, signed by the server tooling with the public **development** key. Both stacks' tests verify it (a cross-implementation check of the envelope). |
 
 ## Crisis lexicon (F9 L1)
 
@@ -46,9 +47,18 @@ Runs on the phone over notes, custom habit names and (later) reflections and cap
 
 ### Changing the lexicon
 
+Two ways, for two purposes:
+
+**A. The bundled baseline (needs an app release).**
 1. Edit `crisis_lexicon.v1.json` (bump `version` for any change that ships; keep ids stable) and add cases to `crisis_lexicon.vectors.json`.
-2. Regenerate the app's bundled copy: `cd apps/mobile && python3 tool/gen_lexicon.py` (writes `lib/src/features/support/crisis_lexicon_data.dart`; `--check` fails when it is stale).
-3. `flutter test test/lexicon_*` must pass (the tests read this directory: generated copy in sync, every vector).
+2. Regenerate the copies: `cd apps/mobile && python3 tool/gen_lexicon.py` — writes the app's `lib/src/features/support/crisis_lexicon_data.dart` **and** the server's `server/aura-api/src/remote-config/lexicon/lexicon-contract.data.ts` (same Unicode tables, the baseline, the vectors); `--check` fails when either is stale.
+3. `flutter test test/lexicon_*` and `pnpm test` (server) must pass (both read this directory: generated copies in sync, every vector). Re-sign the fixture: `cd server/aura-api && pnpm lexicon sign ../../contracts/safety/crisis_lexicon.v1.json --dev --seq 1 --out ../../contracts/safety/fixtures/crisis_lexicon.v1.dev-signed.json`.
 4. Removing a crisis term needs the owner's sign-off (PRD 19, admin console rules) and a note in the review log.
 
-Later (PRD 18 "Moderation lexicons"): the same data ships as a signed bundle from the admin console without an app release; this file stays the reviewed baseline.
+**B. A signed version (no app release; PRD 19 REQ-ADM-12 "signed and reversible").** Through the admin console (NestJS `/admin/lexicons/crisis*`, Owner; contracts/api/v1.md "Crisis lexicon versions"):
+1. **Upload** a version in this schema with its own test cases. NestJS refuses it unless it follows the rules above, **every case in `crisis_lexicon.vectors.json` plus its own cases pass**, and en / te / te-Latn each keep a crisis entry. Stored versions never change.
+2. **Test on samples** (verdicts only; nothing kept).
+3. **Publish**: NestJS signs `{kind, seq, issuedAt, version, content, vectors}` with Ed25519 (`LEXICON_SIGNING_KEY`, server-only). **Roll back** = publish an older stored version: a new signature with a higher `seq`. Dropping crisis forms that phones use now needs an explicit `allowCrisisRemovals` (Owner). Every step is in the hash-chained audit log.
+4. Phones download it on start / resume / sync, verify the signature with the public key they embed, refuse an older `seq` (replay), re-run the bundle's vectors with **their own** matcher, and only then use it — else they keep the last verified version, else the bundled v1.
+
+Signed envelope (`aura.signed-bundle.v1`): `{ format, keyId, payload: base64(canonical JSON bytes), signature: base64(Ed25519("aura.signed-bundle.v1\n" ‖ payload bytes)) }`; `keyId` = hex of the first 8 bytes of SHA-256 of the raw 32-byte public key. The development key (`keyId ba9afcf9c1f7ab25`, public key `c8HcqQhqAfZ/Q0f+tf7I7n7meei0mzldCIbFYLYSfko=`) is derived from a published string: it is **not a secret**, production APIs refuse it and release builds don't trust it. Key management: docs/setup/lexicon-and-flags.md.

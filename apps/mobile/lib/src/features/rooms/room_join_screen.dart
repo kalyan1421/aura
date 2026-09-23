@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
@@ -156,6 +158,26 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
   Future<void> _match({bool poolFallback = false}) async {
     final request = widget.request;
     if (!mounted || request == null) return;
+    // Remote flags (PRD 19 REQ-ADM-12): what the server has switched off is
+    // known here already, so no call is made (the server refuses it anyway).
+    final flags = ref.read(remoteFlagsProvider);
+    if (!flags.roomsEnabled) {
+      setState(() {
+        _phase = _Phase.failed;
+        _failure = const RoomsFailure(RoomsFailureKind.paused);
+      });
+      return;
+    }
+    final tag = ref.read(localeControllerProvider);
+    if (!poolFallback &&
+        !flags.roomsPoolHi &&
+        (tag == 'hi' || tag == 'hi-Latn')) {
+      setState(() {
+        _phase = _Phase.pool;
+        _failure = null;
+      });
+      return;
+    }
     setState(() {
       _phase = _Phase.matching;
       _failure = null;

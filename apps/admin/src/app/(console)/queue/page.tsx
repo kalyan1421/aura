@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { AutoRefresh, ListKeys, SlaTimer } from '@/components/client';
 import { Badge, Empty, Hash, LaneBadge, PageHead, When } from '@/components/ui';
 import { apiGet } from '@/lib/api';
-import { LANE_LABEL, REASON_LABEL, label } from '@/lib/format';
-import type { Lane, LaneSummary, QueueItem } from '@/lib/types';
+import { LANE_LABEL, REASON_LABEL, label, queueSessionText } from '@/lib/format';
+import type { Lane, LaneSummary, QueueItem, QueueSessionView } from '@/lib/types';
 
 export const metadata: Metadata = { title: 'Queue' };
 
@@ -14,8 +14,11 @@ const LANES: Lane[] = ['crisis', 'minors_grooming', 'harassment', 'spam'];
 export default async function QueuePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const sp = await searchParams;
   const lane = typeof sp.lane === 'string' && (LANES as string[]).includes(sp.lane) ? (sp.lane as Lane) : undefined;
-  const q = await apiGet<{ items: QueueItem[]; lanes: LaneSummary[]; generatedAt: string }>(`/admin/queue?limit=300${lane ? `&lane=${lane}` : ''}`);
+  const q = await apiGet<{ items: QueueItem[]; lanes: LaneSummary[]; generatedAt: string; queueSession?: QueueSessionView }>(
+    `/admin/queue?limit=300${lane ? `&lane=${lane}` : ''}`,
+  );
   const total = q.lanes.reduce((n, l) => n + l.open, 0);
+  const session = queueSessionText(q.queueSession);
 
   return (
     <>
@@ -24,6 +27,12 @@ export default async function QueuePage({ searchParams }: { searchParams: Promis
           Updated <When iso={q.generatedAt} /> · j / k to move, Enter to open
         </span>
       </PageHead>
+      {session ? (
+        <p className={q.queueSession?.capped ? 'callout danger' : 'callout'} role="status">
+          {session}
+          {q.queueSession?.capped ? ' Crisis and paging items (marked “Pages”) stay open to you.' : ' (PRD: queue sessions are capped at 2 h; a 15-minute break resets it.)'}
+        </p>
+      ) : null}
       <AutoRefresh seconds={60} />
       <ListKeys />
       <nav aria-label="Lanes" className="row tabs">

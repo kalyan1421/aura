@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AppConfig } from '../config/app-config';
 import type { Queryable } from '../db/db';
 import { subjectHash } from '../safety/audit';
-import { ModerationError, ModerationService, type ModerationActionKind, type QueueItem } from '../safety/moderation.service';
+import { ModerationError, ModerationService, type ActResult, type ModerationActionKind, type QueueItem } from '../safety/moderation.service';
 import { ACTIVE_SANCTION_SQL, LANE_PRIORITY, LANES, REPORT_REASONS, type Lane, type ReportReason } from '../safety/safety-types';
 import { auditConsole } from './admin-audit';
 import { AdminDb } from './admin-db';
@@ -150,6 +150,15 @@ export class ModerationConsoleService {
 
   private hash(userId: string): string {
     return subjectHash(this.app.masterKey, userId);
+  }
+
+  /**
+   * Urgent review work is never capped by the 2-hour queue session (PRD 19): the crisis lane and anything that pages.
+   * An unknown id counts as urgent (the item route answers 404 right after).
+   */
+  async isUrgent(reportId: string): Promise<boolean> {
+    const r = (await this.adminDb.query<{ lane: Lane; pages: boolean }>('select lane, pages from public.reports where id = $1', [reportId])).rows[0];
+    return !r || r.lane === 'crisis' || r.pages;
   }
 
   // ------------------------------------------------------------------------------------------------ queue
@@ -432,11 +441,7 @@ export class ModerationConsoleService {
   }
 
   // ------------------------------------------------------------------------------------------------ actions
-  async act(
-    staff: StaffUser,
-    reportId: string,
-    body: unknown,
-  ): Promise<{ reportId: string; status: string; sanctionId: string | null; strikeId: string | null; activeStrikes: number | null; mandatoryReport: { evidenceHoldId: string } | null }> {
+  async act(staff: StaffUser, reportId: string, body: unknown): Promise<ActResult & { mandatoryReport: { evidenceHoldId: string } | null }> {
     const b = parse(actionSchema, body);
     const tooLong = staff.role === 'moderator' && b.action === 'shadow_mute' && (b.hours ?? MODERATOR_MAX_SHADOW_MUTE_H) > MODERATOR_MAX_SHADOW_MUTE_H;
     if (!ACTION_ROLES[b.action].includes(staff.role) || tooLong) {

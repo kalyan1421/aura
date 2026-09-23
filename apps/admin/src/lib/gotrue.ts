@@ -2,8 +2,9 @@ import { env } from './env';
 
 /**
  * Supabase Auth (GoTrue) calls for the staff member's own session, made by the Next.js server only.
- * First factor: an email one-time code (no sign-up: `create_user: false`). Second factor: TOTP via Supabase MFA
- * (AAL2). Google Workspace SSO is the PRD's target first factor and comes later (docs/setup/admin-console.md).
+ * First factor (REQ-ADM-01): Google Workspace SSO through Supabase's Google provider with PKCE (`exchangePkce`), or —
+ * development only — an email one-time code (no sign-up: `create_user: false`). Second factor: TOTP via Supabase MFA
+ * (AAL2). The NestJS guard re-checks both on every request (docs/setup/admin-console.md).
  */
 export interface Tokens {
   access_token: string;
@@ -57,6 +58,12 @@ export async function sendEmailCode(email: string): Promise<'sent' | 'rate_limit
 
 export async function verifyEmailCode(email: string, code: string): Promise<Tokens | null> {
   const r = await call('/verify', { body: { type: 'email', email, token: code } });
+  return r.ok ? tokens(r.json) : null;
+}
+
+/** SSO callback: the one-time auth code from Supabase + the PKCE verifier this browser started with → a session. */
+export async function exchangePkce(authCode: string, codeVerifier: string): Promise<Tokens | null> {
+  const r = await call('/token?grant_type=pkce', { body: { auth_code: authCode, code_verifier: codeVerifier } });
   return r.ok ? tokens(r.json) : null;
 }
 

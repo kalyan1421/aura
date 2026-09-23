@@ -6,11 +6,20 @@
 /// Telugu and Tenglish now; Hindi and Hinglish are empty until beta), bundled
 /// as `crisis_lexicon_data.dart` by `tool/gen_lexicon.py`. The matching rules
 /// are part of that contract (`contracts/safety/README.md`) so the NestJS
-/// worker can later give the same answers; `crisis_lexicon.vectors.json`
-/// holds the cases both must pass.
+/// matcher gives the same answers; `crisis_lexicon.vectors.json` holds the
+/// cases both must pass.
+///
+/// Newer versions arrive as signed bundles without an app release (PRD 19
+/// REQ-ADM-12, `core/remote_config/remote_lexicon.dart`): only a bundle whose
+/// Ed25519 signature checks out and whose own vectors pass here is
+/// [CrisisLexicon.activate]d; otherwise the last verified one stays, else the
+/// bundled v1. [noteNeedsSupport] and [lexiconVerdict] always use the active
+/// one.
 ///
 /// NEEDS NATIVE + SAFE-MESSAGING REVIEW (A9) before alpha.
 library;
+
+import 'package:flutter/foundation.dart';
 
 import 'crisis_lexicon_data.dart';
 
@@ -33,13 +42,22 @@ enum LexiconVerdict {
 bool noteNeedsSupport(String note) =>
     lexiconVerdict(note) == LexiconVerdict.crisis;
 
-/// The lexicon's verdict for [text] (see [LexiconVerdict]).
+/// The lexicon's verdict for [text] (see [LexiconVerdict]), with the active
+/// version ([CrisisLexicon.active]).
 LexiconVerdict lexiconVerdict(String text) =>
-    CrisisLexicon.bundled.verdict(text);
+    CrisisLexicon.active.verdict(text);
 
-/// The bundled lexicon, compiled once on first use.
+/// Where the active lexicon came from.
+enum LexiconSource { bundled, remote }
+
+/// A compiled lexicon: the bundled one, compiled once on first use, or a
+/// verified remote version ([CrisisLexicon.fromEntries]).
 class CrisisLexicon {
-  CrisisLexicon._(Iterable<CrisisLexiconEntry> entries) {
+  CrisisLexicon._(
+    Iterable<CrisisLexiconEntry> entries, {
+    required this.version,
+    required this.source,
+  }) {
     for (final e in entries) {
       final soft = e.kind == 'soft';
       for (final form in e.forms) {
@@ -63,7 +81,38 @@ class CrisisLexicon {
   }
 
   /// Compiled from `crisis_lexicon_data.dart`.
-  static final CrisisLexicon bundled = CrisisLexicon._(crisisLexiconEntries);
+  static final CrisisLexicon bundled = CrisisLexicon._(
+    crisisLexiconEntries,
+    version: crisisLexiconVersion,
+    source: LexiconSource.bundled,
+  );
+
+  /// A version that arrived as a signed bundle. Call only with entries that
+  /// passed the contract checks (`remote_lexicon.dart` does both the
+  /// signature and the checks before it gets here).
+  factory CrisisLexicon.fromEntries(
+    Iterable<CrisisLexiconEntry> entries, {
+    required int version,
+  }) =>
+      CrisisLexicon._(entries, version: version, source: LexiconSource.remote);
+
+  /// The lexicon version (the JSON's `version`).
+  final int version;
+  final LexiconSource source;
+
+  static CrisisLexicon? _active;
+
+  /// What [noteNeedsSupport] and [lexiconVerdict] use: the last verified
+  /// remote version, else the bundled one.
+  static CrisisLexicon get active => _active ?? bundled;
+
+  /// Makes a verified remote version the active one (in memory; the verified
+  /// bundle itself is kept by the remote config store for the next start).
+  static void activate(CrisisLexicon lexicon) => _active = lexicon;
+
+  /// Back to the bundled lexicon (tests).
+  @visibleForTesting
+  static void resetToBundled() => _active = null;
 
   /// Word forms by their first word (the whole form when [_Form.stem] is
   /// false or the form has more than one word).

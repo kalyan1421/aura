@@ -6,6 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../../core/env/env.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/device_ban.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../account/account_providers.dart';
 import '../auth/account_closed.dart';
 import '../onboarding/gate_controller.dart';
@@ -25,7 +27,16 @@ Duration? noRoomsRetry(int retryCount, Object error) => null;
 RoomsApi? roomsApi(Ref ref) {
   if (!Env.hasApi) return null;
   final auth = ref.watch(authRepositoryProvider);
-  return HttpRoomsApi(baseUrl: Env.apiUrl, accessToken: auth.accessToken);
+  return HttpRoomsApi(
+    baseUrl: Env.apiUrl,
+    accessToken: auth.accessToken,
+    // Device bans (REQ-ADM-14): the install id on the match; 403
+    // device_banned → the app-wide screen.
+    deviceHeaders: ref.watch(installIdProvider).headers,
+    onDeviceBanned: () {
+      if (ref.mounted) ref.read(deviceBannedProvider.notifier).report();
+    },
+  );
 }
 
 @Riverpod(keepAlive: true)

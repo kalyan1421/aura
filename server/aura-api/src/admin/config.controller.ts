@@ -2,15 +2,19 @@ import { Body, Controller, Get, HttpCode, Param, Post, Query, UseGuards, UseInte
 import { AdminGuard, AdminRoles, CurrentStaff } from './admin.guard';
 import { NoStoreInterceptor } from './admin-http';
 import type { StaffUser } from './admin-types';
+import { AuditExportService, type AuditExportResult, type AuditExportStatus } from './audit-export';
 import { ConsoleConfigService, type AuditView } from './console-config.service';
 
-/** Kill switches (feature flags) and the audit log — Owner only (PRD 19 Roles: config, flags). */
+/** Kill switches (feature flags), the audit log and its export — Owner only (PRD 19 Roles: config, flags). */
 @Controller('admin')
 @UseGuards(AdminGuard)
 @UseInterceptors(NoStoreInterceptor)
 @AdminRoles('owner')
 export class ConfigController {
-  constructor(private readonly config: ConsoleConfigService) {}
+  constructor(
+    private readonly config: ConsoleConfigService,
+    private readonly exports: AuditExportService,
+  ) {}
 
   @Get('config')
   get(): ReturnType<ConsoleConfigService['get']> {
@@ -31,5 +35,18 @@ export class ConfigController {
   @Get('audit/verify')
   verify(): Promise<{ ok: boolean; checkedAt: string }> {
     return this.config.verifyChain();
+  }
+
+  /** The nightly export's configuration and its latest runs (PRD 19 "exported nightly"). */
+  @Get('audit/exports')
+  exportStatus(): Promise<AuditExportStatus> {
+    return this.exports.status();
+  }
+
+  /** Export now (everything since the last export) to the configured destinations; audited like the nightly run. */
+  @Post('audit/exports')
+  @HttpCode(200)
+  exportNow(@CurrentStaff() staff: StaffUser): Promise<AuditExportResult> {
+    return this.exports.run('manual', staff.actor);
   }
 }

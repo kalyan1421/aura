@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:aura_domain/aura_domain.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 import '../../core/net/aura_api.dart' show ApiException;
 import 'room_models.dart';
@@ -95,22 +98,34 @@ abstract interface class RoomsApi {
 /// [RoomsApi] over Dio, with the same auth, timeouts and error mapping as
 /// `AuraApi` (core/net/aura_api.dart).
 class HttpRoomsApi implements RoomsApi {
-  HttpRoomsApi({required String baseUrl, required this._accessToken, Dio? dio})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
-              baseUrl: baseUrl,
-              connectTimeout: const Duration(seconds: 6),
-              sendTimeout: const Duration(seconds: 10),
-              receiveTimeout: const Duration(seconds: 12),
-              contentType: Headers.jsonContentType,
-              responseType: ResponseType.json,
-            ),
-          );
+  HttpRoomsApi({
+    required String baseUrl,
+    required this._accessToken,
+    Dio? dio,
+    this._deviceHeaders,
+    this._onDeviceBanned,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               baseUrl: baseUrl,
+               connectTimeout: const Duration(seconds: 6),
+               sendTimeout: const Duration(seconds: 10),
+               receiveTimeout: const Duration(seconds: 12),
+               contentType: Headers.jsonContentType,
+               responseType: ResponseType.json,
+             ),
+           );
 
   final Dio _dio;
   final Future<String?> Function() _accessToken;
+
+  /// This install's id headers, sent on the match only (device bans, PRD 19
+  /// REQ-ADM-14; core/remote_config/install_id.dart).
+  final Future<Map<String, String>> Function()? _deviceHeaders;
+
+  /// `403 device_banned` from any rooms call: the app-wide screen.
+  final void Function()? _onDeviceBanned;
 
   Future<Options> _auth() async {
     final token = await _accessToken();
@@ -139,15 +154,38 @@ class HttpRoomsApi implements RoomsApi {
       final res = await send();
       return res.data ?? const {};
     } on DioException catch (e) {
-      throw _map(e);
+      final ex = _map(e);
+      final onBanned = _onDeviceBanned;
+      if (onBanned != null && ex.isDeviceBanned) {
+        // Outside the caller's error path, like AuraApi's hooks.
+        scheduleMicrotask(() {
+          try {
+            onBanned();
+          } on Object catch (e) {
+            debugPrint('rooms: device banned hook ${e.runtimeType}');
+          }
+        });
+      }
+      throw ex;
     }
   }
 
   static String _id(String id) => Uri.encodeComponent(id);
 
   @override
-  Future<MatchResult> match(MatchRequest request) async =>
-      MatchResult.fromJson(await _post('/v1/rooms/match', request.toJson()));
+  Future<MatchResult> match(MatchRequest request) async {
+    final device = await _deviceHeaders?.call() ?? const <String, String>{};
+    return MatchResult.fromJson(
+      await _call(() async {
+        final auth = await _auth();
+        return _dio.post<Map<String, dynamic>>(
+          '/v1/rooms/match',
+          data: request.toJson(),
+          options: auth.copyWith(headers: {...?auth.headers, ...device}),
+        );
+      }),
+    );
+  }
 
   @override
   Future<List<RoomSummary>> rooms() async {

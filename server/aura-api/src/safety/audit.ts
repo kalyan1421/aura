@@ -89,9 +89,11 @@ export async function readAudit(q: Queryable, opts: { limit?: number; beforeId?:
 /** Recomputes the chain in SQL (same formula as the insert trigger); true when every link and hash holds. */
 export async function verifyAuditChain(q: Queryable): Promise<boolean> {
   // After the retention job pruned the oldest rows (src/queues/retention.ts), the oldest remaining row links to the
-  // last pruned row, whose hash `moderation_audit_anchor` keeps (migration 20261005000014).
+  // last pruned row, whose hash `moderation_audit_anchor` keeps (migration 20261005000014). Read through
+  // `admin_audit_anchor()` (migration 20261005000016) so the console can run this as aura_admin, which has no grant on
+  // the anchor table itself.
   const r = await q.query<{ ok: boolean | null }>(
-    `with anchor as (select x.last_pruned_hash from public.moderation_audit_anchor x where x.id),
+    `with anchor as (select x.last_pruned_hash from public.admin_audit_anchor() x),
      ordered as (
        select a.*, coalesce(lag(a.row_hash) over (order by a.id), (select last_pruned_hash from anchor)) as expected_prev
          from public.moderation_actions a)
@@ -103,6 +105,30 @@ export async function verifyAuditChain(q: Queryable): Promise<boolean> {
                 coalesce(report_id::text, '') || '|' || coalesce(subject_hash, '') || '|' || coalesce(reason_code, '') || '|' ||
                 detail::text, 'UTF8')), 'hex')) as ok
        from ordered`,
+  );
+  return r.rows[0]?.ok ?? true;
+}
+
+/**
+ * The chain check for one id range (the nightly export): every row's hash recomputes, each row links to the one before
+ * it, and the first row links to whatever precedes the range (the previous row, or the retention anchor).
+ */
+export async function verifyAuditRange(q: Queryable, fromId: number, toId: number): Promise<boolean> {
+  const r = await q.query<{ ok: boolean | null }>(
+    `with before as (select coalesce((select a.row_hash from public.moderation_actions a where a.id < $1 order by a.id desc limit 1),
+                                     (select x.last_pruned_hash from public.admin_audit_anchor() x)) as h),
+     seg as (
+       select a.*, coalesce(lag(a.row_hash) over (order by a.id), (select h from before)) as expected_prev
+         from public.moderation_actions a where a.id between $1 and $2)
+     select bool_and(
+              prev_hash is not distinct from expected_prev
+              and row_hash = encode(sha256(convert_to(
+                coalesce(prev_hash, '') || '|' || id::text || '|' ||
+                to_char(created_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US') || '|' || actor || '|' || action || '|' ||
+                coalesce(report_id::text, '') || '|' || coalesce(subject_hash, '') || '|' || coalesce(reason_code, '') || '|' ||
+                detail::text, 'UTF8')), 'hex')) as ok
+       from seg`,
+    [fromId, toId],
   );
   return r.rows[0]?.ok ?? true;
 }

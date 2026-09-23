@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, UseFilters } from '@nestjs/common';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { AuthUser } from '../auth/jwt-verifier';
+import { KillSwitch, ROOMS_KILL_SWITCH } from '../remote-config/kill-switch';
 import { GuidelinesRequiredFilter } from '../safety/guidelines';
 import { GesturesService, type GestureAccepted } from './gestures.service';
 import type { Counts, RoomDetail, RoomInfo, RoomSummary } from './room-views';
@@ -23,6 +24,7 @@ export class RoomsController {
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
   @UseFilters(GuidelinesRequiredFilter)
+  @KillSwitch(ROOMS_KILL_SWITCH) // flag `rooms_enabled` off → 503 rooms_paused (src/remote-config/kill-switch.ts)
   match(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<MatchResponse> {
     return this.rooms.match(user.id, body);
   }

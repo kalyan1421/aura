@@ -1095,7 +1095,7 @@ final class AuraApiProvider
   }
 }
 
-String _$auraApiHash() => r'21c8fd1b808645151de3664b9ba440afb02b8a92';
+String _$auraApiHash() => r'e7caffebe76bd91dcac9a7872bdddd29bfddc7fb';
 
 @ProviderFor(syncController)
 final syncControllerProvider = SyncControllerProvider._();
