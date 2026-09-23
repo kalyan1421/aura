@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -40,20 +41,32 @@ int checkInsToday(Ref ref) {
       .length;
 }
 
-/// Room kept below the avatar for the stats, history line, glow card,
-/// habits title and first habit row, so they sit above the check-in bar
-/// without scrolling on small phones (375×667, 1.0 text).
-const double homeFoldReserve = 380;
+/// The avatar never grows past this, however much room is left.
+const double homeAvatarMax = 340;
 
-/// The avatar's height for a scroll viewport [available] dp tall: ≈ 40% of
-/// it, but never eating into [homeFoldReserve], within 140–340 dp. Common
-/// phones (390×844) keep the full 40%; short ones (375×667) get a smaller
-/// avatar so the first habits stay above the fold.
-double homeAvatarHeight(double available) =>
-    math.min(available * 0.40, available - homeFoldReserve).clamp(140.0, 340.0);
+/// The smallest avatar on common phones (390×844, 402×874 and taller):
+/// when the content below needs more room than that leaves, Home scrolls
+/// instead of the hero shrinking further.
+const double homeAvatarFloor = 180;
+
+/// The smallest avatar on short screens (< 700 dp tall, e.g. 375×667),
+/// where at least the first habit row still sits above the fold.
+const double homeAvatarFloorCompact = 140;
+
+/// The avatar's height in a scroll viewport [viewport] dp tall when the
+/// content under it (status line, stats, history line, glow card, habits)
+/// needs [below] dp: everything that is left above the check-in bar, never
+/// under [floor] (then Home scrolls) nor over [homeAvatarMax]. No extra gap
+/// above the bar: the last chip row's 48 dp tap targets already keep its
+/// pills clear of it.
+double homeAvatarHeight({
+  required double viewport,
+  required double below,
+  double floor = homeAvatarFloor,
+}) => (viewport - below).clamp(floor, homeAvatarMax);
 
 /// Screens shorter than this (iPhone SE, small Android phones) get tighter
-/// spacing and a slimmer check-in bar.
+/// spacing, a slimmer check-in bar and the smaller avatar floor.
 const double _shortScreen = 700;
 
 /// Painter aspect (width / height) the avatar art was composed for.
@@ -64,11 +77,13 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
     final view = ref.watch(progressViewProvider);
     final moment = ref.watch(momentsControllerProvider);
     final hue = glowColorForHue(view.avatar.hue);
     // A scheduled account deletion (sync saw `account_deletion_pending`):
     // "Keep my account?" right on Home, first in the scroll (REQ-ACC-11).
+    // It sits above the fitted hero, so Home scrolls while it shows.
     final deletionHeld = ref.watch(deletionHoldProvider) != null;
     final compact = MediaQuery.sizeOf(context).height < _shortScreen;
 
@@ -83,47 +98,56 @@ class HomeScreen extends ConsumerWidget {
               const _Banners(),
               Expanded(
                 child: LayoutBuilder(
-                  builder: (context, box) {
-                    final h = homeAvatarHeight(box.maxHeight);
-                    final w = math.min(
-                      box.maxWidth - 2 * AuraSpace.gutter,
-                      h * _avatarAspect,
-                    );
-                    return ListView(
-                      padding: const EdgeInsets.fromLTRB(
-                        AuraSpace.gutter,
-                        0,
-                        AuraSpace.gutter,
-                        AuraSpace.xl,
-                      ),
-                      children: [
-                        if (deletionHeld) ...[
-                          const SizedBox(height: AuraSpace.s),
-                          const DeletionPendingCard(),
-                          const SizedBox(height: AuraSpace.s),
-                        ],
-                        Center(
-                          child: AuraAvatar(
+                  builder: (context, box) => ListView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AuraSpace.gutter,
+                      0,
+                      AuraSpace.gutter,
+                      AuraSpace.xl,
+                    ),
+                    children: [
+                      if (deletionHeld) ...[
+                        const SizedBox(height: AuraSpace.s),
+                        const DeletionPendingCard(),
+                        const SizedBox(height: AuraSpace.s),
+                      ],
+                      _HeroFit(
+                        viewport: box.maxHeight,
+                        floor: compact
+                            ? homeAvatarFloorCompact
+                            : homeAvatarFloor,
+                        fitStatus: _StatusLine.steadyText(l, view) != null,
+                        avatar: LayoutBuilder(
+                          builder: (context, fit) => AuraAvatar(
                             key: const ValueKey('home-avatar'),
                             state: view.avatar,
-                            size: Size(w, h),
+                            size: fit.biggest,
                             moment: moment,
                             onMomentDone: (m) => ref
                                 .read(momentsControllerProvider.notifier)
                                 .markPlayed(m),
                           ),
                         ),
-                        _StatusLine(view: view, moment: moment),
-                        SizedBox(height: compact ? AuraSpace.xs : AuraSpace.s),
-                        _StarlightRow(view: view),
-                        const _HistoryLine(),
-                        const SizedBox(height: AuraSpace.xs),
-                        _GlowCard(view: view, compact: compact),
-                        SizedBox(height: compact ? AuraSpace.s : AuraSpace.l),
-                        const HabitsSection(),
-                      ],
-                    );
-                  },
+                        status: _StatusLine(view: view, moment: moment),
+                        below: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(
+                              height: compact ? AuraSpace.xs : AuraSpace.s,
+                            ),
+                            _StarlightRow(view: view),
+                            const _HistoryLine(),
+                            const SizedBox(height: AuraSpace.xs),
+                            _GlowCard(view: view, compact: compact),
+                            SizedBox(
+                              height: compact ? AuraSpace.s : AuraSpace.l,
+                            ),
+                            const HabitsSection(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               _CheckInBar(
@@ -136,6 +160,145 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Home's avatar and everything under it, in one box. The content below is
+/// laid out first, at the real width, text scale and language; the avatar
+/// then gets what is left of [viewport] ([homeAvatarHeight]). So on common
+/// phones the stats, glow card and every habit row sit above the check-in
+/// bar without scrolling, and the avatar stays the hero. Children, top to
+/// bottom: avatar (tight size, centred), status line, the rest.
+class _HeroFit extends MultiChildRenderObjectWidget {
+  _HeroFit({
+    required this.viewport,
+    required this.floor,
+    required this.fitStatus,
+    required Widget avatar,
+    required Widget status,
+    required Widget below,
+  }) : super(children: [avatar, status, below]);
+
+  /// Height of the scroll viewport between the top bar and the check-in bar.
+  final double viewport;
+
+  /// The avatar's minimum height.
+  final double floor;
+
+  /// Whether the status line's height counts. Only a steady line (new user,
+  /// resting) does: a moment's line is brief, so it nudges the content down
+  /// for a moment rather than resizing the avatar mid-moment.
+  final bool fitStatus;
+
+  @override
+  _RenderHeroFit createRenderObject(BuildContext context) =>
+      _RenderHeroFit(viewport: viewport, floor: floor, fitStatus: fitStatus);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderHeroFit renderObject) {
+    renderObject
+      ..viewport = viewport
+      ..floor = floor
+      ..fitStatus = fitStatus;
+  }
+}
+
+class _HeroFitParentData extends ContainerBoxParentData<RenderBox> {}
+
+class _RenderHeroFit extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _HeroFitParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _HeroFitParentData> {
+  _RenderHeroFit({
+    required this._viewport,
+    required this._floor,
+    required this._fitStatus,
+  });
+
+  double _viewport;
+  set viewport(double value) {
+    if (value == _viewport) return;
+    _viewport = value;
+    markNeedsLayout();
+  }
+
+  double _floor;
+  set floor(double value) {
+    if (value == _floor) return;
+    _floor = value;
+    markNeedsLayout();
+  }
+
+  bool _fitStatus;
+  set fitStatus(bool value) {
+    if (value == _fitStatus) return;
+    _fitStatus = value;
+    markNeedsLayout();
+  }
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _HeroFitParentData) {
+      child.parentData = _HeroFitParentData();
+    }
+  }
+
+  /// Sizes the three children with [layoutChild] (a real or a dry layout)
+  /// and returns this box's size.
+  Size _fit(
+    BoxConstraints constraints,
+    Size Function(RenderBox child, BoxConstraints constraints) layoutChild,
+  ) {
+    assert(constraints.hasBoundedWidth);
+    assert(childCount == 3);
+    final avatar = firstChild!;
+    final status = childAfter(avatar)!;
+    final below = childAfter(status)!;
+    final width = constraints.maxWidth;
+    final rows = BoxConstraints.tightFor(width: width);
+    final statusHeight = layoutChild(status, rows).height;
+    final belowHeight = layoutChild(below, rows).height;
+    final h = homeAvatarHeight(
+      viewport: _viewport,
+      below: belowHeight + (_fitStatus ? statusHeight : 0),
+      floor: _floor,
+    );
+    layoutChild(
+      avatar,
+      BoxConstraints.tight(Size(math.min(width, h * _avatarAspect), h)),
+    );
+    return constraints.constrain(Size(width, h + statusHeight + belowHeight));
+  }
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) => _fit(
+    constraints,
+    // The avatar's constraints are tight: its size is known without it.
+    (child, c) => c.isTight ? c.smallest : child.getDryLayout(c),
+  );
+
+  @override
+  void performLayout() {
+    size = _fit(constraints, (child, c) {
+      child.layout(c, parentUsesSize: true);
+      return child.size;
+    });
+    var y = 0.0;
+    for (var child = firstChild; child != null; child = childAfter(child)) {
+      (child.parentData! as _HeroFitParentData).offset = Offset(
+        (size.width - child.size.width) / 2,
+        y,
+      );
+      y += child.size.height;
+    }
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
 }
 
 class _TopBar extends ConsumerWidget {
@@ -265,6 +428,16 @@ class _StatusLine extends StatelessWidget {
   final ProgressView view;
   final AvatarMoment? moment;
 
+  /// The line while no moment plays: new user or resting, else null.
+  static String? steadyText(AppLocalizations l, ProgressView view) =>
+      !view.loaded
+      ? null
+      : view.avatar.isResting
+      ? l.home_resting
+      : !view.hasActivity
+      ? l.home_empty
+      : null;
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -274,14 +447,7 @@ class _StatusLine extends StatelessWidget {
       AvatarMomentKind.evolve => l.home_evolved(
         stageName(l, view.avatar.stage),
       ),
-      _ =>
-        !view.loaded
-            ? null
-            : view.avatar.isResting
-            ? l.home_resting
-            : !view.hasActivity
-            ? l.home_empty
-            : null,
+      _ => steadyText(l, view),
     };
     return AnimatedSwitcher(
       // A plain crossfade; ≤ 300 ms under Reduce Motion.

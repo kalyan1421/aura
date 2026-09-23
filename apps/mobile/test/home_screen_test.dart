@@ -139,13 +139,46 @@ Future<void> _close(WidgetTester tester) async {
 
 void main() {
   group('layout (item 1)', () {
-    test('avatar height follows the viewport (≈ 40%), keeps the fold '
-        'reserve on short screens, clamped 140–340', () {
-      expect(homeAvatarHeight(300), 140);
-      // 375×667: the reserve below the avatar wins over 40%.
-      expect(homeAvatarHeight(529), closeTo(529 - homeFoldReserve, 0.01));
-      expect(homeAvatarHeight(704), closeTo(281.6, 0.01));
-      expect(homeAvatarHeight(2000), 340);
+    test('the avatar gets what the content below leaves of the viewport, '
+        'within its floor and 340', () {
+      // Room to spare: all of it goes to the avatar.
+      expect(homeAvatarHeight(viewport: 625, below: 436), 189);
+      expect(homeAvatarHeight(viewport: 640, below: 436), 204);
+      // Not enough: the floor holds and Home scrolls.
+      expect(homeAvatarHeight(viewport: 500, below: 436), homeAvatarFloor);
+      expect(
+        homeAvatarHeight(
+          viewport: 521,
+          below: 436,
+          floor: homeAvatarFloorCompact,
+        ),
+        homeAvatarFloorCompact,
+      );
+      // Tall screens: never past the cap.
+      expect(homeAvatarHeight(viewport: 2000, below: 436), homeAvatarMax);
+      expect(homeAvatarMax, 340);
+    });
+
+    testWidgets('when everything fits, the avatar takes exactly the rest: '
+        'the last habit row ends at the check-in bar', (tester) async {
+      // Wide enough for the (wide) test font's chips to fit, short enough
+      // that the avatar stays under its cap.
+      _setSize(tester, const Size(800, 800));
+      final db = memoryDb();
+      await _checkIn(tester, db);
+      await tester.pumpWidget(_app(testOverrides(db: db)));
+      await settleIo(tester);
+      expect(tester.takeException(), isNull);
+
+      final fold = tester.getRect(find.byType(ListView)).bottom;
+      final last = tester.getRect(
+        find.byKey(ValueKey('habit-${presetHabits.last.key}')),
+      );
+      expect(last.bottom, closeTo(fold, 0.01));
+      final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
+      expect(avatar.height, greaterThan(homeAvatarFloor));
+      expect(avatar.height, lessThan(homeAvatarMax));
+      await _close(tester);
     });
 
     for (final size in const [Size(375, 667), Size(390, 844)]) {
@@ -164,9 +197,12 @@ void main() {
       });
     }
 
+    // With the test font (twice as wide as a phone's) the chips need more
+    // rows than on a phone, so here the guarantee is the first row. Every
+    // row with real fonts and safe areas: test/home_fit_test.dart.
     for (final (size, minAvatar) in const [
-      (Size(375, 667), 140.0),
-      (Size(390, 844), 250.0),
+      (Size(375, 667), homeAvatarFloorCompact),
+      (Size(390, 844), homeAvatarFloor),
     ]) {
       final name = '${size.width.toInt()}×${size.height.toInt()}';
       for (final newUser in [false, true]) {
@@ -198,7 +234,7 @@ void main() {
             final rect = tester.getRect(find.byKey(ValueKey(key)));
             expect(rect.bottom, lessThanOrEqualTo(fold), reason: key);
           }
-          // The avatar stays the hero: smaller only on short screens.
+          // The avatar stays the hero: never under its floor.
           final avatar = tester.getSize(find.byKey(const ValueKey('home-avatar')));
           expect(avatar.height, greaterThanOrEqualTo(minAvatar));
           await _close(tester);

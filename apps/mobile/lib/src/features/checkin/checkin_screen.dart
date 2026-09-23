@@ -254,9 +254,12 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
         ),
         Expanded(
           child: ListView(
+            // Tight top and grid spacing: at 1.0 text the title, subtitle
+            // and all 16 moods fit above the pinned Save on a 390 × 844
+            // phone, even in the tall layout (test/mood_grid_fit_test.dart).
             padding: const EdgeInsets.fromLTRB(
               AuraSpace.gutter,
-              AuraSpace.s,
+              AuraSpace.xs,
               AuraSpace.gutter,
               AuraSpace.xl,
             ),
@@ -276,7 +279,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
                   color: AuraColors.textSoft,
                 ),
               ),
-              const SizedBox(height: AuraSpace.l),
+              const SizedBox(height: AuraSpace.m),
               MoodGrid(
                 selected: mood,
                 localeTag: localeTag,

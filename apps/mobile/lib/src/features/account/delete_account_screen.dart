@@ -8,9 +8,9 @@ import '../../core/net/aura_api.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/busy_button_label.dart';
 import '../../core/widgets/inline_notice.dart';
-import '../support/support_sheet.dart';
 import 'account_providers.dart';
 
 enum _Phase { idle, requesting, scheduled }
@@ -130,16 +130,10 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
         if (!didPop && _phase == _Phase.scheduled) _finish();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(l.acct_deleteTitle),
-          backgroundColor: AuraColors.sky,
+        appBar: helpAppBar(
+          context,
+          title: l.acct_deleteTitle,
           automaticallyImplyLeading: _phase == _Phase.idle,
-          actions: const [
-            Padding(
-              padding: EdgeInsetsDirectional.only(end: AuraSpace.s),
-              child: HelpNowButton(compact: true),
-            ),
-          ],
         ),
         body: CosmicBackground(
           child: _phase == _Phase.scheduled

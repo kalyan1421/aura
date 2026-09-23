@@ -69,7 +69,8 @@ class HabitsSection extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: AuraSpace.s),
+        // Edit's 48 dp tap target already leaves air under the title.
+        const SizedBox(height: AuraSpace.xs),
         if (habits.isEmpty)
           Text(
             l.habits_empty,
@@ -79,7 +80,9 @@ class HabitsSection extends ConsumerWidget {
         else
           Wrap(
             spacing: AuraSpace.s,
-            runSpacing: AuraSpace.s,
+            // No run spacing: each chip's 48 dp tap target already puts
+            // clear space between the rows of pills (so Home fits all six
+            // presets above the check-in bar).
             children: [for (final h in habits) _HabitChip(habit: h)],
           ),
       ],

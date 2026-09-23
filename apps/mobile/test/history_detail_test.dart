@@ -180,7 +180,12 @@ void main() {
     await tapVisible(tester, edit);
     await settleIo(tester); // the stored note is read first
     final note = find.byKey(const ValueKey('checkin-note'));
-    await tester.scrollUntilVisible(note, 300);
+    // The page list (the note field has a Scrollable of its own once built).
+    await tester.scrollUntilVisible(
+      note,
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.enterText(note, 'I want to die');
     await tester.pump();
     await tapVisible(tester, find.byKey(const ValueKey('history-edit-save')));

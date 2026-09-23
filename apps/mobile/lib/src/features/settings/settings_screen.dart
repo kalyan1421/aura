@@ -11,10 +11,10 @@ import '../../core/providers.dart';
 import '../../core/router/router.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/legal_links.dart';
 import '../account/deletion_pending.dart';
 import '../onboarding/language_screen.dart';
-import '../support/support_sheet.dart';
 
 /// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
 /// Haptics, Hide streak number F3) · Account (sign in/out, "Delete my
@@ -75,26 +75,10 @@ class SettingsScreen extends ConsumerWidget {
     final grievanceEmail = Env.grievanceOfficerEmail;
     final supportEmail = Env.supportEmail;
 
-    // The app bar is a fixed 56 dp: at large text "I need help now" wraps
-    // and would be cut off there, so it moves to the top of the page (still
-    // right after Back and the title in focus order, REQ-A11Y-11).
-    final helpInBar = MediaQuery.textScalerOf(context).scale(1) <= 1.3;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l.settings_title),
-        backgroundColor: AuraColors.sky,
-        actions: [
-          if (helpInBar)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: AuraSpace.s),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 230),
-                child: const HelpNowButton(compact: true),
-              ),
-            ),
-        ],
-      ),
+      // "I need help now" stays in the bar only when it fits there on one
+      // line; otherwise it gets its own row under the title.
+      appBar: helpAppBar(context, title: l.settings_title),
       body: CosmicBackground(
         child: ListView(
           padding: const EdgeInsetsDirectional.fromSTEB(
@@ -104,11 +88,6 @@ class SettingsScreen extends ConsumerWidget {
             AuraSpace.xxl,
           ),
           children: [
-            if (!helpInBar)
-              const Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: HelpNowButton(key: ValueKey('settings-help-body')),
-              ),
             const DeletionPendingCard(),
 
             // ---- Language -------------------------------------------------

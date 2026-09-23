@@ -50,7 +50,12 @@ ThemeData buildAuraTheme(Locale locale) {
     onError: AuraColors.onLantern,
   );
 
-  final base = Typography.material2021(platform: TargetPlatform.iOS).white;
+  // Sizes (englishLike geometry) merged with the white colours up front:
+  // component themes (app bar title, buttons, chips) use these styles
+  // directly, and `white` alone has no font sizes (the app bar title drew at
+  // the 14 px fallback instead of titleLarge's 22).
+  final typography = Typography.material2021(platform: TargetPlatform.iOS);
+  final base = typography.englishLike.merge(typography.white);
   TextStyle? tune(TextStyle? s, {FontWeight? weight, double? spacing}) =>
       s?.copyWith(
         fontFamily: family,

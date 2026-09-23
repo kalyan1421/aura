@@ -41,6 +41,22 @@ const double _headerGap = 6;
 const double _headerStart = 4;
 const double _dotBox = 14;
 
+// Row tiles (every layout but the 4×4): the dot sits inline before the
+// label, so a tile is one text line tall and the gaps are tighter. That keeps
+// all 16 moods of the tall layout above the pinned Save button on a 390 dp
+// phone (test/mood_grid_fit_test.dart).
+const double _rowPadStart = 6;
+const double _rowPadEnd = 4;
+const double _rowPadV = 4;
+const double _rowDotGap = 6;
+const double _rowGap = 3; // between the rows of moods in a quadrant
+const double _rowCardPadV = 5;
+
+/// Smallest mood tile side: the 48 dp target (REQ-A11Y-02). The 4×4's
+/// dot-above tiles are taller ([_gridTileMinHeight]).
+const double moodTileMinTarget = 48;
+const double _gridTileMinHeight = 64;
+
 /// How the 16 moods are arranged. Every layout keeps the fixed
 /// energy × pleasantness order (Storm, Sunrise, Rain, Moonlight; REQ-A11Y-10)
 /// and gives each quadrant the same geometry.
@@ -67,6 +83,10 @@ extension on MoodGridLayout {
   /// Moods per row inside a quadrant.
   int get columns =>
       this == MoodGridLayout.grid || this == MoodGridLayout.stacked ? 2 : 1;
+
+  /// Row tiles: the dot inline at the start of the label, 48 dp tall. Only
+  /// the 4×4 keeps the dot above the label.
+  bool get rowTiles => this != MoodGridLayout.grid;
 }
 
 /// One label size for the whole grid, and the layout it fits in.
@@ -92,12 +112,16 @@ class MoodGridFit {
   final double labelHeight;
 }
 
-/// Width a mood label gets in [layout] for a grid [width] wide.
+/// Width a mood label gets in [layout] for a grid [width] wide. In row tiles
+/// the inline dot and its gap come off the label's width.
 double moodLabelWidth(MoodGridLayout layout, double width) {
   final columns = layout.columns;
   final inner = _quadWidth(layout, width) - 2 * (_cardPadH + _cardBorder);
   final tile = (inner - _tileGap * (columns - 1)) / columns;
-  return tile - 2 * _tilePadH - _labelSlack;
+  final chrome = layout.rowTiles
+      ? _rowPadStart + _dotBox + _rowDotGap + _rowPadEnd
+      : 2 * _tilePadH;
+  return tile - chrome - _labelSlack;
 }
 
 /// Width a quadrant name gets in its card header.
@@ -303,7 +327,15 @@ class MoodGrid extends StatelessWidget {
           localeTag: localeTag,
           fit: fit,
         );
-        return fit.layout.twoByTwo ? _grid(l, axis, quad) : _stacked(quad);
+        return fit.layout.twoByTwo
+            ? _grid(
+                l,
+                axis,
+                quad,
+                // Row tiles sit the axis labels closer to the quadrants.
+                axesGap: fit.layout.rowTiles ? AuraSpace.xs : AuraSpace.s,
+              )
+            : _stacked(quad);
       },
     );
   }
@@ -311,8 +343,9 @@ class MoodGrid extends StatelessWidget {
   Widget _grid(
     AppLocalizations l,
     TextStyle? axis,
-    Widget Function(Quadrant) quad,
-  ) {
+    Widget Function(Quadrant) quad, {
+    required double axesGap,
+  }) {
     Widget axes(String start, String end) => ExcludeSemantics(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,11 +371,12 @@ class MoodGrid extends StatelessWidget {
     return Column(
       children: [
         axes('↑ ${l.checkin_moreEnergy}', '${l.checkin_pleasant} →'),
-        const SizedBox(height: AuraSpace.s),
+        SizedBox(height: axesGap),
         row(Quadrant.storm, Quadrant.sunrise),
+        // Same gap as between the two columns of quadrants.
         const SizedBox(height: AuraSpace.s),
         row(Quadrant.rain, Quadrant.moonlight),
-        const SizedBox(height: AuraSpace.s),
+        SizedBox(height: axesGap),
         axes('← ${l.checkin_unpleasant}', '↓ ${l.checkin_lessEnergy}'),
       ],
     );
@@ -389,6 +423,8 @@ class _QuadrantCard extends StatelessWidget {
     final moods = moodsIn(quadrant);
     final active = selected?.quadrant == quadrant;
     final stacked = !fit.layout.twoByTwo;
+    final rows = fit.layout.rowTiles;
+    final rowGap = rows ? _rowGap : _tileGap;
 
     Widget tile(Mood mood) => MoodTile(
       mood: mood,
@@ -398,6 +434,7 @@ class _QuadrantCard extends StatelessWidget {
       labelWidth: fit.labelWidth,
       labelHeight: fit.labelHeight,
       fontSize: fit.fontSize,
+      row: rows,
       onTap: () => onSelected(mood),
     );
     Widget pair(Mood a, Mood b) => IntrinsicHeight(
@@ -414,9 +451,9 @@ class _QuadrantCard extends StatelessWidget {
     return AnimatedContainer(
       duration: AuraMotion.calm,
       curve: AuraMotion.ease,
-      padding: const EdgeInsets.symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: _cardPadH,
-        vertical: AuraSpace.s,
+        vertical: rows ? _rowCardPadV : AuraSpace.s,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AuraRadius.m),
@@ -437,10 +474,10 @@ class _QuadrantCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.only(
+            padding: EdgeInsetsDirectional.only(
               start: _headerStart,
-              bottom: 6,
-              top: 2,
+              bottom: rows ? 4 : 6,
+              top: rows ? 0 : 2,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,12 +520,12 @@ class _QuadrantCard extends StatelessWidget {
           ),
           if (fit.layout.columns == 1)
             for (final (i, m) in moods.indexed) ...[
-              if (i > 0) const SizedBox(height: _tileGap),
+              if (i > 0) SizedBox(height: rowGap),
               tile(m),
             ]
           else ...[
             pair(moods[0], moods[1]),
-            const SizedBox(height: _tileGap),
+            SizedBox(height: rowGap),
             pair(moods[2], moods[3]),
           ],
         ],
@@ -508,7 +545,12 @@ class MoodTile extends StatelessWidget {
     this.labelWidth = double.infinity,
     this.labelHeight = 0,
     this.fontSize,
+    this.row = false,
   });
+
+  /// Row tile: the dot inline at the start of the label, 48 dp tall
+  /// (every layout but the 4×4). Otherwise the dot sits above the label.
+  final bool row;
 
   /// Width every label in the grid is laid out in (see [MoodGridFit]).
   final double labelWidth;
@@ -541,6 +583,32 @@ class MoodTile extends StatelessWidget {
       mood.quadrant.pleasant ? l.semantic_pleasant : l.semantic_unpleasant,
     );
     final base = MoodGrid.labelBaseStyle(theme, localeTag);
+    // Fixed box: the lit (bigger) dot never shifts the label or changes the
+    // tile's size.
+    final dot = SizedBox.square(
+      dimension: _dotBox,
+      child: Center(
+        child: _MoodDot(color: accent, lit: selected),
+      ),
+    );
+    Widget nameText(AlignmentGeometry alignment, TextAlign align) => SizedBox(
+      width: labelWidth.isFinite ? labelWidth : null,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: labelHeight),
+        child: Align(
+          alignment: alignment,
+          child: Text(
+            name,
+            textAlign: align,
+            locale: localeFromTag(localeTag),
+            style: base.copyWith(
+              fontSize: fontSize ?? base.fontSize,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
 
     return Semantics(
       button: true,
@@ -574,46 +642,45 @@ class MoodTile extends StatelessWidget {
               },
               splashColor: accent.withValues(alpha: 0.2),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 64, minWidth: 48),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _tilePadH,
-                    vertical: 8,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Fixed box: the lit (bigger) dot never shifts the
-                      // label or changes the tile's height.
-                      SizedBox.square(
-                        dimension: _dotBox,
-                        child: Center(
-                          child: _MoodDot(color: accent, lit: selected),
+                constraints: BoxConstraints(
+                  minHeight: row ? moodTileMinTarget : _gridTileMinHeight,
+                  minWidth: moodTileMinTarget,
+                ),
+                child: row
+                    ? Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
+                          _rowPadStart,
+                          _rowPadV,
+                          _rowPadEnd,
+                          _rowPadV,
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      SizedBox(
-                        width: labelWidth.isFinite ? labelWidth : null,
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: labelHeight),
-                          child: Center(
-                            child: Text(
-                              name,
-                              textAlign: TextAlign.center,
-                              locale: localeFromTag(localeTag),
-                              style: base.copyWith(
-                                fontSize: fontSize ?? base.fontSize,
-                                fontWeight: selected
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
+                        child: Row(
+                          children: [
+                            dot,
+                            const SizedBox(width: _rowDotGap),
+                            Flexible(
+                              child: nameText(
+                                AlignmentDirectional.centerStart,
+                                TextAlign.start,
                               ),
                             ),
-                          ),
+                          ],
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: _tilePadH,
+                          vertical: 8,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            dot,
+                            const SizedBox(height: 6),
+                            nameText(Alignment.center, TextAlign.center),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
               ),
             ),
           ),

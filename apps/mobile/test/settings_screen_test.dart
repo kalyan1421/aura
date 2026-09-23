@@ -11,6 +11,7 @@ import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/core/security/secure_store.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
 import 'package:aura/src/core/theme/app_theme.dart';
+import 'package:aura/src/core/widgets/help_app_bar.dart';
 import 'package:aura/src/features/account/account_providers.dart';
 import 'package:aura/src/features/account/delete_account_screen.dart';
 import 'package:aura/src/features/auth/auth_repository.dart';
@@ -109,8 +110,9 @@ Future<ProviderContainer> _pump(
   required AppDatabase db,
   AuthRepository? auth,
   _Account? account,
+  double width = 390,
 }) async {
-  tester.view.physicalSize = const Size(1170, 7200);
+  tester.view.physicalSize = Size(width * 3, 7200);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   final container = ProviderContainer(
@@ -348,30 +350,45 @@ void main() {
   });
 
   testWidgets('"I need help now" leaves the 56 dp app bar at large text so '
-      'it is never cut off', (tester) async {
-    await _pump(tester, db: memoryDb());
-    expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byType(HelpNowButton),
-      ),
-      findsOneWidget,
-    );
-    expect(find.byKey(const ValueKey('settings-help-body')), findsNothing);
+      'it is never cut off: its own row under the title', (tester) async {
+    final help = find.byType(HelpNowButton);
+    final action = find.byKey(HelpBarLayout.actionKey);
+    final below = find.byKey(HelpBarLayout.bottomKey);
+
+    // Room beside the title (the test font is about twice as wide as real
+    // ones, so a wide phone): in the bar, on one line, bar still 56 dp.
+    await _pump(tester, db: memoryDb(), width: 600);
+    expect(find.descendant(of: action, matching: help), findsOneWidget);
+    expect(below, findsNothing);
+    expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
+    expect(tester.getSize(help).height, lessThanOrEqualTo(kToolbarHeight));
     await _unmount(tester);
 
+    // 200% text: its own row under the title, inside the app bar, whole.
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await _pump(tester, db: memoryDb());
-    expect(
-      find.descendant(
-        of: find.byType(AppBar),
-        matching: find.byType(HelpNowButton),
-      ),
-      findsNothing,
-    );
-    expect(find.byKey(const ValueKey('settings-help-body')), findsOneWidget);
     expect(tester.takeException(), isNull);
+    expect(action, findsNothing);
+    expect(find.descendant(of: below, matching: help), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(AppBar), matching: below),
+      findsOneWidget,
+    );
+    final title = tester.getRect(
+      find.descendant(of: find.byType(AppBar), matching: find.text('Settings')),
+    );
+    final row = tester.getRect(below);
+    final button = tester.getRect(help);
+    expect(title.bottom, lessThanOrEqualTo(row.top));
+    expect(row.top, closeTo(kToolbarHeight, 0.01));
+    expect(button.top, greaterThanOrEqualTo(row.top - 0.01));
+    expect(button.bottom, lessThanOrEqualTo(row.bottom + 0.01));
+    expect(button.right, lessThanOrEqualTo(row.right + 0.01));
+    expect(
+      tester.getRect(find.byType(AppBar)).bottom,
+      closeTo(row.bottom, 0.01),
+    );
     await _unmount(tester);
   });
 }

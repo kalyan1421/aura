@@ -10,8 +10,8 @@ import '../../core/providers.dart';
 import '../../core/router/router.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
+import '../../core/widgets/help_app_bar.dart';
 import '../checkin/quadrant_glyph.dart';
-import '../support/support_sheet.dart';
 import 'history_format.dart';
 import 'history_providers.dart';
 
@@ -29,23 +29,10 @@ class HistoryScreen extends ConsumerWidget {
     final rows = entries.value;
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: helpAppBar(
+        context,
+        title: l.history_title,
         leading: const HistoryBackButton(fallback: Routes.home),
-        title: Semantics(
-          header: true,
-          container: true,
-          child: Text(l.history_title),
-        ),
-        backgroundColor: AuraColors.sky,
-        actions: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: AuraSpace.s),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 230),
-              child: const HelpNowButton(compact: true),
-            ),
-          ),
-        ],
       ),
       body: CosmicBackground(
         child: rows == null
