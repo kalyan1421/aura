@@ -1,16 +1,17 @@
 /**
- * F9 core: report reasons → lanes (crisis wins; minors & grooming when anyone involved is under 18 or reason 7),
- * SLA clocks (19 admin console), the strike ladder, and the audit subject hash (no raw account ids).
+ * F9 core: report reasons → lanes (crisis wins; minors & grooming when anyone involved is under 18, and always for
+ * reason 7 "may be under 13" and reason 9 "targeting a young person"), SLA clocks (19 admin console), the strike
+ * ladder, and the audit subject hash (no raw account ids).
  */
 import { subjectHash } from '../../src/safety/audit';
 import { laneFor, slaFor } from '../../src/safety/lanes';
 import { isReportReason, LANE_PRIORITY, REPORT_REASONS, type ReportReason } from '../../src/safety/safety-types';
 import { consequenceForActiveStrikes } from '../../src/safety/strikes';
 
-const ALL: ReportReason[] = [1, 2, 3, 4, 5, 6, 7, 8];
+const ALL: ReportReason[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 describe('report reasons → lanes', () => {
-  it('the 8 one-tap reasons from the PRD', () => {
+  it('the 9 one-tap reasons from the PRD; codes 1–8 never change meaning (older apps), 9 was appended', () => {
     expect(REPORT_REASONS).toEqual({
       1: 'in_danger',
       2: 'harassment',
@@ -20,9 +21,10 @@ describe('report reasons → lanes', () => {
       6: 'spam',
       7: 'under_13',
       8: 'other',
+      9: 'targeting_minor',
     });
     expect(ALL.every(isReportReason)).toBe(true);
-    for (const bad of [0, 9, 1.5, '1', null]) expect(isReportReason(bad)).toBe(false);
+    for (const bad of [0, 10, 1.5, '1', '9', null]) expect(isReportReason(bad)).toBe(false);
   });
 
   it('adults on both sides', () => {
@@ -35,12 +37,14 @@ describe('report reasons → lanes', () => {
       'spam',
       'minors_grooming',
       'spam',
+      'minors_grooming', // 9: the reporter's sense of it is the signal, whatever the ages on record
     ]);
   });
 
   it('anyone involved under 18 → minors & grooming, except crisis which sorts above everything', () => {
     expect(ALL.map((r) => laneFor(r, true))).toEqual([
       'crisis',
+      'minors_grooming',
       'minors_grooming',
       'minors_grooming',
       'minors_grooming',
@@ -71,12 +75,16 @@ describe('SLA clocks', () => {
     expect(slaFor('crisis', 1, true, day).pages).toBe(false);
   });
 
-  it('minors & grooming: sexual or contact/personal info involving a minor < 2 h and pages 24×7; other L1 < 4 h', () => {
+  it('minors & grooming: sexual, contact/personal info or targeting a young person involving a minor < 2 h and pages 24×7; other L1 < 4 h', () => {
     const t = at('2026-10-08T21:00:00Z'); // 02:30 IST: overnight still pages
     expect(slaFor('minors_grooming', 3, true, t)).toEqual({ dueAt: new Date(t.getTime() + 120 * 60_000), pages: true });
     expect(slaFor('minors_grooming', 5, true, t)).toEqual({ dueAt: new Date(t.getTime() + 120 * 60_000), pages: true });
+    expect(slaFor('minors_grooming', 9, true, t)).toEqual({ dueAt: new Date(t.getTime() + 120 * 60_000), pages: true });
     expect(slaFor('minors_grooming', 7, false, t)).toEqual({ dueAt: new Date(t.getTime() + 240 * 60_000), pages: false });
     expect(slaFor('minors_grooming', 2, true, t)).toEqual({ dueAt: new Date(t.getTime() + 240 * 60_000), pages: false });
+    // Nobody under 18 on record (a bystander's sense only): still L1, the ordinary L1 clock, no overnight page.
+    expect(slaFor('minors_grooming', 9, false, t)).toEqual({ dueAt: new Date(t.getTime() + 240 * 60_000), pages: false });
+    expect(slaFor(laneFor(9, false), 9, false, t)).toEqual(slaFor('minors_grooming', 7, false, t));
   });
 
   it('harassment and spam: < 24 h, no page', () => {

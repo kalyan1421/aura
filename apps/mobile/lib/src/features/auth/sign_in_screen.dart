@@ -16,6 +16,7 @@ import '../account/deletion_pending.dart';
 import '../onboarding/gate_controller.dart';
 import '../onboarding/onboarding_frame.dart';
 import '../support/support_sheet.dart';
+import 'account_closed.dart';
 import 'age_signals.dart';
 import 'auth_providers.dart';
 import 'auth_repository.dart';
@@ -236,10 +237,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   /// Signed in (code, magic link or social). Runs once. The profile POST is
   /// queued and sent by sync; nothing here waits on it. A deletion check
   /// that can't reach the server never blocks sign-in (sync asks later).
+  /// Then an account closed for breaking the rules gets the calm closed
+  /// screen instead of the app (account_closed.dart; same fallback: a later
+  /// `403 account_closed` shows it).
   Future<void> _complete() async {
     if (_completing) return;
     setState(() => _completing = true);
     final hold = ref.read(deletionHoldProvider.notifier);
+    final closedHold = ref.read(accountClosedProvider.notifier);
+    // Both questions go out together; a scheduled deletion is asked first.
+    final closedCheck = closedHold.check(show: false);
     final pending = await hold.check();
     if (!mounted) return;
     if (pending != null) {
@@ -251,6 +258,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       }
       if (!mounted) return;
     }
+    if (await closedCheck) {
+      closedHold.report(); // the calm closed screen, above everything
+      return;
+    }
+    if (!mounted) return;
     await _proceed();
   }
 

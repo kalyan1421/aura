@@ -1095,7 +1095,7 @@ final class AuraApiProvider
   }
 }
 
-String _$auraApiHash() => r'7e146beb5e82b68c5a511ba02b789a5dc3d3702b';
+String _$auraApiHash() => r'21c8fd1b808645151de3664b9ba440afb02b8a92';
 
 @ProviderFor(syncController)
 final syncControllerProvider = SyncControllerProvider._();
@@ -1267,7 +1267,7 @@ final class SignOutServiceProvider
   }
 }
 
-String _$signOutServiceHash() => r'7c8ba35147dddb8be57b2175e239b9197cbdc827';
+String _$signOutServiceHash() => r'604d3baf1cbd4128f625db021658b2eabaa1d131';
 
 @ProviderFor(pendingCount)
 final pendingCountProvider = PendingCountProvider._();

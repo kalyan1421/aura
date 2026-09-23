@@ -4,7 +4,7 @@ import type { Queryable } from '../db/db';
 import { DbService } from '../db/db.service';
 import { lockUser } from '../db/locks';
 import { applyUnder13PauseIfDue, insertReport } from './reports.core';
-import { CRISIS_REASON, UNDER_13_REASON, type ReportReason, type ReportTargetKind } from './safety-types';
+import { CRISIS_REASON, TARGETING_MINOR_REASON, UNDER_13_REASON, type ReportReason, type ReportTargetKind } from './safety-types';
 import { invalidTarget, notFound, parseReportRequest, reportLimit } from './safety.schema';
 import { anyMinor, assertNotClosed, loadSafetyConfig } from './safety.queries';
 
@@ -94,11 +94,15 @@ export class ReportsService {
       }
 
       // Anyone involved under 18 (either side; for a room, anyone in it) → Minors & grooming lane, invisibly.
+      // "Targeting a young person" (9) is that lane whatever the ages; the young person is someone else in the room
+      // (maybe already gone because of it), so everyone who has been in the room counts for its "Under 18" flag and
+      // the 2 h / 24×7 page (lanes.ts). Nothing of this reaches any client (DS-10).
       const involved: Array<string | null> = [userId, targetUserId];
-      if (req.targetKind === 'room') {
+      const wholeRoom = req.reason === TARGETING_MINOR_REASON;
+      if (req.targetKind === 'room' || wholeRoom) {
         const members = await tx.query<{ user_id: string }>(
-          'select user_id from public.room_members where room_id = $1 and left_at is null',
-          [req.roomId],
+          'select user_id from public.room_members where room_id = $1 and ($2::boolean or left_at is null)',
+          [req.roomId, wholeRoom],
         );
         involved.push(...members.rows.map((x) => x.user_id));
       }

@@ -7,6 +7,7 @@ import 'package:aura/src/core/sync/outbox_repository.dart';
 import 'package:aura/src/core/time/clock.dart';
 import 'package:aura/src/features/capsules/capsule_notifications.dart';
 import 'package:aura/src/features/capsules/capsule_repository.dart';
+import 'package:aura/src/features/push/push_inbox.dart' show PushChannels;
 import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -66,29 +67,37 @@ void main() {
 
   Future<void> reconcile() => scheduler.reconcile(tz: tz, text: text);
 
-  test('scheduled at sealing for 10:00 local on the date, generic copy', () async {
-    await sealFor('a', '2027-10-08');
-    await reconcile();
-    final id = capsuleNoticeId(LocalDay.parse('2027-10-08'));
-    expect(port.scheduled, {id: DateTime.utc(2027, 10, 8, 4, 30)}); // 10:00 IST
-    expect(port.payloads[id], 'capsule_unlocked:2027-10-08');
-    // Never the title, the date or the content on the lock screen.
-    expect(port.bodies.single, text.body);
-    expect(port.bodies.single, isNot(contains('Private')));
-    final row = (await repo.row('a'))!;
-    expect(row.notifyAt, DateTime.utc(2027, 10, 8, 4, 30));
-  });
+  test(
+    'scheduled at sealing for 10:00 local on the date, generic copy',
+    () async {
+      await sealFor('a', '2027-10-08');
+      await reconcile();
+      final id = capsuleNoticeId(LocalDay.parse('2027-10-08'));
+      expect(port.scheduled, {
+        id: DateTime.utc(2027, 10, 8, 4, 30),
+      }); // 10:00 IST
+      expect(port.payloads[id], 'capsule_unlocked:2027-10-08');
+      // Never the title, the date or the content on the lock screen.
+      expect(port.bodies.single, text.body);
+      expect(port.bodies.single, isNot(contains('Private')));
+      final row = (await repo.row('a'))!;
+      expect(row.notifyAt, DateTime.utc(2027, 10, 8, 4, 30));
+    },
+  );
 
-  test('capsules on the same day share one notice; unchanged → no churn', () async {
-    await sealFor('a', '2027-10-08');
-    await sealFor('b', '2027-10-08');
-    await sealFor('c', '2027-12-01');
-    await reconcile();
-    expect(port.scheduled, hasLength(2));
-    final calls = port.scheduleCalls;
-    await reconcile();
-    expect(port.scheduleCalls, calls, reason: 'nothing changed');
-  });
+  test(
+    'capsules on the same day share one notice; unchanged → no churn',
+    () async {
+      await sealFor('a', '2027-10-08');
+      await sealFor('b', '2027-10-08');
+      await sealFor('c', '2027-12-01');
+      await reconcile();
+      expect(port.scheduled, hasLength(2));
+      final calls = port.scheduleCalls;
+      await reconcile();
+      expect(port.scheduleCalls, calls, reason: 'nothing changed');
+    },
+  );
 
   test('after a timezone change: 10:00 in the new zone', () async {
     await sealFor('a', '2027-10-08');
@@ -112,13 +121,16 @@ void main() {
     expect(port.scheduled, isEmpty);
   });
 
-  test('an unlock that already passed is not scheduled (shows on launch)', () async {
-    await sealFor('a', '2026-10-15');
-    clock.instant = DateTime.utc(2026, 10, 16);
-    await reconcile();
-    expect(port.scheduled, isEmpty);
-    expect(isCapsuleDue((await repo.row('a'))!, tz, clock.now()), isTrue);
-  });
+  test(
+    'an unlock that already passed is not scheduled (shows on launch)',
+    () async {
+      await sealFor('a', '2026-10-15');
+      clock.instant = DateTime.utc(2026, 10, 16);
+      await reconcile();
+      expect(port.scheduled, isEmpty);
+      expect(isCapsuleDue((await repo.row('a'))!, tz, clock.now()), isTrue);
+    },
+  );
 
   test('only the soonest days are scheduled (iOS keeps 64 in total)', () async {
     var day = LocalDay.parse('2026-10-20');
@@ -137,33 +149,75 @@ void main() {
   });
 
   group("the server's backup push (dedupe by capsule id)", () {
-    test('skipped once this phone notified (or the capsule is open/gone)', () async {
-      await sealFor('a', '2026-10-15');
-      await reconcile();
-      clock.instant = DateTime.utc(2026, 10, 15, 4, 31); // local notice fired
-      expect(await scheduler.shouldShowServerPush('a'), isFalse);
-      await repo.open('a');
-      expect(await scheduler.shouldShowServerPush('a'), isFalse);
-      await repo.delete('a');
-      expect(await scheduler.shouldShowServerPush('a'), isFalse);
-    });
+    test(
+      'skipped once this phone notified (or the capsule is open/gone)',
+      () async {
+        await sealFor('a', '2026-10-15');
+        await reconcile();
+        clock.instant = DateTime.utc(2026, 10, 15, 4, 31); // local notice fired
+        expect(await scheduler.shouldShowServerPush('a'), isFalse);
+        await repo.open('a');
+        expect(await scheduler.shouldShowServerPush('a'), isFalse);
+        await repo.delete('a');
+        expect(await scheduler.shouldShowServerPush('a'), isFalse);
+      },
+    );
 
-    test('shown when it comes first; the local notice for that day is cancelled', () async {
-      await sealFor('a', '2026-10-15');
-      await sealFor('b', '2026-10-15');
-      await reconcile();
-      clock.instant = DateTime.utc(2026, 10, 15, 4); // 09:30 IST, before ours
-      expect(await scheduler.shouldShowServerPush('a'), isTrue);
-      expect(port.scheduled, isEmpty);
-      // Not re-scheduled later, and the same day's other capsule is covered.
-      await reconcile();
-      expect(port.scheduled, isEmpty);
-      expect(await scheduler.shouldShowServerPush('b'), isFalse);
-    });
+    test(
+      'shown when it comes first; the local notice for that day is cancelled',
+      () async {
+        await sealFor('a', '2026-10-15');
+        await sealFor('b', '2026-10-15');
+        await reconcile();
+        clock.instant = DateTime.utc(2026, 10, 15, 4); // 09:30 IST, before ours
+        expect(await scheduler.shouldShowServerPush('a'), isTrue);
+        expect(port.scheduled, isEmpty);
+        // Not re-scheduled later, and the same day's other capsule is covered.
+        await reconcile();
+        expect(port.scheduled, isEmpty);
+        expect(await scheduler.shouldShowServerPush('b'), isFalse);
+      },
+    );
 
     test('an unknown capsule (not pulled yet) shows it', () async {
       expect(await scheduler.shouldShowServerPush('unknown'), isTrue);
     });
+  });
+
+  test(
+    'Android: a notice the push handler cancelled is never re-shown',
+    () async {
+      await sealFor('a', '2027-10-08');
+      await reconcile();
+      final id = capsuleNoticeId(LocalDay.parse('2027-10-08'));
+      // FCM's background handler dropped it (the server's push came first).
+      port.scheduled.remove(id);
+      await reconcile();
+      expect(port.scheduled, isEmpty, reason: 'not re-scheduled');
+      // Later changes leave that day alone and still schedule others.
+      await sealFor('b', '2027-11-08');
+      await reconcile();
+      expect(port.scheduled.keys, [
+        capsuleNoticeId(LocalDay.parse('2027-11-08')),
+      ]);
+    },
+  );
+
+  test('notices use the Capsules channel push created, and its icon', () {
+    expect(FlutterLocalNoticePort.channelId, PushChannels.capsules);
+    expect(FlutterLocalNoticePort.androidIcon, 'ic_stat_aura');
+    expect(
+      File('android/app/src/main/res/drawable/ic_stat_aura.xml').existsSync(),
+      isTrue,
+    );
+  });
+
+  test('the notice id matches the push contract (0x18000000 + days)', () {
+    expect(
+      capsuleNoticeId(LocalDay.parse('2027-10-08')),
+      0x18000000 +
+          DateTime.utc(2027, 10, 8).difference(DateTime.utc(1970)).inDays,
+    );
   });
 
   test('sign-out cancels every capsule notice', () async {

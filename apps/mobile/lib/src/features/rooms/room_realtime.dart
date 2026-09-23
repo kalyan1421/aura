@@ -98,7 +98,8 @@ RoomEvent? parseRoomEvent(String event, Map<String, dynamic> payload) {
         if (m is! Map<String, dynamic>) return null;
         // A new member is live; mute and "me" are this phone's business.
         return MemberJoinedEvent(
-          RoomMember.fromJson(m).copyWith(live: true, muted: false, isMe: false),
+          RoomMember.fromJson(m)
+              .copyWith(live: true, muted: false, isMe: false),
           counts(),
         );
       case 'member_left':

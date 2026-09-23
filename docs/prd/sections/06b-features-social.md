@@ -23,7 +23,7 @@ Covers F5 Mood Rooms, F6 Reflections, F7 Breath Ripples and F16 Quiet Together. 
 | Breath Ripples HUD | Lifebuoy top-right, whole session | Tap a light: all three | Never; no commerce in the game `[ASSUMPTION]` |
 | Quiet Together session (F16) | Lifebuoy icon, whole session | Session menu: "Report a problem here". Nobody is shown, so there is no per-person block or mute; "Hide gestures" is for yourself | Never |
 
-**Report reasons** (one tap, optional note; lanes per F9): (1) in danger or self-harm → crisis lane, reporter sees helplines; (2) harassment; (3) sexual content or advances; (4) hate; (5) contact or personal info; (6) spam or selling; (7) may be under 13 → Minors & grooming; (8) other.
+**Report reasons** (one tap, optional note; lanes per F9): (1) in danger or self-harm → crisis lane, reporter sees helplines; (2) harassment; (3) sexual content or advances; (4) hate; (5) contact or personal info; (6) spam or selling; (7) may be under 13 → Minors & grooming; (8) other; (9) targeting a young person → Minors & grooming, whatever anyone's age on record (the reporter's sense of it is the signal). Codes never change meaning; new reasons are appended (the sheet shows 9 before "other").
 
 **Block** is account-level: content hidden both ways, the pair never matched again. **The blocked user sees no change:** gestures to the blocker look sent but are dropped, and a gift fails before any charge. **Mute** is per membership: hides that member's reflections, gestures and pulses for you only.
 

@@ -21,15 +21,23 @@ import '../safety/safety_center_screen.dart';
 /// now" opens the Safety Center instead ([openSafetyCenter]). Works offline
 /// from bundled data, with no login. Shown over everything, the navigation
 /// bar included.
-Future<void> showSupportSheet(BuildContext context, {bool crisis = false}) {
+Future<void> showSupportSheet(
+  BuildContext context, {
+  bool crisis = false,
+  SupportOrigin origin = SupportOrigin.checkIn,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     useRootNavigator: true,
-    builder: (_) => SupportSheet(crisis: crisis),
+    builder: (_) => SupportSheet(crisis: crisis, origin: origin),
   );
 }
+
+/// What was just saved when a crisis-lexicon hit opened the sheet: its
+/// reassurance line and the way back name it ("Your capsule is sealed.").
+enum SupportOrigin { checkIn, capsule }
 
 /// Opens the Safety Center (`/safety`), a full route above everything, from
 /// any screen and gate state. Outside the app's router (a bare navigator)
@@ -212,11 +220,17 @@ class _HelpShape extends OutlinedBorder {
 
 /// The support sheet ([showSupportSheet]): the same help as the Safety
 /// Center (helplines, grounding, disclaimer) over the task in progress, with
-/// crisis wording and "Back to my check-in" after a lexicon hit.
+/// crisis wording and a way back to what was just saved after a lexicon
+/// hit ("Back to my check-in" / "Back to my capsule").
 class SupportSheet extends ConsumerStatefulWidget {
-  const SupportSheet({super.key, this.crisis = false});
+  const SupportSheet({
+    super.key,
+    this.crisis = false,
+    this.origin = SupportOrigin.checkIn,
+  });
 
   final bool crisis;
+  final SupportOrigin origin;
 
   @override
   ConsumerState<SupportSheet> createState() => _SupportSheetState();
@@ -279,7 +293,12 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
           ),
           const SizedBox(height: AuraSpace.s),
           Text(
-            widget.crisis ? l.help_crisisSubtitle : l.help_subtitle,
+            !widget.crisis
+                ? l.help_subtitle
+                : switch (widget.origin) {
+                    SupportOrigin.checkIn => l.help_crisisSubtitle,
+                    SupportOrigin.capsule => l.help_crisisSubtitleCapsule,
+                  },
             style: theme.textTheme.bodyLarge?.copyWith(
               color: AuraColors.textSoft,
             ),
@@ -313,7 +332,10 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
             const SizedBox(height: AuraSpace.l),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(l.help_backToCheckin),
+              child: Text(switch (widget.origin) {
+                SupportOrigin.checkIn => l.help_backToCheckin,
+                SupportOrigin.capsule => l.help_backToCapsule,
+              }),
             ),
           ],
         ],

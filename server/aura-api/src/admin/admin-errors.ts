@@ -17,6 +17,7 @@ export const AdminErrors = {
   rateLimited: (): ApiError =>
     new ApiError(HttpStatus.TOO_MANY_REQUESTS, 'rate_limited', 'Too many requests. Please try again in an hour.'),
   unavailable: (code: string, message: string): ApiError => new ApiError(HttpStatus.SERVICE_UNAVAILABLE, code, message),
+  notImplemented: (message: string): ApiError => new ApiError(HttpStatus.NOT_IMPLEMENTED, 'not_implemented', message),
 };
 
 const MODERATION_STATUS: Record<ModerationError['code'], HttpStatus> = {

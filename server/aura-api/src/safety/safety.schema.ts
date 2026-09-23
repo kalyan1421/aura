@@ -3,7 +3,7 @@ import { ApiError } from '../common/api-error';
 import { isUuid } from '../common/uuid';
 import { parseOrThrow } from '../common/zod';
 import { fitsChars } from '../sync/text-limits';
-import type { ReportReason, ReportTargetKind } from './safety-types';
+import { MAX_REPORT_REASON, type ReportReason, type ReportTargetKind } from './safety-types';
 
 const uuid = z.string().refine(isUuid, 'must be a UUID').transform((s) => s.toLowerCase());
 
@@ -16,7 +16,7 @@ const reportShape = z.object({
     z.object({ kind: z.literal('gesture'), roomId: uuid, gestureId: uuid }),
     z.object({ kind: z.literal('room'), roomId: uuid }),
   ]),
-  reason: z.number().int().min(1).max(8),
+  reason: z.number().int().min(1).max(MAX_REPORT_REASON),
   note: z.string().nullish(),
 });
 

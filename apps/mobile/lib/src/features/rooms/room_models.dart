@@ -58,8 +58,9 @@ enum RoomPhase {
   };
 }
 
-/// Report reasons, one tap (PRD 06b; the int is the wire value). Lanes are
-/// server-only and never shown.
+/// Report reasons, one tap (PRD 06b; the int is the wire value, never
+/// reused). Listed in the order the sheet shows them: "Something else"
+/// stays last, so 9 comes before 8. Lanes are server-only and never shown.
 enum ReportReason {
   inDanger(1),
   harassment(2),
@@ -68,6 +69,10 @@ enum ReportReason {
   contactInfo(5),
   spam(6),
   under13(7),
+
+  /// "Seems to be targeting a young person": the Minors & grooming lane on
+  /// the server, whatever anyone's age. Nobody's age is ever shown.
+  targetingYoungPerson(9),
   other(8);
 
   const ReportReason(this.wire);
@@ -421,6 +426,29 @@ abstract class ReportAck with _$ReportAck {
 
   factory ReportAck.fromJson(Map<String, dynamic> json) =>
       _$ReportAckFromJson(json);
+}
+
+/// Community guidelines on the server (REQ-SAFE-04, contracts §2.4): the
+/// version rooms require and whether this account accepted it (or a newer
+/// one). A plain class: nothing here needs code generation.
+@immutable
+class GuidelinesStatus {
+  const GuidelinesStatus({
+    required this.version,
+    required this.accepted,
+    this.acceptedVersion,
+  });
+
+  factory GuidelinesStatus.fromJson(Map<String, dynamic> json) =>
+      GuidelinesStatus(
+        version: (json['version'] as num?)?.toInt() ?? 1,
+        accepted: json['accepted'] == true,
+        acceptedVersion: (json['acceptedVersion'] as num?)?.toInt(),
+      );
+
+  final int version;
+  final bool accepted;
+  final int? acceptedVersion;
 }
 
 /// `GET /v1/safety/me` (only what the app shows: room access and until).

@@ -100,9 +100,12 @@ log-only transport (logs the type only), the worker keeps running.
 
 ## 4. App behaviour (apps/mobile `features/push`, Settings › Notifications)
 
-- Settings › Notifications: master switch, daily reminder on/off + time, date capsule unlocked on/off, quiet hours
-  (start/end), discreet mode. Picking a reminder time inside quiet hours asks once: send it anyway
+- Settings › Notifications (after Account): master switch, daily reminder on/off + time, date capsule unlocked on/off,
+  quiet hours (start/end), discreet mode. Picking a reminder time inside quiet hours asks once: send it anyway
   (`reminderInQuietHours: true`) or keep it quiet. Each change is a local write + an outbox patch.
+- The post-first-check-in explainer shows the evening time (suggested 20:00, changeable) and a "Keep them discreet"
+  choice (rule 4). "Allow" → the OS prompt and `{reminderEnabled: true, reminderTime}`; the discreet choice is saved
+  whatever the answer (after "Not now" iOS still delivers capsule notices quietly).
 - OS permission off: a calm note with a link to the phone's Settings. The app never re-asks within 30 days of a decline
   (only "Allow" on the explainer fires the OS prompt; a later re-ask needs 30 days and a meaningful moment).
 - Foreground: never a system notification for these pushes — an in-app banner (reminder: only if not checked in

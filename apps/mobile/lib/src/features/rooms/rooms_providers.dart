@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import '../../core/env/env.dart';
 import '../../core/providers.dart';
 import '../account/account_providers.dart';
+import '../auth/account_closed.dart';
 import '../onboarding/gate_controller.dart';
 import 'room_models.dart';
 import 'room_realtime.dart';
@@ -35,6 +36,8 @@ RoomsRepository roomsRepository(Ref ref) => RoomsRepository(
   // Same hold as sync: "Keep my account?" (REQ-ACC-11).
   onDeletionPending: () =>
       unawaited(ref.read(deletionHoldProvider.notifier).reportFromSync()),
+  // Same calm "This account is closed" screen as every other API path (F9).
+  onAccountClosed: () => ref.read(accountClosedProvider.notifier).report(),
 );
 
 /// Opens the private Realtime channels, or `null` when this build has no
@@ -74,8 +77,10 @@ class MyRooms extends _$MyRooms {
   @override
   Future<List<RoomSummary>> build() async {
     if (!ref.watch(roomsReadyProvider)) return const [];
-    final online = ref.watch(connectivityProvider).value ?? true;
+    // Wait for the first known connection state (never call on a guess).
+    final online = await ref.watch(connectivityProvider.future);
     if (!online) throw const RoomsFailure(RoomsFailureKind.offline);
+    if (!ref.mounted) return const [];
     final refresh = Timer(const Duration(seconds: 90), ref.invalidateSelf);
     final life = AppLifecycleListener(onResume: ref.invalidateSelf);
     ref.onDispose(() {

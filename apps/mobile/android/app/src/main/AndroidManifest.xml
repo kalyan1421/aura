@@ -54,8 +54,9 @@
                 <data android:scheme="aura" android:host="auth-callback"/>
             </intent-filter>
             <!-- App deep links (core/router/deep_links.dart): aura://checkin,
-                 aura://safety, aura://sanctuary. The router applies the
-                 gate (under-13 lock, onboarding) before opening them. -->
+                 aura://safety, aura://sanctuary, aura://rooms. The router
+                 applies the gate (under-13 lock, onboarding) before opening
+                 them. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -63,6 +64,7 @@
                 <data android:scheme="aura" android:host="checkin"/>
                 <data android:scheme="aura" android:host="safety"/>
                 <data android:scheme="aura" android:host="sanctuary"/>
+                <data android:scheme="aura" android:host="rooms"/>
             </intent-filter>
         </activity>
         <!-- FCM: no token is created until the user opts in after the first
@@ -70,6 +72,16 @@
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
+        <!-- F14 pushes (features/push): a monochrome status-bar icon (the
+             full-colour launcher icon would show as a white square), and the
+             Reminders channel (created by the app) for any message that
+             names no channel. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_aura" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="reminders" />
         <!-- No Firebase Analytics: product analytics are PostHog. -->
         <meta-data
             android:name="firebase_analytics_collection_deactivated"

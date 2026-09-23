@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AccountModule } from './account/account.module';
+import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { CatalogueModule } from './catalogue/catalogue.module';
 import { ConfigModule } from './config/config.module';
@@ -33,6 +34,7 @@ import { SyncModule } from './sync/sync.module';
     MediaModule,
     RoomsModule, // F5 Mood Rooms — contracts/api/v1-rooms.md
     SafetyModule, // F9 core safety (reports, blocks, standing; internal ModerationService)
+    AdminModule, // admin console v0: /admin/*, public grievance form, legal-order intake (docs/setup/admin-console.md)
   ],
 })
 export class AppModule {}

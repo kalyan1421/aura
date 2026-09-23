@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:aura_domain/aura_domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/providers.dart';
 import '../onboarding/gate_controller.dart';
+import '../profile/profile_service.dart';
 import 'age_signals.dart';
 import 'auth_repository.dart';
 import 'social_sign_in.dart';
@@ -32,6 +35,10 @@ SocialSignInService? socialSignIn(Ref ref) {
             )
           : null,
       apple: ios ? const PluginAppleSignIn() : null,
+      // App Review 5.1.1(v): the server keeps Apple's token so deleting the
+      // account can revoke it. In the background; failures are ignored.
+      onAppleAuthorizationCode: (code) =>
+          unawaited(linkAppleAuthorization(ref.read(auraApiProvider), code)),
     );
   }
   return null;
@@ -41,7 +48,8 @@ SocialSignInService? socialSignIn(Ref ref) {
 @Riverpod(keepAlive: true)
 AgeSignalSource ageSignalSource(Ref ref) => const ChannelAgeSignalSource();
 
-/// Applies a signal: the under-13 block or the invisible under-18 flag.
+/// Applies a signal: the under-13 block or the invisible under-18 flag (on
+/// the phone, and on the server with the next profile POST).
 @Riverpod(keepAlive: true)
 AgeSignalPolicy ageSignalPolicy(Ref ref) => AgeSignalPolicy(
   kv: ref.watch(kvStoreProvider),
@@ -50,5 +58,9 @@ AgeSignalPolicy ageSignalPolicy(Ref ref) => AgeSignalPolicy(
   today: () {
     final now = ref.read(timeContextProvider).now().toLocal();
     return LocalDay(now.year, now.month, now.day);
+  },
+  onMinor: () async {
+    await ref.read(profileServiceProvider).noteAgeSignal(AgeBand.under18);
+    ref.read(syncControllerProvider).notifyLocalWrite();
   },
 );

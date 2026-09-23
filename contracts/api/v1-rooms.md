@@ -1,7 +1,8 @@
 # Aura API v1 — Mood Rooms (F5) and core safety (F9)
 
 Companion to `contracts/api/v1.md` (same base URL, auth, error shape and pending-deletion guard). Server:
-`server/aura-api/src/rooms` and `src/safety`; schema `supabase/migrations/20261005000010_rooms_safety.sql`.
+`server/aura-api/src/rooms` and `src/safety`; schema `supabase/migrations/20261005000010_rooms_safety.sql` (+
+`20261005000015_safety_reason_guidelines.sql`: report reason 9, community guidelines acceptance).
 PRD: `06b-features-social.md` (F5, shared stranger-surface rules), `06c-features-platform.md` (F9),
 `14-states.md` (Room states), `19-admin-console.md` (lanes, strikes, evidence).
 
@@ -29,7 +30,8 @@ No response in this document and no realtime payload ever contains an account id
 email, a date of birth, an age, or anything that says whether someone is under 18 — about anyone, **including the
 caller**. Other people appear only as `{ memberId, pseudonym, silhouette, moodChip }`. Under-18 accounts get
 exactly the same responses, copy and limits as adults; their extra protections (stricter moderation, the Minors
-& grooming lane) are invisible and live only on the server. Report lanes are never returned.
+& grooming lane) are invisible and live only on the server. Report lanes and moderation reason codes are never
+returned — not even to the person a sanction is about (§2.3, no tipping off).
 
 ### Enums
 | Name | Values |
@@ -40,7 +42,7 @@ exactly the same responses, copy and limits as adults; their extra protections (
 | `Stage` | `spark` · `ember` · `glow` · `radiance` · `constellation` |
 | `GestureType` (the 8 presets) | `warm_tea` · `light_a_candle` · `hug` · `me_too` · `soft_rain` · `stargaze` · `deep_breath` · `youre_not_alone` |
 | `GestureTarget` | `member` · `room` (`reflection` arrives with F6, Milestone B; until then → `400`) |
-| `ReportReason` (int) | `1` in danger or self-harm · `2` harassment · `3` sexual content or advances · `4` hate · `5` contact or personal info · `6` spam or selling · `7` may be under 13 · `8` other |
+| `ReportReason` (int) | `1` in danger or self-harm · `2` harassment · `3` sexual content or advances · `4` hate · `5` contact or personal info · `6` spam or selling · `7` may be under 13 · `8` other · `9` targeting a young person. Codes never change meaning; new ones are appended (apps list 9 before 8 "other") |
 
 ### Shared shapes
 ```ts
@@ -124,8 +126,12 @@ region, pool or the adjacent quadrant).
 | `400 invalid_request` | bad body, unknown mood, mood not in `quadrant`, unknown timezone |
 | `403 rooms_suspended` | the account's room access is suspended or paused (see `GET /v1/safety/me`) |
 | `403 account_closed` | the account was closed for breaking the rules ("This account was closed for breaking Aura's rules.") |
+| `409 guidelines_required` | the community guidelines in force aren't accepted yet (REQ-SAFE-04). Body: `{ "code": "guidelines_required", "message": "…", "version": 1 }` — the app shows the guidelines, calls `POST /v1/safety/guidelines/accept` (§2.4) and retries the match. Checked after `profile_required` / `rooms_suspended` / `account_closed` and before `language_pool_unavailable`; nothing is seated. If `version` is newer than the copy the app carries, the app asks for an update instead |
 | `409 language_pool_unavailable` | Hindi + Hinglish rooms aren't open yet (`feature_flags.rooms_pool_hi` off) and `allowPoolFallback` was not true → the app offers "Join English room" (retry with `allowPoolFallback: true`) / "Tell me when they open" / close (14-states) |
 | `429 room_join_limit` | 3 **new** rooms joined for this quadrant in the last 24 h. Returning to your room (step 0) is always free |
+
+Only this route is gated by the guidelines: rooms you already joined keep working after the required version
+changes, and you are asked again at your next match.
 
 Rules: one active room per quadrant — while you hold a room for this quadrant (joined for it, or a room of this
 quadrant, not left, younger than 24 h) you always get it back (step 0). Leaving frees the slot; you can never
@@ -210,11 +216,15 @@ an open report on the same target for the same reason — repeats count once).
   `400 invalid_target`.
 - The item hides for you at once: a reported member is muted for you in that room (not for reason 1); a reported
   gesture drops out of your lists.
-- Limits: reason 1 unlimited; reasons 2–8 at most 20 per 24 h → `429 report_limit`.
-- Server-side routing (never visible): crisis lane (reason 1); Minors & grooming lane (reason 7, or anyone
-  involved is under 18 by stored DOB); harassment (2, 3, 4, 5); spam/other (6, 8). The reported item is copied to
-  the evidence store (180 days). Two "may be under 13" reports from different people pause that account's rooms
-  pending review.
+- Limits: reason 1 unlimited; reasons 2–9 at most 20 per 24 h → `429 report_limit`.
+- Server-side routing (never visible): crisis lane (reason 1); Minors & grooming lane (reasons 7 and 9 whatever the
+  ages on record, or anyone involved is under 18 by stored DOB or a platform age signal); harassment (2, 3, 4, 5);
+  spam/other (6, 8). "Involved" = the reporter and the reported person; for a room report, everyone in the room; for
+  reason 9 ("targeting a young person" — a bystander's sense of it is the signal), everyone who has been in the room,
+  including people who left. Sexual content (3), contact / personal info (5) and targeting a young person (9) with a
+  minor involved get the 2 h clock and the 24×7 page (§5); other Minors & grooming items 4 h. The response is the same
+  for every reason and age (DS-10). The reported item is copied to the evidence store (180 days). Two "may be under
+  13" reports from different people pause that account's rooms pending review.
 
 `GET /v1/safety/reports` → `200 { "reports": [{ "reportId", "reason", "targetKind", "status": "received" | "reviewed",
 "outcome": "action_taken" | "no_action" | null, "createdAt", "reviewedAt": "ISO" | null }] }` — your own reports,
@@ -235,11 +245,34 @@ newest first (≤ 100): the in-app outcome inbox. Never says what happened to th
 ### 2.3 `GET /v1/safety/me` → your own standing
 ```json
 { "rooms": "available", "until": null,
-  "notices": [{ "noticeId": "uuid", "kind": "warning", "reasonCode": "harassment", "createdAt": "ISO", "until": null }] }
+  "notices": [{ "noticeId": "uuid", "kind": "warning", "createdAt": "ISO", "until": null }],
+  "guidelines": { "version": 1, "accepted": true, "acceptedVersion": 1, "acceptedAt": "ISO" } }
 ```
 `rooms`: `available` · `suspended` (`until` = end, or null = paused pending review) · `closed` (account closed).
-`notices` (≤ 50, newest first): `warning` · `suspension` · `account_closed`, each with a `reasonCode` from the
-moderation reason list. Shadow-mutes are never shown anywhere.
+`notices` (≤ 50, newest first, last 180 days): `warning` · `suspension` (room suspension, pause pending review, social
+ban) · `account_closed`, with when and until when — **never why**: no reason code, lane, report or moderator detail
+for any kind (19 admin console, Minors & grooming SOP step 4 "no tipping off"; e.g. a ban for grooming reads exactly
+like any other closure). The app shows the calm generic line and how to ask for a review: the Grievance Officer
+(bundled in the app; also `GET /v1/grievances/officer`) and `POST /v1/grievances` with category `moderation_appeal`.
+Shadow-mutes are never shown anywhere (no notice, `rooms` stays `available`).
+`guidelines` (REQ-SAFE-04): `version` = the version rooms require now; `accepted` = you accepted it or a newer one;
+`acceptedVersion` / `acceptedAt` = your newest acceptance (null if none). Works for suspended and closed accounts.
+
+### 2.4 `POST /v1/safety/guidelines/accept` — community guidelines before the first room (REQ-SAFE-04)
+```json
+{ "version": 1 }
+```
+→ `200 { "version": 1, "accepted": true, "acceptedVersion": 1, "acceptedAt": "ISO" }` (the §2.3 `guidelines` shape).
+- `version`: the version of the guidelines text the app just showed (integer 1–1000) → else `400 invalid_request`.
+  The required version, or a newer one (an app release can carry new copy before the server asks for it), is
+  recorded; an older one opens nothing → `409 guidelines_required` with `{ "version": <required> }` (an out-of-date
+  app asks for an update).
+- Idempotent: repeating keeps the first `acceptedAt`. Needs a profile (`409 profile_required`). Suspended accounts
+  can accept; a closed one gets `403 account_closed`.
+- Versioning: `safety_config.guidelines_version` (default 1). On a material change AK ships the new copy in an app
+  release, then raises the version: everyone is asked again at their next `POST /v1/rooms/match`.
+- Stored server-only in `guidelines_acceptances` (account, version, time; purged with the profile). The app keeps a
+  local flag only as a cache to skip the sheet; the server's answer wins.
 
 ## 3. Realtime (Supabase Realtime, private Broadcast channels)
 
@@ -302,16 +335,17 @@ the evidence store) → `404`.
   of "here now", refused on Realtime (and every route answers `403 account_deletion_pending`, v1.md). "Keep my
   account" restores it.
 - The account purge removes its memberships (with pseudonyms, heartbeats, survey marks, gestures and mutes both
-  ways), blocks both ways, sanctions and strikes; reports it filed stay in their moderation lane without the link
-  to it. The only rows that may still reference a purged account are **evidence holds about it** (reported content
-  where it is the subject), kept until `hold_until` = capture + 180 days `[LEGAL]` (`LEGAL_HOLD_TABLES`,
-  `server/aura-api/src/account/account-purge.ts`). The moderation audit log keeps only an HMAC of the account id.
+  ways), blocks both ways, sanctions, strikes and guidelines acceptances (with the profile); reports it filed stay in
+  their moderation lane without the link to it. The only rows that may still reference a purged account are
+  **evidence holds about it** (reported content where it is the subject), kept until `hold_until` = capture +
+  180 days `[LEGAL]` (`LEGAL_HOLD_TABLES`, `server/aura-api/src/account/account-purge.ts`). The moderation audit
+  log keeps only an HMAC of the account id.
 - Survey answers are aggregate counters (no account, member or room id).
 
 ### 4.4 Codes introduced here
 `invalid_target`, `member_not_found`, `room_read_only`, `language_pool_unavailable`, `room_join_limit`,
-`report_limit`, `rooms_suspended`, `account_closed` (plus v1.md's `invalid_request`, `not_found`,
-`profile_required`, `account_deletion_pending`, `unauthorized`).
+`report_limit`, `rooms_suspended`, `account_closed`, `guidelines_required` (plus v1.md's `invalid_request`,
+`not_found`, `profile_required`, `account_deletion_pending`, `unauthorized`).
 
 ## 5. For the admin console (next stage): internal `ModerationService` (`server/aura-api/src/safety/moderation.service.ts`)
 The console's NestJS admin layer (SSO + 2FA, roles) wraps these methods; nothing here is exposed over HTTP yet.
@@ -320,8 +354,8 @@ The console's NestJS admin layer (SSO + 2FA, roles) wraps these methods; nothing
   slaDueAt, overdue, pages, involvesMinor ("Under 18" flag — never a DOB), reporterCount, note, room { roomId,
   quadrant, languagePool, tzRegion, ageHours }, subject { hash (HMAC of the account id), pseudonym, accountAgeDays,
   activeStrikes, activeSanctions }, evidenceHoldId }`. SLA: crisis 15 min in India's Lantern Hour else 1 h (pages in
-  Lantern Hour); minors & grooming 2 h and pages 24×7 for sexual / contact-info reports involving a minor, else 4 h;
-  others 24 h.
+  Lantern Hour); minors & grooming 2 h and pages 24×7 for sexual / contact-info / targeting-a-young-person reports
+  involving a minor, else 4 h; others 24 h. `reasonKey` of reason 9 is `targeting_minor`.
 - `act({ reportId, action, actor, reasonCode?, hours? })`, `action` ∈ `dismiss` · `warn` · `strike` (ladder: warning
   → 24 h shadow-mute → 7-day room suspension → permanent social ban; 90-day strikes; a crisis report can never
   strike → `ModerationError('crisis_never_strikes')`) · `shadow_mute` (1–720 h, default 7 days) · `suspend` (24 h or

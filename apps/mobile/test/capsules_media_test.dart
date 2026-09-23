@@ -19,7 +19,14 @@ void main() {
     final src = img.Image(width: w, height: h);
     img.fill(src, color: img.ColorRgb8(200, 120, 60));
     // A marker in the top-left corner to check the rotation.
-    img.fillRect(src, x1: 0, y1: 0, x2: 99, y2: 99, color: img.ColorRgb8(0, 0, 255));
+    img.fillRect(
+      src,
+      x1: 0,
+      y1: 0,
+      x2: 99,
+      y2: 99,
+      color: img.ColorRgb8(0, 0, 255),
+    );
     src.exif.imageIfd.make = 'AuraTestCam';
     src.exif.imageIfd.model = 'Model-X';
     src.exif.imageIfd.orientation = orientation;
@@ -72,13 +79,17 @@ void main() {
     });
 
     test('a small photo keeps its size (still stripped)', () {
-      final out = processCapsulePhoto(cameraJpeg(w: 800, h: 600, orientation: 1));
+      final out = processCapsulePhoto(
+        cameraJpeg(w: 800, h: 600, orientation: 1),
+      );
       expect((out.width, out.height), (800, 600));
       expect(img.decodeJpg(out.jpeg)!.exif.isEmpty, isTrue);
     });
 
     test('a landscape photo caps its width', () {
-      final out = processCapsulePhoto(cameraJpeg(w: 4096, h: 3072, orientation: 1));
+      final out = processCapsulePhoto(
+        cameraJpeg(w: 4096, h: 3072, orientation: 1),
+      );
       expect((out.width, out.height), (2048, 1536));
     });
 
@@ -93,7 +104,8 @@ void main() {
 
     test('something that is not an image is refused', () {
       expect(
-        () => processCapsulePhoto(Uint8List.fromList(utf8.encode('not a photo'))),
+        () =>
+            processCapsulePhoto(Uint8List.fromList(utf8.encode('not a photo'))),
         throwsA(isA<PhotoUnreadable>()),
       );
     });
@@ -119,25 +131,31 @@ void main() {
       if (root.existsSync()) root.deleteSync(recursive: true);
     });
 
-    test('adopt moves draft files; seal writes `<slot>.enc` and drops the raw', () async {
-      final photo = await store.writeDraftPhoto('d1', Uint8List.fromList([1, 2, 3]));
-      final adopted = await store.adopt('CAP', {'photo-0': photo});
-      expect(adopted, {'photo-0': 'photo-0.jpg'});
-      expect(File(photo).existsSync(), isFalse);
-      final sealed = await store.seal(
-        'CAP',
-        'photo-0',
-        'photo-0.jpg',
-        cipher: testCipher(),
-      );
-      expect(sealed, 'photo-0.enc');
-      expect(await store.read('CAP', 'photo-0.jpg'), isNull);
-      final clear = await testCipher().decryptBytes(
-        (await store.read('CAP', 'photo-0.enc'))!,
-        recordId: 'cap/photo-0',
-      );
-      expect(clear, [1, 2, 3]);
-    });
+    test(
+      'adopt moves draft files; seal writes `<slot>.enc` and drops the raw',
+      () async {
+        final photo = await store.writeDraftPhoto(
+          'd1',
+          Uint8List.fromList([1, 2, 3]),
+        );
+        final adopted = await store.adopt('CAP', {'photo-0': photo});
+        expect(adopted, {'photo-0': 'photo-0.jpg'});
+        expect(File(photo).existsSync(), isFalse);
+        final sealed = await store.seal(
+          'CAP',
+          'photo-0',
+          'photo-0.jpg',
+          cipher: testCipher(),
+        );
+        expect(sealed, 'photo-0.enc');
+        expect(await store.read('CAP', 'photo-0.jpg'), isNull);
+        final clear = await testCipher().decryptBytes(
+          (await store.read('CAP', 'photo-0.enc'))!,
+          recordId: 'cap/photo-0',
+        );
+        expect(clear, [1, 2, 3]);
+      },
+    );
 
     test('a missing draft file adopts nothing', () async {
       await expectLater(
@@ -189,7 +207,10 @@ void main() {
       expect(tmp.existsSync(), isFalse);
       // Usable again afterwards.
       await store.writeDraftPhoto('new', Uint8List(4));
-      expect(Directory('${root.path}/capsules/drafts/new').existsSync(), isTrue);
+      expect(
+        Directory('${root.path}/capsules/drafts/new').existsSync(),
+        isTrue,
+      );
     });
   });
 }

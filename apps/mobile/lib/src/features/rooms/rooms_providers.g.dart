@@ -94,7 +94,7 @@ final class RoomsRepositoryProvider
   }
 }
 
-String _$roomsRepositoryHash() => r'802a4877b0a38f8af0462d6fdb4c9d41c59bc703';
+String _$roomsRepositoryHash() => r'fb18caa6c87806e937c8e26ec360c82de309d1bb';
 
 /// Opens the private Realtime channels, or `null` when this build has no
 /// Supabase (the room then polls with its heartbeat).
@@ -236,7 +236,7 @@ final class MyRoomsProvider
   MyRooms create() => MyRooms();
 }
 
-String _$myRoomsHash() => r'38c63e3b3aa0853f634e8393f9007d7d3d099b95';
+String _$myRoomsHash() => r'54c44768fb1dc29485070eba7643ea9067b75d50';
 
 /// The rooms you are in (`GET /v1/rooms`), newest first: active ones and
 /// memories. Empty until rooms are usable ([roomsReady]); offline it fails

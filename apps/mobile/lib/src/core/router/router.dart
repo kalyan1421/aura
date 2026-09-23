@@ -132,7 +132,9 @@ GoRouter router(Ref ref) {
       route(
         Routes.roomJoin,
         (s) => RoomJoinScreen(
-          request: s.extra is RoomJoinRequest ? s.extra! as RoomJoinRequest : null,
+          request: s.extra is RoomJoinRequest
+              ? s.extra! as RoomJoinRequest
+              : null,
         ),
       ),
       route(

@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../features/account/account_providers.dart';
+import '../features/auth/account_closed.dart';
 import '../features/auth/auth_repository.dart';
 import '../features/auth/sign_out_service.dart';
 import '../features/avatar/moments_controller.dart';
@@ -224,6 +225,11 @@ AuraApi? auraApi(Ref ref) {
     // Signed Storage URLs are rewritten to this build's Supabase host when
     // the API signed a loopback one (Android emulator / LAN device).
     supabaseUrl: Env.supabaseUrl,
+    // 403 account_closed from any call: the calm "This account is closed"
+    // screen (features/auth/account_closed.dart).
+    onAccountClosed: () {
+      if (ref.mounted) ref.read(accountClosedProvider.notifier).report();
+    },
   );
 }
 
@@ -393,8 +399,16 @@ SignOutService signOutService(Ref ref) => SignOutService(
   unregisterPush: () => ref.read(pushServiceProvider).unregister(),
   pauseSync: () => ref.read(syncControllerProvider).pause(),
   resumeSync: () => ref.read(syncControllerProvider).resume(),
-  // Every voice file (saved, raw, drafts, decrypted temp copies).
-  wipeFiles: () => ref.read(voiceStoreProvider).wipe(),
+  // Every voice file (saved, raw, drafts, decrypted temp copies) and every
+  // capsule file (media, drafts, scheduled notices, decrypted copies). The
+  // capsule wipe runs even if the voice wipe fails.
+  wipeFiles: () async {
+    try {
+      await ref.read(voiceStoreProvider).wipe();
+    } finally {
+      await ref.read(capsuleWiperProvider).wipeAll();
+    }
+  },
   afterWipe: () async {
     await ref
         .read(gateControllerProvider.notifier)

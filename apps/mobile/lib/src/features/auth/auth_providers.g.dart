@@ -114,7 +114,7 @@ final class SocialSignInProvider
   }
 }
 
-String _$socialSignInHash() => r'fe99d6394edd1f17165ff48d4ce521510d7b8365';
+String _$socialSignInHash() => r'4548277342851d39cda6d3643fbfc0b1b174b2d7';
 
 /// Apple Declared Age Range / Play Age Signals (REQ-ACC-04).
 
@@ -163,18 +163,21 @@ final class AgeSignalSourceProvider
 
 String _$ageSignalSourceHash() => r'0b66bfb495e223543d72f003e8d7b848749d18b3';
 
-/// Applies a signal: the under-13 block or the invisible under-18 flag.
+/// Applies a signal: the under-13 block or the invisible under-18 flag (on
+/// the phone, and on the server with the next profile POST).
 
 @ProviderFor(ageSignalPolicy)
 final ageSignalPolicyProvider = AgeSignalPolicyProvider._();
 
-/// Applies a signal: the under-13 block or the invisible under-18 flag.
+/// Applies a signal: the under-13 block or the invisible under-18 flag (on
+/// the phone, and on the server with the next profile POST).
 
 final class AgeSignalPolicyProvider
     extends
         $FunctionalProvider<AgeSignalPolicy, AgeSignalPolicy, AgeSignalPolicy>
     with $Provider<AgeSignalPolicy> {
-  /// Applies a signal: the under-13 block or the invisible under-18 flag.
+  /// Applies a signal: the under-13 block or the invisible under-18 flag (on
+  /// the phone, and on the server with the next profile POST).
   AgeSignalPolicyProvider._()
     : super(
         from: null,
@@ -208,4 +211,4 @@ final class AgeSignalPolicyProvider
   }
 }
 
-String _$ageSignalPolicyHash() => r'd21036b9320e3dc8465856e7500a7adec3ce8421';
+String _$ageSignalPolicyHash() => r'35ee96b2735c84321e62c4ce13c1b1648be54571';

@@ -18,14 +18,29 @@ import 'room_status.dart';
 import 'rooms_providers.dart';
 import 'rooms_repository.dart';
 
-enum _Phase { starting, matching, failed, pool, poolNotified, noRequest }
+enum _Phase {
+  starting,
+  matching,
+  failed,
+  pool,
+  poolNotified,
+  noRequest,
+  updateNeeded,
+}
 
 /// Finds a room for a saved check-in (`POST /v1/rooms/match`): "Finding
 /// people who feel this way right now…", then the room replaces this
 /// screen. Offline it says so and makes no call, then tries again by itself
-/// on reconnect (REQ-ROOM-01). The guidelines come first the first time
-/// (REQ-SAFE-04: leaving them never enters a room). Hindi + Hinglish before
-/// that pool opens: "Join an English room for now?".
+/// on reconnect (REQ-ROOM-01). Hindi + Hinglish before that pool opens:
+/// "Join an English room for now?".
+///
+/// Community guidelines (REQ-SAFE-04) are recorded on the server: the
+/// sheet comes first when this phone has no record of them, and again
+/// whenever the match answers `409 guidelines_required` (another phone, a
+/// material change); agreeing records them (`POST
+/// /v1/safety/guidelines/accept`) and the match is tried again. Leaving the
+/// sheet never enters a room. Guidelines newer than this build's copy: "update
+/// Aura".
 class RoomJoinScreen extends ConsumerStatefulWidget {
   const RoomJoinScreen({super.key, required this.request});
 
@@ -40,6 +55,12 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
   _Phase _phase = _Phase.starting;
   RoomsFailure? _failure;
 
+  /// Agreed to the guidelines on this screen (never asked twice here).
+  bool _agreed = false;
+
+  /// ... and the server has that on record.
+  bool _recorded = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,11 +73,84 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
       setState(() => _phase = _Phase.noRequest);
       return;
     }
-    if (!await ensureRoomGuidelines(context, ref)) {
-      if (mounted) Navigator.of(context).maybePop();
-      return;
+    // The phone's flag only saves a round trip; the server decides.
+    if (!await roomGuidelinesCached(ref.read(kvStoreProvider))) {
+      if (!mounted || !await _agree()) return;
     }
     await _match();
+  }
+
+  /// The guidelines (once per visit), then the server's record of them.
+  /// `false`: the person left them (this screen closes, no room), or the
+  /// record didn't go through (the screen says why).
+  Future<bool> _agree() async {
+    if (!_agreed) {
+      final agreed = await showRoomGuidelines(context);
+      if (!mounted) return false;
+      if (!agreed) {
+        Navigator.of(context).maybePop();
+        return false;
+      }
+      _agreed = true;
+    }
+    return _record();
+  }
+
+  Future<bool> _record() async {
+    setState(() {
+      _phase = _Phase.matching;
+      _failure = null;
+    });
+    try {
+      await ref
+          .read(roomsRepositoryProvider)
+          .acceptGuidelines(roomGuidelinesVersion);
+      _recorded = true;
+      await cacheRoomGuidelines(
+        ref.read(kvStoreProvider),
+        roomGuidelinesVersion,
+      );
+      return mounted;
+    } on RoomsFailure catch (f) {
+      if (!mounted) return false;
+      setState(() {
+        // Refused as too old: the server needs newer guidelines than this
+        // build carries.
+        _phase = f.kind == RoomsFailureKind.guidelinesRequired
+            ? _Phase.updateNeeded
+            : _Phase.failed;
+        _failure = f;
+      });
+      return false;
+    }
+  }
+
+  /// "Try again" and back-online: the guidelines' record first if that is
+  /// what didn't go through, then the match.
+  Future<void> _retry() async {
+    if (_agreed && !_recorded && !await _record()) return;
+    await _match();
+  }
+
+  /// `409 guidelines_required` from the match: the sheet, the record, the
+  /// same match again (once per visit, never a loop).
+  Future<void> _guidelinesRequired(
+    RoomsFailure f, {
+    required bool poolFallback,
+  }) async {
+    await forgetRoomGuidelines(ref.read(kvStoreProvider));
+    if (!mounted) return;
+    final version = f.guidelinesVersion ?? roomGuidelinesVersion;
+    if (version > roomGuidelinesVersion || _recorded) {
+      setState(() {
+        _phase = version > roomGuidelinesVersion
+            ? _Phase.updateNeeded
+            : _Phase.failed;
+        _failure = f;
+      });
+      return;
+    }
+    if (await _agree()) await _match(poolFallback: poolFallback);
   }
 
   Future<void> _match({bool poolFallback = false}) async {
@@ -79,6 +173,10 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
       openRoom(context, result.detail.room.roomId, replace: true);
     } on RoomsFailure catch (f) {
       if (!mounted) return;
+      if (f.kind == RoomsFailureKind.guidelinesRequired) {
+        await _guidelinesRequired(f, poolFallback: poolFallback);
+        return;
+      }
       setState(() {
         _phase = f.kind == RoomsFailureKind.poolUnavailable
             ? _Phase.pool
@@ -106,7 +204,7 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
           prev?.value == false &&
           _phase == _Phase.failed &&
           (_failure?.isTransient ?? false)) {
-        unawaited(_match());
+        unawaited(_retry());
       }
     });
     final request = widget.request;
@@ -123,9 +221,20 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
               switch (_phase) {
                 _Phase.starting => const SizedBox.shrink(),
                 _Phase.matching => _Finding(request: request!),
-                _Phase.failed => _Failed(
-                  failure: _failure!,
-                  onRetry: () => _match(),
+                _Phase.failed => _Failed(failure: _failure!, onRetry: _retry),
+                _Phase.updateNeeded => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    InlineNotice(
+                      l.rooms_guidelinesUpdate,
+                      key: const ValueKey('rooms-guidelines-update'),
+                    ),
+                    const SizedBox(height: AuraSpace.l),
+                    FilledButton(
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      child: Text(l.common_done),
+                    ),
+                  ],
                 ),
                 _Phase.pool => _PoolChoice(
                   onEnglish: () => unawaited(_match(poolFallback: true)),
@@ -217,7 +326,8 @@ class _FindingState extends State<_Finding>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    AuraColors.quadrant(q).withValues(alpha: 0.18 + 0.14 * _c.value),
+                    AuraColors.quadrant(q)
+                        .withValues(alpha: 0.18 + 0.14 * _c.value),
                     AuraColors.quadrant(q).withValues(alpha: 0),
                   ],
                 ),

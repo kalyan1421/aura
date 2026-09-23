@@ -319,6 +319,7 @@ class CapsuleSync {
   static const String cursorKey = 'capsules.pull_cursor';
 
   DateTime? _lastPull;
+  String? _lastPullUser;
   bool _pullRequested = true;
   final Set<String> _refetch = {};
 
@@ -465,9 +466,11 @@ class CapsuleSync {
     if (source == null) return;
     final now = _clock.now();
     final last = _lastPull;
+    // Another account signed in: its first pull never waits.
     if (!force &&
         !_pullRequested &&
         last != null &&
+        _lastPullUser == userId &&
         now.difference(last) < pullEvery) {
       return;
     }
@@ -491,6 +494,7 @@ class CapsuleSync {
       if (!isCurrent()) return;
       await apply(raw, userId: userId, isCurrent: isCurrent);
       _lastPull = now;
+      _lastPullUser = userId;
     } catch (_) {
       // Try again next drain.
       _refetch.addAll(refetch);

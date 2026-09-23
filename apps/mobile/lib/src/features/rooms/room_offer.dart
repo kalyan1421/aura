@@ -12,7 +12,6 @@ import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../onboarding/gate_controller.dart';
-import 'room_guidelines.dart';
 import 'room_navigation.dart';
 import 'rooms_providers.dart';
 
@@ -24,8 +23,9 @@ import 'rooms_providers.dart';
 /// - Signed out: a calm line and Sign in; during the first check-in (still
 ///   onboarding) a line that rooms are in the Rooms tab. Never a dead
 ///   button; nothing at all in a build without rooms.
-/// - Otherwise: the guidelines the first time (REQ-SAFE-04), then the room
-///   is matched for this check-in's mood.
+/// - Otherwise: the join screen matches the room for this check-in's mood,
+///   with the community guidelines first when the server has no record of
+///   them yet (REQ-SAFE-04, room_join_screen.dart).
 class RoomOfferButton extends ConsumerStatefulWidget {
   const RoomOfferButton({super.key, required this.quadrant, this.moodId});
 
@@ -50,7 +50,6 @@ class _RoomOfferButtonState extends ConsumerState<RoomOfferButton> {
           widget.moodId ??
           await latestMoodIn(ref.read(appDatabaseProvider), widget.quadrant);
       if (!mounted || moodId == null) return;
-      if (!await ensureRoomGuidelines(context, ref) || !mounted) return;
       openRoomJoin(
         context,
         RoomJoinRequest(quadrant: widget.quadrant, moodId: moodId),
@@ -93,15 +92,18 @@ class _RoomOfferButtonState extends ConsumerState<RoomOfferButton> {
         icon: Icons.cloud_off_outlined,
       );
     }
-    return Semantics(
-      hint: l.rooms_offerHint,
-      child: SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          key: const ValueKey('room-offer'),
-          onPressed: _busy ? null : () => unawaited(_join()),
-          icon: const Icon(Icons.groups_rounded),
-          label: Text(l.rooms_offer, textAlign: TextAlign.center),
+    // One node: the button's label and action plus the hint.
+    return MergeSemantics(
+      child: Semantics(
+        hint: l.rooms_offerHint,
+        child: SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            key: const ValueKey('room-offer'),
+            onPressed: _busy ? null : () => unawaited(_join()),
+            icon: const Icon(Icons.groups_rounded),
+            label: Text(l.rooms_offer, textAlign: TextAlign.center),
+          ),
         ),
       ),
     );
@@ -160,9 +162,8 @@ class _Note extends StatelessWidget {
               children: [
                 Text(
                   text,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AuraColors.textSoft,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(color: AuraColors.textSoft),
                 ),
                 ?action,
               ],

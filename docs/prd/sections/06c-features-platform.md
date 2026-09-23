@@ -97,7 +97,7 @@ Attach a demo account, a seeded room and a 60-second recording of a report actio
 
 **Community guidelines** accepted before first room (Play UGC), versioned, re-shown on material change: be kind; no hate (incl. caste, religion, gender, sexuality); no sexual content; no contact details, meeting up, or asking anyone's age, school, city or photos; no selling; no encouraging self-harm (talking about how you feel is fine).
 
-**Report reasons:** Unkind · Hate · Sexual · Asking for contact or to meet · **Targeting a young person** (minors lane) · Spam · Encourages self-harm · Threat · **I'm worried about this person** (crisis lane, not a violation) · **Might be under 13** (minors lane) · Other. Item hides for the reporter; outcome goes to their inbox.
+**Report reasons** (the same 9 as the Social Layer's shared stranger-surface rules): (1) **in danger or self-harm** (crisis lane, not a violation; the reporter sees helplines) · (2) harassment · (3) sexual content or advances · (4) hate · (5) contact or personal info · (6) spam or selling · (7) **might be under 13** (minors lane) · (8) other · (9) **targeting a young person** (minors lane, whatever the ages on record). Earlier wordings map onto these: Unkind and Threat → harassment (2); Encourages self-harm and "I'm worried about this person" → (1), the crisis lane; Asking for contact or to meet → contact or personal info (5). Item hides for the reporter; outcome goes to their inbox.
 
 **Mute** hides a pseudonym for that room. **Block** also keeps both accounts out of the same room or game for good (server-side). The blocked person isn't told.
 
@@ -153,7 +153,7 @@ Publish only if 1–3 are clear; violation → gentle rejection; self-harm → c
 | REQ-SAFE-01 | P0 | Help button on every listed surface opens the Safety Center. | `/safety` opens <500 ms in airplane mode, signed out and from the under-13 screen; contextual triggers open the support sheet just as fast. **Neg:** never behind paywall or login. |
 | REQ-SAFE-02 | P0 | Region-aware support sheet. | IN → 14416, 1-800-891-4416, 112; US → 988; other → generic. **Neg:** no findahelpline.com data shipped. |
 | REQ-SAFE-03 | P0 | On-device EN/TE/Tenglish/HI/Hinglish lexicon. | ≥90% recall on a 200-phrase set per language `[ASSUMPTION]`. **Neg:** no private text sent for classification. |
-| REQ-SAFE-04 | P0 | Guidelines before first room. | Unaccepted current version → guidelines first. **Neg:** Back doesn't enter the room. |
+| REQ-SAFE-04 | P0 | Guidelines before first room. | Unaccepted current version → guidelines first; the acceptance is recorded on the server per version and the room match refuses until the current version is accepted (a new phone or a material change asks again). **Neg:** Back doesn't enter the room; a flag on the phone alone never opens one. |
 | REQ-SAFE-05 | P0 | Report with reasons everywhere. | Item hides for reporter; lands in the right lane; outcome in inbox. |
 | REQ-SAFE-06 | P0 | Mute and block. | Blocked pair never co-matched across 100 simulated matches. **Neg:** blocked user gets no signal. |
 | REQ-SAFE-07 | P0 | Four-stage pipeline, fail closed. | p50 <2 s; provider timeout → held. **Neg:** "9 8 7 6 5 4 3 2 1 0", "insta: x" or "which school are you in?" never published. |

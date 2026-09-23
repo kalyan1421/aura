@@ -256,8 +256,8 @@ select throws_ok(
 );
 select throws_ok(
   $$ insert into public.reports (reporter_user_id, reason, lane, target_kind, target_ref, sla_due_at)
-     values ('10cccccc-0000-4000-8000-00000000000c', 9, 'spam', 'room', gen_random_uuid(), now()) $$,
-  '23514', null, 'report reasons are 1–8'
+     values ('10cccccc-0000-4000-8000-00000000000c', 10, 'spam', 'room', gen_random_uuid(), now()) $$,
+  '23514', null, 'report reasons are 1–9 (9 = targeting a young person, migration 20261005000015)'
 );
 insert into public.blocks (blocker_user_id, blocked_user_id, quadrant) values
   ('10aaaaaa-0000-4000-8000-00000000000a', '10bbbbbb-0000-4000-8000-00000000000b', 'storm'),

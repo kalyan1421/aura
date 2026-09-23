@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../features/onboarding/gate_controller.dart';
 import 'routes.dart';
 
-/// `aura://` links: `aura://checkin`, `aura://safety`, `aura://sanctuary`
-/// (notifications, widgets, shortcuts). The platform hands them to the
-/// router (Flutter deep linking): at launch as the first location, while
-/// running as a new one.
+/// `aura://` links: `aura://checkin`, `aura://safety`, `aura://sanctuary`,
+/// `aura://rooms` (notifications, widgets, shortcuts). The platform hands
+/// them to the router (Flutter deep linking): at launch as the first
+/// location, while running as a new one.
 ///
 /// They respect the gate: the under-13 lock and onboarding win (the link
 /// then does nothing: the gate already shows where the person is), except
@@ -28,6 +28,7 @@ abstract final class DeepLinks {
     'checkin': Routes.checkIn,
     'safety': Routes.safety,
     'sanctuary': Routes.sanctuary,
+    'rooms': Routes.rooms,
   };
 
   /// Opened above the current screen rather than instead of it.

@@ -55,6 +55,10 @@ class World {
     if (/pg_advisory_xact_lock|realtime\.send|here_now_broadcast|from public\.matching_config|from public\.sanctions|from public\.feature_flags/.test(text)) {
       return { rows: [], rowCount: 0 };
     }
+    if (/from public\.guidelines_acceptances/.test(text)) {
+      // Everyone here has accepted the community guidelines (the gate itself: test/unit/safety.guidelines.spec.ts).
+      return { rows: [{ current: 1, accepted_version: 1, accepted_at: new Date(LANTERN_HOUR_IST) }], rowCount: 1 };
+    }
     if (/from public\.profiles/.test(text)) return { rows: [{ language_pool: 'en', timezone: 'Asia/Kolkata' }], rowCount: 1 };
     throw new Error(`unexpected SQL in fake: ${text.slice(0, 80)}`);
   }

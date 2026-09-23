@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/net/aura_api.dart';
 import 'package:aura/src/core/providers.dart';
 import 'package:aura/src/core/security/secure_store.dart';
+import 'package:aura/src/core/theme/app_theme.dart';
 import 'package:aura/src/core/time/clock.dart';
 import 'package:aura/src/features/auth/auth_repository.dart';
 import 'package:aura/src/features/avatar/avatar_assets.dart';
@@ -14,7 +16,9 @@ import 'package:aura/src/features/rooms/room_realtime.dart';
 import 'package:aura/src/features/rooms/rooms_api.dart';
 import 'package:aura/src/features/rooms/rooms_providers.dart';
 import 'package:aura_domain/aura_domain.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -34,10 +38,11 @@ final DateTime serverNow = testNow;
 Map<String, dynamic> lanternJson({bool active = false, DateTime? endsAt}) => {
   'timezone': 'Asia/Kolkata',
   'active': active,
-  'startsAt': (active
-          ? serverNow.subtract(const Duration(minutes: 30))
-          : serverNow.add(const Duration(hours: 5)))
-      .toIso8601String(),
+  'startsAt':
+      (active
+              ? serverNow.subtract(const Duration(minutes: 30))
+              : serverNow.add(const Duration(hours: 5)))
+          .toIso8601String(),
   'endsAt': (endsAt ?? serverNow.add(const Duration(hours: 7)))
       .toIso8601String(),
 };
@@ -216,7 +221,8 @@ class FakeRoomsApi implements RoomsApi {
     gestures.add((type: type, to: toMemberId));
     // Delivered or silently dropped: the same 202 either way.
     return GestureAck(
-      gestureId: 'bbbbbbbb-0000-4000-8000-${(++_gestureIds).toString().padLeft(12, '0')}',
+      gestureId:
+          'bbbbbbbb-0000-4000-8000-${(++_gestureIds).toString().padLeft(12, '0')}',
       at: serverNow,
     );
   }
@@ -271,13 +277,30 @@ class FakeRoomsApi implements RoomsApi {
     await _call('standing');
     return const SafetyStanding(rooms: 'suspended');
   }
+
+  /// Guidelines versions recorded by `acceptGuidelines` (REQ-SAFE-04).
+  final List<int> acceptedGuidelines = [];
+
+  @override
+  Future<GuidelinesStatus> acceptGuidelines(int version) async {
+    await _call('acceptGuidelines');
+    acceptedGuidelines.add(version);
+    return GuidelinesStatus(
+      version: version,
+      accepted: true,
+      acceptedVersion: version,
+    );
+  }
 }
 
 /// A private Broadcast channel driven by the test.
 class FakeChannel implements RoomChannel {
-  FakeChannel(this.topic);
+  FakeChannel(this.topic, {this.autoJoin = true});
 
   final String topic;
+
+  /// Answers `subscribed` right after [subscribe].
+  final bool autoJoin;
   void Function(String event, Map<String, dynamic> payload)? _onEvent;
   void Function(RoomChannelStatus status)? _onStatus;
   bool subscribed = false;
@@ -291,6 +314,11 @@ class FakeChannel implements RoomChannel {
   void subscribe(void Function(RoomChannelStatus status) onStatus) {
     subscribed = true;
     _onStatus = onStatus;
+    if (autoJoin) {
+      scheduleMicrotask(() {
+        if (!closed) status(RoomChannelStatus.subscribed);
+      });
+    }
   }
 
   @override
@@ -308,13 +336,8 @@ class FakeChannels {
   bool autoJoin = true;
 
   Future<RoomChannel> open(String topic) async {
-    final c = FakeChannel(topic);
+    final c = FakeChannel(topic, autoJoin: autoJoin);
     opened.add(c);
-    if (autoJoin) {
-      scheduleMicrotask(() {
-        if (!c.closed) c.status(RoomChannelStatus.subscribed);
-      });
-    }
     return c;
   }
 
@@ -410,3 +433,74 @@ List<String> captureAnnouncements(WidgetTester tester) {
 
 /// A Quadrant for a quick match request.
 const Quadrant rain = Quadrant.rain;
+
+/// A phone-sized, localized app around [home] with the rooms overrides.
+/// [scale]: OS text size (2 = 200%); [reduceMotion]: the OS setting.
+Future<AppDatabase> pumpRooms(
+  WidgetTester tester,
+  Widget home, {
+  required FakeRoomsApi api,
+  FakeChannels? channels,
+  Stream<bool>? connectivity,
+  AuthRepository auth = const SignedInAuth(),
+  GateState gate = const GateState(stage: OnboardingStage.done),
+  String tag = 'en',
+  double scale = 1,
+  bool reduceMotion = false,
+  Size size = const Size(390, 844),
+  Future<void> Function(AppDatabase db)? seed,
+}) async {
+  tester.view.physicalSize = size * 3;
+  tester.view.devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+  tester.platformDispatcher.textScaleFactorTestValue = scale;
+  addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+  if (reduceMotion) {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+  }
+  final db = memoryDb();
+  if (seed != null) await tester.runAsync(() => seed(db));
+  final locale = localeFromTag(tag);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: roomsTestOverrides(
+        db: db,
+        api: api,
+        channels: channels,
+        connectivity: connectivity,
+        auth: auth,
+        gate: gate,
+        locale: tag,
+      ),
+      child: MaterialApp(
+        theme: buildAuraTheme(locale),
+        locale: locale,
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          ...systemLocalizationDelegates,
+        ],
+        home: home,
+      ),
+    ),
+  );
+  await settleRooms(tester);
+  return db;
+}
+
+/// Lets the fake server, channels and streams land (rooms screens have
+/// endless spinners and glows, so never `pumpAndSettle`).
+Future<void> settleRooms(WidgetTester tester, {int frames = 4}) async {
+  for (var i = 0; i < frames; i++) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+}
+
+/// Opens a sheet or dialog (or lets one close).
+Future<void> settleSheet(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pump(const Duration(milliseconds: 400));
+}

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../capsules/capsule_providers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/net/aura_api.dart';
 import '../../core/providers.dart';
@@ -197,6 +198,11 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
         item(Icons.spa_outlined, l.acct_itemHabits),
         item(Icons.auto_awesome_outlined, l.acct_itemProgress),
         item(Icons.alternate_email_rounded, l.acct_itemAccount),
+        // F4 edge case: "the confirmation states how many sealed ones will be
+        // lost". Nothing when there are none.
+        if ((ref.watch(sealedCapsuleCountProvider).value ?? 0) case final n
+            when n > 0)
+          item(Icons.lock_clock_outlined, l.capsules_accountDeletionCount(n)),
         const SizedBox(height: AuraSpace.l),
         Text(l.acct_grace, key: const ValueKey('acct-grace'), style: soft),
         const SizedBox(height: AuraSpace.m),

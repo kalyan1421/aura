@@ -142,16 +142,17 @@ Future<void> _pickTime(WidgetTester tester, String row, int hh, int mm) async {
 }
 
 void main() {
-  testWidgets('the section sits between Comfort and Account, announced as a '
-      'heading, with the PRD defaults', (tester) async {
+  testWidgets('the section sits between Account and Help & Safety, announced '
+      'as a heading, with the PRD defaults', (tester) async {
     await _pump(tester);
     final handle = tester.ensureSemantics();
     final y = {
-      for (final k in ['comfort', 'notifications', 'account'])
+      for (final k in ['comfort', 'account', 'notifications', 'help'])
         k: tester.getTopLeft(_key('set-section-$k')).dy,
     };
-    expect(y['comfort']!, lessThan(y['notifications']!));
-    expect(y['notifications']!, lessThan(y['account']!));
+    expect(y['comfort']!, lessThan(y['account']!));
+    expect(y['account']!, lessThan(y['notifications']!));
+    expect(y['notifications']!, lessThan(y['help']!));
     expect(
       tester.getSemantics(_key('set-section-notifications')),
       isSemantics(isHeader: true, label: 'Notifications'),

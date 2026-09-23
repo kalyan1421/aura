@@ -2078,7 +2078,10 @@ $SnapshotCopyWith<$Res>? get snapshot {
 /// @nodoc
 mixin _$ProfileRequest {
 
- String get birthDate; String get uiLocale; String get timezone; String? get country;
+ String get birthDate; String get uiLocale; String get timezone; String? get country;/// Platform age band read before sign-in (F8 REQ-ACC-04/10):
+/// `under13` | `under18` | `adult`. Sent only when set; the server keeps
+/// the invisible under-18 flag and never returns it.
+@JsonKey(includeIfNull: false) String? get ageSignal;
 /// Create a copy of ProfileRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2092,20 +2095,20 @@ $ProfileRequestCopyWith<ProfileRequest> get copyWith => _$ProfileRequestCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as ProfileRequest;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileRequest&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.uiLocale, _this.uiLocale) || other.uiLocale == _this.uiLocale)&&(identical(other.timezone, _this.timezone) || other.timezone == _this.timezone)&&(identical(other.country, _this.country) || other.country == _this.country));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileRequest&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.uiLocale, _this.uiLocale) || other.uiLocale == _this.uiLocale)&&(identical(other.timezone, _this.timezone) || other.timezone == _this.timezone)&&(identical(other.country, _this.country) || other.country == _this.country)&&(identical(other.ageSignal, _this.ageSignal) || other.ageSignal == _this.ageSignal));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as ProfileRequest;
-  return Object.hash(runtimeType,_this.birthDate,_this.uiLocale,_this.timezone,_this.country);
+  return Object.hash(runtimeType,_this.birthDate,_this.uiLocale,_this.timezone,_this.country,_this.ageSignal);
 }
 
 @override
 String toString() {
   final _this = this as ProfileRequest;
-  return 'ProfileRequest(birthDate: ${_this.birthDate}, uiLocale: ${_this.uiLocale}, timezone: ${_this.timezone}, country: ${_this.country})';
+  return 'ProfileRequest(birthDate: ${_this.birthDate}, uiLocale: ${_this.uiLocale}, timezone: ${_this.timezone}, country: ${_this.country}, ageSignal: ${_this.ageSignal})';
 }
 
 
@@ -2116,7 +2119,7 @@ abstract mixin class $ProfileRequestCopyWith<$Res>  {
   factory $ProfileRequestCopyWith(ProfileRequest value, $Res Function(ProfileRequest) _then) = _$ProfileRequestCopyWithImpl;
 @useResult
 $Res call({
- String birthDate, String uiLocale, String timezone, String? country
+ String birthDate, String uiLocale, String timezone, String? country,@JsonKey(includeIfNull: false) String? ageSignal
 });
 
 
@@ -2133,12 +2136,13 @@ class _$ProfileRequestCopyWithImpl<$Res>
 
 /// Create a copy of ProfileRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? birthDate = null,Object? uiLocale = null,Object? timezone = null,Object? country = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? birthDate = null,Object? uiLocale = null,Object? timezone = null,Object? country = freezed,Object? ageSignal = freezed,}) {
   return _then(ProfileRequest(
 birthDate: null == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String,uiLocale: null == uiLocale ? _self.uiLocale : uiLocale // ignore: cast_nullable_to_non_nullable
 as String,timezone: null == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
 as String,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
+as String?,ageSignal: freezed == ageSignal ? _self.ageSignal : ageSignal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -2224,10 +2228,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String birthDate,  String uiLocale,  String timezone,  String? country)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String birthDate,  String uiLocale,  String timezone,  String? country, @JsonKey(includeIfNull: false)  String? ageSignal)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileRequest() when $default != null:
-return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);case _:
+return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country,_that.ageSignal);case _:
   return orElse();
 
 }
@@ -2245,10 +2249,10 @@ return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String birthDate,  String uiLocale,  String timezone,  String? country)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String birthDate,  String uiLocale,  String timezone,  String? country, @JsonKey(includeIfNull: false)  String? ageSignal)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileRequest():
-return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);case _:
+return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country,_that.ageSignal);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2265,10 +2269,10 @@ return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);cas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String birthDate,  String uiLocale,  String timezone,  String? country)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String birthDate,  String uiLocale,  String timezone,  String? country, @JsonKey(includeIfNull: false)  String? ageSignal)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileRequest() when $default != null:
-return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);case _:
+return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country,_that.ageSignal);case _:
   return null;
 
 }
@@ -2280,13 +2284,17 @@ return $default(_that.birthDate,_that.uiLocale,_that.timezone,_that.country);cas
 @JsonSerializable()
 
 class _ProfileRequest implements ProfileRequest {
-  const _ProfileRequest({required this.birthDate, required this.uiLocale, required this.timezone, this.country});
+  const _ProfileRequest({required this.birthDate, required this.uiLocale, required this.timezone, this.country, @JsonKey(includeIfNull: false) this.ageSignal});
   factory _ProfileRequest.fromJson(Map<String, dynamic> json) => _$ProfileRequestFromJson(json);
 
 @override final  String birthDate;
 @override final  String uiLocale;
 @override final  String timezone;
 @override final  String? country;
+/// Platform age band read before sign-in (F8 REQ-ACC-04/10):
+/// `under13` | `under18` | `adult`. Sent only when set; the server keeps
+/// the invisible under-18 flag and never returns it.
+@override@JsonKey(includeIfNull: false) final  String? ageSignal;
 
 /// Create a copy of ProfileRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -2301,18 +2309,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileRequest&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.uiLocale, uiLocale) || other.uiLocale == uiLocale)&&(identical(other.timezone, timezone) || other.timezone == timezone)&&(identical(other.country, country) || other.country == country));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileRequest&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.uiLocale, uiLocale) || other.uiLocale == uiLocale)&&(identical(other.timezone, timezone) || other.timezone == timezone)&&(identical(other.country, country) || other.country == country)&&(identical(other.ageSignal, ageSignal) || other.ageSignal == ageSignal));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,birthDate,uiLocale,timezone,country);
+    return Object.hash(runtimeType,birthDate,uiLocale,timezone,country,ageSignal);
 }
 
 @override
 String toString() {
-    return 'ProfileRequest(birthDate: $birthDate, uiLocale: $uiLocale, timezone: $timezone, country: $country)';
+    return 'ProfileRequest(birthDate: $birthDate, uiLocale: $uiLocale, timezone: $timezone, country: $country, ageSignal: $ageSignal)';
 }
 
 
@@ -2323,7 +2331,7 @@ abstract mixin class _$ProfileRequestCopyWith<$Res> implements $ProfileRequestCo
   factory _$ProfileRequestCopyWith(_ProfileRequest value, $Res Function(_ProfileRequest) _then) = __$ProfileRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String birthDate, String uiLocale, String timezone, String? country
+ String birthDate, String uiLocale, String timezone, String? country,@JsonKey(includeIfNull: false) String? ageSignal
 });
 
 
@@ -2340,12 +2348,13 @@ class __$ProfileRequestCopyWithImpl<$Res>
 
 /// Create a copy of ProfileRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? birthDate = null,Object? uiLocale = null,Object? timezone = null,Object? country = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? birthDate = null,Object? uiLocale = null,Object? timezone = null,Object? country = freezed,Object? ageSignal = freezed,}) {
   return _then(_ProfileRequest(
 birthDate: null == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String,uiLocale: null == uiLocale ? _self.uiLocale : uiLocale // ignore: cast_nullable_to_non_nullable
 as String,timezone: null == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
 as String,country: freezed == country ? _self.country : country // ignore: cast_nullable_to_non_nullable
+as String?,ageSignal: freezed == ageSignal ? _self.ageSignal : ageSignal // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -12,7 +12,20 @@
           "package_name": "com.akvega.aura"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "956426842892-mbnnkf683ipvt9s31vu8d4n74va4s8h5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.akvega.aura",
+            "certificate_hash": "92eef9d9b31084041e5b8bda49c318d3320ffd6f"
+          }
+        },
+        {
+          "client_id": "956426842892-3dhg064sa12jffrodogss57rnf95emqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBKGOd7S4MXxIXYaFe7iElOIGJicdU04e8"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956426842892-3dhg064sa12jffrodogss57rnf95emqv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "956426842892-cajbosmt05vucd0l3831bqsk2993b9ts.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.akvega.aura"
+              }
+            }
+          ]
         }
       }
     }

@@ -18,9 +18,9 @@ import '../onboarding/language_screen.dart';
 import '../push/notifications_settings_section.dart';
 
 /// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
-/// Haptics, Hide streak number F3) · Notifications (F14) · Account (sign in/out, "Delete my
-/// account" F8 REQ-ACC-11) · Help & Safety (disclaimer REQ-SAFE-12, legal
-/// links, Grievance Officer REQ-SAFE-11, support) · About.
+/// Haptics, Hide streak number F3) · Account (sign in/out, "Delete my
+/// account" F8 REQ-ACC-11) · Notifications (F14) · Help & Safety (disclaimer
+/// REQ-SAFE-12, legal links, Grievance Officer REQ-SAFE-11, support) · About.
 ///
 /// A deletion that sync found pending (`403 account_deletion_pending`) is
 /// surfaced at the top with "Keep my account" / "Let it go".
@@ -125,10 +125,6 @@ class SettingsScreen extends ConsumerWidget {
                   comfortCtl.update((c) => c.copyWith(hideStreak: v)),
             ),
 
-            // ---- Notifications (F14: reminder, capsules, quiet hours,
-            // discreet mode; features/push) ---------------------------------
-            const NotificationsSection(),
-
             // ---- Account --------------------------------------------------
             if (auth.isAvailable) ...[
               section(l.settings_account, 'account'),
@@ -164,6 +160,10 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ],
+
+            // ---- Notifications (F14: reminder, capsules, quiet hours,
+            // discreet mode; features/push) ---------------------------------
+            const NotificationsSection(),
 
             // ---- Help & Safety ------------------------------------------------
             section(l.set_helpSafety, 'help'),

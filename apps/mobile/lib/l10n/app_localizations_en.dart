@@ -1102,6 +1102,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get capsules_channelName => 'Capsules';
 
   @override
+  String get capsules_notifyAskTitle => 'Want to know when it opens?';
+
+  @override
+  String get capsules_notifyAskBody =>
+      'One quiet note on the day it opens. Nothing on your lock screen says what\'s inside.';
+
+  @override
   String get capsules_channelDescription =>
       'When something you sealed is ready to open.';
 
@@ -1260,6 +1267,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get legal_opensInBrowser => 'Opens in your browser';
 
   @override
+  String get help_crisisSubtitleCapsule =>
+      'You don\'t have to carry it alone. Your capsule is sealed.';
+
+  @override
+  String get help_backToCapsule => 'Back to my capsule';
+
+  @override
   String get flows_startOverTitle => 'Start over?';
 
   @override
@@ -1268,6 +1282,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get flows_startOver => 'Start over';
+
+  @override
+  String get closed_title => 'This account is closed';
+
+  @override
+  String get closed_body =>
+      'This account was closed for breaking Aura\'s rules.';
+
+  @override
+  String get closed_review =>
+      'If you think this is a mistake, you can ask for a review. We reply within 7 days.';
+
+  @override
+  String get closed_askReview => 'Ask for a review';
+
+  @override
+  String get closed_reviewSubject => 'Review of a closed account';
+
+  @override
+  String get closed_deleteNote =>
+      'You can still delete your account and everything in it.';
+
+  @override
+  String get closed_signOutNote =>
+      'Signing out clears this account from this phone.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -1524,6 +1563,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get push_changeTime => 'Change time';
+
+  @override
+  String get push_discreet => 'Keep them discreet';
 
   @override
   String get onb_trustTitle => 'Before we begin';
@@ -2023,6 +2065,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rooms_guidelinesAgree => 'I\'ll keep to these';
 
   @override
+  String get rooms_guidelinesUpdate =>
+      'Rooms have new community guidelines. Update Aura to read them before your next room.';
+
+  @override
   String rooms_sendTo(String pseudonym) {
     return 'Send $pseudonym some warmth';
   }
@@ -2113,6 +2159,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rooms_reason8 => 'Something else';
+
+  @override
+  String get rooms_reason9 => 'Seems to be targeting a young person';
 
   @override
   String get rooms_reportNoteLabel =>

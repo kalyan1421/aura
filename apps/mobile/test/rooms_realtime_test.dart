@@ -29,6 +29,9 @@ class _Room {
   RoomController get room => c.read(roomControllerProvider(roomId).notifier);
 }
 
+/// Opens the room in a ProviderScope that lives in the widget tree, so it
+/// (and every timer the room holds) is disposed with the tree at the end of
+/// the test.
 Future<_Room> _open(
   WidgetTester tester, {
   FakeRoomsApi? api,
@@ -37,24 +40,30 @@ Future<_Room> _open(
   final server = api ?? FakeRoomsApi();
   final channels = FakeChannels()..autoJoin = autoJoin;
   final net = StreamController<bool>.broadcast();
-  final db = memoryDb();
-  final c = ProviderContainer(
-    overrides: roomsTestOverrides(
-      db: db,
-      api: server,
-      channels: channels,
-      connectivity: net.stream,
+  addTearDown(net.close);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: roomsTestOverrides(
+        db: memoryDb(),
+        api: server,
+        channels: channels,
+        connectivity: net.stream,
+      ),
+      child: Consumer(
+        builder: (context, ref, _) {
+          ref.watch(roomControllerProvider(roomId));
+          return const SizedBox(key: ValueKey('host'));
+        },
+      ),
     ),
   );
+  final c = ProviderScope.containerOf(
+    tester.element(find.byKey(const ValueKey('host'))),
+  );
   final r = _Room(c, server, channels, net);
-  final sub = c.listen(roomControllerProvider(roomId), (prev, next) {
+  c.listen(roomControllerProvider(roomId), (prev, next) {
     final m = next.moment;
     if (m != null && m.serial != prev?.moment?.serial) r.moments.add(m);
-  });
-  addTearDown(() async {
-    sub.close();
-    c.dispose();
-    await net.close();
   });
   await _settle(tester);
   return r;
@@ -64,6 +73,14 @@ Future<_Room> _open(
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 4; i++) {
     await tester.pump();
+  }
+}
+
+/// Steps the app through [states] (AppLifecycleListener checks that each
+/// transition is a real one).
+void _lifecycle(WidgetTester tester, List<AppLifecycleState> states) {
+  for (final s in states) {
+    tester.binding.handleAppLifecycleStateChanged(s);
   }
 }
 
@@ -165,8 +182,9 @@ void main() {
       expect(r.moments.map((m) => m.kind), [GestureMomentKind.received]);
     });
 
-    testWidgets('someone else\'s gesture plays unnamed after a short wait',
-        (tester) async {
+    testWidgets('someone else\'s gesture plays unnamed after a short wait', (
+      tester,
+    ) async {
       final r = await _open(tester);
       r.channels.room.emit('gesture_sent', _gesture('g3', target: 'room'));
       await _settle(tester);
@@ -194,6 +212,27 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(r.moments, hasLength(1));
       await tester.pump(const Duration(seconds: 2)); // spacing
+    });
+
+    testWidgets('your own gesture\'s room copy arriving before a slow reply '
+        'is still never replayed', (tester) async {
+      final r = await _open(tester);
+      r.api.hold = Completer<void>();
+      r.room.sendGesture(GestureType.meToo);
+      await _settle(tester);
+      // The fake server's first id; its broadcast beats the HTTP reply.
+      r.channels.room.emit(
+        'gesture_sent',
+        _gesture('bbbbbbbb-0000-4000-8000-000000000001', target: 'room'),
+      );
+      await tester.pump(const Duration(milliseconds: 1500));
+      expect(r.moments.map((m) => m.kind), [GestureMomentKind.sent]);
+      r.api.hold!.complete();
+      r.api.hold = null;
+      await _settle(tester);
+      await tester.pump(const Duration(seconds: 1));
+      expect(r.moments.map((m) => m.kind), [GestureMomentKind.sent]);
+      await tester.pump(const Duration(seconds: 3));
     });
 
     testWidgets('a muted member\'s gestures never show', (tester) async {
@@ -317,11 +356,19 @@ void main() {
     await _settle(tester);
     expect(r.api.count('heartbeat'), 2);
 
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    _lifecycle(tester, const [
+      AppLifecycleState.inactive,
+      AppLifecycleState.hidden,
+      AppLifecycleState.paused,
+    ]);
     await tester.pump(const Duration(seconds: 120));
     expect(r.api.count('heartbeat'), 2);
 
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    _lifecycle(tester, const [
+      AppLifecycleState.hidden,
+      AppLifecycleState.inactive,
+      AppLifecycleState.resumed,
+    ]);
     await _settle(tester);
     expect(r.api.count('heartbeat'), 3);
     await tester.pump(const Duration(seconds: 45));
@@ -374,8 +421,9 @@ void main() {
     expect(r.api.count('heartbeat'), beats);
   });
 
-  testWidgets('leaving unsubscribes both topics and stops the heartbeat',
-      (tester) async {
+  testWidgets('leaving unsubscribes both topics and stops the heartbeat', (
+    tester,
+  ) async {
     final r = await _open(tester);
     expect(await r.room.leave(), isTrue);
     expect(r.state.left, isTrue);

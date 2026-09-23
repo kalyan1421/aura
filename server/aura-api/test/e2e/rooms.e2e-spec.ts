@@ -59,7 +59,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
     return res;
   }
 
-  async function mk(label: string, opts: { locale?: string; dob?: string; tz?: string } = {}): Promise<TestUser> {
+  async function mk(label: string, opts: { locale?: string; dob?: string; tz?: string; guidelines?: boolean } = {}): Promise<TestUser> {
     const u = await createUser(label);
     users.push(u);
     const dob = opts.dob ?? ADULT_DOB;
@@ -69,6 +69,11 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       .set('Authorization', `Bearer ${u.token}`)
       .send({ birthDate: dob, uiLocale: opts.locale ?? 'en', timezone: opts.tz ?? TZ.south_asia, country: 'IN' })
       .expect(200);
+    // REQ-SAFE-04: everyone here has accepted the current community guidelines unless a test says otherwise.
+    if (opts.guidelines !== false) {
+      const { v } = await one<{ v: number }>('select guidelines_version::int as v from public.safety_config where id');
+      expect((await call(u, 'post', '/v1/safety/guidelines/accept', { version: v })).status).toBe(200);
+    }
     return u;
   }
 
@@ -201,6 +206,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       ['get', '/v1/safety/blocks'],
       ['delete', `/v1/safety/blocks/${id}`],
       ['get', '/v1/safety/me'],
+      ['post', '/v1/safety/guidelines/accept'],
     ] as const) {
       const r = await http()[method](path).expect(401);
       expect(r.body).toEqual({ code: 'unauthorized', message: expect.any(String) });
@@ -228,6 +234,65 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
     expect((await call(v, 'get', '/v1/rooms/not-a-uuid')).status).toBe(404);
     expect((await call(v, 'get', `/v1/rooms/${randomUUID()}`)).body.code).toBe('not_found');
     expect((await call(v, 'get', '/v1/rooms')).body).toEqual({ rooms: [] });
+  });
+
+  // ================================================================== community guidelines (REQ-SAFE-04)
+  describe('community guidelines before the first room (REQ-SAFE-04)', () => {
+    beforeAll(() => freshRooms());
+    afterAll(() => setSafety({ guidelines_version: 1 }));
+
+    it('no room until the current version is accepted: 409 guidelines_required + version, nothing seated; accept → 200 → match', async () => {
+      const g = await mk('gl-new', { guidelines: false });
+      expect((await call(g, 'get', '/v1/safety/me')).body.guidelines).toEqual({ version: 1, accepted: false, acceptedVersion: null, acceptedAt: null });
+      const refused = await match(g, 'sunrise', 'joyful', TZ.south_asia);
+      expect(refused.status).toBe(409);
+      expect(refused.body).toEqual({ code: 'guidelines_required', message: expect.any(String), version: 1 });
+      expect(await one('select count(*)::int as n from public.room_members where user_id = $1', [g.id])).toEqual({ n: 0 });
+
+      const ok = await call(g, 'post', '/v1/safety/guidelines/accept', { version: 1 });
+      expect(ok.status).toBe(200);
+      expect(ok.headers['cache-control']).toBe('no-store');
+      expect(ok.body).toEqual({ version: 1, accepted: true, acceptedVersion: 1, acceptedAt: expect.any(String) });
+      expect((await call(g, 'post', '/v1/safety/guidelines/accept', { version: 1 })).body).toEqual(ok.body); // idempotent
+      expect((await call(g, 'get', '/v1/safety/me')).body.guidelines).toEqual(ok.body);
+      expect(await one('select count(*)::int as n from public.guidelines_acceptances where user_id = $1', [g.id])).toEqual({ n: 1 });
+      expect((await match(g, 'sunrise', 'joyful', TZ.south_asia)).status).toBe(200);
+    });
+
+    it('validation, and onboarding first (409 profile_required)', async () => {
+      const v = await mk('gl-validate', { guidelines: false });
+      for (const body of [{}, { version: 0 }, { version: '1' }, { version: 1.5 }, { version: 1001 }, { version: null }]) {
+        const r = await call(v, 'post', '/v1/safety/guidelines/accept', body);
+        expect(r.status).toBe(400);
+        expect(r.body.code).toBe('invalid_request');
+      }
+      const np = await createUser('gl-noprofile');
+      users.push(np);
+      const r = await call(np, 'post', '/v1/safety/guidelines/accept', { version: 1 });
+      expect(r.status).toBe(409);
+      expect(r.body.code).toBe('profile_required');
+    });
+
+    it('a material change asks everyone again at their next match; the old version no longer opens rooms; rooms already joined keep working', async () => {
+      const w = await mk('gl-bump');
+      const first = await match(w, 'sunrise', 'joyful', TZ.south_asia);
+      expect(first.status).toBe(200);
+      const roomId = first.body.room.roomId as string;
+      await setSafety({ guidelines_version: 2 });
+      try {
+        expect((await match(w, 'rain', 'lonely', TZ.south_asia)).body).toEqual({ code: 'guidelines_required', message: expect.any(String), version: 2 });
+        expect((await match(w, 'sunrise', 'joyful', TZ.south_asia)).body.code).toBe('guidelines_required'); // step-0 returns too
+        expect((await detail(w, roomId)).status).toBe(200); // only a new match is gated
+        const stale = await call(w, 'post', '/v1/safety/guidelines/accept', { version: 1 });
+        expect(stale.status).toBe(409);
+        expect(stale.body).toEqual({ code: 'guidelines_required', message: expect.any(String), version: 2 });
+        expect((await call(w, 'get', '/v1/safety/me')).body.guidelines).toMatchObject({ version: 2, accepted: false, acceptedVersion: 1 });
+        expect((await call(w, 'post', '/v1/safety/guidelines/accept', { version: 2 })).body).toMatchObject({ version: 2, accepted: true, acceptedVersion: 2 });
+        expect((await match(w, 'sunrise', 'joyful', TZ.south_asia)).body.match).toMatchObject({ step: 0, reentry: true });
+      } finally {
+        await setSafety({ guidelines_version: 1 });
+      }
+    });
   });
 
   // ================================================================== matching, re-entry, pseudonyms, realtime
@@ -464,7 +529,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       const eView = await detail(e, roomId);
       expect(eView.body.gestures.received.map((g: { gestureId: string }) => g.gestureId)).not.toContain(muted.body.gestureId);
       const standing = await call(d, 'get', '/v1/safety/me');
-      expect(standing.body).toEqual({ rooms: 'available', until: null, notices: [] }); // shadow-mutes are invisible
+      expect(standing.body).toEqual({ rooms: 'available', until: null, notices: [], guidelines: expect.objectContaining({ accepted: true }) }); // shadow-mutes are invisible
     });
   });
 
@@ -649,6 +714,49 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       expect((await report(j, { kind: 'gesture', gestureId: g.body.gestureId }, 3)).body.code).toBe('invalid_target');
     });
 
+    it('reason 9 "targeting a young person" → Minors & grooming; a young person in the room → 2 h and a 24×7 page; same response as any report', async () => {
+      const r = await report(k, { kind: 'member', memberId: mem.i }, 9); // adults on both sides; Meera (16) is in the room
+      expect(r.status).toBe(201);
+      expect(r.body).toEqual({ reportId: expect.any(String), showHelplines: false });
+      expect(await reportRow(r.body.reportId)).toMatchObject({ lane: 'minors_grooming', involves_minor: true, target_user_id: i.id });
+      const clock = await one<{ pages: boolean; mins: number }>(
+        `select pages, round(extract(epoch from (sla_due_at - created_at)) / 60)::int as mins from public.reports where id = $1`,
+        [r.body.reportId],
+      );
+      expect(clock).toEqual({ pages: true, mins: 120 });
+      expect((await detail(k, roomId)).body.members.find((m: { memberId: string }) => m.memberId === mem.i).muted).toBe(true);
+    });
+
+    it('reason 9 is Minors & grooming whatever the ages; it counts everyone who has been in the room, even a young person who left', async () => {
+      const [a1, a2, kid] = await Promise.all([mk('r9-a1'), mk('r9-a2'), mk('r9-kid', { dob: MINOR_DOB })]);
+      const m1 = await match(a1, 'moonlight', 'calm', TZ.east_asia_pacific);
+      const room9 = m1.body.room.roomId as string;
+      const m2 = await match(a2, 'moonlight', 'calm', TZ.east_asia_pacific);
+      expect(m2.body.room.roomId).toBe(room9);
+      const file = (by: TestUser, memberId: string, reason: number) =>
+        call(by, 'post', '/v1/safety/reports', { target: { kind: 'member', roomId: room9, memberId }, reason });
+      const clockOf = (id: string) =>
+        one<{ pages: boolean; mins: number }>(
+          `select pages, round(extract(epoch from (sla_due_at - created_at)) / 60)::int as mins from public.reports where id = $1`,
+          [id],
+        );
+
+      const adultsOnly = await file(a1, m2.body.me.memberId, 9);
+      expect(await reportRow(adultsOnly.body.reportId)).toMatchObject({ lane: 'minors_grooming', involves_minor: false });
+      expect(await clockOf(adultsOnly.body.reportId)).toEqual({ pages: false, mins: 240 });
+
+      const mk9 = await match(kid, 'moonlight', 'calm', TZ.east_asia_pacific);
+      expect(mk9.body.room.roomId).toBe(room9);
+      await call(kid, 'post', `/v1/rooms/${room9}/leave`);
+      const afterLeft = await file(a2, m1.body.me.memberId, 9);
+      expect(afterLeft.body).toEqual({ reportId: expect.any(String), showHelplines: false });
+      expect(await reportRow(afterLeft.body.reportId)).toMatchObject({ lane: 'minors_grooming', involves_minor: true });
+      expect(await clockOf(afterLeft.body.reportId)).toEqual({ pages: true, mins: 120 });
+
+      const plain = await file(a2, m1.body.me.memberId, 2); // other reasons still look at the two people involved
+      expect(await reportRow(plain.body.reportId)).toMatchObject({ lane: 'harassment', involves_minor: false });
+    });
+
     it('two different people saying "may be under 13" pause that account’s rooms pending review', async () => {
       const first = await report(i, { kind: 'member', memberId: mem.meera }, 7);
       expect(await reportRow(first.body.reportId)).toMatchObject({ lane: 'minors_grooming' });
@@ -664,8 +772,10 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       expect(standing.body).toEqual({
         rooms: 'suspended',
         until: null,
-        notices: [{ noticeId: expect.any(String), kind: 'suspension', reasonCode: 'under_13_reports', createdAt: expect.any(String), until: null }],
+        notices: [{ noticeId: expect.any(String), kind: 'suspension', createdAt: expect.any(String), until: null }],
+        guidelines: { version: 1, accepted: true, acceptedVersion: 1, acceptedAt: expect.any(String) },
       });
+      expect(JSON.stringify(standing.body)).not.toMatch(/reason|under_13|lane|minor/i); // never why (no tipping off)
       expect((await detail(i, roomId)).body.members.map((m: { memberId: string }) => m.memberId)).not.toContain(mem.meera);
       const s = await socket();
       expect((await s.join(`room:${roomId}`, meera.token)).ok).toBe(false);
@@ -673,7 +783,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       expect((await report(meera, { kind: 'member', memberId: mem.k }, 1)).status).toBe(201);
     });
 
-    it('reports: 20/day for reasons 2–8 (429), reason 1 unlimited; validation', async () => {
+    it('reports: 20/day for reasons 2–9 (429), reason 1 unlimited; validation', async () => {
       const used = await one<{ n: number }>(
         `select count(*)::int as n from public.reports where reporter_user_id = $1 and source = 'user' and reason <> 1`,
         [k.id],
@@ -685,7 +795,8 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       expect((await report(k, { kind: 'member', memberId: mem.i }, 1)).status).toBe(201);
       await setSafety({ report_daily_limit: 20 });
 
-      expect((await report(k, { kind: 'member', memberId: mem.i }, 9)).body.code).toBe('invalid_request');
+      expect((await report(k, { kind: 'member', memberId: mem.i }, 10)).body.code).toBe('invalid_request');
+      expect((await report(k, { kind: 'member', memberId: mem.i }, 0)).body.code).toBe('invalid_request');
       expect((await report(k, { kind: 'member', memberId: mem.k }, 2)).body.code).toBe('invalid_target');
       expect((await report(k, { kind: 'member', memberId: randomUUID() }, 2)).body.code).toBe('not_found');
       expect((await report(k, { kind: 'member', memberId: mem.i }, 2, 'x'.repeat(501))).body.code).toBe('invalid_request');
@@ -1026,7 +1137,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       const s1Strike = await mod.act({ reportId: harassment, action: 'strike', actor: 'staff:e2e' });
       expect(s1Strike).toMatchObject({ status: 'actioned', activeStrikes: 1, strikeId: expect.any(String) });
       expect((await call(s1, 'get', '/v1/safety/me')).body.notices).toEqual([
-        { noticeId: expect.any(String), kind: 'warning', reasonCode: 'harassment', createdAt: expect.any(String), until: null },
+        { noticeId: expect.any(String), kind: 'warning', createdAt: expect.any(String), until: null }, // never why
       ]);
       expect((await call(t1, 'get', '/v1/safety/reports')).body.reports[0]).toMatchObject({ status: 'reviewed', outcome: 'action_taken' });
     });
@@ -1080,7 +1191,10 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       }
       expect((await call(u1, 'get', '/v1/rooms')).body.code).toBe('account_closed');
       expect((await call(u1, 'post', '/v1/safety/reports', { target: { kind: 'room', roomId }, reason: 8 })).body.code).toBe('account_closed');
-      expect((await call(u1, 'get', '/v1/safety/me')).body).toMatchObject({ rooms: 'closed', notices: [expect.objectContaining({ kind: 'account_closed' })] });
+      const closedView = await call(u1, 'get', '/v1/safety/me');
+      expect(closedView.body).toMatchObject({ rooms: 'closed', notices: [expect.objectContaining({ kind: 'account_closed' })] });
+      expect(JSON.stringify(closedView.body)).not.toMatch(/grooming|reason|lane|minor/i); // SOP step 4: no tipping off
+      expect((await call(u1, 'post', '/v1/safety/guidelines/accept', { version: 1 })).body.code).toBe('account_closed');
       const hold = await one<{ id: string; mandatory: boolean; days: number }>(
         `select e.id, e.mandatory_report_required as mandatory, round(extract(epoch from (e.hold_until - now())) / 86400)::int as days
            from public.evidence_holds e join public.reports r on r.evidence_hold_id = e.id where r.id = $1`,
@@ -1100,6 +1214,31 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       expect(await mod.verifyAuditChain()).toBe(true);
       await expect(db.query(`update public.moderation_actions set actor = 'x' where id = $1`, [log[0].id])).rejects.toMatchObject({ code: 'AR010' });
       await expect(db.query('delete from public.moderation_actions where id = $1', [log[0].id])).rejects.toMatchObject({ code: 'AR010' });
+    });
+
+    it('no tipping off: for every sanction kind the person never sees a reason code, lane or report; shadow-mutes not at all', async () => {
+      const p = await mk('mod-notip');
+      const kinds = ['warning', 'gesture_shadow_mute', 'shadow_mute', 'room_suspension', 'rooms_pause', 'social_ban', 'account_ban'];
+      for (const kind of kinds) {
+        const s = await one<{ id: string }>(
+          `insert into public.sanctions (user_id, kind, reason_code, source, created_by, ends_at)
+           values ($1, $2, 'grooming', 'moderator', 'staff:e2e', case when $2 in ('shadow_mute', 'gesture_shadow_mute', 'room_suspension')
+                                                                     then now() + interval '1 day' end)
+           returning id`,
+          [p.id, kind],
+        );
+        const me = await call(p, 'get', '/v1/safety/me');
+        expect(me.status).toBe(200);
+        const text = JSON.stringify(me.body);
+        expect(text).not.toMatch(/reason|grooming|lane|minor|strike|report/i);
+        for (const n of me.body.notices) expect(Object.keys(n).sort()).toEqual(['createdAt', 'kind', 'noticeId', 'until']);
+        if (kind === 'shadow_mute' || kind === 'gesture_shadow_mute') {
+          expect(me.body).toMatchObject({ rooms: 'available', until: null, notices: [] });
+        } else {
+          expect(me.body.notices).toHaveLength(1);
+        }
+        await db.query('delete from public.sanctions where id = $1', [s.id]);
+      }
     });
   });
 
@@ -1256,7 +1395,7 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       ...[...dobs],
     ].map((s) => s.toLowerCase());
     const FORBIDDEN_KEY =
-      /^(user_?id|userIds?|account_?ids?|sub|email|birth_?date|dob|age|is_?minor|minor|under_?18|involves_?minor|lane|reporter_?user_?id|target_?user_?id|subject_?hash)$/i;
+      /^(user_?id|userIds?|account_?ids?|sub|email|birth_?date|dob|age|is_?minor|minor|under_?18|involves_?minor|lane|reason_?code|reporter_?user_?id|target_?user_?id|subject_?hash)$/i;
     const violations: string[] = [];
     const walk = (v: unknown, where: string): void => {
       if (v === null || v === undefined) return;

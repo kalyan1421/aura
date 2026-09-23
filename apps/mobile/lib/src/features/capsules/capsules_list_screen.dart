@@ -23,6 +23,29 @@ Future<void> openCapsulesList(BuildContext context) => Navigator.of(context)
       MaterialPageRoute<void>(builder: (_) => const CapsulesListScreen()),
     );
 
+/// Where a tapped "ready to open" notice leads — the server's push (the
+/// `CapsulePushBridge` in features/push) or this phone's own notice: that
+/// capsule's opening when it can be opened now, otherwise Future you (the
+/// list, where ready capsules wait).
+Future<void> openCapsuleFromNotice(
+  BuildContext context,
+  String? capsuleId,
+) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final row = capsuleId == null
+      ? null
+      : await container
+            .read(capsuleRepositoryProvider)
+            .row(capsuleId.toLowerCase());
+  if (!context.mounted) return;
+  final tz = container.read(deviceTimezoneProvider);
+  final now = container.read(timeContextProvider).now();
+  if (row != null && isCapsuleReady(row, tz, now)) {
+    return openCapsule(context, row.id);
+  }
+  return openCapsulesList(context);
+}
+
 /// "Future you" (PRD F4, 14-states): capsules ready to open, sealed ones
 /// ("Sealed until 12 Oct 2027. It'll keep." / "Waiting for a feeling" — no
 /// content, no early open) and opened ones to read again. A kept draft sits

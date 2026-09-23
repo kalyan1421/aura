@@ -27,7 +27,11 @@ String momentText(AppLocalizations l, GestureMoment m) {
 /// 5 s ("Quiet Comet sent you Warm Tea"); others' gestures stay unnamed.
 /// Purely visual: the words are announced by the room screen.
 class RoomMomentLayer extends StatelessWidget {
-  const RoomMomentLayer({super.key, required this.moments, required this.onDone});
+  const RoomMomentLayer({
+    super.key,
+    required this.moments,
+    required this.onDone,
+  });
 
   final List<GestureMoment> moments;
   final ValueChanged<GestureMoment> onDone;
@@ -121,7 +125,9 @@ class _MomentViewState extends State<_MomentView>
         final glyphOpacity = v > glyphShare
             ? 0.0
             : _opacity(glyphT, fade / glyphShare, 0.3);
-        final rise = _reduce ? 0.0 : 150 * Curves.easeOutCubic.transform(glyphT);
+        final rise = _reduce
+            ? 0.0
+            : 150 * Curves.easeOutCubic.transform(glyphT);
         return Stack(
           fit: StackFit.expand,
           children: [

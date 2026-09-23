@@ -170,8 +170,7 @@ void main() {
       final w = await _pump(tester);
       expect(w.source.quieted, 1); // iOS presentation off while open
       w.source.foregroundCtl.add(_reminder);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle(); // the notice's entrance
       expect(
         find.text("A quiet minute for you. How's today feeling?"),
         findsOneWidget,
@@ -233,7 +232,7 @@ void main() {
     ) async {
       final w = await _pump(tester);
       await w.inbox.onForeground(_capsulePush);
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle(); // the notice's entrance
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
       expect(w.bridge.opened, [_capsule]);

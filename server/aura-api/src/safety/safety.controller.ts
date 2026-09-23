@@ -1,16 +1,17 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, Res, UseFilters } from '@nestjs/common';
 import type { Response } from 'express';
 import { AllowAccountClosed } from '../auth/account-closed.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { AuthUser } from '../auth/jwt-verifier';
 import { BlocksService, type BlockView } from './blocks.service';
+import { GuidelinesRequiredFilter, GuidelinesService, type GuidelinesStatus } from './guidelines';
 import { ReportsService, type MyReport } from './reports.service';
 import { SafetyService, type SafetyStanding } from './safety.service';
 
 /**
  * F9 core safety for app users — contracts/api/v1-rooms.md §2. Reporting and blocking keep working for suspended
  * accounts ("help is never locked"); a closed account gets `403 account_closed`. Responses are `no-store` and never
- * reveal lanes, ages or anything about the other person.
+ * reveal lanes, ages, reason codes or anything about the other person.
  */
 @Controller('v1/safety')
 export class SafetyController {
@@ -18,7 +19,17 @@ export class SafetyController {
     private readonly reports: ReportsService,
     private readonly blocks: BlocksService,
     private readonly safety: SafetyService,
+    private readonly guidelines: GuidelinesService,
   ) {}
+
+  /** REQ-SAFE-04: records that the caller accepted community guidelines `version` (§2.4). */
+  @Post('guidelines/accept')
+  @HttpCode(200)
+  @Header('Cache-Control', 'no-store')
+  @UseFilters(GuidelinesRequiredFilter)
+  acceptGuidelines(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<GuidelinesStatus> {
+    return this.guidelines.accept(user.id, body);
+  }
 
   /** `201` new report, `200` when the same open report already existed. */
   @Post('reports')

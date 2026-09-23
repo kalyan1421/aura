@@ -137,6 +137,7 @@ _ProfileRequest _$ProfileRequestFromJson(Map<String, dynamic> json) =>
       uiLocale: json['uiLocale'] as String,
       timezone: json['timezone'] as String,
       country: json['country'] as String?,
+      ageSignal: json['ageSignal'] as String?,
     );
 
 Map<String, dynamic> _$ProfileRequestToJson(_ProfileRequest instance) =>
@@ -145,6 +146,7 @@ Map<String, dynamic> _$ProfileRequestToJson(_ProfileRequest instance) =>
       'uiLocale': instance.uiLocale,
       'timezone': instance.timezone,
       'country': instance.country,
+      'ageSignal': ?instance.ageSignal,
     };
 
 _DataKeyResponse _$DataKeyResponseFromJson(Map<String, dynamic> json) =>

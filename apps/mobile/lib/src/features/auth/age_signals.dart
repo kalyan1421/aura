@@ -123,17 +123,24 @@ LocalDay minorUntilFor(AgeSignal signal, LocalDay today) {
 
 /// Applies an [AgeSignal]: the under-13 block (GateController.blockUnder13)
 /// or a later `minorUntil` (the key the help sheet already reads; never
-/// moved earlier than the DOB put it).
+/// moved earlier than the DOB put it), and the band for the server.
 class AgeSignalPolicy {
   AgeSignalPolicy({
     required this._kv,
     required this._blockUnder13,
     required this._today,
+    this._onMinor,
   });
 
   final KvStore _kv;
   final Future<void> Function() _blockUnder13;
   final LocalDay Function() _today;
+
+  /// Under 18: the band goes with the next `POST /v1/profile`
+  /// (`ageSignal: "under18"`), so the server's invisible protections
+  /// (minors lane, stricter moderation, analytics exclusion) apply too
+  /// (ProfileService.noteAgeSignal). Never shown or logged.
+  final Future<void> Function()? _onMinor;
 
   Future<AgeSignalOutcome> apply(AgeSignal signal) async {
     final outcome = evaluateAgeSignal(signal);
@@ -141,14 +148,12 @@ class AgeSignalPolicy {
       case AgeSignalOutcome.blocked:
         await _blockUnder13();
       case AgeSignalOutcome.minor:
-        // TODO(server): the server's `is_minor` comes from the DOB only; send
-        // the range with POST /v1/profile so server-side protections
-        // (moderation, analytics exclusion) apply too (contract change).
         final until = minorUntilFor(signal, _today());
         final current = LocalDay.tryParse(await _kv.get(KvKeys.minorUntil));
         if (current == null || current.isBefore(until)) {
           await _kv.set(KvKeys.minorUntil, until.toIso());
         }
+        await _onMinor?.call();
       case AgeSignalOutcome.none:
         break;
     }

@@ -134,8 +134,9 @@ class _Rows implements CapsuleRowSource {
             )
             .toList()
           ..sort(
-            (a, b) =>
-                (a['updated_at'] as String).compareTo(b['updated_at'] as String),
+            (a, b) => (a['updated_at'] as String).compareTo(
+              b['updated_at'] as String,
+            ),
           );
     return out.skip(from).take(to - from + 1).toList();
   }
@@ -267,28 +268,31 @@ void main() {
       api.pushed.where((m) => m.entity == Entities.capsule).toList();
 
   group('push', () {
-    test('a seal carries its ciphertext, deviceTs and tz; then synced', () async {
-      await capsules.seal(
-        id: 'c1',
-        content: const CapsuleContent(title: 'hi', text: 'there'),
-        unlock: DateUnlock(LocalDay.parse('2027-10-08')),
-      );
-      await sync.kick();
-      final seal = capsuleOps().single;
-      expect(seal.op, Ops.seal);
-      expect(seal.tz, 'Asia/Kolkata');
-      expect(DateTime.parse(seal.deviceTs), testNow);
-      final row = await rowOf('c1');
-      expect(seal.payload, {
-        'id': 'c1',
-        'payloadCt': row.payloadCt,
-        'unlockType': 'date',
-        'unlockLocalDate': '2027-10-08',
-      });
-      expect(jsonEncode(seal.payload), isNot(contains('there')));
-      expect(row.synced, isTrue);
-      expect(await outbox.count(), 0);
-    });
+    test(
+      'a seal carries its ciphertext, deviceTs and tz; then synced',
+      () async {
+        await capsules.seal(
+          id: 'c1',
+          content: const CapsuleContent(title: 'hi', text: 'there'),
+          unlock: DateUnlock(LocalDay.parse('2027-10-08')),
+        );
+        await sync.kick();
+        final seal = capsuleOps().single;
+        expect(seal.op, Ops.seal);
+        expect(seal.tz, 'Asia/Kolkata');
+        expect(DateTime.parse(seal.deviceTs), testNow);
+        final row = await rowOf('c1');
+        expect(seal.payload, {
+          'id': 'c1',
+          'payloadCt': row.payloadCt,
+          'unlockType': 'date',
+          'unlockLocalDate': '2027-10-08',
+        });
+        expect(jsonEncode(seal.payload), isNot(contains('there')));
+        expect(row.synced, isTrue);
+        expect(await outbox.count(), 0);
+      },
+    );
 
     test('a capsule sealed before the key arrived is sealed at push', () async {
       repoKey = null;
@@ -311,39 +315,45 @@ void main() {
       expect(CapsulePayload.decode(clear).text, 'no key yet');
     });
 
-    test('media upload first (kind, index, exact bytes), then the seal', () async {
-      final voice = await store.newDraftVoicePath('d');
-      await File(voice).writeAsBytes(List.generate(700, (i) => i % 256));
-      final photo = await store.writeDraftPhoto('d', Uint8List(300)..[1] = 9);
-      await capsules.seal(
-        id: 'c3',
-        content: CapsuleContent(
-          text: 'x',
-          voice: CapsuleVoiceDraft(path: voice, duration: const Duration(seconds: 5)),
-          photos: [CapsulePhotoDraft(path: photo, width: 10, height: 10)],
-        ),
-        unlock: DateUnlock(LocalDay.parse('2027-10-08')),
-      );
-      await sync.kick();
-      expect(api.log.where((e) => e != 'data-key'), [
-        'upload-url capsule_photo 0',
-        'put',
-        'upload-url capsule_voice',
-        'put',
-        'push',
-      ]);
-      final voicePath = '$capsuleTestUser/capsules/c3/voice';
-      final clear = await testCipher().decryptBytes(
-        api.objects[voicePath]!,
-        recordId: 'c3/voice',
-      );
-      expect(clear, List.generate(700, (i) => i % 256));
-      final media = await capsules.mediaOf('c3');
-      expect(media.map((m) => m.path), [
-        '$capsuleTestUser/capsules/c3/photo-0',
-        voicePath,
-      ]);
-    });
+    test(
+      'media upload first (kind, index, exact bytes), then the seal',
+      () async {
+        final voice = await store.newDraftVoicePath('d');
+        await File(voice).writeAsBytes(List.generate(700, (i) => i % 256));
+        final photo = await store.writeDraftPhoto('d', Uint8List(300)..[1] = 9);
+        await capsules.seal(
+          id: 'c3',
+          content: CapsuleContent(
+            text: 'x',
+            voice: CapsuleVoiceDraft(
+              path: voice,
+              duration: const Duration(seconds: 5),
+            ),
+            photos: [CapsulePhotoDraft(path: photo, width: 10, height: 10)],
+          ),
+          unlock: DateUnlock(LocalDay.parse('2027-10-08')),
+        );
+        await sync.kick();
+        expect(api.log.where((e) => e != 'data-key'), [
+          'upload-url capsule_photo 0',
+          'put',
+          'upload-url capsule_voice',
+          'put',
+          'push',
+        ]);
+        final voicePath = '$capsuleTestUser/capsules/c3/voice';
+        final clear = await testCipher().decryptBytes(
+          api.objects[voicePath]!,
+          recordId: 'c3/voice',
+        );
+        expect(clear, List.generate(700, (i) => i % 256));
+        final media = await capsules.mediaOf('c3');
+        expect(media.map((m) => m.path), [
+          '$capsuleTestUser/capsules/c3/photo-0',
+          voicePath,
+        ]);
+      },
+    );
 
     test('409 capsule_sealed on a slot means it is already uploaded', () async {
       final photo = await store.writeDraftPhoto('d', Uint8List(40)..[0] = 1);
@@ -365,33 +375,36 @@ void main() {
       expect(capsuleOps().single.op, Ops.seal);
     });
 
-    test('uploads that keep failing: the seal goes, uploads retry later', () async {
-      final photo = await store.writeDraftPhoto('d', Uint8List(40)..[0] = 1);
-      await capsules.seal(
-        id: 'c5',
-        content: CapsuleContent(
-          text: 'x',
-          photos: [CapsulePhotoDraft(path: photo, width: 1, height: 1)],
-        ),
-        unlock: DateUnlock(LocalDay.parse('2027-10-08')),
-      );
-      api.failUploads = true;
-      for (var i = 0; i < OutboxRepository.maxAttempts; i++) {
-        await sync.kick();
-        clock.instant = clock.instant.add(const Duration(hours: 2));
-      }
-      expect(capsuleOps().single.op, Ops.seal, reason: 'not blocked forever');
-      expect((await rowOf('c5')).synced, isTrue);
-      expect((await capsules.mediaOf('c5')).single.path, isNull);
+    test(
+      'uploads that keep failing: the seal goes, uploads retry later',
+      () async {
+        final photo = await store.writeDraftPhoto('d', Uint8List(40)..[0] = 1);
+        await capsules.seal(
+          id: 'c5',
+          content: CapsuleContent(
+            text: 'x',
+            photos: [CapsulePhotoDraft(path: photo, width: 1, height: 1)],
+          ),
+          unlock: DateUnlock(LocalDay.parse('2027-10-08')),
+        );
+        api.failUploads = true;
+        for (var i = 0; i < OutboxRepository.maxAttempts; i++) {
+          await sync.kick();
+          clock.instant = clock.instant.add(const Duration(hours: 2));
+        }
+        expect(capsuleOps().single.op, Ops.seal, reason: 'not blocked forever');
+        expect((await rowOf('c5')).synced, isTrue);
+        expect((await capsules.mediaOf('c5')).single.path, isNull);
 
-      api.failUploads = false;
-      clock.instant = clock.instant.add(const Duration(hours: 2));
-      await sync.kick();
-      expect(
-        (await capsules.mediaOf('c5')).single.path,
-        '$capsuleTestUser/capsules/c5/photo-0',
-      );
-    });
+        api.failUploads = false;
+        clock.instant = clock.instant.add(const Duration(hours: 2));
+        await sync.kick();
+        expect(
+          (await capsules.mediaOf('c5')).single.path,
+          '$capsuleTestUser/capsules/c5/photo-0',
+        );
+      },
+    );
 
     test('a capsule deleted before its seal left never goes out', () async {
       await capsules.seal(
@@ -463,36 +476,42 @@ void main() {
   });
 
   group('pull', () {
-    test('select-own with an updated_at cursor and a 5-minute overlap', () async {
-      rows.rows.addAll([
-        _server('p1', updatedAt: '2026-10-08T09:00:00+00:00'),
-        _server(
-          'p2',
-          unlockType: 'mood',
-          unlockLocalDate: null,
-          triggerMoodId: 'joyful',
-          armedAt: '2026-10-02T10:00:00+00:00',
-          updatedAt: '2026-10-08T09:30:00+00:00',
-        ),
-      ]);
-      await sync.kick();
-      expect(rows.sinces.first, isNull, reason: 'first pull: everything');
-      final p1 = await rowOf('p1');
-      expect(p1.payloadCt, 'AAAA');
-      expect(p1.synced, isTrue);
-      expect((await rowOf('p2')).triggerMoodId, 'joyful');
-      final cursor = jsonDecode((await capsuleSync.cursorJson())!) as Map;
-      expect(cursor['user'], capsuleTestUser);
-      expect(DateTime.parse(cursor['at'] as String), DateTime.utc(2026, 10, 8, 9, 30));
+    test(
+      'select-own with an updated_at cursor and a 5-minute overlap',
+      () async {
+        rows.rows.addAll([
+          _server('p1', updatedAt: '2026-10-08T09:00:00+00:00'),
+          _server(
+            'p2',
+            unlockType: 'mood',
+            unlockLocalDate: null,
+            triggerMoodId: 'joyful',
+            armedAt: '2026-10-02T10:00:00+00:00',
+            updatedAt: '2026-10-08T09:30:00+00:00',
+          ),
+        ]);
+        await sync.kick();
+        expect(rows.sinces.first, isNull, reason: 'first pull: everything');
+        final p1 = await rowOf('p1');
+        expect(p1.payloadCt, 'AAAA');
+        expect(p1.synced, isTrue);
+        expect((await rowOf('p2')).triggerMoodId, 'joyful');
+        final cursor = jsonDecode((await capsuleSync.cursorJson())!) as Map;
+        expect(cursor['user'], capsuleTestUser);
+        expect(
+          DateTime.parse(cursor['at'] as String),
+          DateTime.utc(2026, 10, 8, 9, 30),
+        );
 
-      // Throttled until pullEvery passes (or a resume asks).
-      await sync.kick();
-      expect(rows.sinces, hasLength(1));
-      sync.onResume();
-      await pumpEventQueue();
-      await sync.kick();
-      expect(rows.sinces.last, DateTime.utc(2026, 10, 8, 9, 25));
-    });
+        // Throttled until pullEvery passes (or a resume asks).
+        await sync.kick();
+        expect(rows.sinces, hasLength(1));
+        sync.onResume();
+        await pumpEventQueue();
+        await sync.kick();
+        expect(rows.sinces.last, DateTime.utc(2026, 10, 8, 9, 25));
+      },
+    );
 
     test('a tombstone from another phone erases the capsule here', () async {
       final photo = await store.writeDraftPhoto('d', Uint8List(20)..[0] = 1);
@@ -524,11 +543,24 @@ void main() {
       expect(Directory('${root.path}/capsules/t1').existsSync(), isFalse);
     });
 
-    test('nothing is written for an account that signed out meanwhile', () async {
-      rows.rows.add(_server('late', updatedAt: '2026-10-08T09:00:00+00:00'));
-      await capsuleSync.pull(capsuleTestUser, () => false, force: true);
-      expect(await capsules.row('late'), isNull);
+    test('another account\'s first pull is never throttled', () async {
+      await capsuleSync.pull(capsuleTestUser, () => true);
+      expect(rows.sinces, hasLength(1));
+      await capsuleSync.pull(capsuleTestUser, () => true);
+      expect(rows.sinces, hasLength(1), reason: 'same account: throttled');
+      await capsuleSync.pull('user-2', () => true);
+      expect(rows.sinces, hasLength(2));
+      expect(rows.sinces.last, isNull, reason: 'its own cursor: everything');
     });
+
+    test(
+      'nothing is written for an account that signed out meanwhile',
+      () async {
+        rows.rows.add(_server('late', updatedAt: '2026-10-08T09:00:00+00:00'));
+        await capsuleSync.pull(capsuleTestUser, () => false, force: true);
+        expect(await capsules.row('late'), isNull);
+      },
+    );
   });
 
   group('merge rules', () {
@@ -606,21 +638,24 @@ void main() {
       expect(m.payloadCt.present, isFalse);
     });
 
-    test('fire at most once: the earliest wins; the cooldown is the latest', () {
-      final m = mergeServerCapsule(
-        local(
-          firedAt: DateTime.utc(2026, 10, 5, 12),
-          cooldownUntil: DateTime.utc(2026, 10, 12, 12),
-        ),
-        server(
-          firedAt: '2026-10-05T09:00:00Z',
-          cooldownUntil: '2026-10-12T09:00:00Z',
-        ),
-        hasPending: true,
-      );
-      expect(m.firedAt.value, DateTime.utc(2026, 10, 5, 9));
-      expect(m.cooldownUntil.value, DateTime.utc(2026, 10, 12, 12));
-    });
+    test(
+      'fire at most once: the earliest wins; the cooldown is the latest',
+      () {
+        final m = mergeServerCapsule(
+          local(
+            firedAt: DateTime.utc(2026, 10, 5, 12),
+            cooldownUntil: DateTime.utc(2026, 10, 12, 12),
+          ),
+          server(
+            firedAt: '2026-10-05T09:00:00Z',
+            cooldownUntil: '2026-10-12T09:00:00Z',
+          ),
+          hasPending: true,
+        );
+        expect(m.firedAt.value, DateTime.utc(2026, 10, 5, 9));
+        expect(m.cooldownUntil.value, DateTime.utc(2026, 10, 12, 12));
+      },
+    );
 
     test('opened is one-way; the server time is the real unlock time', () {
       var m = mergeServerCapsule(
@@ -631,7 +666,10 @@ void main() {
       expect(m.openedAt.value, DateTime.utc(2026, 10, 6), reason: 'kept');
       m = mergeServerCapsule(
         local(openedAt: DateTime.utc(2026, 10, 6)),
-        server(openedAt: '2026-10-06T00:00:05Z', firedAt: '2026-10-06T00:00:00Z'),
+        server(
+          openedAt: '2026-10-06T00:00:05Z',
+          firedAt: '2026-10-06T00:00:00Z',
+        ),
         hasPending: true,
       );
       expect(m.openedAt.value, DateTime.utc(2026, 10, 6, 0, 0, 5));
@@ -644,7 +682,10 @@ void main() {
 
     test('a newer cycle from another phone replaces the cycle state', () {
       final m = mergeServerCapsule(
-        local(firedAt: DateTime.utc(2026, 10, 5), openedAt: DateTime.utc(2026, 10, 5)),
+        local(
+          firedAt: DateTime.utc(2026, 10, 5),
+          openedAt: DateTime.utc(2026, 10, 5),
+        ),
         server(cycle: 1, armedAt: '2026-10-07T00:00:00Z'),
         hasPending: true,
       );
@@ -657,7 +698,10 @@ void main() {
     test('with nothing queued the server row is adopted as is', () {
       final m = mergeServerCapsule(
         local(cycle: 1, armedAt: DateTime.utc(2026, 10, 8)),
-        server(openedAt: '2026-10-06T00:00:00Z', firedAt: '2026-10-06T00:00:00Z'),
+        server(
+          openedAt: '2026-10-06T00:00:00Z',
+          firedAt: '2026-10-06T00:00:00Z',
+        ),
         hasPending: false,
       );
       expect(m.cycle.value, 0, reason: 'a refused re-arm is undone');

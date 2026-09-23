@@ -1,0 +1,36 @@
+# Account & safety follow-ups copy: the "account closed" screen (F9 / 19 admin console; contracts/api/v1.md
+# "Account closed"). Loaded by tool/l10n_source.py.
+# s(key, en, desc, te, te_Latn, ph=None) · edit(key, en=, te=, tl=, desc=)
+# Telugu / Tenglish: first drafts, NEED NATIVE REVIEW before alpha.
+#
+# Rules: calm and non-shaming; never a reason code or what happened (no tipping off, 19 admin console Minors &
+# grooming SOP step 4); the body line is the PRD's exact wording. Help stays one tap away (the top-bar button).
+
+s("closed_title", "This account is closed",
+  "Title of the full screen shown when the signed-in account was closed by a moderator. Calm, factual, no blame.",
+  "ఈ ఖాతా మూసివేయబడింది",
+  "Ee account close cheyabadindi")
+s("closed_body", "This account was closed for breaking Aura's rules.",
+  "The only explanation shown (PRD wording). Never add a reason, a category or who reported it.",
+  "Aura నియమాలను పాటించనందుకు ఈ ఖాతా మూసివేయబడింది.",
+  "Aura rules paatinchananduku ee account close cheyabadindi.")
+s("closed_review", "If you think this is a mistake, you can ask for a review. We reply within 7 days.",
+  "How to appeal (one appeal per action, resolved in 7 days, PRD F9). Warm, no promise of the outcome.",
+  "ఇది పొరపాటు అని మీకు అనిపిస్తే, మళ్ళీ పరిశీలించమని అడగవచ్చు. 7 రోజుల్లో సమాధానం ఇస్తాం.",
+  "Idi porapaatu ani meeku anipiste, malli review cheyamani adagochu. 7 rojullo reply istaam.")
+s("closed_askReview", "Ask for a review",
+  "Row that writes an email to the Grievance Officer (name and address shown under it).",
+  "మళ్ళీ పరిశీలించమని అడగండి",
+  "Review adagandi")
+s("closed_reviewSubject", "Review of a closed account",
+  "Email subject pre-filled when asking for a review. Nothing about the person is added.",
+  "మూసివేసిన ఖాతా పునఃపరిశీలన",
+  "Closed account review")
+s("closed_deleteNote", "You can still delete your account and everything in it.",
+  "Above the 'Delete my account' button on the closed screen (deletion always stays available).",
+  "మీ ఖాతాను, అందులోని ప్రతిదాన్నీ మీరు ఇప్పటికీ తొలగించవచ్చు.",
+  "Mee account ni, andulo unna pratidaanni meeru ippatiki delete cheyochu.")
+s("closed_signOutNote", "Signing out clears this account from this phone.",
+  "Small note under the actions: what Sign out does on this phone.",
+  "సైన్ అవుట్ చేస్తే ఈ ఫోన్ నుండి ఈ ఖాతా క్లియర్ అవుతుంది.",
+  "Sign out cheste ee phone nundi ee account clear avutundi.")

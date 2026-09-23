@@ -52,9 +52,11 @@ comment on table public.admin_staff is
   'Admin console allowlist + roles (PRD 19 "Roles"). Staff accounts are separate from app accounts; changes are audited.';
 
 -- Every allowlist change lands in the append-only, hash-chained audit log (PRD 19: "staff roles" are Owner business;
--- the console has no staff editor in v0, so changes are made in SQL and this trigger records them).
+-- the console has no staff editor in v0, so changes are made in SQL and this trigger records them). SECURITY DEFINER:
+-- the change may come from a role that cannot write the audit log itself — e.g. GoTrue (supabase_auth_admin) deleting
+-- a staff auth user cascades here. `session_user` still records who really made the change.
 create function public.admin_staff_audit() returns trigger
-language plpgsql set search_path = '' as $$
+language plpgsql security definer set search_path = '' as $$
 declare
   r   record;
   act text;

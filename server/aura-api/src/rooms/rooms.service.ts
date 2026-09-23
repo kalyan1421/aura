@@ -6,6 +6,7 @@ import { pgCode, pgConstraint, type Queryable, type Tx } from '../db/db';
 import { DbService } from '../db/db.service';
 import { lockUser } from '../db/locks';
 import type { Quadrant } from '../rules';
+import { assertGuidelinesAccepted } from '../safety/guidelines';
 import { assertRoomAccess } from '../safety/safety.queries';
 import { Broadcast } from './broadcast';
 import { loadMatchingConfig, type MatchingConfig } from './matching-config';
@@ -83,6 +84,8 @@ export class RoomsService {
     const profile = await this.profileOf(this.db, userId);
     if (!profile) throw profileRequired();
     await assertRoomAccess(this.db, userId);
+    // REQ-SAFE-04: the community guidelines (current version or newer) come before any room → 409 + version.
+    await assertGuidelinesAccepted(this.db, userId);
 
     const homeRegion = regionForTimeZone(req.timezone ?? profile.timezone, now);
     const homePool = profile.language_pool;

@@ -7,7 +7,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(93);
+select plan(96);
 
 -- pgTAP lives in `extensions`; let aura_admin call it for the role-switched assertions below (rolled back at the end,
 -- so the real grants are what the other assertions see).
@@ -168,6 +168,22 @@ select results_eq(
 select throws_ok(
   $$ insert into public.admin_staff (staff_id, role, display_name) values ('13cccccc-0000-4000-8000-00000000000c', 'superuser', 'X') $$,
   '23514', null, 'roles are owner / moderator / analyst');
+-- A role that may remove staff but cannot write the audit log itself (like GoTrue's supabase_auth_admin when an auth
+-- user is deleted and the FK cascades) must still succeed, and still leave the audit row: the trigger is a definer.
+select ok((select prosecdef and proconfig = array['search_path=""'] from pg_proc where oid = 'public.admin_staff_audit()'::regprocedure),
+  'the allowlist audit trigger runs as definer with a pinned search_path');
+insert into public.admin_staff (staff_id, role, display_name) values ('13cccccc-0000-4000-8000-00000000000c', 'analyst', 'PgTap');
+create role pgtap_staff_remover nologin;
+grant select, delete on public.admin_staff to pgtap_staff_remover;
+grant usage on schema extensions to pgtap_staff_remover;
+grant pgtap_staff_remover to postgres;
+set local role pgtap_staff_remover;
+select lives_ok($$ delete from public.admin_staff where staff_id = '13cccccc-0000-4000-8000-00000000000c' $$,
+  'removing staff works for a role without audit-log privileges (e.g. an auth-user deletion cascade)');
+reset role;
+select is((select actor from public.moderation_actions where action = 'staff_removed'
+             and detail->>'staffId' = '13cccccc-0000-4000-8000-00000000000c' order by id desc limit 1),
+  'db:postgres', '... and the audit row names the session user');
 
 -- ---------------------------------------------------------------- grievances (IT Rules clocks)
 set local role aura_admin;

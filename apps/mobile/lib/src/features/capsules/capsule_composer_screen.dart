@@ -17,6 +17,7 @@ import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel, quadrantName;
 import '../companion/prompts.dart';
+import '../push/push_messaging.dart' show PushPermission;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
@@ -284,11 +285,45 @@ class _CapsuleComposerScreenState extends ConsumerState<CapsuleComposerScreen> {
           !online && (content.voice != null || content.photos.isNotEmpty);
     });
     // A lexicon hit: help first (the capsule is already sealed and safe).
-    if (hard) await showSupportSheet(context, crisis: true);
+    if (hard) {
+      await showSupportSheet(
+        context,
+        crisis: true,
+        origin: SupportOrigin.capsule,
+      );
+    }
     if (!mounted) return;
     // F2: sealing a capsule is journaling.
     final logged = await autoCompleteHabitToday(ref, PresetHabitKeys.journal);
     if (logged && mounted) setState(() => _journalLogged = true);
+    // PRD 15-permissions: sealing a date capsule is the moment for the one
+    // notification re-ask — never right after a hard moment.
+    if (!hard && unlock is DateUnlock && mounted) await _offerUnlockNotice();
+  }
+
+  /// "Want to know when it opens?": offered once, when push says the OS
+  /// prompt may be shown now (`PushService.mayAskAgain`: never asked, or the
+  /// one re-ask 30+ days after a decline). Only "Allow" fires the prompt.
+  Future<void> _offerUnlockNotice() async {
+    try {
+      final push = ref.read(pushServiceProvider);
+      final kv = ref.read(kvStoreProvider);
+      if (!push.isAvailable) return;
+      if (await kv.get(capsuleNotifyOfferedKey) != null) return;
+      if (await push.permission() == PushPermission.authorized) return;
+      if (!await push.mayAskAgain() || !mounted) return;
+      await kv.set(capsuleNotifyOfferedKey, 'true');
+      if (!mounted) return;
+      final allow = await showModalBottomSheet<bool>(
+        context: context,
+        useSafeArea: true,
+        isScrollControlled: true,
+        builder: (_) => const CapsuleNotifyAskSheet(),
+      );
+      if (allow == true) await push.requestFromSettings();
+    } on Object catch (e) {
+      debugPrint('capsules: notify ask skipped (${e.runtimeType})');
+    }
   }
 
   // ---- leaving ---------------------------------------------------------------------
@@ -858,6 +893,70 @@ class _SealedView extends ConsumerWidget {
           child: Text(l.common_done),
         ),
       ],
+    );
+  }
+}
+
+/// Key/value flag: the capsule notification ask was shown (it never nags).
+const String capsuleNotifyOfferedKey = 'capsules.notify_offered';
+
+/// "Want to know when it opens?" — the soft ask before the OS prompt.
+/// True for "Allow"; "Not now" never shows the OS prompt.
+class CapsuleNotifyAskSheet extends StatelessWidget {
+  const CapsuleNotifyAskSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(
+        AuraSpace.gutter,
+        AuraSpace.xl,
+        AuraSpace.gutter,
+        AuraSpace.l,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const ExcludeSemantics(
+            child: Icon(
+              Icons.notifications_none_rounded,
+              size: 40,
+              color: AuraColors.lavender,
+            ),
+          ),
+          const SizedBox(height: AuraSpace.l),
+          Semantics(
+            header: true,
+            child: Text(
+              l.capsules_notifyAskTitle,
+              textAlign: TextAlign.center,
+              style: t.headlineSmall,
+            ),
+          ),
+          const SizedBox(height: AuraSpace.s),
+          Text(
+            l.capsules_notifyAskBody,
+            textAlign: TextAlign.center,
+            style: t.bodyLarge?.copyWith(color: AuraColors.textSoft),
+          ),
+          const SizedBox(height: AuraSpace.xl),
+          FilledButton(
+            key: const ValueKey('capsule-notify-allow'),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.push_allow),
+          ),
+          const SizedBox(height: AuraSpace.s),
+          TextButton(
+            key: const ValueKey('capsule-notify-not-now'),
+            autofocus: true,
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.common_notNow),
+          ),
+        ],
+      ),
     );
   }
 }

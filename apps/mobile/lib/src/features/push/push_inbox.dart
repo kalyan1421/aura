@@ -32,7 +32,7 @@ abstract interface class CapsulePushBridge {
 }
 
 /// [CapsulePushBridge] over the capsules feature
-/// (`CapsuleUnlockScheduler.shouldShowServerPush`, `openCapsulesList`).
+/// (`CapsuleUnlockScheduler.shouldShowServerPush`, `openCapsuleFromNotice`).
 class CapsulesFeatureBridge implements CapsulePushBridge {
   CapsulesFeatureBridge(this._ref);
 
@@ -44,7 +44,7 @@ class CapsulesFeatureBridge implements CapsulePushBridge {
 
   @override
   Future<void> open(BuildContext context, String? capsuleId) =>
-      openCapsulesList(context);
+      openCapsuleFromNotice(context, capsuleId);
 }
 
 final capsulePushBridgeProvider = Provider<CapsulePushBridge>(

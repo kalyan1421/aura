@@ -91,6 +91,8 @@ s("capsules_readyTitle", "Something you sealed is ready to open.", "Home card an
 s("capsules_readyMore", "{count, plural, =1{1 capsule is ready.} other{{count} capsules are ready.}}", "Home card when several date capsules are ready.", "{count, plural, =1{1 క్యాప్సూల్ సిద్ధంగా ఉంది.} other{{count} క్యాప్సూల్స్ సిద్ధంగా ఉన్నాయి.}}", "{count, plural, =1{1 capsule ready ga undi.} other{{count} capsules ready ga unnaayi.}}", INT("count"))
 s("capsules_readyOpen", "Open it", "Opens a capsule (Home card, a capsule's page, the hard-moment note).", "తెరవండి", "Open cheyandi")
 s("capsules_channelName", "Capsules", "Android notification channel name (Settings).", "క్యాప్సూల్స్", "Capsules")
+s("capsules_notifyAskTitle", "Want to know when it opens?", "The one notification re-ask, after sealing a date capsule (PRD 15-permissions). Only 'Allow' shows the OS prompt.", "ఇది ఎప్పుడు తెరుచుకుంటుందో తెలుసుకోవాలనుకుంటున్నారా?", "Idi eppudu open avutundo telusukovaalanukuntunnaaraa?")
+s("capsules_notifyAskBody", "One quiet note on the day it opens. Nothing on your lock screen says what's inside.", "Under 'Want to know when it opens?'. Must promise: one note, nothing about the content on the lock screen.", "అది తెరుచుకునే రోజు ఒక్క నిశ్శబ్ద సందేశం. లోపల ఏముందో మీ లాక్ స్క్రీన్ ఎప్పుడూ చెప్పదు.", "Adi open ayye roju oka quiet note. Lopala emundo mee lock screen eppudu cheppadu.")
 s("capsules_channelDescription", "When something you sealed is ready to open.", "Android notification channel description.", "మీరు దాచుకున్నది తెరవడానికి సిద్ధమైనప్పుడు.", "Meeru daachukunnadi open cheyyadaaniki ready ainappudu.")
 
 # ---- opening ---------------------------------------------------------------------

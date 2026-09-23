@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/haptics.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
@@ -87,8 +88,10 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
       case GestureMomentKind.sent:
         _lastSent = text;
         announceRoom(context, text);
+        AuraHaptics.light(); // restrained; off with Comfort → Haptics
       case GestureMomentKind.received:
         announceRoom(context, text);
+        AuraHaptics.selection();
       case GestureMomentKind.room:
         if (_roomAnnounceGate == null) {
           announceRoom(context, text);
@@ -429,7 +432,10 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
         AuraSpace.xl,
       ),
       children: [
-        if (held) ...[const DeletionPendingCard(), const SizedBox(height: AuraSpace.m)],
+        if (held) ...[
+          const DeletionPendingCard(),
+          const SizedBox(height: AuraSpace.m),
+        ],
         if (notice != null) ...[
           InlineNotice(
             notice.text,
@@ -550,9 +556,8 @@ class _Opening extends StatelessWidget {
                 l.rooms_opening,
                 key: const ValueKey('room-opening'),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AuraColors.textSoft,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: AuraColors.textSoft),
               ),
             ),
           ],
@@ -610,12 +615,16 @@ class _Header extends StatelessWidget {
               Expanded(
                 child: Semantics(
                   key: const ValueKey('room-counts'),
+                  container: true,
                   label: l.rooms_countsSemantic(counts.hereNow, counts.today),
                   excludeSemantics: true,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l.rooms_hereNow(counts.hereNow), style: t.titleMedium),
+                      Text(
+                        l.rooms_hereNow(counts.hereNow),
+                        style: t.titleMedium,
+                      ),
                       Text(
                         l.rooms_today(counts.today),
                         style: t.bodyMedium?.copyWith(
@@ -797,7 +806,10 @@ class _MemberTile extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AuraColors.starlight,
                               shape: BoxShape.circle,
-                              border: Border.all(color: AuraColors.sky, width: 2),
+                              border: Border.all(
+                                color: AuraColors.sky,
+                                width: 2,
+                              ),
                             ),
                           ),
                         ),
@@ -856,7 +868,15 @@ class _Recent extends StatelessWidget {
     final g = detail.gestures;
     final names = {for (final m in detail.members) m.memberId: m.pseudonym};
     final seen = <String>{};
-    final rows = <({DateTime at, GestureType type, String text, ReceivedGesture? received})>[];
+    final rows =
+        <
+          ({
+            DateTime at,
+            GestureType type,
+            String text,
+            ReceivedGesture? received,
+          })
+        >[];
     for (final r in g.received) {
       final type = r.gesture;
       if (type == null || !seen.add(r.gestureId)) continue;
@@ -1035,9 +1055,8 @@ class _MemoryFooter extends StatelessWidget {
           children: [
             Text(
               l.rooms_trayResting,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AuraColors.textSoft,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: AuraColors.textSoft),
             ),
             const SizedBox(height: AuraSpace.s),
             OutlinedButton(

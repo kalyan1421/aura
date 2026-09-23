@@ -9,6 +9,7 @@ import 'core/providers.dart';
 import 'core/router/router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/avatar/moments_controller.dart';
+import 'features/capsules/capsule_providers.dart';
 import 'features/onboarding/gate_controller.dart';
 import 'features/profile/timezone_sync.dart';
 import 'features/push/push_inbox.dart';
@@ -55,6 +56,8 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     ref.watch(pushServiceProvider);
     ref.watch(pushInboxProvider); // F14: in-app notices + tap routing
     ref.watch(momentsControllerProvider);
+    // Capsule unlock scheduling and trigger arming (F4) for the whole session.
+    ref.watch(capsuleCoordinatorProvider);
     final router = ref.watch(routerProvider);
     final comfort = ref.watch(comfortControllerProvider);
     AuraHaptics.enabled = comfort.haptics;

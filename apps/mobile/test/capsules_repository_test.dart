@@ -55,9 +55,8 @@ void main() {
     if (root.existsSync()) root.deleteSync(recursive: true);
   });
 
-  Future<List<OutboxRow>> queued() => (db.select(
-    db.outbox,
-  )..orderBy([(t) => OrderingTerm.asc(t.seq)])).get();
+  Future<List<OutboxRow>> queued() =>
+      (db.select(db.outbox)..orderBy([(t) => OrderingTerm.asc(t.seq)])).get();
 
   Map<String, dynamic> payloadOf(OutboxRow r) =>
       jsonDecode(r.payload) as Map<String, dynamic>;
@@ -169,35 +168,41 @@ void main() {
       );
       expect(q.triggerQuadrant, 'rain');
       expect(payloadOf((await queued()).last)['triggerQuadrant'], 'rain');
-      expect(payloadOf((await queued()).last).containsKey('triggerMoodId'), isFalse);
+      expect(
+        payloadOf((await queued()).last).containsKey('triggerMoodId'),
+        isFalse,
+      );
     });
 
-    test('REQ-CAP-04: a 4th active trigger capsule is refused; dates never', () async {
-      final r = repo();
-      for (var i = 0; i < 3; i++) {
-        await r.seal(
-          id: 'm$i',
-          content: const CapsuleContent(text: 'x'),
-          unlock: const MoodUnlock.quadrant(Quadrant.storm),
+    test(
+      'REQ-CAP-04: a 4th active trigger capsule is refused; dates never',
+      () async {
+        final r = repo();
+        for (var i = 0; i < 3; i++) {
+          await r.seal(
+            id: 'm$i',
+            content: const CapsuleContent(text: 'x'),
+            unlock: const MoodUnlock.quadrant(Quadrant.storm),
+          );
+        }
+        await expectLater(
+          r.seal(
+            id: 'm3',
+            content: const CapsuleContent(text: 'x'),
+            unlock: const MoodUnlock.mood('calm'),
+          ),
+          throwsA(isA<TriggerCapsuleLimitReached>()),
         );
-      }
-      await expectLater(
-        r.seal(
-          id: 'm3',
+        expect(await r.row('m3'), isNull, reason: 'nothing stored');
+        // Date capsules never hit the limit.
+        await r.seal(
+          id: 'd1',
           content: const CapsuleContent(text: 'x'),
-          unlock: const MoodUnlock.mood('calm'),
-        ),
-        throwsA(isA<TriggerCapsuleLimitReached>()),
-      );
-      expect(await r.row('m3'), isNull, reason: 'nothing stored');
-      // Date capsules never hit the limit.
-      await r.seal(
-        id: 'd1',
-        content: const CapsuleContent(text: 'x'),
-        unlock: DateUnlock(LocalDay.parse('2027-01-01')),
-      );
-      expect(await r.activeTriggerCount(), 3);
-    });
+          unlock: DateUnlock(LocalDay.parse('2027-01-01')),
+        );
+        expect(await r.activeTriggerCount(), 3);
+      },
+    );
 
     test('sealing the same id twice is one capsule (double tap)', () async {
       final r = repo();
@@ -227,10 +232,7 @@ void main() {
       final r = repo();
       final row = await r.seal(
         id: 'long',
-        content: CapsuleContent(
-          title: 'అ' * 70,
-          text: '👋🏽' * 2100,
-        ),
+        content: CapsuleContent(title: 'అ' * 70, text: '👋🏽' * 2100),
         unlock: DateUnlock(LocalDay.parse('2027-01-01')),
       );
       final p = await decrypt(row);
@@ -255,123 +257,137 @@ void main() {
       );
     });
 
-    test('media move into the capsule, sealed per slot, seal waits for upload', () async {
-      final r = repo();
-      final voicePath = await store.newDraftVoicePath('draft-1');
-      final voiceBytes = Uint8List.fromList(List.generate(900, (i) => i % 251));
-      await File(voicePath).writeAsBytes(voiceBytes);
-      final photoBytes = Uint8List.fromList(List.generate(500, (i) => i % 7));
-      final photo0 = await store.writeDraftPhoto('draft-1', photoBytes);
-      final photo1 = await store.writeDraftPhoto('draft-1', photoBytes);
+    test(
+      'media move into the capsule, sealed per slot, seal waits for upload',
+      () async {
+        final r = repo();
+        final voicePath = await store.newDraftVoicePath('draft-1');
+        final voiceBytes = Uint8List.fromList(
+          List.generate(900, (i) => i % 251),
+        );
+        await File(voicePath).writeAsBytes(voiceBytes);
+        final photoBytes = Uint8List.fromList(List.generate(500, (i) => i % 7));
+        final photo0 = await store.writeDraftPhoto('draft-1', photoBytes);
+        final photo1 = await store.writeDraftPhoto('draft-1', photoBytes);
 
-      final row = await r.seal(
-        id: 'withmedia',
-        content: CapsuleContent(
-          text: 'listen',
-          voice: CapsuleVoiceDraft(
-            path: voicePath,
-            duration: const Duration(minutes: 3), // clamped to 2:00
+        final row = await r.seal(
+          id: 'withmedia',
+          content: CapsuleContent(
+            text: 'listen',
+            voice: CapsuleVoiceDraft(
+              path: voicePath,
+              duration: const Duration(minutes: 3), // clamped to 2:00
+            ),
+            photos: [
+              CapsulePhotoDraft(path: photo0, width: 2048, height: 1536),
+              CapsulePhotoDraft(path: photo1, width: 1536, height: 2048),
+            ],
           ),
-          photos: [
-            CapsulePhotoDraft(path: photo0, width: 2048, height: 1536),
-            CapsulePhotoDraft(path: photo1, width: 1536, height: 2048),
-          ],
-        ),
-        unlock: DateUnlock(LocalDay.parse('2027-01-01')),
-      );
-      expect(File(voicePath).existsSync(), isFalse, reason: 'moved');
-      final p = await decrypt(row);
-      expect(p.voice?.durationMs, 120000);
-      expect(p.photos.map((m) => (m.slot, m.width, m.height)), [
-        ('photo-0', 2048, 1536),
-        ('photo-1', 1536, 2048),
-      ]);
-      expect((await queued()).single.needsMedia, isTrue);
+          unlock: DateUnlock(LocalDay.parse('2027-01-01')),
+        );
+        expect(File(voicePath).existsSync(), isFalse, reason: 'moved');
+        final p = await decrypt(row);
+        expect(p.voice?.durationMs, 120000);
+        expect(p.photos.map((m) => (m.slot, m.width, m.height)), [
+          ('photo-0', 2048, 1536),
+          ('photo-1', 1536, 2048),
+        ]);
+        expect((await queued()).single.needsMedia, isTrue);
 
-      // Sealed with the data key per slot (AD `<id>/<slot>`).
-      for (final slot in ['voice', 'photo-0', 'photo-1']) {
-        final name = await sealCapsuleMediaSlot(
-          db,
-          store,
-          'withmedia',
-          slot,
-          cipher: testCipher(),
-        );
-        expect(name, '$slot.enc');
-        final sealed = await store.read('withmedia', name!);
-        final clear = await testCipher().decryptBytes(
-          sealed!,
-          recordId: 'withmedia/$slot',
-        );
-        expect(clear, slot == 'voice' ? voiceBytes : photoBytes);
-      }
-      final media = await r.mediaOf('withmedia');
-      expect(media.map((m) => (m.slot, m.file, m.path)), [
-        ('photo-0', 'photo-0.enc', null),
-        ('photo-1', 'photo-1.enc', null),
-        ('voice', 'voice.enc', null),
-      ]);
-    });
+        // Sealed with the data key per slot (AD `<id>/<slot>`).
+        for (final slot in ['voice', 'photo-0', 'photo-1']) {
+          final name = await sealCapsuleMediaSlot(
+            db,
+            store,
+            'withmedia',
+            slot,
+            cipher: testCipher(),
+          );
+          expect(name, '$slot.enc');
+          final sealed = await store.read('withmedia', name!);
+          final clear = await testCipher().decryptBytes(
+            sealed!,
+            recordId: 'withmedia/$slot',
+          );
+          expect(clear, slot == 'voice' ? voiceBytes : photoBytes);
+        }
+        final media = await r.mediaOf('withmedia');
+        expect(media.map((m) => (m.slot, m.file, m.path)), [
+          ('photo-0', 'photo-0.enc', null),
+          ('photo-1', 'photo-1.enc', null),
+          ('voice', 'voice.enc', null),
+        ]);
+      },
+    );
   });
 
   group('open, fire, re-arm, delete', () {
-    test('sealed means sealed: a date capsule opens from 10:00 on its day', () async {
-      final r = repo();
-      await r.seal(
-        id: 'd',
-        content: const CapsuleContent(text: 'hi'),
-        unlock: DateUnlock(LocalDay.parse('2026-10-15')),
-      );
-      clock.instant = DateTime.utc(2026, 10, 15, 4, 29); // 09:59 IST
-      await expectLater(r.open('d'), throwsA(isA<CapsuleNotOpenable>()));
-      clock.instant = DateTime.utc(2026, 10, 15, 4, 30); // 10:00 IST
-      await r.open('d');
-      final row = (await r.row('d'))!;
-      expect(row.openedAt, clock.instant);
-      expect(row.openedDeviceTs, clock.instant);
-      await r.open('d'); // one-way; again is a no-op
-      final o = await queued();
-      expect(o.map((x) => x.op), [Ops.seal, Ops.open]);
-      expect(payloadOf(o.last), {'id': 'd', 'cycle': 0});
-    });
+    test(
+      'sealed means sealed: a date capsule opens from 10:00 on its day',
+      () async {
+        final r = repo();
+        await r.seal(
+          id: 'd',
+          content: const CapsuleContent(text: 'hi'),
+          unlock: DateUnlock(LocalDay.parse('2026-10-15')),
+        );
+        clock.instant = DateTime.utc(2026, 10, 15, 4, 29); // 09:59 IST
+        await expectLater(r.open('d'), throwsA(isA<CapsuleNotOpenable>()));
+        clock.instant = DateTime.utc(2026, 10, 15, 4, 30); // 10:00 IST
+        await r.open('d');
+        final row = (await r.row('d'))!;
+        expect(row.openedAt, clock.instant);
+        expect(row.openedDeviceTs, clock.instant);
+        await r.open('d'); // one-way; again is a no-op
+        final o = await queued();
+        expect(o.map((x) => x.op), [Ops.seal, Ops.open]);
+        expect(payloadOf(o.last), {'id': 'd', 'cycle': 0});
+      },
+    );
 
-    test('a trigger capsule: fire (cooldown), open, keep for next time', () async {
-      final r = repo();
-      await r.seal(
-        id: 'm',
-        content: const CapsuleContent(text: 'hi'),
-        unlock: const MoodUnlock.quadrant(Quadrant.storm),
-      );
-      expect(await r.fire('m'), isFalse, reason: 'not armed yet');
-      await expectLater(r.open('m'), throwsA(isA<CapsuleNotOpenable>()));
+    test(
+      'a trigger capsule: fire (cooldown), open, keep for next time',
+      () async {
+        final r = repo();
+        await r.seal(
+          id: 'm',
+          content: const CapsuleContent(text: 'hi'),
+          unlock: const MoodUnlock.quadrant(Quadrant.storm),
+        );
+        expect(await r.fire('m'), isFalse, reason: 'not armed yet');
+        await expectLater(r.open('m'), throwsA(isA<CapsuleNotOpenable>()));
 
-      clock.instant = testNow.add(const Duration(hours: 24));
-      expect(await r.fire('m'), isTrue);
-      var row = (await r.row('m'))!;
-      expect(row.firedAt, clock.instant);
-      expect(row.cooldownUntil, clock.instant.add(const Duration(hours: 168)));
-      expect(await r.fire('m'), isFalse, reason: 'at most once per cycle');
+        clock.instant = testNow.add(const Duration(hours: 24));
+        expect(await r.fire('m'), isTrue);
+        var row = (await r.row('m'))!;
+        expect(row.firedAt, clock.instant);
+        expect(
+          row.cooldownUntil,
+          clock.instant.add(const Duration(hours: 168)),
+        );
+        expect(await r.fire('m'), isFalse, reason: 'at most once per cycle');
 
-      clock.instant = clock.instant.add(const Duration(minutes: 1));
-      await r.open('m');
-      row = (await r.row('m'))!;
-      expect(row.openedAt, clock.instant);
-      final cooldown = row.cooldownUntil;
+        clock.instant = clock.instant.add(const Duration(minutes: 1));
+        await r.open('m');
+        row = (await r.row('m'))!;
+        expect(row.openedAt, clock.instant);
+        final cooldown = row.cooldownUntil;
 
-      clock.instant = clock.instant.add(const Duration(minutes: 5));
-      await r.rearm('m');
-      row = (await r.row('m'))!;
-      expect(row.cycle, 1);
-      expect(row.armedAt, clock.instant, reason: 'armed at once');
-      expect(row.firedAt, isNull);
-      expect(row.openedAt, isNull);
-      expect(row.cooldownUntil, cooldown, reason: 'the cooldown still holds');
+        clock.instant = clock.instant.add(const Duration(minutes: 5));
+        await r.rearm('m');
+        row = (await r.row('m'))!;
+        expect(row.cycle, 1);
+        expect(row.armedAt, clock.instant, reason: 'armed at once');
+        expect(row.firedAt, isNull);
+        expect(row.openedAt, isNull);
+        expect(row.cooldownUntil, cooldown, reason: 'the cooldown still holds');
 
-      final o = await queued();
-      expect(o.map((x) => x.op), [Ops.seal, Ops.fire, Ops.open, Ops.rearm]);
-      expect(o.map((x) => payloadOf(x)['cycle']), [null, 0, 0, 0]);
-      expect(o.map((x) => x.deviceTs).toSet(), hasLength(4));
-    });
+        final o = await queued();
+        expect(o.map((x) => x.op), [Ops.seal, Ops.fire, Ops.open, Ops.rearm]);
+        expect(o.map((x) => payloadOf(x)['cycle']), [null, 0, 0, 0]);
+        expect(o.map((x) => x.deviceTs).toSet(), hasLength(4));
+      },
+    );
 
     test('keep for next time respects the Free limit', () async {
       final r = repo();
@@ -428,55 +444,64 @@ void main() {
       expect(await queued(), hasLength(o.length));
     });
 
-    test('a refused mood capsule can become a date capsule (same id)', () async {
-      final r = repo();
-      await r.seal(
-        id: 'refused',
-        content: const CapsuleContent(text: 'x'),
-        unlock: const MoodUnlock.mood('joyful'),
-      );
-      await (db.update(db.capsules)..where((t) => t.id.equals('refused')))
-          .write(const CapsulesCompanion(rejected: Value('trigger_capsule_limit')));
-      await expectLater(
-        r.convertToDate('refused', LocalDay.parse('2026-10-10')),
-        throwsA(isA<CapsuleUnlockOutOfRange>()),
-      );
-      await r.convertToDate('refused', LocalDay.parse('2027-02-01'));
-      final row = (await r.row('refused'))!;
-      expect(row.unlockType, 'date');
-      expect(row.unlockLocalDate, '2027-02-01');
-      expect(row.triggerMoodId, isNull);
-      expect(row.armedAt, isNull);
-      expect(row.rejected, isNull);
-      final seals = (await queued()).where((o) => o.op == Ops.seal).toList();
-      expect(seals, hasLength(2));
-      expect(seals.last.mutationId, isNot(seals.first.mutationId));
-      expect(payloadOf(seals.last), {
-        'id': 'refused',
-        'payloadCt': null,
-        'unlockType': 'date',
-        'unlockLocalDate': '2027-02-01',
-      });
-    });
-
-    test('the sealed count (account deletion) skips opened and deleted', () async {
-      final r = repo();
-      final counts = <int>[];
-      final sub = r.watchSealedCount().listen(counts.add);
-      addTearDown(sub.cancel);
-      for (final id in ['a', 'b', 'c']) {
+    test(
+      'a refused mood capsule can become a date capsule (same id)',
+      () async {
+        final r = repo();
         await r.seal(
-          id: id,
+          id: 'refused',
           content: const CapsuleContent(text: 'x'),
-          unlock: DateUnlock(LocalDay.parse('2026-10-15')),
+          unlock: const MoodUnlock.mood('joyful'),
         );
-      }
-      clock.instant = DateTime.utc(2026, 10, 15, 5);
-      await r.open('a');
-      await r.delete('b');
-      await pumpEventQueue();
-      expect(counts.last, 1);
-    });
+        await (db.update(
+          db.capsules,
+        )..where((t) => t.id.equals('refused'))).write(
+          const CapsulesCompanion(rejected: Value('trigger_capsule_limit')),
+        );
+        await expectLater(
+          r.convertToDate('refused', LocalDay.parse('2026-10-10')),
+          throwsA(isA<CapsuleUnlockOutOfRange>()),
+        );
+        await r.convertToDate('refused', LocalDay.parse('2027-02-01'));
+        final row = (await r.row('refused'))!;
+        expect(row.unlockType, 'date');
+        expect(row.unlockLocalDate, '2027-02-01');
+        expect(row.triggerMoodId, isNull);
+        expect(row.armedAt, isNull);
+        expect(row.rejected, isNull);
+        final seals = (await queued()).where((o) => o.op == Ops.seal).toList();
+        expect(seals, hasLength(2));
+        expect(seals.last.mutationId, isNot(seals.first.mutationId));
+        expect(payloadOf(seals.last), {
+          'id': 'refused',
+          'payloadCt': null,
+          'unlockType': 'date',
+          'unlockLocalDate': '2027-02-01',
+        });
+      },
+    );
+
+    test(
+      'the sealed count (account deletion) skips opened and deleted',
+      () async {
+        final r = repo();
+        final counts = <int>[];
+        final sub = r.watchSealedCount().listen(counts.add);
+        addTearDown(sub.cancel);
+        for (final id in ['a', 'b', 'c']) {
+          await r.seal(
+            id: id,
+            content: const CapsuleContent(text: 'x'),
+            unlock: DateUnlock(LocalDay.parse('2026-10-15')),
+          );
+        }
+        clock.instant = DateTime.utc(2026, 10, 15, 5);
+        await r.open('a');
+        await r.delete('b');
+        await pumpEventQueue();
+        expect(counts.last, 1);
+      },
+    );
   });
 
   group('trigger evaluation after a check-in', () {
@@ -490,44 +515,63 @@ void main() {
       return id;
     }
 
-    test('armed, matching, oldest first; crisis holds; backfill fires nothing', () async {
-      final r = repo();
-      await r.seal(
-        id: 'q',
-        content: const CapsuleContent(text: 'x'),
-        unlock: const MoodUnlock.quadrant(Quadrant.storm),
-      );
-      clock.instant = testNow.add(const Duration(hours: 1));
-      await r.seal(
-        id: 'm',
-        content: const CapsuleContent(text: 'x'),
-        unlock: const MoodUnlock.mood('anxious'),
-      );
-      // Not armed yet.
-      var ci = await checkIn('anxious');
-      expect(
-        await r.pickFor(checkInId: ci, mood: moodById('anxious')!, crisis: false),
-        TriggerPick.none,
-      );
-      clock.instant = testNow.add(const Duration(hours: 26));
-      ci = await checkIn('anxious');
-      expect(
-        await r.pickFor(checkInId: ci, mood: moodById('anxious')!, crisis: false),
-        const TriggerPick(fire: 'q'),
-      );
-      expect(
-        await r.pickFor(checkInId: ci, mood: moodById('anxious')!, crisis: true),
-        const TriggerPick(hold: 'q'),
-      );
-      final back = await checkIn(
-        'anxious',
-        backfill: time.today().addDays(-1),
-      );
-      expect(
-        await r.pickFor(checkInId: back, mood: moodById('anxious')!, crisis: false),
-        TriggerPick.none,
-      );
-    });
+    test(
+      'armed, matching, oldest first; crisis holds; backfill fires nothing',
+      () async {
+        final r = repo();
+        await r.seal(
+          id: 'q',
+          content: const CapsuleContent(text: 'x'),
+          unlock: const MoodUnlock.quadrant(Quadrant.storm),
+        );
+        clock.instant = testNow.add(const Duration(hours: 1));
+        await r.seal(
+          id: 'm',
+          content: const CapsuleContent(text: 'x'),
+          unlock: const MoodUnlock.mood('anxious'),
+        );
+        // Not armed yet.
+        var ci = await checkIn('anxious');
+        expect(
+          await r.pickFor(
+            checkInId: ci,
+            mood: moodById('anxious')!,
+            crisis: false,
+          ),
+          TriggerPick.none,
+        );
+        clock.instant = testNow.add(const Duration(hours: 26));
+        ci = await checkIn('anxious');
+        expect(
+          await r.pickFor(
+            checkInId: ci,
+            mood: moodById('anxious')!,
+            crisis: false,
+          ),
+          const TriggerPick(fire: 'q'),
+        );
+        expect(
+          await r.pickFor(
+            checkInId: ci,
+            mood: moodById('anxious')!,
+            crisis: true,
+          ),
+          const TriggerPick(hold: 'q'),
+        );
+        final back = await checkIn(
+          'anxious',
+          backfill: time.today().addDays(-1),
+        );
+        expect(
+          await r.pickFor(
+            checkInId: back,
+            mood: moodById('anxious')!,
+            crisis: false,
+          ),
+          TriggerPick.none,
+        );
+      },
+    );
 
     test('REQ-CAP-03: a fire holds every trigger capsule for 7 days', () async {
       final r = repo();
@@ -545,13 +589,21 @@ void main() {
       clock.instant = firedAt.add(const Duration(hours: 167, minutes: 59));
       var ci = await checkIn('drained');
       expect(
-        await r.pickFor(checkInId: ci, mood: moodById('drained')!, crisis: false),
+        await r.pickFor(
+          checkInId: ci,
+          mood: moodById('drained')!,
+          crisis: false,
+        ),
         TriggerPick.none,
       );
       clock.instant = firedAt.add(const Duration(hours: 168));
       ci = await checkIn('drained');
       expect(
-        await r.pickFor(checkInId: ci, mood: moodById('drained')!, crisis: false),
+        await r.pickFor(
+          checkInId: ci,
+          mood: moodById('drained')!,
+          crisis: false,
+        ),
         const TriggerPick(fire: 'b'),
       );
     });

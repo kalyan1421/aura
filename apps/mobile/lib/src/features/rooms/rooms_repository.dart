@@ -36,6 +36,10 @@ enum RoomsFailureKind {
   /// `409 language_pool_unavailable`: Hindi + Hinglish rooms aren't open.
   poolUnavailable,
 
+  /// `409 guidelines_required` (REQ-SAFE-04): the community guidelines in
+  /// [RoomsFailure.guidelinesVersion] must be accepted before a room.
+  guidelinesRequired,
+
   /// `429 room_join_limit`: 3 new rooms for this quadrant in 24 h.
   joinLimit,
 
@@ -59,7 +63,12 @@ enum RoomsFailureKind {
 }
 
 class RoomsFailure implements Exception {
-  const RoomsFailure(this.kind, {this.code, this.status});
+  const RoomsFailure(
+    this.kind, {
+    this.code,
+    this.status,
+    this.guidelinesVersion,
+  });
 
   factory RoomsFailure.from(ApiException e) {
     final kind = switch ((e.status, e.code)) {
@@ -71,6 +80,8 @@ class RoomsFailure implements Exception {
       (403, 'account_closed') => RoomsFailureKind.closed,
       (409, 'profile_required') => RoomsFailureKind.profileRequired,
       (409, 'language_pool_unavailable') => RoomsFailureKind.poolUnavailable,
+      (409, GuidelinesRequiredException.guidelinesRequiredCode) =>
+        RoomsFailureKind.guidelinesRequired,
       (409, 'room_read_only') => RoomsFailureKind.readOnly,
       (429, 'room_join_limit') => RoomsFailureKind.joinLimit,
       (429, 'report_limit') => RoomsFailureKind.reportLimit,
@@ -81,12 +92,24 @@ class RoomsFailure implements Exception {
         RoomsFailureKind.network,
       _ => RoomsFailureKind.other,
     };
-    return RoomsFailure(kind, code: e.code, status: e.status);
+    return RoomsFailure(
+      kind,
+      code: e.code,
+      status: e.status,
+      guidelinesVersion: switch (e) {
+        GuidelinesRequiredException(:final version) => version,
+        _ when kind == RoomsFailureKind.guidelinesRequired => 1,
+        _ => null,
+      },
+    );
   }
 
   final RoomsFailureKind kind;
   final String? code;
   final int? status;
+
+  /// [RoomsFailureKind.guidelinesRequired]: the version to accept.
+  final int? guidelinesVersion;
 
   /// Worth trying again later (a connection or server hiccup).
   bool get isTransient =>
@@ -112,19 +135,22 @@ class RoomsFailure implements Exception {
 /// nothing is ever queued here (the room screen's 30 s gesture queue is
 /// the only exception, and it lives with the room). Errors come back as
 /// [RoomsFailure]. `403 account_deletion_pending` also runs
-/// [onDeletionPending], like sync does.
+/// [onDeletionPending], like sync does; `403 account_closed` runs
+/// [onAccountClosed] (the app-wide closed screen, like every `AuraApi` call).
 class RoomsRepository {
   RoomsRepository({
     required this._api,
     required this._isOnline,
     required this._timezone,
     this._onDeletionPending,
+    this._onAccountClosed,
   });
 
   final RoomsApi? _api;
   final bool Function() _isOnline;
   final String Function() _timezone;
   final void Function()? _onDeletionPending;
+  final void Function()? _onAccountClosed;
 
   /// The detail a match returned, handed to the room screen once so it
   /// doesn't fetch the same room again.
@@ -143,6 +169,7 @@ class RoomsRepository {
       if (failure.kind == RoomsFailureKind.deletionPending) {
         _onDeletionPending?.call();
       }
+      if (failure.kind == RoomsFailureKind.closed) _onAccountClosed?.call();
       // Codes only: never ids, pseudonyms or bodies (DS-10).
       debugPrint('rooms: ${failure.kind.name} (${e.status}, ${e.code})');
       throw failure;
@@ -192,9 +219,7 @@ class RoomsRepository {
     String roomId,
     GestureType type, {
     String? toMemberId,
-  }) => _guard(
-    (api) => api.sendGesture(roomId, type, toMemberId: toMemberId),
-  );
+  }) => _guard((api) => api.sendGesture(roomId, type, toMemberId: toMemberId));
 
   Future<bool> leave(String roomId) => _guard((api) => api.leave(roomId));
 
@@ -217,4 +242,10 @@ class RoomsRepository {
       _guard((api) => api.block(roomId, memberId));
 
   Future<SafetyStanding> standing() => _guard((api) => api.standing());
+
+  /// REQ-SAFE-04: records on the server that the person accepted community
+  /// guidelines [version] (the text this build showed). Online only, like
+  /// every rooms call.
+  Future<GuidelinesStatus> acceptGuidelines(int version) =>
+      _guard((api) => api.acceptGuidelines(version));
 }

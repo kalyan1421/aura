@@ -44,3 +44,4 @@ s("set_notifQuietConfirmNo", "Keep it quiet", "Dialog: don't send inside quiet h
 # ---- post-check-in explainer (PRD 15-permissions "with a time picker") -------
 s("push_timeRow", "Every evening at {time}", "On the notification explainer: when the daily nudge comes; {time} e.g. '8:00 PM'.", "ప్రతి సాయంత్రం {time}కి", "Prati saayantram {time} ki", STR("time"))
 s("push_changeTime", "Change time", "Opens the time picker on the explainer.", "సమయం మార్చండి", "Time maarchandi")
+s("push_discreet", "Keep them discreet", "Checkbox on the explainer: discreet mode (PRD 12 rule 4, a one-tap choice on the permission screen). The line under it quotes the discreet text.", "గోప్యంగా ఉంచండి", "Discreet ga unchandi")

@@ -1391,6 +1391,14 @@
   "@capsules_channelName": {
     "description": "Android notification channel name (Settings)."
   },
+  "capsules_notifyAskTitle": "Want to know when it opens?",
+  "@capsules_notifyAskTitle": {
+    "description": "The one notification re-ask, after sealing a date capsule (PRD 15-permissions). Only 'Allow' shows the OS prompt."
+  },
+  "capsules_notifyAskBody": "One quiet note on the day it opens. Nothing on your lock screen says what's inside.",
+  "@capsules_notifyAskBody": {
+    "description": "Under 'Want to know when it opens?'. Must promise: one note, nothing about the content on the lock screen."
+  },
   "capsules_channelDescription": "When something you sealed is ready to open.",
   "@capsules_channelDescription": {
     "description": "Android notification channel description."
@@ -1582,6 +1590,14 @@
   "@legal_opensInBrowser": {
     "description": "Screen-reader hint on legal links."
   },
+  "help_crisisSubtitleCapsule": "You don't have to carry it alone. Your capsule is sealed.",
+  "@help_crisisSubtitleCapsule": {
+    "description": "Support sheet subtitle after a crisis-lexicon match while sealing a time capsule. The capsule still sealed."
+  },
+  "help_backToCapsule": "Back to my capsule",
+  "@help_backToCapsule": {
+    "description": "Closes the support sheet and returns to the sealed capsule."
+  },
   "flows_startOverTitle": "Start over?",
   "@flows_startOverTitle": {
     "description": "Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame."
@@ -1593,6 +1609,34 @@
   "flows_startOver": "Start over",
   "@flows_startOver": {
     "description": "Start-over dialog on the first check-in: clears the mood, tags and words and stays on the check-in. The default choice is 'Keep editing'."
+  },
+  "closed_title": "This account is closed",
+  "@closed_title": {
+    "description": "Title of the full screen shown when the signed-in account was closed by a moderator. Calm, factual, no blame."
+  },
+  "closed_body": "This account was closed for breaking Aura's rules.",
+  "@closed_body": {
+    "description": "The only explanation shown (PRD wording). Never add a reason, a category or who reported it."
+  },
+  "closed_review": "If you think this is a mistake, you can ask for a review. We reply within 7 days.",
+  "@closed_review": {
+    "description": "How to appeal (one appeal per action, resolved in 7 days, PRD F9). Warm, no promise of the outcome."
+  },
+  "closed_askReview": "Ask for a review",
+  "@closed_askReview": {
+    "description": "Row that writes an email to the Grievance Officer (name and address shown under it)."
+  },
+  "closed_reviewSubject": "Review of a closed account",
+  "@closed_reviewSubject": {
+    "description": "Email subject pre-filled when asking for a review. Nothing about the person is added."
+  },
+  "closed_deleteNote": "You can still delete your account and everything in it.",
+  "@closed_deleteNote": {
+    "description": "Above the 'Delete my account' button on the closed screen (deletion always stays available)."
+  },
+  "closed_signOutNote": "Signing out clears this account from this phone.",
+  "@closed_signOutNote": {
+    "description": "Small note under the actions: what Sign out does on this phone."
   },
   "home_stageProgress": "{stage}, {count} of {target} Starlight toward {next}",
   "@home_stageProgress": {
@@ -1960,6 +2004,10 @@
   "push_changeTime": "Change time",
   "@push_changeTime": {
     "description": "Opens the time picker on the explainer."
+  },
+  "push_discreet": "Keep them discreet",
+  "@push_discreet": {
+    "description": "Checkbox on the explainer: discreet mode (PRD 12 rule 4, a one-tap choice on the permission screen). The line under it quotes the discreet text."
   },
   "onb_trustTitle": "Before we begin",
   "@onb_trustTitle": {
@@ -2608,6 +2656,10 @@
   "@rooms_guidelinesAgree": {
     "description": "Accept the guidelines and continue to the room."
   },
+  "rooms_guidelinesUpdate": "Rooms have new community guidelines. Update Aura to read them before your next room.",
+  "@rooms_guidelinesUpdate": {
+    "description": "The server asks for guidelines newer than this app version carries (REQ-SAFE-04). Calm; no blame."
+  },
   "rooms_sendTo": "Send {pseudonym} some warmth",
   "@rooms_sendTo": {
     "description": "Member sheet: the gestures for this one person.",
@@ -2742,6 +2794,10 @@
   "rooms_reason8": "Something else",
   "@rooms_reason8": {
     "description": "Report reason 8."
+  },
+  "rooms_reason9": "Seems to be targeting a young person",
+  "@rooms_reason9": {
+    "description": "Report reason 9, shown before 'Something else' (Minors & grooming lane on the server, whatever anyone's age). Plain and warm; never mentions or asks anyone's age."
   },
   "rooms_reportNoteLabel": "Anything a moderator should know? (optional)",
   "@rooms_reportNoteLabel": {

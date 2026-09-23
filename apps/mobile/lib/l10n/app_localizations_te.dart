@@ -1103,6 +1103,14 @@ class AppLocalizationsTe extends AppLocalizations {
   String get capsules_channelName => 'క్యాప్సూల్స్';
 
   @override
+  String get capsules_notifyAskTitle =>
+      'ఇది ఎప్పుడు తెరుచుకుంటుందో తెలుసుకోవాలనుకుంటున్నారా?';
+
+  @override
+  String get capsules_notifyAskBody =>
+      'అది తెరుచుకునే రోజు ఒక్క నిశ్శబ్ద సందేశం. లోపల ఏముందో మీ లాక్ స్క్రీన్ ఎప్పుడూ చెప్పదు.';
+
+  @override
   String get capsules_channelDescription =>
       'మీరు దాచుకున్నది తెరవడానికి సిద్ధమైనప్పుడు.';
 
@@ -1261,6 +1269,13 @@ class AppLocalizationsTe extends AppLocalizations {
   String get legal_opensInBrowser => 'మీ బ్రౌజర్‌లో తెరుచుకుంటుంది';
 
   @override
+  String get help_crisisSubtitleCapsule =>
+      'దీన్ని మీరు ఒంటరిగా మోయాల్సిన అవసరం లేదు. మీ క్యాప్సూల్ సీల్ అయింది.';
+
+  @override
+  String get help_backToCapsule => 'నా క్యాప్సూల్‌కి తిరిగి';
+
+  @override
   String get flows_startOverTitle => 'మళ్ళీ మొదటి నుంచి మొదలుపెడదామా?';
 
   @override
@@ -1269,6 +1284,30 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get flows_startOver => 'మళ్ళీ మొదలుపెడదాం';
+
+  @override
+  String get closed_title => 'ఈ ఖాతా మూసివేయబడింది';
+
+  @override
+  String get closed_body => 'Aura నియమాలను పాటించనందుకు ఈ ఖాతా మూసివేయబడింది.';
+
+  @override
+  String get closed_review =>
+      'ఇది పొరపాటు అని మీకు అనిపిస్తే, మళ్ళీ పరిశీలించమని అడగవచ్చు. 7 రోజుల్లో సమాధానం ఇస్తాం.';
+
+  @override
+  String get closed_askReview => 'మళ్ళీ పరిశీలించమని అడగండి';
+
+  @override
+  String get closed_reviewSubject => 'మూసివేసిన ఖాతా పునఃపరిశీలన';
+
+  @override
+  String get closed_deleteNote =>
+      'మీ ఖాతాను, అందులోని ప్రతిదాన్నీ మీరు ఇప్పటికీ తొలగించవచ్చు.';
+
+  @override
+  String get closed_signOutNote =>
+      'సైన్ అవుట్ చేస్తే ఈ ఫోన్ నుండి ఈ ఖాతా క్లియర్ అవుతుంది.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -1525,6 +1564,9 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get push_changeTime => 'సమయం మార్చండి';
+
+  @override
+  String get push_discreet => 'గోప్యంగా ఉంచండి';
 
   @override
   String get onb_trustTitle => 'మొదలుపెట్టే ముందు';
@@ -2026,6 +2068,10 @@ class AppLocalizationsTe extends AppLocalizations {
   String get rooms_guidelinesAgree => 'నేను వీటిని పాటిస్తాను';
 
   @override
+  String get rooms_guidelinesUpdate =>
+      'రూమ్‌ల కమ్యూనిటీ మార్గదర్శకాలు మారాయి. మీ తర్వాతి రూమ్‌కి ముందు వాటిని చదవడానికి Auraని అప్‌డేట్ చేయండి.';
+
+  @override
   String rooms_sendTo(String pseudonym) {
     return '$pseudonymకి కొంచెం ఆత్మీయత పంపండి';
   }
@@ -2117,6 +2163,10 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get rooms_reason8 => 'ఇంకేదైనా';
+
+  @override
+  String get rooms_reason9 =>
+      'చిన్న వయసు వారిని లక్ష్యంగా చేసుకుంటున్నట్టు అనిపిస్తోంది';
 
   @override
   String get rooms_reportNoteLabel =>
@@ -4002,6 +4052,14 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get capsules_channelName => 'Capsules';
 
   @override
+  String get capsules_notifyAskTitle =>
+      'Idi eppudu open avutundo telusukovaalanukuntunnaaraa?';
+
+  @override
+  String get capsules_notifyAskBody =>
+      'Adi open ayye roju oka quiet note. Lopala emundo mee lock screen eppudu cheppadu.';
+
+  @override
   String get capsules_channelDescription =>
       'Meeru daachukunnadi open cheyyadaaniki ready ainappudu.';
 
@@ -4161,6 +4219,13 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get legal_opensInBrowser => 'Mee browser lo open avutundi';
 
   @override
+  String get help_crisisSubtitleCapsule =>
+      'Idi meeru okkare moyyalsina avasaram ledu. Mee capsule seal ayyindi.';
+
+  @override
+  String get help_backToCapsule => 'Naa capsule ki tirigi';
+
+  @override
   String get flows_startOverTitle => 'Malli modati nunchi modalupedadaamaa?';
 
   @override
@@ -4169,6 +4234,31 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get flows_startOver => 'Malli modalupedadaam';
+
+  @override
+  String get closed_title => 'Ee account close cheyabadindi';
+
+  @override
+  String get closed_body =>
+      'Aura rules paatinchananduku ee account close cheyabadindi.';
+
+  @override
+  String get closed_review =>
+      'Idi porapaatu ani meeku anipiste, malli review cheyamani adagochu. 7 rojullo reply istaam.';
+
+  @override
+  String get closed_askReview => 'Review adagandi';
+
+  @override
+  String get closed_reviewSubject => 'Closed account review';
+
+  @override
+  String get closed_deleteNote =>
+      'Mee account ni, andulo unna pratidaanni meeru ippatiki delete cheyochu.';
+
+  @override
+  String get closed_signOutNote =>
+      'Sign out cheste ee phone nundi ee account clear avutundi.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -4427,6 +4517,9 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get push_changeTime => 'Time maarchandi';
+
+  @override
+  String get push_discreet => 'Discreet ga unchandi';
 
   @override
   String get onb_trustTitle => 'Modalupette mundu';
@@ -4930,6 +5023,10 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get rooms_guidelinesAgree => 'Nenu veetini paatistaanu';
 
   @override
+  String get rooms_guidelinesUpdate =>
+      'Rooms community guidelines maaraayi. Mee next room ki mundu vaatini chadavadaaniki Aura ni update cheyandi.';
+
+  @override
   String rooms_sendTo(String pseudonym) {
     return '$pseudonym ki konchem warmth pampandi';
   }
@@ -5021,6 +5118,10 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get rooms_reason8 => 'Inkedaina';
+
+  @override
+  String get rooms_reason9 =>
+      'Chinna vayasu vaallani target chestunnattu anipistondi';
 
   @override
   String get rooms_reportNoteLabel =>

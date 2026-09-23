@@ -38,6 +38,9 @@ export const PERSONAL_TABLES = [
   // F8 REQ-ACC-11: the sealed Sign in with Apple refresh token — removed by step 1b, after it is revoked at Apple
   // (`APPLE_TOKEN_TABLE`), never by the plain delete in step 1.
   'apple_auth_tokens',
+  // F9 REQ-SAFE-04: which community-guidelines version the account accepted
+  // (also cascades from profiles).
+  'guidelines_acceptances',
   'profiles',
 ] as const;
 

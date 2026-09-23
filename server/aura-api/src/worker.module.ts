@@ -1,5 +1,6 @@
 import { Controller, Get, HttpStatus, Module, Res } from '@nestjs/common';
 import type { Response } from 'express';
+import { AdminWorkerModule } from './admin/paging/paging.worker';
 import { CapsuleUnlockModule } from './capsules/capsule-unlock.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
@@ -37,7 +38,8 @@ class WorkerHealthController {
 
 /** Worker process (src/worker.ts): BullMQ processors + tiny health endpoint. No auth, no API routes. */
 @Module({
-  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule],
+  // AdminWorkerModule: the admin console's pager (30 s tick, repeats / escalation, weekly test page).
+  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule],
   controllers: [WorkerHealthController],
   providers: [WorkerHostService],
 })

@@ -3,7 +3,10 @@
  * sanction details are server/console-only — never returned to app clients (DS-10).
  */
 
-/** Report reasons, one tap (06b): the integer is the wire value. */
+/**
+ * Report reasons, one tap (06b): the integer is the wire value. Codes never change meaning (older apps keep sending
+ * 1–8); new reasons are appended.
+ */
 export const REPORT_REASONS = {
   1: 'in_danger',
   2: 'harassment',
@@ -13,16 +16,24 @@ export const REPORT_REASONS = {
   6: 'spam',
   7: 'under_13',
   8: 'other',
+  9: 'targeting_minor',
 } as const;
 export type ReportReason = keyof typeof REPORT_REASONS;
 export type ReportReasonKey = (typeof REPORT_REASONS)[ReportReason];
 
+export const MAX_REPORT_REASON = 9;
+
 export const isReportReason = (v: unknown): v is ReportReason =>
-  typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= 8;
+  typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= MAX_REPORT_REASON;
 
 /** Crisis reports are never a violation: never a strike, never rate-limited, never auto-hidden. */
 export const CRISIS_REASON: ReportReason = 1;
 export const UNDER_13_REASON: ReportReason = 7;
+/**
+ * "Seems to be targeting a young person": a bystander's sense that someone is going after a young person. Minors &
+ * grooming lane whatever the ages on record; the young person may be anyone in the room (see ReportsService).
+ */
+export const TARGETING_MINOR_REASON: ReportReason = 9;
 
 export const LANES = ['crisis', 'minors_grooming', 'harassment', 'spam'] as const;
 export type Lane = (typeof LANES)[number];

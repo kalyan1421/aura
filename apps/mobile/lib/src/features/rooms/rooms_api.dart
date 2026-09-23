@@ -32,10 +32,23 @@ class MatchRequest {
   };
 }
 
+/// `409 guidelines_required` (REQ-SAFE-04, contracts §1.1 / §2.4): the
+/// community guidelines [version] the server needs accepted before a room.
+class GuidelinesRequiredException extends ApiException {
+  const GuidelinesRequiredException(this.version)
+    : super(code: guidelinesRequiredCode, status: 409);
+
+  static const String guidelinesRequiredCode = 'guidelines_required';
+
+  final int version;
+}
+
 /// NestJS Mood Rooms (F5) and core safety (F9) routes,
 /// contracts/api/v1-rooms.md. Every failure is an [ApiException] (same
-/// codes and status as `AuraApi`). Rooms are online only: callers never
-/// queue these (the repository refuses offline before calling).
+/// codes and status as `AuraApi`; `409 guidelines_required` is a
+/// [GuidelinesRequiredException] carrying the version). Rooms are online
+/// only: callers never queue these (the repository refuses offline before
+/// calling).
 abstract interface class RoomsApi {
   Future<MatchResult> match(MatchRequest request);
 
@@ -73,27 +86,28 @@ abstract interface class RoomsApi {
   Future<String> block(String roomId, String memberId);
 
   Future<SafetyStanding> standing();
+
+  /// Records that the person accepted community guidelines [version] (the
+  /// text the app just showed): `POST /v1/safety/guidelines/accept`.
+  Future<GuidelinesStatus> acceptGuidelines(int version);
 }
 
 /// [RoomsApi] over Dio, with the same auth, timeouts and error mapping as
 /// `AuraApi` (core/net/aura_api.dart).
 class HttpRoomsApi implements RoomsApi {
-  HttpRoomsApi({
-    required String baseUrl,
-    required this._accessToken,
-    Dio? dio,
-  }) : _dio =
-           dio ??
-           Dio(
-             BaseOptions(
-               baseUrl: baseUrl,
-               connectTimeout: const Duration(seconds: 6),
-               sendTimeout: const Duration(seconds: 10),
-               receiveTimeout: const Duration(seconds: 12),
-               contentType: Headers.jsonContentType,
-               responseType: ResponseType.json,
-             ),
-           );
+  HttpRoomsApi({required String baseUrl, required this._accessToken, Dio? dio})
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: baseUrl,
+              connectTimeout: const Duration(seconds: 6),
+              sendTimeout: const Duration(seconds: 10),
+              receiveTimeout: const Duration(seconds: 12),
+              contentType: Headers.jsonContentType,
+              responseType: ResponseType.json,
+            ),
+          );
 
   final Dio _dio;
   final Future<String?> Function() _accessToken;
@@ -106,18 +120,17 @@ class HttpRoomsApi implements RoomsApi {
     return Options(headers: {'Authorization': 'Bearer $token'});
   }
 
-  Future<Map<String, dynamic>> _get(String path) =>
-      _call(() async => _dio.get<Map<String, dynamic>>(
-        path,
-        options: await _auth(),
-      ));
+  Future<Map<String, dynamic>> _get(String path) => _call(
+    () async => _dio.get<Map<String, dynamic>>(path, options: await _auth()),
+  );
 
-  Future<Map<String, dynamic>> _post(String path, [Object? body]) =>
-      _call(() async => _dio.post<Map<String, dynamic>>(
-        path,
-        data: body,
-        options: await _auth(),
-      ));
+  Future<Map<String, dynamic>> _post(String path, [Object? body]) => _call(
+    () async => _dio.post<Map<String, dynamic>>(
+      path,
+      data: body,
+      options: await _auth(),
+    ),
+  );
 
   Future<Map<String, dynamic>> _call(
     Future<Response<Map<String, dynamic>>> Function() send,
@@ -172,8 +185,7 @@ class HttpRoomsApi implements RoomsApi {
 
   @override
   Future<bool> leave(String roomId) async =>
-      (await _post('/v1/rooms/${_id(roomId)}/leave'))['surveyEligible'] ==
-      true;
+      (await _post('/v1/rooms/${_id(roomId)}/leave'))['surveyEligible'] == true;
 
   @override
   Future<void> survey(String roomId, SurveyAnswer answer) async {
@@ -219,8 +231,15 @@ class HttpRoomsApi implements RoomsApi {
   Future<SafetyStanding> standing() async =>
       SafetyStanding.fromJson(await _get('/v1/safety/me'));
 
+  @override
+  Future<GuidelinesStatus> acceptGuidelines(int version) async =>
+      GuidelinesStatus.fromJson(
+        await _post('/v1/safety/guidelines/accept', {'version': version}),
+      );
+
   /// Same mapping as `AuraApi`: a response's `code`, else `http_<status>`;
-  /// no response at all is a network failure. Never carries bodies.
+  /// no response at all is a network failure. Never carries bodies — except
+  /// the guidelines version of a `409 guidelines_required` (a number).
   static ApiException _map(DioException e) {
     final res = e.response;
     if (res == null) return ApiException(code: e.type.name, isNetwork: true);
@@ -228,6 +247,13 @@ class HttpRoomsApi implements RoomsApi {
     final code = data is Map && data['code'] is String
         ? data['code'] as String
         : 'http_${res.statusCode}';
+    if (res.statusCode == 409 &&
+        code == GuidelinesRequiredException.guidelinesRequiredCode) {
+      final version = data is Map && data['version'] is num
+          ? (data['version'] as num).toInt()
+          : 1;
+      return GuidelinesRequiredException(version);
+    }
     return ApiException(code: code, status: res.statusCode);
   }
 }

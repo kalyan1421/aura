@@ -13,6 +13,8 @@ NestJS 11 modular monolith for Aura — raw `pg` (no ORM), zod, jose, BullMQ. Tw
 cp .env.example .env        # fill AURA_MASTER_KEY (openssl rand -base64 32); local values in supabase/LOCAL.md
                             # SUPABASE_SERVICE_ROLE_KEY: the API (signed voice-note URLs, voice cleanup on sync) and the
                             # worker (account purge) reach the private-media bucket via the Storage API with it
+                            # APPLE_TEAM_ID / APPLE_KEY_ID / APPLE_PRIVATE_KEY / APPLE_CLIENT_ID (API + worker): Sign in
+                            # with Apple token revocation on account deletion (docs/setup/social-sign-in.md §10)
 pnpm install
 pnpm test                   # unit: rules vectors, auth, crypto, validation, sync orchestration (no DB)
 pnpm test:e2e               # needs the local Supabase stack (55521/55522) + Redis (6391)
@@ -28,17 +30,17 @@ pnpm lint                   # type-check (tsc --noEmit, strict) + push copy lint
 |---|---|
 | `config/` | zod-validated env (`AppConfig`); `.env` is merged without overriding real env vars |
 | `db/` | `pg` Pool, `withTx`, `Tx.savepoint()`; DATE columns stay `YYYY-MM-DD` strings |
-| `auth/` | global guards: `AuthGuard` (Supabase JWT via `jose`: ES256/RS256 against JWKS (by `kid`), HS256 only if `SUPABASE_JWT_SECRET` is set), then `PendingDeletionGuard` (`403 account_deletion_pending` while a deletion is scheduled; one PK lookup); `@CurrentUser()`, `@Public()`, `@AllowPendingDeletion()` |
+| `auth/` | global guards: `AuthGuard` (Supabase JWT via `jose`: ES256/RS256 against JWKS (by `kid`), HS256 only if `SUPABASE_JWT_SECRET` is set), then `PendingDeletionGuard` (`403 account_deletion_pending` while a deletion is scheduled; one PK lookup), then `AccountClosedGuard` (`403 account_closed` for an active `account_ban`, except `@AllowAccountClosed()` routes: `/v1/account*`, `GET /v1/safety*`); `@CurrentUser()`, `@Public()`, `@AllowPendingDeletion()`, `@AllowAccountClosed()` |
 | `rules/` | pure TS port of `contracts/rules/RULES.md` (aura day, eligibility, Starlight, stage, traits, hue, streak, nebula) |
 | `progression/` | derive the `Snapshot` from ledger + active days; persist `avatar_state` / `streak_state` |
-| `profile/` | `POST /v1/profile` (under-13 → 403, nothing stored), `GET /v1/me/snapshot` |
+| `profile/` | `POST /v1/profile` (under-13 by DOB or `ageSignal` → 403, nothing stored; `ageSignal: "under18"` → server-only `minor_signals`, read by `user_is_minor()`), `GET /v1/me/snapshot` |
 | `sync/` | `POST /v1/sync/push` — the only personal-data write path (incl. check-in `voicePath`; grapheme-counted text limits in `text-limits.ts`) |
 | `media/` | `POST /v1/media/upload-url` / `download-url` — signed Storage URLs for F1 voice notes under `<user_id>/voice/<check-in id>` (503 `media_unavailable` without a service key) |
 | `keys/` | `GET /v1/keys/data-key` — per-user AES-256-GCM-wrapped data key (DS-1) |
 | `devices/` | `PUT` / `DELETE /v1/devices` — FCM token registration (upsert on token, reassigned across accounts; owner-scoped delete). Sending: `notifications/` (F14) |
-| `account/` | `GET /v1/account`, `POST` / `DELETE /v1/account/deletion` — 7-day grace (F8 REQ-ACC-11). `account-purge.ts` (worker): personal rows → private-media (Storage API) → GoTrue leftovers + `auth.users` (SQL) |
+| `account/` | `GET /v1/account` (+ `accountClosed: true` when banned), `POST` / `DELETE /v1/account/deletion` — 7-day grace (F8 REQ-ACC-11), `POST /v1/account/apple-auth` (Sign in with Apple refresh token, sealed; `apple-sign-in.ts`, `apple-tokens.ts`). `account-purge.ts` (worker): personal rows → Apple token revoked → private-media (Storage API) → GoTrue leftovers + `auth.users` (SQL) |
 | `catalogue/` | cached moods / preset habits from the DB seed |
-| `queues/` | queue registry (`capsule-unlock`, `room-lifecycle`, `moderation`, `notifications` + internal `heartbeat`, `maintenance`), skeleton processors, worker host. `maintenance` runs job `maintenance` (sync_mutations > 90 days, daily 03:17 UTC) and job `account-purge` (hourly :41 UTC) |
+| `queues/` | queue registry (`capsule-unlock`, `room-lifecycle`, `moderation`, `notifications` + internal `heartbeat`, `maintenance`), skeleton processors, worker host. `maintenance` runs job `maintenance` (sync_mutations > 90 days, daily 03:17 UTC), job `account-purge` (hourly :41 UTC) and job `retention` (`retention.ts`: moderation audit rows > 3 years via `prune_moderation_actions()`; closed reports only once `safety_config.closed_report_retention_days` is set — NULL = keep; daily 03:29 UTC) |
 | `health/` | `GET /health` → `{status, db, redis}` |
 
 ## Sync semantics worth knowing
@@ -83,8 +85,13 @@ Never log request bodies, notes, DOB or job payloads.
   scrubs GoTrue audit/flow/refresh rows keyed by the user and deletes `auth.users` **via SQL** (the Admin API delete would
   log a new audit entry with the email). Idempotent; the schedule row is the retry marker and vanishes with the auth user.
   Without a service key, accounts with media are deferred (warning) — rows are gone, media + auth user wait.
+- Sign in with Apple (App Review 5.1.1(v)): the stored refresh token (`apple_auth_tokens`) is revoked at Apple when the
+  deletion is requested (best effort, ≤ 5 s) and by the purge right after step (1). Apple unreachable / no `APPLE_*` on
+  the worker → deferred for up to 72 h after the grace period, then dropped unrevoked (`appleAbandoned`, warned).
 - New personal table? Add it to `PERSONAL_TABLES` — the e2e suite compares the list with every public table that has a
   `user_id` column.
+- Closed accounts (active `account_ban`): every route but `/v1/account*`, `GET /v1/safety*` and `/health` →
+  `403 account_closed` (a pending deletion answers first). They can still see their status and delete themselves.
 
 ## Time capsules — F4 (contracts/api/v1-capsules.md)
 

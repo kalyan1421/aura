@@ -129,9 +129,11 @@ abstract interface class LocalNoticePort {
 /// permission the OS simply doesn't show the notice; Home's card and the
 /// Sanctuary list still say a capsule is ready.
 ///
-/// Android: channel "Capsules", private visibility, inexact scheduling (no
-/// exact-alarm permission; ±15 min is fine), rescheduled after a reboot by
-/// the plugin's boot receiver (AndroidManifest.xml).
+/// Android: channel "Capsules" (the same `capsules` channel push uses,
+/// created by features/push), the monochrome `ic_stat_aura` small icon,
+/// private visibility, inexact scheduling (no exact-alarm permission; ±15
+/// min is fine), rescheduled after a reboot by the plugin's boot receiver
+/// (AndroidManifest.xml).
 class FlutterLocalNoticePort implements LocalNoticePort {
   FlutterLocalNoticePort([FlutterLocalNotificationsPlugin? plugin])
     : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
@@ -139,13 +141,18 @@ class FlutterLocalNoticePort implements LocalNoticePort {
   final FlutterLocalNotificationsPlugin _plugin;
   Future<bool>? _ready;
 
+  /// Must match `PushChannels.capsules` (features/push/push_inbox.dart).
   static const String channelId = 'capsules';
+
+  /// Monochrome small icon (android/app/src/main/res/drawable), shared with
+  /// push notifications.
+  static const String androidIcon = 'ic_stat_aura';
 
   Future<bool> _init() => _ready ??= () async {
     try {
       await _plugin.initialize(
         settings: const InitializationSettings(
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          android: AndroidInitializationSettings(androidIcon),
           iOS: DarwinInitializationSettings(
             requestAlertPermission: false,
             requestBadgePermission: false,
@@ -178,6 +185,7 @@ class FlutterLocalNoticePort implements LocalNoticePort {
           channelId,
           text.channelName,
           channelDescription: text.channelDescription,
+          icon: androidIcon,
           visibility: NotificationVisibility.private,
         ),
         iOS: const DarwinNotificationDetails(threadIdentifier: channelId),
@@ -252,13 +260,28 @@ class CapsuleUnlockScheduler {
   }) => _serial(() async {
     final now = _clock.now();
     final rows = await _db.select(_db.capsules).get();
-    final skip = await _serverNotified(now);
-    final plan = planUnlockNotices(rows, tz: tz, now: now, skipDates: skip);
-    final planned = {for (final n in plan) n.id: n};
     final last = await _kv.getJson(planKey);
     final lastNotices = (last?['notices'] as Map<String, dynamic>?) ?? const {};
+    final lastDates = (last?['dates'] as Map<String, dynamic>?) ?? const {};
     final sameText = last?['text'] == text.body;
     final pending = (await _port.pendingIds()).toSet();
+    // A notice this phone scheduled that vanished before its time was
+    // cancelled by the push handler (Android): the server's push for that
+    // day came first and was shown. Never re-show that day.
+    var skip = await _serverNotified(now);
+    final vanished = <String>{
+      for (final e in lastNotices.entries)
+        if (!pending.contains(int.tryParse(e.key)) &&
+            (DateTime.tryParse('${e.value}')?.isAfter(now) ?? false) &&
+            lastDates[e.key] is String)
+          lastDates[e.key] as String,
+    };
+    if (vanished.isNotEmpty) {
+      skip = {...skip, ...vanished};
+      await _kv.set(serverNotifiedKey, _encodeDays(skip));
+    }
+    final plan = planUnlockNotices(rows, tz: tz, now: now, skipDates: skip);
+    final planned = {for (final n in plan) n.id: n};
 
     for (final id in pending) {
       if (!planned.containsKey(id)) await _port.cancel(id);
@@ -274,6 +297,7 @@ class CapsuleUnlockScheduler {
     await _kv.setJson(planKey, {
       'text': text.body,
       'notices': {for (final n in plan) '${n.id}': n.at.toIso8601String()},
+      'dates': {for (final n in plan) '${n.id}': n.date.toIso()},
     });
 
     // When each pending date capsule's notice fires (or fired). A notice

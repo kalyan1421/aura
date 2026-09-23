@@ -1,28 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
-import '../../core/providers.dart';
+import '../../core/db/kv_store.dart';
 import '../../core/theme/aura_tokens.dart';
 
-/// The community guidelines version this build shows (F9: versioned,
-/// re-shown on material change: bump it with the copy).
-const String roomGuidelinesVersion = '1';
+/// The community guidelines version this build's copy is (F9: versioned,
+/// re-shown on material change). Bump it with the copy; the server's
+/// `safety_config.guidelines_version` is raised once that release is out
+/// (contracts/api/v1-rooms.md §2.4).
+const int roomGuidelinesVersion = 1;
 
-/// Accepted version, per account (wiped with everything else at sign-out).
+/// The version the server has on record for this account, cached on this
+/// phone (per account: wiped with everything else at sign-out). Only a
+/// cache that saves a round trip: the server decides, and its
+/// `409 guidelines_required` brings the guidelines back (REQ-SAFE-04).
 const String roomGuidelinesKey = 'rooms.guidelines_accepted';
 
-/// REQ-SAFE-04: the guidelines come before the first room. `true` when the
-/// current version is (or now gets) accepted; anything else (Not now, back,
-/// a tap outside) never enters the room.
-Future<bool> ensureRoomGuidelines(BuildContext context, WidgetRef ref) async {
-  final kv = ref.read(kvStoreProvider);
+/// Whether the cache says this build's guidelines (or newer) are on record.
+Future<bool> roomGuidelinesCached(KvStore kv) async {
   try {
-    if (await kv.get(roomGuidelinesKey) == roomGuidelinesVersion) return true;
+    final cached = int.tryParse(await kv.get(roomGuidelinesKey) ?? '');
+    return cached != null && cached >= roomGuidelinesVersion;
   } on Object catch (e) {
     debugPrint('rooms: guidelines read (${e.runtimeType})');
+    return false;
   }
-  if (!context.mounted) return false;
+}
+
+/// Caches that the server recorded [version].
+Future<void> cacheRoomGuidelines(KvStore kv, int version) async {
+  try {
+    await kv.set(roomGuidelinesKey, '$version');
+  } on Object catch (e) {
+    // Only the cache: the server has the acceptance either way.
+    debugPrint('rooms: guidelines write (${e.runtimeType})');
+  }
+}
+
+/// Drops the cache (the server asked for the guidelines again).
+Future<void> forgetRoomGuidelines(KvStore kv) async {
+  try {
+    await kv.set(roomGuidelinesKey, null);
+  } on Object catch (e) {
+    debugPrint('rooms: guidelines clear (${e.runtimeType})');
+  }
+}
+
+/// Shows the guidelines. `true` only for "I'll keep to these"; anything
+/// else (Not now, close, back, a tap outside) never enters a room.
+Future<bool> showRoomGuidelines(BuildContext context) async {
   final agreed = await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
@@ -30,14 +56,7 @@ Future<bool> ensureRoomGuidelines(BuildContext context, WidgetRef ref) async {
     useRootNavigator: true,
     builder: (_) => const RoomGuidelinesSheet(),
   );
-  if (agreed != true) return false;
-  try {
-    await kv.set(roomGuidelinesKey, roomGuidelinesVersion);
-  } on Object catch (e) {
-    // Still fine to enter this time; asked again next time.
-    debugPrint('rooms: guidelines write (${e.runtimeType})');
-  }
-  return true;
+  return agreed == true;
 }
 
 /// "Before your first room": what keeps rooms gentle, how to report, block
@@ -62,79 +81,110 @@ class RoomGuidelinesSheet extends StatelessWidget {
       initialChildSize: 0.9,
       minChildSize: 0.5,
       maxChildSize: 0.96,
-      builder: (context, controller) => ListView(
-        key: const ValueKey('rooms-guidelines'),
-        controller: controller,
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          AuraSpace.gutter,
-          0,
-          AuraSpace.gutter,
-          AuraSpace.xxl,
-        ),
+      builder: (context, controller) => Column(
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: AuraSpace.s),
-                  child: Semantics(
-                    header: true,
-                    child: Text(
-                      l.rooms_guidelinesTitle,
-                      style: t.headlineSmall,
+          Expanded(
+            child: ListView(
+              key: const ValueKey('rooms-guidelines'),
+              controller: controller,
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AuraSpace.gutter,
+                0,
+                AuraSpace.gutter,
+                AuraSpace.l,
+              ),
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: AuraSpace.s),
+                        child: Semantics(
+                          header: true,
+                          child: Text(
+                            l.rooms_guidelinesTitle,
+                            style: t.headlineSmall,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: l.common_close,
+                      onPressed: () => Navigator.of(context).pop(false),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AuraSpace.s),
+                Text(
+                  l.rooms_guidelinesIntro,
+                  style: t.bodyLarge?.copyWith(color: AuraColors.textSoft),
+                ),
+                const SizedBox(height: AuraSpace.l),
+                for (final rule in rules)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AuraSpace.m),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 3),
+                          child: Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 18,
+                            color: AuraColors.lavender,
+                          ),
+                        ),
+                        const SizedBox(width: AuraSpace.m),
+                        Expanded(child: Text(rule, style: t.bodyLarge)),
+                      ],
                     ),
                   ),
+                const SizedBox(height: AuraSpace.s),
+                Text(
+                  l.rooms_guidelinesSafety,
+                  style: t.bodyMedium?.copyWith(color: AuraColors.textSoft),
+                ),
+              ],
+            ),
+          ),
+          // Always in view, whatever the text size: the choice never hides
+          // below the rules.
+          DecoratedBox(
+            decoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: AuraColors.hairline)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AuraSpace.gutter,
+                  AuraSpace.m,
+                  AuraSpace.gutter,
+                  AuraSpace.s,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    FilledButton(
+                      key: const ValueKey('rooms-guidelines-agree'),
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: Text(
+                        l.rooms_guidelinesAgree,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    TextButton(
+                      key: const ValueKey('rooms-guidelines-later'),
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: Text(l.common_notNow),
+                    ),
+                  ],
                 ),
               ),
-              IconButton(
-                tooltip: l.common_close,
-                onPressed: () => Navigator.of(context).pop(false),
-                icon: const Icon(Icons.close_rounded),
-              ),
-            ],
-          ),
-          const SizedBox(height: AuraSpace.s),
-          Text(
-            l.rooms_guidelinesIntro,
-            style: t.bodyLarge?.copyWith(color: AuraColors.textSoft),
-          ),
-          const SizedBox(height: AuraSpace.l),
-          for (final rule in rules)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AuraSpace.m),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 3),
-                    child: Icon(
-                      Icons.check_circle_outline_rounded,
-                      size: 18,
-                      color: AuraColors.lavender,
-                    ),
-                  ),
-                  const SizedBox(width: AuraSpace.m),
-                  Expanded(child: Text(rule, style: t.bodyLarge)),
-                ],
-              ),
             ),
-          const SizedBox(height: AuraSpace.s),
-          Text(
-            l.rooms_guidelinesSafety,
-            style: t.bodyMedium?.copyWith(color: AuraColors.textSoft),
-          ),
-          const SizedBox(height: AuraSpace.xl),
-          FilledButton(
-            key: const ValueKey('rooms-guidelines-agree'),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l.rooms_guidelinesAgree, textAlign: TextAlign.center),
-          ),
-          const SizedBox(height: AuraSpace.s),
-          TextButton(
-            key: const ValueKey('rooms-guidelines-later'),
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l.common_notNow),
           ),
         ],
       ),

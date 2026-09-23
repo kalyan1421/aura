@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/env/env.dart';
+import '../../core/net/aura_api.dart';
 import 'auth_repository.dart';
 
 /// Native Sign in with Apple / Google (F8 REQ-ACC-01): the provider's own
@@ -115,11 +116,17 @@ class SocialCredential {
     required this.idToken,
     this.accessToken,
     this.rawNonce,
+    this.authorizationCode,
   });
 
   final String idToken;
   final String? accessToken;
   final String? rawNonce;
+
+  /// Sign in with Apple only: the one-time code (valid 5 minutes) the server
+  /// exchanges for a refresh token, so deleting the account can revoke it
+  /// (App Review 5.1.1(v); `POST /v1/account/apple-auth`). Never logged.
+  final String? authorizationCode;
 
   @override
   String toString() => 'SocialCredential(<redacted>)';
@@ -310,7 +317,11 @@ class PluginAppleSignIn implements NativeAppleSignIn {
       if (idToken == null || idToken.isEmpty) {
         throw const AuthFailure(AuthFailureKind.other);
       }
-      return SocialCredential(idToken: idToken, rawNonce: raw);
+      return SocialCredential(
+        idToken: idToken,
+        rawNonce: raw,
+        authorizationCode: credential.authorizationCode,
+      );
     } on AuthFailure {
       rethrow;
     } on Object catch (e) {
@@ -355,12 +366,18 @@ class SocialSignInService {
     required this._exchange,
     this.google,
     this.apple,
+    this.onAppleAuthorizationCode,
   });
 
   final SocialSignInConfig config;
   final SocialSessionExchange _exchange;
   final NativeGoogleSignIn? google;
   final NativeAppleSignIn? apple;
+
+  /// Told Apple's one-time authorization code once the Supabase session
+  /// exists (native Apple only). Fire-and-forget: sign-in never waits for it
+  /// and its failures never surface ([linkAppleAuthorization]).
+  final void Function(String authorizationCode)? onAppleAuthorizationCode;
 
   List<SocialProvider> get providers => config.providers;
 
@@ -398,7 +415,36 @@ class SocialSignInService {
           idToken: c.idToken,
           nonce: c.rawNonce,
         );
+        final code = c.authorizationCode;
+        if (code != null && code.isNotEmpty) {
+          try {
+            onAppleAuthorizationCode?.call(code);
+          } on Object catch (e) {
+            debugPrint('auth: apple code ${e.runtimeType}');
+          }
+        }
         return SocialSignInResult.signedIn;
     }
+  }
+}
+
+/// Sends Apple's one-time authorization code to `POST /v1/account/apple-auth`
+/// so the server can revoke the Apple token when the account is deleted
+/// (App Review 5.1.1(v)). Best effort and silent: without an API, when the
+/// server has no Apple key (`503 apple_unavailable`), offline, or on any other
+/// answer, sign-in carries on unchanged. Logs only an error code, never the
+/// authorization code.
+Future<void> linkAppleAuthorization(
+  AuraApi? api,
+  String authorizationCode, {
+  Duration timeout = const Duration(seconds: 15),
+}) async {
+  if (api == null) return;
+  try {
+    await api.postAppleAuth(authorizationCode).timeout(timeout);
+  } on ApiException catch (e) {
+    debugPrint('auth: apple link not stored (${e.code})');
+  } on Object catch (e) {
+    debugPrint('auth: apple link not stored (${e.runtimeType})');
   }
 }

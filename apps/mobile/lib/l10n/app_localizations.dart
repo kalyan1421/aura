@@ -1877,6 +1877,18 @@ abstract class AppLocalizations {
   /// **'Capsules'**
   String get capsules_channelName;
 
+  /// The one notification re-ask, after sealing a date capsule (PRD 15-permissions). Only 'Allow' shows the OS prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Want to know when it opens?'**
+  String get capsules_notifyAskTitle;
+
+  /// Under 'Want to know when it opens?'. Must promise: one note, nothing about the content on the lock screen.
+  ///
+  /// In en, this message translates to:
+  /// **'One quiet note on the day it opens. Nothing on your lock screen says what\'s inside.'**
+  String get capsules_notifyAskBody;
+
   /// Android notification channel description.
   ///
   /// In en, this message translates to:
@@ -2117,6 +2129,18 @@ abstract class AppLocalizations {
   /// **'Opens in your browser'**
   String get legal_opensInBrowser;
 
+  /// Support sheet subtitle after a crisis-lexicon match while sealing a time capsule. The capsule still sealed.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have to carry it alone. Your capsule is sealed.'**
+  String get help_crisisSubtitleCapsule;
+
+  /// Closes the support sheet and returns to the sealed capsule.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to my capsule'**
+  String get help_backToCapsule;
+
   /// Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame.
   ///
   /// In en, this message translates to:
@@ -2134,6 +2158,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start over'**
   String get flows_startOver;
+
+  /// Title of the full screen shown when the signed-in account was closed by a moderator. Calm, factual, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is closed'**
+  String get closed_title;
+
+  /// The only explanation shown (PRD wording). Never add a reason, a category or who reported it.
+  ///
+  /// In en, this message translates to:
+  /// **'This account was closed for breaking Aura\'s rules.'**
+  String get closed_body;
+
+  /// How to appeal (one appeal per action, resolved in 7 days, PRD F9). Warm, no promise of the outcome.
+  ///
+  /// In en, this message translates to:
+  /// **'If you think this is a mistake, you can ask for a review. We reply within 7 days.'**
+  String get closed_review;
+
+  /// Row that writes an email to the Grievance Officer (name and address shown under it).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a review'**
+  String get closed_askReview;
+
+  /// Email subject pre-filled when asking for a review. Nothing about the person is added.
+  ///
+  /// In en, this message translates to:
+  /// **'Review of a closed account'**
+  String get closed_reviewSubject;
+
+  /// Above the 'Delete my account' button on the closed screen (deletion always stays available).
+  ///
+  /// In en, this message translates to:
+  /// **'You can still delete your account and everything in it.'**
+  String get closed_deleteNote;
+
+  /// Small note under the actions: what Sign out does on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing out clears this account from this phone.'**
+  String get closed_signOutNote;
 
   /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
   ///
@@ -2554,6 +2620,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change time'**
   String get push_changeTime;
+
+  /// Checkbox on the explainer: discreet mode (PRD 12 rule 4, a one-tap choice on the permission screen). The line under it quotes the discreet text.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep them discreet'**
+  String get push_discreet;
 
   /// Trust step title (privacy and boundaries). Calm.
   ///
@@ -3317,6 +3389,12 @@ abstract class AppLocalizations {
   /// **'I\'ll keep to these'**
   String get rooms_guidelinesAgree;
 
+  /// The server asks for guidelines newer than this app version carries (REQ-SAFE-04). Calm; no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms have new community guidelines. Update Aura to read them before your next room.'**
+  String get rooms_guidelinesUpdate;
+
   /// Member sheet: the gestures for this one person.
   ///
   /// In en, this message translates to:
@@ -3466,6 +3544,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something else'**
   String get rooms_reason8;
+
+  /// Report reason 9, shown before 'Something else' (Minors & grooming lane on the server, whatever anyone's age). Plain and warm; never mentions or asks anyone's age.
+  ///
+  /// In en, this message translates to:
+  /// **'Seems to be targeting a young person'**
+  String get rooms_reason9;
 
   /// Report note field label (≤ 200 characters).
   ///

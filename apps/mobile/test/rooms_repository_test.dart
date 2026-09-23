@@ -5,7 +5,6 @@ import 'package:aura/src/features/rooms/contact_check.dart';
 import 'package:aura/src/features/rooms/room_models.dart';
 import 'package:aura/src/features/rooms/room_realtime.dart';
 import 'package:aura/src/features/rooms/rooms_repository.dart';
-import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'rooms_fakes.dart';
@@ -90,7 +89,11 @@ void main() {
     Future<void> offline(Future<Object?> Function() call) => expectLater(
       call(),
       throwsA(
-        isA<RoomsFailure>().having((f) => f.kind, 'kind', RoomsFailureKind.offline),
+        isA<RoomsFailure>().having(
+          (f) => f.kind,
+          'kind',
+          RoomsFailureKind.offline,
+        ),
       ),
     );
     await offline(() => repo.match(quadrant: rain, moodId: 'lonely'));
@@ -98,7 +101,7 @@ void main() {
     await offline(() => repo.room(roomId));
     await offline(() => repo.sendGesture(roomId, GestureType.hug));
     await offline(
-      () => repo.report(RoomReportTarget(roomId), ReportReason.other),
+      () => repo.report(const RoomReportTarget(roomId), ReportReason.other),
     );
     await offline(() => repo.block(roomId, cometId));
     expect(api.calls, isEmpty);
@@ -190,13 +193,13 @@ void main() {
   test('reports: reason 1 comes back with helplines (crisis lane); the note '
       'is trimmed and sent only when there is one', () async {
     final crisis = await repo.report(
-      MemberReportTarget(roomId, cometId),
+      const MemberReportTarget(roomId, cometId),
       ReportReason.inDanger,
       note: '  ',
     );
     expect(crisis.showHelplines, isTrue);
     final spam = await repo.report(
-      GestureReportTarget(roomId, 'g1'),
+      const GestureReportTarget(roomId, 'g1'),
       ReportReason.spam,
     );
     expect(spam.showHelplines, isFalse);

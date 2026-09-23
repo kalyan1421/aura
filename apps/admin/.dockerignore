@@ -1,0 +1,9 @@
+# Allow-list: only what the image build needs. Keeps .env.local (secrets), node_modules, .next and tests out of the
+# build context. Update when the build needs a new file.
+*
+!package.json
+!pnpm-lock.yaml
+!next.config.ts
+!tsconfig.json
+!src/
+!public/

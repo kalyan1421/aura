@@ -16,17 +16,22 @@ import 'push_service.dart';
 ///
 /// "Allow" also turns the daily check-in reminder on at the evening time
 /// shown on the sheet (suggested 20:00, changeable there and in Settings ›
-/// Notifications). "Not now" changes nothing.
+/// Notifications). The discreet choice on the sheet (PRD 12 rule 4: "offered
+/// as a one-tap choice on the permission screen") applies whatever the
+/// answer: after "Not now" iOS still delivers capsule notices quietly.
 Future<void> offerPushAfterCheckIn(BuildContext context, WidgetRef ref) async {
   var time = NotificationPrefs.suggestedReminderTime;
-  var allowed = false;
+  var discreet = false;
+  var wasDiscreet = false;
+  SoftAskAnswer? answer;
   final prefs = ref.read(notificationPrefsRepositoryProvider);
   await ref.read(pushServiceProvider).offerAfterCheckIn(() async {
     if (!context.mounted) return null;
     final current = await prefs.load();
     time = current.reminderTime ?? time;
+    discreet = wasDiscreet = current.discreet;
     if (!context.mounted) return null;
-    final answer = await showModalBottomSheet<SoftAskAnswer>(
+    answer = await showModalBottomSheet<SoftAskAnswer>(
       context: context,
       useSafeArea: true,
       isScrollControlled: true,
@@ -34,20 +39,25 @@ Future<void> offerPushAfterCheckIn(BuildContext context, WidgetRef ref) async {
         initialTime: time,
         quietStart: current.quietStart,
         quietEnd: current.quietEnd,
+        initialDiscreet: discreet,
         onTimeChanged: (t) => time = t,
+        onDiscreetChanged: (v) => discreet = v,
       ),
     );
-    allowed = answer == SoftAskAnswer.allow;
     return answer;
   });
-  if (!allowed) return;
+  // Dismissed without a choice: offered again after the next check-in.
+  if (answer == null) return;
   final current = await prefs.load();
   await prefs.update({
-    PrefFields.reminderEnabled: true,
-    PrefFields.reminderTime: time.hm,
-    // A time inside quiet hours was confirmed on the sheet.
-    if (inQuietHours(time, current.quietStart, current.quietEnd))
-      PrefFields.reminderInQuietHours: true,
+    if (answer == SoftAskAnswer.allow) ...{
+      PrefFields.reminderEnabled: true,
+      PrefFields.reminderTime: time.hm,
+      // A time inside quiet hours was confirmed on the sheet.
+      if (inQuietHours(time, current.quietStart, current.quietEnd))
+        PrefFields.reminderInQuietHours: true,
+    },
+    if (discreet != wasDiscreet) PrefFields.discreet: discreet,
   });
 }
 
@@ -59,13 +69,17 @@ class PushExplainerSheet extends StatefulWidget {
     this.initialTime = NotificationPrefs.suggestedReminderTime,
     this.quietStart = const DayTime(23, 0),
     this.quietEnd = const DayTime(8, 0),
+    this.initialDiscreet = false,
     this.onTimeChanged,
+    this.onDiscreetChanged,
   });
 
   final DayTime initialTime;
   final DayTime quietStart;
   final DayTime quietEnd;
+  final bool initialDiscreet;
   final ValueChanged<DayTime>? onTimeChanged;
+  final ValueChanged<bool>? onDiscreetChanged;
 
   @override
   State<PushExplainerSheet> createState() => _PushExplainerSheetState();
@@ -73,6 +87,7 @@ class PushExplainerSheet extends StatefulWidget {
 
 class _PushExplainerSheetState extends State<PushExplainerSheet> {
   late DayTime _time = widget.initialTime;
+  late bool _discreet = widget.initialDiscreet;
 
   String _format(DayTime t) =>
       MaterialLocalizations.of(context).formatTimeOfDay(
@@ -154,7 +169,19 @@ class _PushExplainerSheetState extends State<PushExplainerSheet> {
               ),
             ],
           ),
-          const SizedBox(height: AuraSpace.l),
+          CheckboxListTile(
+            key: const ValueKey('push-discreet'),
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _discreet,
+            onChanged: (v) {
+              setState(() => _discreet = v ?? false);
+              widget.onDiscreetChanged?.call(_discreet);
+            },
+            title: Text(l.push_discreet),
+            subtitle: Text(l.set_notifDiscreetNote),
+          ),
+          const SizedBox(height: AuraSpace.m),
           FilledButton(
             key: const ValueKey('push-allow'),
             onPressed: () => Navigator.pop(context, SoftAskAnswer.allow),

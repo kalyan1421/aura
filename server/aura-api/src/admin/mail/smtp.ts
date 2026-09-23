@@ -297,7 +297,7 @@ export async function sendMail(o: SmtpOptions, mail: OutgoingMail): Promise<void
     const body = dotStuff(buildMessage(mail));
     s.write(body.endsWith('\r\n') ? `${body}.\r\n` : `${body}\r\n.\r\n`);
     await s.expect([250], 'end of data');
-    s.write('QUIT\r\n');
+    await s.command('QUIT', [221], 'QUIT').catch(() => undefined); // accepted already; a missing 221 doesn't matter
   } finally {
     s.close();
   }

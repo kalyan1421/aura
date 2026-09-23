@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, UseFilters } from '@nestjs/common';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { AuthUser } from '../auth/jwt-verifier';
+import { GuidelinesRequiredFilter } from '../safety/guidelines';
 import { GesturesService, type GestureAccepted } from './gestures.service';
 import type { Counts, RoomDetail, RoomInfo, RoomSummary } from './room-views';
 import { RoomsService, type MatchResponse } from './rooms.service';
@@ -17,9 +18,11 @@ export class RoomsController {
     private readonly gestures: GesturesService,
   ) {}
 
+  /** `409 guidelines_required` carries the guidelines `version` to accept (REQ-SAFE-04, §1.1). */
   @Post('match')
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
+  @UseFilters(GuidelinesRequiredFilter)
   match(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<MatchResponse> {
     return this.rooms.match(user.id, body);
   }

@@ -377,10 +377,7 @@ class RoomController extends _$RoomController {
     if (!d.room.isMemory) {
       final next = [d.room.joinsCloseAt, d.room.memoryAt]
           .where((t) => t.isAfter(now))
-          .fold<DateTime?>(
-            null,
-            (a, b) => a == null || b.isBefore(a) ? b : a,
-          );
+          .fold<DateTime?>(null, (a, b) => a == null || b.isBefore(a) ? b : a);
       if (next != null) {
         _scheduledRefetch = Timer(
           next.difference(now) + const Duration(seconds: 2),
@@ -407,7 +404,9 @@ class RoomController extends _$RoomController {
         detail: d.copyWith(
           room: d.room.copyWith(
             lanternHour: d.room.lanternHour.copyWith(active: false),
-            state: d.room.phase == RoomPhase.lanternHour ? 'open' : d.room.state,
+            state: d.room.phase == RoomPhase.lanternHour
+                ? 'open'
+                : d.room.state,
           ),
         ),
       ),
@@ -546,26 +545,34 @@ class RoomController extends _$RoomController {
     }
     // Wait briefly: the recipient also gets a named copy, and a sender's
     // own reply may still be on its way.
-    _twins[id] = Timer(_twinWindow, () {
-      _twins.remove(id);
-      final d = state.detail;
-      if (_disposed || d == null || _ownIds.contains(id)) return;
-      if (_receivedIds.contains(id)) return;
-      if (d.gestures.recent.any((r) => r.gestureId == id)) return;
-      _set(
-        (s) => s.copyWith(
-          detail: d.copyWith(
-            gestures: d.gestures.copyWith(recent: [g, ...d.gestures.recent]),
-          ),
-          moment: GestureMoment(
-            serial: ++_serial,
-            kind: GestureMomentKind.room,
-            type: g.gesture!,
-            toRoom: g.target == 'room',
-          ),
+    _twins[id] = Timer(_twinWindow, () => _releaseRoomGesture(g));
+  }
+
+  void _releaseRoomGesture(RoomGesture g) {
+    final id = g.gestureId;
+    _twins.remove(id);
+    if (_disposed) return;
+    if (_flushing) {
+      // One of your own sends is still in flight: this may be its copy.
+      _twins[id] = Timer(_twinWindow, () => _releaseRoomGesture(g));
+      return;
+    }
+    final d = state.detail;
+    if (d == null || _ownIds.contains(id) || _receivedIds.contains(id)) return;
+    if (d.gestures.recent.any((r) => r.gestureId == id)) return;
+    _set(
+      (s) => s.copyWith(
+        detail: d.copyWith(
+          gestures: d.gestures.copyWith(recent: [g, ...d.gestures.recent]),
         ),
-      );
-    });
+        moment: GestureMoment(
+          serial: ++_serial,
+          kind: GestureMomentKind.room,
+          type: g.gesture!,
+          toRoom: g.target == 'room',
+        ),
+      ),
+    );
   }
 
   void _onReceived(ReceivedGesture g) {

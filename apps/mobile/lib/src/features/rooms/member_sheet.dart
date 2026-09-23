@@ -51,7 +51,8 @@ class MemberSheet extends ConsumerWidget {
     final tag = ref.watch(localeControllerProvider);
     final room = ref.watch(roomControllerProvider(roomId));
     // The member as the room sees them now (e.g. just muted).
-    final m = room.detail?.members
+    final m =
+        room.detail?.members
             .where((x) => x.memberId == member.memberId)
             .firstOrNull ??
         member;
@@ -74,7 +75,11 @@ class MemberSheet extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RoomSilhouette(silhouette: m.silhouette, size: 72, dimmed: m.muted),
+              RoomSilhouette(
+                silhouette: m.silhouette,
+                size: 72,
+                dimmed: m.muted,
+              ),
               const SizedBox(width: AuraSpace.m),
               Expanded(
                 child: Padding(
@@ -122,40 +127,9 @@ class MemberSheet extends ConsumerWidget {
               ),
             ],
           ),
-          if (!room.isMemory) ...[
-            const SizedBox(height: AuraSpace.l),
-            Text(l.rooms_sendTo(m.pseudonym), style: t.titleSmall),
-            const SizedBox(height: AuraSpace.s),
-            LayoutBuilder(
-              builder: (context, box) {
-                // Two to four per row; each label may wrap, never cut.
-                final scale = MediaQuery.textScalerOf(context).scale(1);
-                final perRow = (box.maxWidth / (88 * scale.clamp(1.0, 2.0)))
-                    .floor()
-                    .clamp(2, 4);
-                final width =
-                    (box.maxWidth - (perRow - 1) * AuraSpace.s) / perRow;
-                return Wrap(
-                  spacing: AuraSpace.s,
-                  runSpacing: AuraSpace.s,
-                  children: [
-                    for (final g in GestureType.values)
-                      GestureButton(
-                        type: g,
-                        width: width,
-                        hint: l.rooms_gestureHintMember(m.pseudonym),
-                        onPressed: canSend
-                            ? () => pick(MemberChoice.gesture(g))
-                            : null,
-                      ),
-                  ],
-                );
-              },
-            ),
-          ],
-          const SizedBox(height: AuraSpace.l),
-          const Divider(color: AuraColors.hairline),
-          const SizedBox(height: AuraSpace.s),
+          // Report · Block · Mute first, never below the fold (REQ-ROOM-08:
+          // the second tap from the silhouette, at any text size).
+          const SizedBox(height: AuraSpace.m),
           Wrap(
             spacing: AuraSpace.s,
             runSpacing: AuraSpace.s,
@@ -191,8 +165,41 @@ class MemberSheet extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: AuraSpace.s),
+          const SizedBox(height: AuraSpace.xs),
           Text(l.rooms_safetyNote, style: t.bodySmall),
+          if (!room.isMemory) ...[
+            const SizedBox(height: AuraSpace.l),
+            const Divider(color: AuraColors.hairline),
+            const SizedBox(height: AuraSpace.s),
+            Text(l.rooms_sendTo(m.pseudonym), style: t.titleSmall),
+            const SizedBox(height: AuraSpace.s),
+            LayoutBuilder(
+              builder: (context, box) {
+                // Two to four per row; each label may wrap, never cut.
+                final scale = MediaQuery.textScalerOf(context).scale(1);
+                final perRow = (box.maxWidth / (88 * scale.clamp(1.0, 2.0)))
+                    .floor()
+                    .clamp(2, 4);
+                final width =
+                    (box.maxWidth - (perRow - 1) * AuraSpace.s) / perRow;
+                return Wrap(
+                  spacing: AuraSpace.s,
+                  runSpacing: AuraSpace.s,
+                  children: [
+                    for (final g in GestureType.values)
+                      GestureButton(
+                        type: g,
+                        width: width,
+                        hint: l.rooms_gestureHintMember(m.pseudonym),
+                        onPressed: canSend
+                            ? () => pick(MemberChoice.gesture(g))
+                            : null,
+                      ),
+                  ],
+                );
+              },
+            ),
+          ],
         ],
       ),
     );

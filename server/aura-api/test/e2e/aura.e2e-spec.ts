@@ -913,6 +913,8 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       await db.query('insert into public.notification_prefs (user_id, reminder_time) values ($1, $2)', [u.id, '21:00']);
       await db.query(`insert into public.user_consents (user_id, purpose, policy_version) values ($1, 'core', 'v1')`, [u.id]);
       // F5/F9: a room membership (through the API), plus a sanction and a strike as the moderation service writes them.
+      // Matching needs the current community guidelines accepted first (REQ-SAFE-04).
+      await as(u, http().post('/v1/safety/guidelines/accept')).send({ version: 1 }).expect(200);
       await as(u, http().post('/v1/rooms/match')).send({ quadrant: 'storm', moodId: 'anxious' }).expect(200);
       await db.query(`insert into public.sanctions (user_id, kind, reason_code, source) values ($1, 'warning', 'e2e', 'moderator')`, [u.id]);
       await db.query(

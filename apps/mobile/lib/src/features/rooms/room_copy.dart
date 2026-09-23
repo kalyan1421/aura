@@ -47,6 +47,7 @@ String reportReasonLabel(AppLocalizations l, ReportReason r) => switch (r) {
   ReportReason.contactInfo => l.rooms_reason5,
   ReportReason.spam => l.rooms_reason6,
   ReportReason.under13 => l.rooms_reason7,
+  ReportReason.targetingYoungPerson => l.rooms_reason9,
   ReportReason.other => l.rooms_reason8,
 };
 

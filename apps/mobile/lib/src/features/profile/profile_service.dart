@@ -27,6 +27,25 @@ enum ProfileFlush {
   deferred,
 }
 
+/// A platform age band for `POST /v1/profile` (`ageSignal`, F8 REQ-ACC-04 /
+/// REQ-ACC-10; contracts/api/v1.md "Onboarding / profile"). The app sends
+/// only "under 18": under 13 is blocked on the phone before any auth call,
+/// and an adult band changes nothing on the server.
+enum AgeBand {
+  under18('under18');
+
+  const AgeBand(this.wire);
+
+  final String wire;
+
+  static AgeBand? fromWire(String? v) {
+    for (final b in values) {
+      if (b.wire == v) return b;
+    }
+    return null;
+  }
+}
+
 /// Queues and sends `POST /v1/profile`.
 ///
 /// The DOB is kept in the encrypted local database because a later profile
@@ -68,6 +87,19 @@ class ProfileService {
 
   /// True while a pending profile waits for the "Keep my account?" choice.
   bool get isHeldForDeletion => _heldForDeletion;
+
+  /// The platform age band waiting to go with the next profile POST.
+  /// User-scoped (wiped at sign-out); cleared once the server took it, so a
+  /// later re-send (locale, timezone) never restarts the server's window.
+  static const String ageSignalKey = 'profile.age_signal';
+
+  /// A platform signal said "under 18" (AgeSignalPolicy): send the band with
+  /// the next profile POST, so the server's invisible protections apply
+  /// even with an adult DOB. Never logged or shown.
+  Future<void> noteAgeSignal(AgeBand band) async {
+    await _kv.set(ageSignalKey, band.wire);
+    await markDirty();
+  }
 
   /// "Keep my account" succeeded, or the account signed out / changed: a
   /// pending profile goes on the next flush, without backoff.
@@ -126,6 +158,7 @@ class ProfileService {
     }
     final locale = await _kv.get(KvKeys.locale) ?? AuraLocales.en;
     final zone = _timezone();
+    final band = AgeBand.fromWire(await _kv.get(ageSignalKey));
     try {
       final result = await api.postProfile(
         ProfileRequest(
@@ -133,9 +166,16 @@ class ProfileService {
           uiLocale: locale,
           timezone: zone,
           country: _country(),
+          ageSignal: band?.wire,
         ),
       );
       await _kv.set(KvKeys.pendingProfile, null);
+      if (band != null) {
+        await _kv.set(ageSignalKey, null);
+      } else if (await _kv.get(ageSignalKey) != null) {
+        // A band noted while this POST was in flight goes with the next one.
+        await _kv.set(KvKeys.pendingProfile, '1');
+      }
       _refusals = 0;
       _retryAt = null;
       switch (result) {
@@ -159,8 +199,10 @@ class ProfileService {
       }
       if (e.code == 'birth_date_locked') {
         // The server keeps the onboarding DOB (support-only change): the
-        // profile exists, so stop re-sending this one.
+        // profile exists, so stop re-sending this one. It still recorded the
+        // age band (contracts/api/v1.md), so that is done too.
         await _kv.set(KvKeys.pendingProfile, null);
+        if (band != null) await _kv.set(ageSignalKey, null);
         return ProfileFlush.failed;
       }
       // Any other refusal: keep it pending and retry with backoff, never

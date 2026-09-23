@@ -162,9 +162,7 @@ class LanternGlyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SizedBox.square(
     dimension: size,
-    child: CustomPaint(
-      painter: _LanternPainter(color ?? AuraColors.starlight),
-    ),
+    child: CustomPaint(painter: _LanternPainter(color ?? AuraColors.starlight)),
   );
 }
 
@@ -189,7 +187,11 @@ class _LanternPainter extends CustomPainter {
       false,
       stroke,
     );
-    canvas.drawLine(Offset(w * 0.32, w * 0.24), Offset(w * 0.68, w * 0.24), stroke);
+    canvas.drawLine(
+      Offset(w * 0.32, w * 0.24),
+      Offset(w * 0.68, w * 0.24),
+      stroke,
+    );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTRB(w * 0.3, w * 0.26, w * 0.7, w * 0.82),
@@ -197,7 +199,11 @@ class _LanternPainter extends CustomPainter {
       ),
       stroke,
     );
-    canvas.drawLine(Offset(w * 0.26, w * 0.9), Offset(w * 0.74, w * 0.9), stroke);
+    canvas.drawLine(
+      Offset(w * 0.26, w * 0.9),
+      Offset(w * 0.74, w * 0.9),
+      stroke,
+    );
     final flame = Path()
       ..moveTo(w * 0.5, w * 0.38)
       ..quadraticBezierTo(w * 0.62, w * 0.56, w * 0.5, w * 0.68)
