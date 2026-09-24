@@ -228,6 +228,11 @@ class RoomsRepository {
 
   Future<bool> leave(String roomId) => _guard((api) => api.leave(roomId));
 
+  /// Tonight's intention (§1.9). `intention_closed` / `intention_paused`
+  /// come back as a [RoomsFailure] with that [RoomsFailure.code].
+  Future<IntentionHoldResult> holdIntention(String roomId) =>
+      _guard((api) => api.holdIntention(roomId));
+
   Future<void> survey(String roomId, SurveyAnswer answer) =>
       _guard((api) => api.survey(roomId, answer));
 

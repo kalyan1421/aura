@@ -240,6 +240,13 @@ class HabitRepository {
     return _toggleLog(habit!);
   });
 
+  /// The id of preset [presetKey]'s row, created (shown, with its `habit`
+  /// upsert in the outbox) when the preset was never used — a habit nudge
+  /// (F14) refers to a habit by id.
+  Future<String> ensurePresetId(String presetKey) => _db.transaction(
+    () async => (await _presetRow(presetKey, create: true))!.id,
+  );
+
   /// Shows or hides a preset on Home (`habit` upsert with `active`).
   Future<void> setPresetShown(String presetKey, bool shown) => _db.transaction(
     () async {

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/haptics.dart';
+import '../../core/entitlements/plus.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
@@ -17,6 +18,8 @@ import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel, quadrantName;
 import '../companion/prompts.dart';
+import '../plus/paywall_gate.dart' show PaywallSurface;
+import '../plus/plus_entry.dart' show PlusOpenButton;
 import '../push/push_messaging.dart' show PushPermission;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/crisis_lexicon.dart';
@@ -241,6 +244,7 @@ class _CapsuleComposerScreenState extends ConsumerState<CapsuleComposerScreen> {
         content: content,
         unlock: unlock,
         hardMoment: hard,
+        plus: ref.read(plusActiveProvider),
       );
     } on TriggerCapsuleLimitReached {
       if (mounted) setState(() => _busy = false);
@@ -489,7 +493,7 @@ class _CapsuleComposerScreenState extends ConsumerState<CapsuleComposerScreen> {
         const SizedBox(height: AuraSpace.l),
         VoiceNoteField.custom(
           binding: draft,
-          maxDuration: maxCapsuleVoiceDuration,
+          maxDuration: capsuleVoiceLimit(plus: ref.watch(plusActiveProvider)),
           newRecordingPath: () =>
               ref.read(capsuleMediaStoreProvider).newDraftVoicePath(draft.id),
           recordHint: l.capsules_voiceHint,
@@ -689,9 +693,11 @@ class _UnlockChooser extends ConsumerWidget {
     final tag = ref.watch(localeControllerProvider);
     final soft = t.bodySmall?.copyWith(color: AuraColors.textSoft);
     final kind = draft.kind;
+    // F12: Aura Plus keeps as many trigger capsules as you like.
     final atLimit =
+        !ref.watch(plusActiveProvider) &&
         (ref.watch(activeTriggerCountProvider).value ?? 0) >=
-        maxActiveTriggerCapsules;
+            maxActiveTriggerCapsules;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -754,17 +760,26 @@ class _UnlockChooser extends ConsumerWidget {
           ),
         ],
         if (kind == CapsuleUnlockKind.feeling && atLimit)
-          // REQ-CAP-04: no paywall (Plus isn't built) — a date instead.
+          // REQ-CAP-04: the free path ("make it a date capsule") first, then
+          // the way to Aura Plus under the F12 paywall rules.
           InlineNotice(
             l.capsules_limitBody,
             key: const ValueKey('capsule-trigger-limit'),
-            action: TextButton(
-              key: const ValueKey('capsule-limit-pick-date'),
-              onPressed: () {
-                draft.kind = CapsuleUnlockKind.date;
-                onPickDate();
-              },
-              child: Text(l.capsules_limitPickDate),
+            action: Wrap(
+              spacing: AuraSpace.s,
+              children: [
+                TextButton(
+                  key: const ValueKey('capsule-limit-pick-date'),
+                  onPressed: () {
+                    draft.kind = CapsuleUnlockKind.date;
+                    onPickDate();
+                  },
+                  child: Text(l.capsules_limitPickDate),
+                ),
+                const PlusOpenButton(
+                  surface: PaywallSurface.capsuleTriggerLimit,
+                ),
+              ],
             ),
           ),
         if (kind == CapsuleUnlockKind.feeling && !atLimit) ...[

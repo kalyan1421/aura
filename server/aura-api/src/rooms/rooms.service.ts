@@ -9,6 +9,7 @@ import type { Quadrant } from '../rules';
 import { assertGuidelinesAccepted } from '../safety/guidelines';
 import { assertRoomAccess } from '../safety/safety.queries';
 import { Broadcast } from './broadcast';
+import { ensureLanternNight } from './lanterns';
 import { loadMatchingConfig, type MatchingConfig } from './matching-config';
 import { planLadder, resolvePartition, type LadderStep } from './matching';
 import { generatePseudonym } from './pseudonyms';
@@ -245,9 +246,10 @@ export class RoomsService {
     await assertRoomAccess(this.db, userId);
     return this.db.withTx(async (tx) => {
       const cfg = await loadMatchingConfig(tx);
-      const { room, member } = await this.requireMembership(tx, roomId, userId, now, cfg);
-      await this.markHere(tx, room, member, cfg, now); // opening the room counts as being here
-      return this.buildDetail(tx, room, member, userId, cfg, now);
+      const found = await this.requireMembership(tx, roomId, userId, now, cfg);
+      const room = await ensureLanternNight(tx, found.room, now, cfg); // tonight's intention, once per room
+      await this.markHere(tx, room, found.member, cfg, now); // opening the room counts as being here
+      return this.buildDetail(tx, room, found.member, userId, cfg, now);
     });
   }
 
@@ -256,8 +258,9 @@ export class RoomsService {
     await assertRoomAccess(this.db, userId);
     return this.db.withTx(async (tx) => {
       const cfg = await loadMatchingConfig(tx);
-      const { room, member } = await this.requireMembership(tx, roomId, userId, now, cfg);
-      await this.markHere(tx, room, member, cfg, now);
+      const found = await this.requireMembership(tx, roomId, userId, now, cfg);
+      const room = await ensureLanternNight(tx, found.room, now, cfg);
+      await this.markHere(tx, room, found.member, cfg, now);
       return { room: roomInfo(room, now, cfg), counts: countsView(await this.repo.counts(tx, roomId, cfg.liveWindowS)) };
     });
   }
@@ -367,6 +370,7 @@ export class RoomsService {
         silhouette: silhouetteOf(me),
         joinedAt: me.joined_at.toISOString(),
         surveyEligible,
+        holdingIntention: me.holds_intention === true,
       },
       counts: countsView(counts),
       members: members.map(memberView),

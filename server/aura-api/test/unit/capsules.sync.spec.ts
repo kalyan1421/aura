@@ -21,6 +21,11 @@ const CT = Buffer.from('ciphertext: title, text, media refs, hardMoment').toStri
 
 class MemCapsules {
   rows = new Map<string, CapsuleRow>();
+  /** F12: the account's Aura Plus entitlement. */
+  plus = false;
+  async plusActive() {
+    return this.plus;
+  }
   schedules = new Set<string>();
   objects = new Set<string>();
 
@@ -276,6 +281,13 @@ describe('capsules via SyncService (in-memory)', () => {
       // opening one frees a slot
       expect(await statusOf(h, [op('open', ids[0], at(-1 * H))])).toEqual(['applied']);
       expect(await statusOf(h, [seal(moodCapsule())])).toEqual(['applied']);
+    });
+
+    it('Aura Plus (F12): no trigger-capsule limit', async () => {
+      const h = harness();
+      h.caps.plus = true;
+      for (let i = 0; i < 3; i++) await armedTrigger(h);
+      expect(await statusOf(h, [seal(moodCapsule({ triggerMoodId: 'lonely' }))])).toEqual(['applied']);
     });
 
     it('fair use: at most 200 pending date capsules', async () => {

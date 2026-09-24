@@ -46,6 +46,7 @@ class RemoteFlags {
   static const Map<String, bool> bundledDefaults = {
     roomsEnabledKey: true,
     roomsPoolHiKey: false,
+    ripplesEnabledKey: true,
   };
 
   static const RemoteFlags defaults = RemoteFlags();
@@ -58,6 +59,10 @@ class RemoteFlags {
   /// English room instead, `409 language_pool_unavailable`).
   static const String roomsPoolHiKey = 'rooms_pool_hi';
 
+  /// Kill switch (F7): off → Breath Ripples entries hide (the server answers
+  /// `503 ripples_paused`); sessions already playing finish.
+  static const String ripplesEnabledKey = 'ripples_enabled';
+
   final Map<String, FlagValue> _values;
 
   /// A flag the server sent, else its bundled default, else off.
@@ -68,6 +73,7 @@ class RemoteFlags {
 
   bool get roomsEnabled => enabled(roomsEnabledKey);
   bool get roomsPoolHi => enabled(roomsPoolHiKey);
+  bool get ripplesEnabled => enabled(ripplesEnabledKey);
 
   /// Keys the server sent (tests, debug).
   Iterable<String> get keys => _values.keys;

@@ -8,6 +8,10 @@ import { NOTIFICATION_TRANSPORT, type NotificationTransport } from './notificati
 import { NotificationsService } from './notifications.service';
 import { PoolOpenSweep, PoolWaitlistSyncHandler } from './pool-waitlist';
 import { ReminderScheduler } from './reminder.service';
+import { GesturesPushSweep } from './gestures-push';
+import { MilestoneBJobs } from './milestone-b-jobs';
+import { ScheduleSweep } from './schedules';
+import { WelcomeBackSweep } from './welcome-back';
 
 /**
  * Push notifications (PRD 12-notifications; F14 Milestone A: daily check-in reminder + date capsule unlocked).
@@ -29,6 +33,11 @@ import { ReminderScheduler } from './reminder.service';
     NotificationPrefsSyncHandler,
     PoolWaitlistSyncHandler,
     PoolOpenSweep,
+    // F14 Milestone B: wind-down / Lantern Hour / habit-nudge schedules, welcome back, gestures received.
+    ScheduleSweep,
+    WelcomeBackSweep,
+    GesturesPushSweep,
+    MilestoneBJobs,
     // AppConfig first: it merges `.env` into process.env before the service account is read.
     {
       provide: NOTIFICATION_TRANSPORT,
@@ -44,6 +53,10 @@ import { ReminderScheduler } from './reminder.service';
     NotificationPrefsSyncHandler,
     PoolWaitlistSyncHandler,
     PoolOpenSweep,
+    ScheduleSweep,
+    WelcomeBackSweep,
+    GesturesPushSweep,
+    MilestoneBJobs,
   ],
 })
 export class NotificationsModule {}

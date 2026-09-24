@@ -67,7 +67,7 @@ final class RoomControllerProvider
   }
 }
 
-String _$roomControllerHash() => r'5a36fd2a84104569560076d08a0092bc3282e3b3';
+String _$roomControllerHash() => r'acbe34110a2f8b09c8cc2edd29878bdc5587162b';
 
 /// One open room (`/rooms/:id`): the detail, the two private Realtime topics,
 /// the 45 s heartbeat while the app is in the foreground, and gestures with

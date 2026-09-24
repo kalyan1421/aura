@@ -1044,7 +1044,9 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
       await setMatching({ thin_join_threshold: 12 });
       const dallas = await mk('thin-dallas', { locale: 'te-Latn', tz: TZ.americas });
       const merged = await match(dallas, 'storm', 'anxious', TZ.americas);
-      expect(merged.body.match).toMatchObject({ merged: true, created: true });
+      // `created` depends on the stack: freshRooms keeps rooms with real (non-e2e) members, and joining a live
+      // en × south_asia storm room is just as much a merge as spawning one.
+      expect(merged.body.match).toMatchObject({ merged: true });
       const placed = await one<{ language_pool: string; tz_region: string }>('select language_pool, tz_region from public.rooms where id = $1', [
         merged.body.room.roomId,
       ]);

@@ -14,7 +14,15 @@ export const MAX_HABIT_NAME_CHARS = 30;
  * F14: `notification_prefs` (op `upsert`, a patch of settings) — contracts/api/v1-notifications.md. F5:
  * `room_pool_waitlist` (op `upsert` / `delete`, `{pool}`: "Tell me when they open").
  */
-export const ENTITIES = ['check_in', 'habit', 'habit_log', 'capsule', 'notification_prefs', 'room_pool_waitlist'] as const;
+export const ENTITIES = [
+  'check_in',
+  'habit',
+  'habit_log',
+  'capsule',
+  'notification_prefs',
+  'room_pool_waitlist',
+  'sanctuary_session', // F15: one content-free record per finished Sanctuary activity (src/sanctuary)
+] as const;
 export type Entity = (typeof ENTITIES)[number];
 /**
  * `upsert` / `delete` for check-ins and habits; F4 capsules use `seal` / `open` / `fire` / `rearm` / `delete`

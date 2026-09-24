@@ -225,7 +225,8 @@ The filing itself follows the lawyer's SOP (action A3); the console files nothin
 `rooms_enabled`, `rooms_pool_hi`, and (off by default) **`reduced_mode`** and **`hold_all`**. Turn reduced mode on before
 being unreachable. Today both are recorded and reach the app through `GET /v1/config`; their effects arrive with the
 features they switch (reduced mode pauses reflections and throttles sign-ups; hold-all sends every new reflection to a
-human — reflections are F6, Milestone B; the sign-up throttle is not wired yet). `matching_config` / `safety_config` are
+human — reflections are F6, Milestone B; the sign-up throttle refuses new profiles beyond `payload.signupsPerHour`
+(default 20) in the last hour with `503 signups_throttled`, existing accounts untouched — contracts/api/v1.md "Reduced mode"). `matching_config` / `safety_config` are
 read-only in v0.
 
 **Crisis lexicon** (console → Lexicon; contracts/api/v1.md "Crisis lexicon versions"): overview of the live signed
@@ -302,7 +303,7 @@ account survive until their `hold_until`. Every step is audited with the ticket 
 ## 13. Not in v0 (PRD gaps)
 
 Console PWA Web Push and FCM paging to AK's device (use ntfy / PagerDuty webhooks) · reduced-mode and hold-all
-*effects* (the switches exist; reflections are F6, Milestone B; the sign-up throttle needs the profile route) ·
+*effects* beyond reflections and the sign-up throttle (both wired in Milestone B) ·
 DeviceCheck / Play Integrity attestation for device bans · config editing beyond flags (matching / safety values stay
 read-only) · reflections items and omni-moderation scores (F6, Milestone B) · grievance retention and localized
 (te / hi) grievance and deletion-verification email copy · inbound email parsing (orders and deletion requests arrive

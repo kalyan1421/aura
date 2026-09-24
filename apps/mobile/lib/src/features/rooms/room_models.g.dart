@@ -21,6 +21,33 @@ Map<String, dynamic> _$LanternHourToJson(_LanternHour instance) =>
       'endsAt': instance.endsAt.toIso8601String(),
     };
 
+_RoomLantern _$RoomLanternFromJson(Map<String, dynamic> json) => _RoomLantern(
+  level: (json['level'] as num?)?.toInt() ?? 0,
+  maxLevel: (json['maxLevel'] as num?)?.toInt() ?? 5,
+  active: json['active'] as bool? ?? false,
+);
+
+Map<String, dynamic> _$RoomLanternToJson(_RoomLantern instance) =>
+    <String, dynamic>{
+      'level': instance.level,
+      'maxLevel': instance.maxLevel,
+      'active': instance.active,
+    };
+
+_RoomIntention _$RoomIntentionFromJson(Map<String, dynamic> json) =>
+    _RoomIntention(
+      key: json['key'] as String,
+      holds: (json['holds'] as num?)?.toInt() ?? 0,
+      open: json['open'] as bool? ?? false,
+    );
+
+Map<String, dynamic> _$RoomIntentionToJson(_RoomIntention instance) =>
+    <String, dynamic>{
+      'key': instance.key,
+      'holds': instance.holds,
+      'open': instance.open,
+    };
+
 _RoomInfo _$RoomInfoFromJson(Map<String, dynamic> json) => _RoomInfo(
   roomId: json['roomId'] as String,
   quadrant: json['quadrant'] as String,
@@ -34,6 +61,12 @@ _RoomInfo _$RoomInfoFromJson(Map<String, dynamic> json) => _RoomInfo(
   lanternHour: LanternHour.fromJson(
     json['lanternHour'] as Map<String, dynamic>,
   ),
+  lantern: json['lantern'] == null
+      ? null
+      : RoomLantern.fromJson(json['lantern'] as Map<String, dynamic>),
+  intention: json['intention'] == null
+      ? null
+      : RoomIntention.fromJson(json['intention'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$RoomInfoToJson(_RoomInfo instance) => <String, dynamic>{
@@ -47,6 +80,8 @@ Map<String, dynamic> _$RoomInfoToJson(_RoomInfo instance) => <String, dynamic>{
   'memoryAt': instance.memoryAt.toIso8601String(),
   'purgeAt': instance.purgeAt.toIso8601String(),
   'lanternHour': instance.lanternHour,
+  'lantern': instance.lantern,
+  'intention': instance.intention,
 };
 
 _RoomCounts _$RoomCountsFromJson(Map<String, dynamic> json) => _RoomCounts(
@@ -152,6 +187,7 @@ _RoomMe _$RoomMeFromJson(Map<String, dynamic> json) => _RoomMe(
       : Silhouette.fromJson(json['silhouette'] as Map<String, dynamic>),
   joinedAt: DateTime.parse(json['joinedAt'] as String),
   surveyEligible: json['surveyEligible'] as bool? ?? false,
+  holdingIntention: json['holdingIntention'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$RoomMeToJson(_RoomMe instance) => <String, dynamic>{
@@ -161,6 +197,7 @@ Map<String, dynamic> _$RoomMeToJson(_RoomMe instance) => <String, dynamic>{
   'silhouette': instance.silhouette,
   'joinedAt': instance.joinedAt.toIso8601String(),
   'surveyEligible': instance.surveyEligible,
+  'holdingIntention': instance.holdingIntention,
 };
 
 _RoomGestures _$RoomGesturesFromJson(Map<String, dynamic> json) =>

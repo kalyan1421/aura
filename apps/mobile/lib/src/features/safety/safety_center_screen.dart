@@ -10,6 +10,7 @@ import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../onboarding/gate_controller.dart';
+import '../plus/paywall_gate.dart' show markCrisisFlow;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/support_sheet.dart';
 import 'helpline_list.dart';
@@ -34,6 +35,14 @@ class SafetyCenterScreen extends ConsumerStatefulWidget {
 class _SafetyCenterScreenState extends ConsumerState<SafetyCenterScreen> {
   /// Set when the finished minute ticked off today's Breathe habit.
   bool _breatheLogged = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // F12 P0: "I need help now" is a crisis flow — no Aura Plus paywall for
+    // the rest of this Aura day (features/plus/paywall_gate.dart).
+    markCrisisFlow(ref);
+  }
 
   Future<void> _completeBreathe() async {
     final logged = await autoCompleteHabitToday(ref, PresetHabitKeys.breathe);

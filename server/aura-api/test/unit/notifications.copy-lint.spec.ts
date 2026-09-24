@@ -18,7 +18,7 @@ import {
   type MoodNames,
   type TemplateSource,
 } from '../../src/notifications/copy-lint';
-import { PUSH_LOCALES } from '../../src/notifications/push-copy';
+import { COPY_KEYS, PUSH_LOCALES } from '../../src/notifications/push-copy';
 
 const ROOT = resolve(__dirname, '..', '..', '..', '..');
 const moods = (JSON.parse(readFileSync(resolve(ROOT, 'contracts', 'moods.json'), 'utf8')) as { moods: { names: MoodNames }[] }).moods.map(
@@ -62,7 +62,7 @@ function appNotificationTemplates(): TemplateSource[] {
 describe('REQ-NTF-01: shipped notification copy passes the lint', () => {
   it('the server push catalogue, in all five languages (as rendered, fallbacks included)', () => {
     const templates = serverPushTemplates();
-    expect(templates).toHaveLength(5 * 4); // daily_reminder, capsule_unlocked, rooms_pool_open, discreet
+    expect(templates).toHaveLength(5 * COPY_KEYS.length); // every type, its variants and discreet, in 5 languages
     const violations = lintTemplates(templates, TERMS);
     expect(violations.map(formatViolation)).toEqual([]);
   });

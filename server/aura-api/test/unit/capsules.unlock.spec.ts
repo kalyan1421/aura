@@ -352,7 +352,7 @@ describe('NotificationsService (producer)', () => {
   it('refuses anything that is not a user id, a known type and an opaque id (never content)', async () => {
     const { added, service } = setup();
     await expect(service.enqueue('someone', 'capsule_unlocked', null)).rejects.toThrow(TypeError);
-    await expect(service.enqueue(USER, 'lantern_hour' as never, null)).rejects.toThrow(TypeError); // not shipped yet
+    await expect(service.enqueue(USER, 'not_a_push_type' as never, null)).rejects.toThrow(TypeError); // unknown type
     await expect(service.enqueue(USER, 'capsule_unlocked', 'You wrote: dear me')).rejects.toThrow(TypeError);
     expect(added).toHaveLength(0);
   });

@@ -11,8 +11,11 @@ import {
   type PushMessage,
 } from './notification-types';
 import { auraDayOf, cappedDecision, decide, endOfAuraDay, reservedSlots, type DeliveryFacts, type SkipReason } from './policy';
+import { fillMilestoneBFacts } from './kind-facts';
 import { POOL_FLAGS } from './pool-waitlist';
-import { renderPushBody, resolvePushLocale } from './push-copy';
+import { milestoneBPrefsSql } from './prefs-milestone-b';
+import { pushCopyKey, renderPushLine, resolvePushLocale } from './push-copy';
+import { readTrialEndingFacts, trialEndingCopy } from './trial-ending';
 
 export type DeliveryOutcome =
   | { status: 'sent'; devices: number; pruned: number }
@@ -45,6 +48,7 @@ interface ContextRow {
   sent_day: string | null;
   sent_types: string[] | null;
   pending_deletion: boolean;
+  [milestoneB: string]: unknown; // the Milestone B prefs columns (prefs-milestone-b.ts), read by prefsFromRow
 }
 
 /**
@@ -76,7 +80,7 @@ export class NotificationDelivery {
       `select p.timezone, p.ui_locale, (np.user_id is not null) as has_prefs,
               np.enabled, np.reminder_enabled, np.reminder_time::text as reminder_time, np.reminder_in_quiet_ok,
               np.capsule_enabled, np.quiet_start::text as quiet_start, np.quiet_end::text as quiet_end, np.discreet,
-              np.field_ts, np.sent_day, np.sent_types,
+              np.field_ts, np.sent_day, np.sent_types, ${milestoneBPrefsSql('np')},
               exists (select 1 from public.account_deletions d where d.user_id = p.user_id) as pending_deletion
          from public.profiles p
          left join public.notification_prefs np on np.user_id = p.user_id
@@ -116,8 +120,12 @@ export class NotificationDelivery {
       } else if (n.type === 'capsule_unlocked') {
         unlockDate = n.id === null ? null : await this.sealedCapsuleDate(n.userId, n.id);
         facts.capsuleSealed = unlockDate !== null;
-      } else {
+      } else if (n.type === 'rooms_pool_open') {
         facts.poolOpen = await this.flagOn(POOL_FLAGS.hi);
+      } else if (n.type === 'trial_ending') {
+        facts.trialEnding = await readTrialEndingFacts(this.db, n, now); // F12 (trial-ending.ts)
+      } else {
+        await fillMilestoneBFacts(this.db, n, facts, now, tz); // F14 Milestone B kinds (kind-facts.ts)
       }
     }
     return { facts, locale: row?.ui_locale ?? null, devices, unlockDate };
@@ -140,7 +148,14 @@ export class NotificationDelivery {
     const message: PushMessage = {
       type: n.type,
       id: n.id,
-      body: renderPushBody(n.type, resolvePushLocale(locale), facts.prefs.discreet),
+      body: (() => {
+        // Milestone B variants: "Someone …" / "{count} people …", a single preset habit's own line (push-copy.ts).
+        const { key, params } =
+          n.type === 'trial_ending' && facts.trialEnding
+            ? trialEndingCopy(facts.trialEnding, facts.tz as string, resolvePushLocale(locale)) // F12: date + store price
+            : pushCopyKey(n.type, facts);
+        return renderPushLine(key, resolvePushLocale(locale), facts.prefs.discreet, params);
+      })(),
       channelId: TYPE_RULES[n.type].channel,
       collapseKey: collapseKeyFor(n.type, unlockDate),
       ttlSeconds: TYPE_RULES[n.type].ttlSeconds,

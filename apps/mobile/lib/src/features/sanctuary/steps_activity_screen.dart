@@ -1,11 +1,16 @@
+import 'dart:async';
+
+import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../progress/progress_view.dart';
 import 'activity_scaffold.dart';
+import 'sanctuary_session_log.dart';
 
 /// The self-paced grounding activities: prompts only, one step at a time
 /// with "Next" (PRD 06d grounding library, REQ-SAN-05).
@@ -24,6 +29,10 @@ enum StepsActivity {
 /// no score: nothing typed, said or picked here is stored or synced. Leave
 /// at any time with ✕; "Back" revisits a step. Each new step is announced
 /// once (a live region).
+///
+/// Reaching the last step's end writes one content-free session record
+/// (the activity, the seconds spent with the screen showing, the Aura day
+/// it started); leaving earlier writes nothing.
 class StepsActivityScreen extends ConsumerStatefulWidget {
   const StepsActivityScreen({super.key, required this.activity});
 
@@ -37,6 +46,50 @@ class StepsActivityScreen extends ConsumerStatefulWidget {
 class _StepsActivityScreenState extends ConsumerState<StepsActivityScreen> {
   int _step = 0;
   bool _done = false;
+
+  /// Time with the activity on screen (paused while the app is hidden).
+  final Stopwatch _clock = Stopwatch();
+  late final AppLifecycleListener _lifecycle;
+  late final LocalDay _startDay;
+
+  @override
+  void initState() {
+    super.initState();
+    _startDay = ref.read(timeContextProvider).today();
+    _clock.start();
+    _lifecycle = AppLifecycleListener(
+      onHide: _clock.stop,
+      onShow: () {
+        if (!_done) _clock.start();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  /// The activity reached its end: one record (F15).
+  void _recordSession() {
+    _clock.stop();
+    final kind = stepsSessionKind(widget.activity);
+    unawaited(
+      recordSanctuarySession(
+        ref,
+        SanctuarySession(
+          activity: kind.activity,
+          variant: kind.variant,
+          // At least a second: every step was gone through.
+          durationS: _clock.elapsed.inSeconds < 1
+              ? 1
+              : _clock.elapsed.inSeconds,
+          localDay: _startDay,
+        ),
+      ),
+    );
+  }
 
   String _title(AppLocalizations l) => switch (widget.activity) {
     StepsActivity.senses => l.senses_title,
@@ -78,13 +131,17 @@ class _StepsActivityScreenState extends ConsumerState<StepsActivityScreen> {
         ],
       };
 
-  void _next(int count) => setState(() {
-    if (_step + 1 >= count) {
-      _done = true;
-    } else {
-      _step++;
-    }
-  });
+  void _next(int count) {
+    final finishing = !_done && _step + 1 >= count;
+    setState(() {
+      if (_step + 1 >= count) {
+        _done = true;
+      } else {
+        _step++;
+      }
+    });
+    if (finishing) _recordSession();
+  }
 
   void _back() => setState(() => _step = _step > 0 ? _step - 1 : 0);
 

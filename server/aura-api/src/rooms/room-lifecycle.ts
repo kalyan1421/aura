@@ -3,7 +3,8 @@ import { pgCode, withTx } from '../db/db';
 import { ensureEvidenceForRoom, purgeExpiredEvidence } from '../safety/evidence';
 import { loadSafetyConfig } from '../safety/safety.queries';
 import { Broadcast } from './broadcast';
-import { loadMatchingConfig } from './matching-config';
+import { ensureLanternNight } from './lanterns';
+import { loadMatchingConfig, type MatchingConfig } from './matching-config';
 import { countsView, roomInfo, roomStateView, stateOf } from './room-views';
 import { RoomsRepository, type RoomRow } from './rooms.repository';
 
@@ -26,6 +27,51 @@ export interface LifecycleSummary {
 
 const PURGE_BATCH = 200;
 
+/**
+ * One room's tick, in its own transaction: (1) move the cached status and broadcast the transition once — entering
+ * Lantern Hour also pins the room's night and tonight's intention (Milestone B) so the `room_state` that announces it
+ * carries them — and (2) re-broadcast "here now" when it changed. Exported for tests that must not tick other rooms.
+ */
+export async function tickRoom(
+  pool: Pool,
+  id: string,
+  now: Date,
+  cfg: MatchingConfig,
+): Promise<{ transition: boolean; presence: boolean }> {
+  const repo = new RoomsRepository();
+  const out = { transition: false, presence: false };
+  await withTx(pool, async (tx) => {
+    let room = await repo.lockRoom(tx, id);
+    if (!room) return;
+    const derived = stateOf(room, now, cfg);
+    if (derived === 'purged') return;
+    if (derived === 'lantern_hour') room = await ensureLanternNight(tx, room, now, cfg);
+    if (derived !== room.status) {
+      const r = await tx.query<RoomRow>(
+        `update public.rooms set status = $2, status_changed_at = now() where id = $1 and status = $3 returning *`,
+        [id, derived, room.status],
+      );
+      if (r.rows[0]) {
+        out.transition = true;
+        const info = roomInfo(room, now, cfg);
+        await Broadcast.roomState(tx, id, roomStateView(info), now);
+        const lanternStarted = derived === 'lantern_hour';
+        const lanternEnded = room.status === 'lantern_hour';
+        if (lanternStarted || lanternEnded) await Broadcast.lanternHour(tx, id, info.lanternHour, now);
+      }
+    }
+    if (derived !== 'memory') {
+      const counts = countsView(await repo.counts(tx, id, cfg.liveWindowS));
+      if (counts.hereNow !== room.here_now_broadcast) {
+        await tx.query('update public.rooms set here_now_broadcast = $2 where id = $1', [id, counts.hereNow]);
+        await Broadcast.presence(tx, id, counts, now);
+        out.presence = true;
+      }
+    }
+  });
+  return out;
+}
+
 export async function runRoomLifecycle(pool: Pool, now = new Date()): Promise<LifecycleSummary> {
   const repo = new RoomsRepository();
   const s: LifecycleSummary = { transitions: 0, presence: 0, purged: 0, evidenceCopied: 0, evidenceExpired: 0, errors: [] };
@@ -39,34 +85,9 @@ export async function runRoomLifecycle(pool: Pool, now = new Date()): Promise<Li
   const active = await pool.query<{ id: string }>(`select id from public.rooms where status <> 'memory' and purge_at > now()`);
   for (const { id } of active.rows) {
     try {
-      await withTx(pool, async (tx) => {
-        const room = await repo.lockRoom(tx, id);
-        if (!room) return;
-        const derived = stateOf(room, now, cfg);
-        if (derived === 'purged') return;
-        if (derived !== room.status) {
-          const r = await tx.query<RoomRow>(
-            `update public.rooms set status = $2, status_changed_at = now() where id = $1 and status = $3 returning *`,
-            [id, derived, room.status],
-          );
-          if (r.rows[0]) {
-            s.transitions += 1;
-            const info = roomInfo(room, now, cfg);
-            await Broadcast.roomState(tx, id, roomStateView(info), now);
-            const lanternStarted = derived === 'lantern_hour';
-            const lanternEnded = room.status === 'lantern_hour';
-            if (lanternStarted || lanternEnded) await Broadcast.lanternHour(tx, id, info.lanternHour, now);
-          }
-        }
-        if (derived !== 'memory') {
-          const counts = countsView(await repo.counts(tx, id, cfg.liveWindowS));
-          if (counts.hereNow !== room.here_now_broadcast) {
-            await tx.query('update public.rooms set here_now_broadcast = $2 where id = $1', [id, counts.hereNow]);
-            await Broadcast.presence(tx, id, counts, now);
-            s.presence += 1;
-          }
-        }
-      });
+      const t = await tickRoom(pool, id, now, cfg);
+      s.transitions += t.transition ? 1 : 0;
+      s.presence += t.presence ? 1 : 0;
     } catch (err) {
       fail(err);
     }

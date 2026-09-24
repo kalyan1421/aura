@@ -1,3 +1,5 @@
+import { hasPlus, PLUS_CAPSULE_VOICE_BYTES } from '../billing/entitlement-check';
+import { DbService } from '../db/db.service';
 import { HttpStatus, Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { MediaStoreError, MediaStoreUnavailableError, PrivateMediaStore } from '../account/private-media';
 import { CapsuleMediaGate } from '../capsules/capsule-media.gate';
@@ -57,6 +59,8 @@ export class MediaService implements OnModuleInit {
     private readonly store: PrivateMediaStore,
     /** "Sealed means sealed" for capsule slots (CapsulesModule). Without it capsule kinds answer 503. */
     @Optional() private readonly capsules?: CapsuleMediaGate,
+    /** F12: the Plus capsule-voice limit (10:00) reads the server-owned entitlement. */
+    @Optional() private readonly db?: DbService,
   ) {}
 
   onModuleInit(): void {
@@ -74,7 +78,8 @@ export class MediaService implements OnModuleInit {
   async uploadUrl(userId: string, body: unknown, now = new Date()): Promise<UploadUrlResponse> {
     const req = parseOrThrow(uploadUrlRequestSchema, body);
     const path = objectPathFor(userId, req);
-    const max = MAX_MEDIA_BYTES[req.kind];
+    const plusVoice = req.kind === 'capsule_voice' && !!this.db && (await hasPlus(this.db, userId, now));
+    const max = plusVoice ? PLUS_CAPSULE_VOICE_BYTES : MAX_MEDIA_BYTES[req.kind];
     if (req.bytes > max) throw ApiError.badRequest('media_too_large', `bytes: at most ${max} for ${req.kind}`);
     if (!Number.isInteger(req.bytes)) throw ApiError.badRequest('invalid_request', 'bytes: must be an integer');
     if (req.kind !== 'voice') {

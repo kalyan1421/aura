@@ -60,6 +60,18 @@ abstract final class PushTypes {
 
   /// "Tell me when they open": the Hindi + Hinglish pool opened (once).
   static const String roomsPoolOpen = 'rooms_pool_open';
+
+  // Milestone B (contracts/api/v1-notifications.md §7–§9).
+  /// People in a room sent gestures (`id` = the room).
+  static const String gesturesReceived = 'gestures_received';
+  static const String lanternHour = 'lantern_hour';
+  static const String windDownReminder = 'wind_down_reminder';
+  static const String habitNudge = 'habit_nudge';
+  static const String welcomeBack = 'welcome_back';
+
+  /// F12: the free month of Aura Plus ends in 48 h (`id` = the subscription).
+  /// Opens the store's own subscription page (PRD 12 "One tap to cancel").
+  static const String trialEnding = 'trial_ending';
 }
 
 /// Payloads are content-free by design (`{type, id?}`, PRD Notifications

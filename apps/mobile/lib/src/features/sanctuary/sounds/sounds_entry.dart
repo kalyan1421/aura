@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../core/theme/aura_tokens.dart';
 import '../calm_route.dart';
+import '../sanctuary_activities.dart' show noteSanctuaryOpened;
 import 'sounds_controller.dart';
 import 'sounds_screen.dart';
 
 /// Opens Sanctuary › Sounds. Opening plays nothing (REQ-SAN-09).
-Future<void> openSounds(BuildContext context) =>
-    pushCalm<void>(context, (_) => const SoundsScreen());
+Future<void> openSounds(BuildContext context) {
+  noteSanctuaryOpened(context);
+  return pushCalm<void>(context, (_) => const SoundsScreen());
+}
 
 /// The Sounds card on the Sanctuary tab (PRD 06d layout: after Grounding).
 /// One button, one focus stop; says "Playing now" while sounds play, so the
@@ -21,9 +24,7 @@ class SoundsEntryCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    final active = ref.watch(
-      soundsControllerProvider.select((s) => !s.isIdle),
-    );
+    final active = ref.watch(soundsControllerProvider.select((s) => !s.isIdle));
     return Material(
       color: AuraColors.surface.withValues(alpha: 0.75),
       shape: RoundedRectangleBorder(

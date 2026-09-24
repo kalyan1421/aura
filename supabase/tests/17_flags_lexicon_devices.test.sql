@@ -66,7 +66,10 @@ select throws_ok(
 );
 select lives_ok(
   $$ insert into public.signed_bundle_current (kind, version, seq, key_id, payload, signature, published_by)
-     values ('crisis_lexicon', 900002, 100, 'ba9afcf9c1f7ab25', 'e30=', repeat('A', 86) || '==', 'staff:pgtap')
+     values ('crisis_lexicon', 900002,
+             -- Relative to whatever is live: a shared dev database has already published real lexicons.
+             (select coalesce(max(seq), 0) + 100 from public.signed_bundle_current where kind = 'crisis_lexicon'),
+             'ba9afcf9c1f7ab25', 'e30=', repeat('A', 86) || '==', 'staff:pgtap')
      on conflict (kind) do update set version = excluded.version, seq = excluded.seq, payload = excluded.payload,
        signature = excluded.signature, key_id = excluded.key_id, published_by = excluded.published_by $$,
   'publishing sets the live envelope'
@@ -77,7 +80,7 @@ select throws_ok(
 );
 select lives_ok($$ delete from public.signed_bundle_versions where version = 900001 $$, 'a version that is not live can go (break-glass)');
 select throws_ok(
-  $$ update public.signed_bundle_current set seq = 99 where kind = 'crisis_lexicon' $$,
+  $$ update public.signed_bundle_current set seq = seq - 1 where kind = 'crisis_lexicon' $$,
   'AR021', null, 'seq never goes back (a rollback is a NEW signature with a higher seq)'
 );
 select lives_ok(

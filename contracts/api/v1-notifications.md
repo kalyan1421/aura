@@ -142,3 +142,85 @@ when they open"). Migration 20261005000019; `src/notifications/pool-waitlist.ts`
   payload `{ "type": "rooms_pool_open" }` (no id).
 - **App:** the pool screen's "Tell me when they open" keeps the tap on the phone and queues the mutation; a foreground
   push shows "Hindi and Hinglish rooms are open now." with "See rooms"; a tap opens Rooms.
+
+## 6. Milestone B (F14 "the rest" + the opt-in wind-down reminder): settings
+
+Migration 20261005000023; `src/notifications/{schedules,welcome-back,gestures-push,kind-facts,prefs-milestone-b}.ts`.
+PRD 12 catalogue rows shipped here: habit nudge, gestures received, Lantern Hour, wind-down reminder (REQ-NTF-04),
+welcome back. (The trial-ending reminder and the billing-issue banner belong to F12 Billing; the Breath Ripples invite
+is an in-room banner of F7; mood-trigger capsule, moderation outcome and crisis follow-up are in-app only — §10.)
+
+New `notification_prefs` patch fields (same entity, same per-field LWW as §1):
+
+| field | type | default | column | meaning |
+|---|---|---|---|---|
+| `gestures` | bool | `true` | `gestures_enabled` | "Gestures received" pushes |
+| `lanternHour` | bool | `false` | `lantern_opt_in` | Lantern Hour (opt-in) |
+| `windDownEnabled` | bool | `false` | `wind_down_enabled` | wind-down reminder (opt-in; the app turns it on with a time, suggested `22:30` `[ASSUMPTION]`) |
+| `windDownTime` | `"HH:MM"` \| null | null | `wind_down_time` | local time in the profile zone |
+| `windDownInQuietHours` | bool | `false` | `wind_down_in_quiet_ok` | rule 1's one-time confirmation for a wind-down time inside quiet hours |
+| `welcomeBack` | bool | `true` | `welcome_back_enabled` | "Welcome back" pushes |
+| `habitNudges` | `{ "<habit uuid>": "HH:MM" }` | `{}` | `habit_nudges` | habit nudges (opt-in per habit; ≤ 16; ids only, never a name). **One LWW field: send the whole map.** |
+
+Every applied change re-plans the user-timed kinds (§7) inside the push transaction. The pull adds these columns.
+
+## 7. User-timed pushes: `wind_down_reminder`, `lantern_hour`, `habit_nudge`
+
+`public.notification_schedule` (server-only): one row per user and kind with the next instant, planned in the profile
+zone. Worker `schedule-sweep` (every minute) claims due rows, moves each to its next instant and enqueues one push
+(dedupe per user + kind + Aura day; habit nudges per time); more than 2 h late (Lantern Hour: 30 min), or planned in a
+zone the profile no longer has → moved on without a push. `schedule-reconcile` (every 10 min) plans missing rows,
+re-plans after a profile zone change, deletes unwanted rows.
+
+| type | when | skipped when | quiet hours | stale after | channel | copy (en / te-Latn) |
+|---|---|---|---|---|---|---|
+| `wind_down_reminder` | the chosen time | a `sanctuary_sessions` record finished since 18:00 of that Aura day `[ASSUMPTION]` ("Sanctuary already opened that evening": the server only knows finished activities; the app also keeps the in-app notice quiet when Sanctuary was opened on the phone) | skipped, unless `windDownInQuietHours` | 2 h | `reminders` | "A few quiet minutes before sleep, whenever you want them." / "Padukune mundu konchem quiet time? Aura ikkade undi." |
+| `lantern_hour` | Lantern Hour start on the person's **region clock** (`matching_config.lantern_start`, 21:00; e.g. 19:30 in Dubai) | already joined a room this Aura day; `rooms_enabled` off; an active ban / social ban / rooms pause | skipped | 1 h | `rooms` | "Lantern Hour is on. Others are here tonight." / "Lantern Hour modalaindi. Ee raatri inka kondaru ikkade unnaru." |
+| `habit_nudge` | each nudged habit's time; **one push a day**, bundling the habits due then | every due habit is logged for the Aura day (or inactive/deleted) | skipped | 2 h | `reminders` | exactly one preset habit due → its own line ("Small one: a glass of water?" for hydrate, …); otherwise "A small habit or two, whenever you're ready." A custom habit's name never appears. |
+
+Payload `{ "type": "<type>" }` (no id). Wind-down and Lantern Hour are opt-in and off until chosen (REQ-NTF-04).
+
+## 8. `welcome_back`
+
+"7 days inactive; again at day 21 · 2 per absence, then silence". **Inactive = the account wrote nothing**: no sync
+push and no profile / device / room call. Triggers on `sync_mutations` and `device_installs` keep
+`public.notification_activity.last_active_at` and reset the absence's count; Aura keeps no other "last seen".
+`welcome-back-sweep` (every 15 min) sends the 1st push once the absence reaches 7 days and the 2nd at 21 days (≥ 7 days
+after the 1st), in the early evening 18:00–21:00 local `[ASSUMPTION]`; absences over 60 days are left alone. The claim
+is recorded before the enqueue (never twice). Delivery skips it if the person wrote anything after it was requested;
+quiet hours → deferred; lowest precedence, capped → next day. Channel `reminders`, payload `{ "type": "welcome_back" }`,
+copy "No catch-up needed. Aura is here whenever you want a quiet minute." / "Catch-up emi avasaram ledu. Meeku eppudu
+kaavalante appudu Aura ikkade untundi."
+
+## 9. `gestures_received`
+
+`gestures-sweep` (every 5 min) reads gestures sent TO a member (never room-wide ones, never dropped ones) in the last
+6 h. A (recipient, room) pair is ready once one of today's gestures is ≥ 10 min old (a burst travels as one push); a row
+in `public.gesture_push_log` (recipient, room, Aura day) is written with the enqueue in one transaction → **at most one
+push per room per day**. Payload `{ "type": "gestures_received", "id": "<room id>" }` (opaque; the app opens the room).
+Delivery counts the distinct senders itself: 1 → "Someone in your room sent you warmth." / "Mee room lo okaru meeku
+warmth pampaaru."; n → "{n} people in your room sent you warmth." / "Mee room lo {n} mandi meeku warmth pampaaru.".
+Never a pseudonym, gesture type, theme or mood. Skipped for a ban / social ban / rooms pause; inside quiet hours dropped
+(the room shows the gestures); stale after 6 h; channel `rooms`. The per-type daily log makes it one room's push a day
+in practice.
+
+**Precedence (all of §7–§9):** each counts toward the 2/day cap; a lower kind yields the last slot to a higher one still
+expected later that Aura day (a due capsule, a planned daily reminder without a check-in yet, a planned Lantern Hour /
+wind-down / habit nudge). **Copy lint:** every template also passes the "calm, not treatment" claim list (`binaural`,
+`heal*`, `cure`, `treat*`, `therapy`, `clinically`, `better sleep`, `fall asleep`, `insomnia`, …; reason
+`health_claim`) — REQ-NTF-04 "no copy promises better sleep".
+
+## 10. App (apps/mobile)
+
+- Settings › Notifications adds: gestures, Lantern Hour, wind-down (on/off + time, with the same one-time quiet-hours
+  confirmation), welcome back, and **Habit nudges** (per habit: a time or off). Sanctuary › Sounds' night wind-down card
+  offers "Remind me at …" for the wind-down reminder (same setting).
+- Android channels unchanged: `reminders` (daily, wind-down, habit nudges, welcome back), `capsules`, `rooms` ("Rooms &
+  Lantern Hour": pool open, Lantern Hour, gestures).
+- Tap: `wind_down_reminder` → Sanctuary › Sounds (nothing plays until a tap, REQ-SAN-09); `lantern_hour` → Rooms;
+  `gestures_received` → that room (Rooms when it's gone); `habit_nudge` / `welcome_back` → Home. Foreground: a calm in-app
+  notice (`notif_*` strings, copy-linted); the wind-down one not when Sanctuary was opened on this phone that evening.
+- **Crisis follow-up** (PRD 12: "Support sheet shown 12–72 h ago · in-app card on next open only · once per event"):
+  entirely on the phone — the time the support sheet was shown is kept in the local encrypted store (never synced,
+  never logged); the next app open 12–72 h later shows one dismissible card on Home with "I need help now" and the
+  locale helplines. No push, ever.

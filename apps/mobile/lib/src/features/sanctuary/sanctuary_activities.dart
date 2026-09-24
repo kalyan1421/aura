@@ -1,10 +1,16 @@
 import 'package:aura_domain/aura_domain.dart';
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import 'breath_pacer.dart';
 import 'breathe_session_screen.dart';
+import '../../core/providers.dart';
 import 'calm_route.dart';
+import 'sanctuary_session_log.dart';
 import 'steps_activity_screen.dart';
 
 /// Every Sanctuary activity (F15 v1). The enum name is a stable id, so a
@@ -120,11 +126,30 @@ extension SanctuaryActivityInfo on SanctuaryActivity {
 }
 
 /// Opens [activity] full screen, above the tab bar. Never starts on its own:
-/// only a tap calls this.
+/// only a tap calls this. Notes (on this phone only) that Sanctuary was used,
+/// for the wind-down reminder's in-app notice.
 Future<void> openSanctuaryActivity(
   BuildContext context,
   SanctuaryActivity activity,
-) => pushCalm<void>(context, (_) => activity.screen());
+) {
+  noteSanctuaryOpened(context);
+  return pushCalm<void>(context, (_) => activity.screen());
+}
+
+/// Marks Sanctuary as opened now (local store only; best-effort).
+void noteSanctuaryOpened(BuildContext context) {
+  try {
+    final c = ProviderScope.containerOf(context, listen: false);
+    unawaited(
+      markSanctuaryOpened(
+        c.read(kvStoreProvider),
+        c.read(timeContextProvider).now(),
+      ),
+    );
+  } on Object {
+    // No provider scope (a bare widget test): nothing to note.
+  }
+}
 
 /// The grounding library as listed in the Sanctuary (PRD 06d: the three
 /// grounding activities plus the two short ones "A minute for you" uses).

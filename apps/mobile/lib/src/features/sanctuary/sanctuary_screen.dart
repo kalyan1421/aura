@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
-import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
 import '../capsules/capsules_entry.dart';
+import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
 import 'breath_orb.dart';
 import 'sanctuary_activities.dart';
@@ -46,7 +46,8 @@ class SanctuaryScreen extends ConsumerWidget {
         title: l.sanctuary_title,
         automaticallyImplyLeading: false,
       ),
-      body: CosmicBackground(
+      body: PersonalSkyBackground(
+        // F12: the person's own sky theme
         tint: glowColorForHue(hue),
         child: ListView(
           padding: const EdgeInsets.fromLTRB(

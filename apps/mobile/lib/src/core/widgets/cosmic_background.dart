@@ -8,22 +8,32 @@ import '../theme/aura_tokens.dart';
 /// washes and a sparse, static starfield. Stars are dim and small so text
 /// always sits on a calm ground (REQ-A11Y-03).
 class CosmicBackground extends StatelessWidget {
-  const CosmicBackground({super.key, required this.child, this.tint});
+  const CosmicBackground({
+    super.key,
+    required this.child,
+    this.tint,
+    this.palette = SkyPalette.night,
+  });
 
   final Widget child;
 
   /// Optional accent wash (e.g. the avatar hue or a quadrant colour).
   final Color? tint;
 
+  /// The sky's colours. Default: Aura's night sky. A personal sky theme (F12,
+  /// features/plus/sky_themes.dart) recolours only the person's own Home,
+  /// Sanctuary and Insights.
+  final SkyPalette palette;
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF0D1030), AuraColors.sky, AuraColors.skyDeep],
-          stops: [0, 0.55, 1],
+          colors: [palette.top, palette.middle, palette.bottom],
+          stops: const [0, 0.55, 1],
         ),
       ),
       child: Stack(
@@ -31,7 +41,7 @@ class CosmicBackground extends StatelessWidget {
         children: [
           RepaintBoundary(
             child: CustomPaint(
-              painter: _SkyPainter(tint ?? AuraColors.lavender),
+              painter: _SkyPainter(tint ?? palette.wash, palette.accent),
             ),
           ),
           child,
@@ -42,9 +52,10 @@ class CosmicBackground extends StatelessWidget {
 }
 
 class _SkyPainter extends CustomPainter {
-  _SkyPainter(this.tint);
+  _SkyPainter(this.tint, this.accent);
 
   final Color tint;
+  final Color accent;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -71,7 +82,7 @@ class _SkyPainter extends CustomPainter {
     wash(
       Offset(size.width * 0.95, size.height * 0.55),
       size.width * 0.8,
-      const Color(0xFF3B6FB6),
+      accent,
       0.08,
     );
 
@@ -92,5 +103,34 @@ class _SkyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_SkyPainter old) => old.tint != tint;
+  bool shouldRepaint(_SkyPainter old) =>
+      old.tint != tint || old.accent != accent;
+}
+
+/// The colours of a sky: a three-stop gradient and two soft washes. Always
+/// dark enough that text keeps its contrast (REQ-A11Y-03).
+@immutable
+class SkyPalette {
+  const SkyPalette({
+    required this.top,
+    required this.middle,
+    required this.bottom,
+    required this.wash,
+    required this.accent,
+  });
+
+  /// Aura's own night sky (the free default).
+  static const SkyPalette night = SkyPalette(
+    top: Color(0xFF0D1030),
+    middle: AuraColors.sky,
+    bottom: AuraColors.skyDeep,
+    wash: AuraColors.lavender,
+    accent: Color(0xFF3B6FB6),
+  );
+
+  final Color top;
+  final Color middle;
+  final Color bottom;
+  final Color wash;
+  final Color accent;
 }

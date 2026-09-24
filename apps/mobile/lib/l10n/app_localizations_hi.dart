@@ -1319,7 +1319,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get notif_channelRoomsDescription =>
-      'When rooms you asked about open.';
+      'Lantern Hour, warmth from your room, and rooms you asked about.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -1758,6 +1758,91 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get rooms_lanternTitle => 'Tonight\'s lantern';
+
+  @override
+  String get rooms_lanternStart => 'Every gesture here adds a little light.';
+
+  @override
+  String get rooms_lanternGlowing =>
+      'It glows brighter with every gesture here.';
+
+  @override
+  String get rooms_lanternFull => 'Fully lit, together.';
+
+  @override
+  String get rooms_lanternKept => 'Tonight\'s lantern glowed this bright.';
+
+  @override
+  String rooms_lanternSemantic(int level, int max) {
+    return 'Tonight\'s lantern, $level of $max lights lit';
+  }
+
+  @override
+  String get rooms_lanternRise =>
+      'The lantern is fully lit. Lanterns rise, together.';
+
+  @override
+  String get rooms_intentionTitle => 'Tonight\'s intention';
+
+  @override
+  String get rooms_intentionHold => 'Hold this tonight';
+
+  @override
+  String get rooms_intentionHolding => 'You\'re holding this tonight';
+
+  @override
+  String rooms_intentionHolds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holding this tonight',
+      one: '1 holding this tonight',
+      zero: 'Hold it with one tap',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_intentionHeld(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count held this tonight',
+      one: '1 held this tonight',
+      zero: 'Resting until the next Lantern Hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rooms_intentionPrivate =>
+      'Nobody sees who holds it, and nobody will ask about it tomorrow.';
+
+  @override
+  String get rooms_intentionFailed =>
+      'That didn\'t go through. Please try again.';
+
+  @override
+  String get rooms_intention_sleep_before_midnight => 'Sleep before midnight';
+
+  @override
+  String get rooms_intention_gentle_with_myself =>
+      'Be gentle with myself tonight';
+
+  @override
+  String get rooms_intention_phone_down_10 => 'Phone down for 10 minutes';
+
+  @override
+  String get rooms_intention_water_before_bed => 'A glass of water before bed';
+
+  @override
+  String get rooms_intention_one_kind_thought => 'One kind thought about today';
+
+  @override
+  String get rooms_intention_slow_breaths => 'Three slow breaths before sleep';
+
+  @override
   String get notif_reminderBanner =>
       'A quiet minute for you. How\'s today feeling?';
 
@@ -1775,7 +1860,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get notif_channelRemindersDescription =>
-      'Your daily check-in reminder.';
+      'Your check-in, wind-down and habit reminders.';
 
   @override
   String get set_notifications => 'Notifications';
@@ -1864,6 +1949,113 @@ class AppLocalizationsHi extends AppLocalizations {
   String get push_discreet => 'Keep them discreet';
 
   @override
+  String get notif_gesturesBanner => 'People in your room sent you warmth.';
+
+  @override
+  String get notif_gesturesAction => 'Open room';
+
+  @override
+  String get notif_lanternBanner =>
+      'Lantern Hour is on. Others are here tonight.';
+
+  @override
+  String get notif_lanternAction => 'See rooms';
+
+  @override
+  String get notif_windDownBanner =>
+      'A few quiet minutes before sleep, whenever you want them.';
+
+  @override
+  String get notif_windDownAction => 'Open Sounds';
+
+  @override
+  String get notif_habitBanner =>
+      'A small habit or two, whenever you\'re ready.';
+
+  @override
+  String get notif_habitAction => 'See habits';
+
+  @override
+  String get notif_crisisFollowUp =>
+      'Just checking in. However today feels, help is one tap away.';
+
+  @override
+  String get notif_crisisFollowUpDismiss => 'Close';
+
+  @override
+  String get set_notifGestures => 'Warmth from your room';
+
+  @override
+  String get set_notifGesturesNote =>
+      'When people in your room send you a gesture. One a day at most.';
+
+  @override
+  String get set_notifLantern => 'Lantern Hour';
+
+  @override
+  String get set_notifLanternNote =>
+      'When Lantern Hour starts in your evening. Not if you\'ve already been in a room that day.';
+
+  @override
+  String get set_notifWindDown => 'Wind-down reminder';
+
+  @override
+  String set_notifWindDownNote(String time) {
+    return 'A few quiet minutes at $time. Not sent once you\'ve used Sanctuary that evening.';
+  }
+
+  @override
+  String get set_notifWindDownOffNote =>
+      'Off. Pick a time for a quiet nudge before sleep.';
+
+  @override
+  String get set_notifWindDownTime => 'Wind-down time';
+
+  @override
+  String get set_notifWelcomeBack => 'After a quiet while';
+
+  @override
+  String get set_notifWelcomeBackNote =>
+      'If you\'ve been away a week or more, one gentle hello. Twice at most.';
+
+  @override
+  String get set_notifHabits => 'Habit nudges';
+
+  @override
+  String get set_notifHabitsNote =>
+      'A small nudge at a time you pick, for any habit on Home. One a day at most.';
+
+  @override
+  String get set_notifHabitsNone =>
+      'Add a habit on Home to get a nudge for it.';
+
+  @override
+  String get set_notifHabitOff => 'Off';
+
+  @override
+  String get set_notifHabitQuiet =>
+      'Inside your quiet hours, so it won\'t be sent.';
+
+  @override
+  String get set_notifHabitChange => 'Change time';
+
+  @override
+  String get set_notifHabitTurnOff => 'Turn off';
+
+  @override
+  String sounds_windDownRemind(String time) {
+    return 'Remind me at $time';
+  }
+
+  @override
+  String sounds_windDownReminderOn(String time) {
+    return 'A gentle reminder comes at $time.';
+  }
+
+  @override
+  String get sounds_windDownReminderOff => 'Turn off';
+
+  @override
   String get onb_trustTitle => 'Before we begin';
 
   @override
@@ -1912,6 +2104,425 @@ class AppLocalizationsHi extends AppLocalizations {
   String onb_blockedMailFailed(String email) {
     return 'We couldn\'t open an email app. You can write to us at $email.';
   }
+
+  @override
+  String get plus_title => 'Aura Plus';
+
+  @override
+  String get plus_intro =>
+      'More of what you already have. Everything that helps you feel better stays free.';
+
+  @override
+  String get plus_addsTitle => 'Plus adds';
+
+  @override
+  String get plus_addCapsules => 'Unlimited mood-trigger capsules';
+
+  @override
+  String get plus_addVoice => 'Voice up to 10 minutes in a capsule';
+
+  @override
+  String get plus_addInsights =>
+      'Deeper Insights: any range, habit × mood, the deeper month in stars';
+
+  @override
+  String get plus_addSounds => 'Extra sounds and two Plus skies';
+
+  @override
+  String get plus_freeTitle => 'Always free';
+
+  @override
+  String get plus_freeBody =>
+      'Check-ins, habits, rest days, rooms, Breath Ripples, date capsules, crisis support, Breathe, grounding, Today\'s minute, every base sound and the night wind-down.';
+
+  @override
+  String get plus_planMonthly => 'Monthly';
+
+  @override
+  String get plus_planAnnual => 'Yearly';
+
+  @override
+  String plus_trialLineMonthly(String price) {
+    return '1 month free, then $price/month';
+  }
+
+  @override
+  String plus_trialLineAnnual(String price) {
+    return '1 month free, then $price/year';
+  }
+
+  @override
+  String plus_priceMonthly(String price) {
+    return '$price/month';
+  }
+
+  @override
+  String plus_priceAnnual(String price) {
+    return '$price/year';
+  }
+
+  @override
+  String plus_trialEnds(String date) {
+    return 'Your free month ends on $date. The first charge is on $date unless you cancel before then.';
+  }
+
+  @override
+  String plus_renews(String store) {
+    return 'Renews automatically until you cancel. Paid through your $store account.';
+  }
+
+  @override
+  String get plus_cancelApple =>
+      'To cancel: iPhone Settings › your name › Subscriptions › Aura. Cancel at least a day before a charge.';
+
+  @override
+  String get plus_cancelGoogle =>
+      'To cancel: Play Store › your profile › Payments & subscriptions › Subscriptions › Aura.';
+
+  @override
+  String get plus_storeApple => 'App Store';
+
+  @override
+  String get plus_storeGoogle => 'Google Play';
+
+  @override
+  String get plus_startTrial => 'Start free month';
+
+  @override
+  String get plus_subscribe => 'Subscribe';
+
+  @override
+  String get plus_restore => 'Restore purchases';
+
+  @override
+  String get plus_manage => 'Manage in store';
+
+  @override
+  String get plus_loadingPrices => 'Loading prices from the store';
+
+  @override
+  String get plus_storeUnavailable =>
+      'The store isn\'t reachable right now. Nothing was charged.';
+
+  @override
+  String get plus_retry => 'Try again';
+
+  @override
+  String get plus_confirming => 'Confirming with the store…';
+
+  @override
+  String get plus_confirmingLater =>
+      'The store has your request. Plus unlocks the moment it\'s confirmed. You can close this.';
+
+  @override
+  String get plus_validationFailed =>
+      'We couldn\'t confirm this yet. If you were charged, it\'s safe. We\'ll keep checking.';
+
+  @override
+  String get plus_pendingApproval =>
+      'Waiting for approval. You won\'t be charged until it goes through.';
+
+  @override
+  String get plus_declined =>
+      'Payment didn\'t go through. You weren\'t charged.';
+
+  @override
+  String get plus_welcome => 'Aura Plus is on. Thank you.';
+
+  @override
+  String get plus_ownedElsewhere =>
+      'This purchase belongs to another Aura account on this store account, so it stays there.';
+
+  @override
+  String plus_restored(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count purchases restored.',
+      one: '1 purchase restored.',
+      zero: 'Nothing to restore on this store account.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plus_lockedOnly => 'Part of Aura Plus';
+
+  @override
+  String get plus_about => 'About Aura Plus';
+
+  @override
+  String get plus_seePlus => 'See Aura Plus';
+
+  @override
+  String get plus_freePath => 'The free way stays right here.';
+
+  @override
+  String get plus_explainerCapsules =>
+      'Free accounts keep 3 mood capsules waiting. Aura Plus keeps as many as you like. Date capsules are always unlimited.';
+
+  @override
+  String get plus_explainerVoice =>
+      'Voice in a capsule stops at 2 minutes on free Aura, 10 minutes with Aura Plus.';
+
+  @override
+  String get plus_explainerSounds =>
+      'This sound comes with Aura Plus. Every base sound and the night wind-down stay free.';
+
+  @override
+  String get plus_explainerInsights =>
+      'Aura Plus adds any range, habit × mood and the deeper month. Your sky and history stay free.';
+
+  @override
+  String get plus_explainerSky => 'This sky comes with Aura Plus.';
+
+  @override
+  String get plus_statusFree => 'You\'re on free Aura.';
+
+  @override
+  String plus_statusTrial(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+      zero: 'ends today',
+    );
+    return 'Free month: $_temp0. First charge on $date.';
+  }
+
+  @override
+  String plus_statusTrialCancelled(String date) {
+    return 'Your free month stays on until $date. After that you\'re on free Aura, and everything you made stays yours.';
+  }
+
+  @override
+  String plus_statusActive(String date) {
+    return 'Aura Plus renews on $date.';
+  }
+
+  @override
+  String plus_statusCancelled(String date) {
+    return 'Aura Plus stays on until $date. You won\'t be charged again.';
+  }
+
+  @override
+  String get plus_statusGrace =>
+      'The store couldn\'t renew Aura Plus. Plus stays on while it tries again.';
+
+  @override
+  String get plus_statusBillingRetry =>
+      'Aura Plus is paused until the store can renew it. Everything you made stays yours.';
+
+  @override
+  String get plus_statusExpired =>
+      'Aura Plus has ended. Everything you made stays yours.';
+
+  @override
+  String get plus_statusRefunded =>
+      'Your refund went through, so Aura Plus has ended. Everything you made stays yours.';
+
+  @override
+  String get plus_statusPending =>
+      'Waiting for the store to confirm. You won\'t be charged until it goes through.';
+
+  @override
+  String get plus_updatePayment => 'Update payment in store';
+
+  @override
+  String get plus_turnBackOn => 'Turn Plus back on';
+
+  @override
+  String plus_managedElsewhere(String store) {
+    return 'Bought on $store. Manage it there.';
+  }
+
+  @override
+  String get plus_notYet =>
+      'Aura Plus opens up a day after you join. Everything you need is already free.';
+
+  @override
+  String plus_cardTrialEnding(String date, String price) {
+    return 'Your free month ends on $date. Plus then continues at $price/month unless you cancel in the store.';
+  }
+
+  @override
+  String plus_cardTrialEndingYear(String date, String price) {
+    return 'Your free month ends on $date. Plus then continues at $price/year unless you cancel in the store.';
+  }
+
+  @override
+  String plus_cardTrialEndingNoPrice(String date) {
+    return 'Your free month ends on $date. Plus then continues unless you cancel in the store.';
+  }
+
+  @override
+  String get plus_cardKeep => 'Keep Plus';
+
+  @override
+  String plus_cardTrialCancelled(String date) {
+    return 'Plus stays on until $date. You won\'t be charged.';
+  }
+
+  @override
+  String get plus_cardBillingIssue =>
+      'Your Aura Plus payment didn\'t go through. Everything you\'ve made is safe.';
+
+  @override
+  String get plus_cardContinues => 'Aura Plus continues. Thank you.';
+
+  @override
+  String get plus_dismiss => 'Dismiss';
+
+  @override
+  String get plus_giftWarmTea => 'Warm Tea';
+
+  @override
+  String get plus_giftComfortLantern => 'Comfort Lantern';
+
+  @override
+  String get plus_giftBouquet => 'Encouragement Bouquet';
+
+  @override
+  String plus_giftReceived(String gift) {
+    return 'Someone here sent you a $gift.';
+  }
+
+  @override
+  String plus_giftStardust(int count) {
+    return '+$count Stardust';
+  }
+
+  @override
+  String get plus_giftTitle => 'Send a gift';
+
+  @override
+  String get plus_giftBody =>
+      'They\'ll see “Someone here sent you a gift” and get Stardust for a sky. No message and no name.';
+
+  @override
+  String plus_giftSend(String price) {
+    return 'Send for $price';
+  }
+
+  @override
+  String get plus_giftSent =>
+      'Sent. They\'ll see it the next time they open Aura.';
+
+  @override
+  String get plus_giftUnavailable =>
+      'This gift can\'t be sent right now. Nothing was charged.';
+
+  @override
+  String get plus_giftDailyLimit =>
+      'That\'s 5 gifts today. You can send more tomorrow.';
+
+  @override
+  String get plus_giftPaused =>
+      'Gifts aren\'t available on this account right now.';
+
+  @override
+  String get plus_giftsOff =>
+      'Gifts are resting for a bit. Nothing was charged.';
+
+  @override
+  String plus_stardustBalance(int count) {
+    return '$count Stardust';
+  }
+
+  @override
+  String get plus_stardustNote =>
+      'Stardust comes only from gifts people send you. It can\'t be bought, cashed or moved.';
+
+  @override
+  String get plus_skiesTitle => 'Your sky';
+
+  @override
+  String get plus_skiesIntro =>
+      'A sky for your own Home, Sanctuary and Insights. Only you see it.';
+
+  @override
+  String get plus_skyNight => 'Night sky';
+
+  @override
+  String get plus_skyAurora => 'Aurora';
+
+  @override
+  String get plus_skyMonsoonDusk => 'Monsoon dusk';
+
+  @override
+  String get plus_skyFirstLight => 'First light';
+
+  @override
+  String get plus_skyLanternFestival => 'Lantern festival';
+
+  @override
+  String get plus_skyDeepOcean => 'Deep ocean';
+
+  @override
+  String get plus_skyMeteorShower => 'Meteor shower';
+
+  @override
+  String get plus_skyFree => 'Free';
+
+  @override
+  String get plus_skyWithPlus => 'With Aura Plus';
+
+  @override
+  String get plus_skyOwned => 'Yours';
+
+  @override
+  String get plus_skyInUse => 'In use';
+
+  @override
+  String get plus_skyUse => 'Use this sky';
+
+  @override
+  String plus_skyBuy(String price) {
+    return 'Buy for $price';
+  }
+
+  @override
+  String plus_skyStardust(int count) {
+    return 'Use $count Stardust';
+  }
+
+  @override
+  String get plus_skyNotEnough => 'Not enough Stardust for this sky yet.';
+
+  @override
+  String get plus_soundscapeTitle => 'Pair a soundscape';
+
+  @override
+  String get plus_soundscapeNone => 'No sounds';
+
+  @override
+  String get plus_soundscapeNightAir => 'Night air';
+
+  @override
+  String get plus_soundscapeHighWind => 'High wind';
+
+  @override
+  String get plus_soundscapeMonsoon => 'Monsoon';
+
+  @override
+  String get plus_soundscapeBells => 'Bells';
+
+  @override
+  String get plus_soundscapeShore => 'Shore';
+
+  @override
+  String get plus_soundscapePlay => 'Play these sounds';
+
+  @override
+  String get plus_settingsSky => 'Your sky and Stardust';
+
+  @override
+  String get plus_channelAccount => 'Account';
+
+  @override
+  String get plus_channelAccountDescription =>
+      'Aura Plus reminders, like your free month ending.';
 
   @override
   String polish_legalOpenFailed(String url) {
@@ -2154,6 +2765,233 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get rooms_pausedJoin =>
       'Rooms are resting for a bit. Your check-in is saved.';
+
+  @override
+  String get ripples_title => 'Breath Ripples';
+
+  @override
+  String get ripples_homeCard => 'Breathe together';
+
+  @override
+  String get ripples_homeCardBody =>
+      'Three quiet minutes with a few others. No words, no score.';
+
+  @override
+  String get ripples_breatheTogether => 'Breathe together';
+
+  @override
+  String ripples_invite(String name, int count, int capacity) {
+    return '$name wants to breathe together · $count/$capacity';
+  }
+
+  @override
+  String get ripples_inviteJoin => 'Join';
+
+  @override
+  String ripples_inviteMine(int count, int capacity) {
+    return 'Your invite is open · $count/$capacity';
+  }
+
+  @override
+  String get ripples_lobby => 'Looking for others to breathe with…';
+
+  @override
+  String get ripples_lobbyHint =>
+      'Breathe along while you wait. You can leave any time.';
+
+  @override
+  String get ripples_holdHint => 'Hold to breathe in, let go to breathe out';
+
+  @override
+  String get ripples_tapHint => 'Tap to switch between breathing in and out';
+
+  @override
+  String get ripples_breathArea => 'Breathing area';
+
+  @override
+  String get ripples_offline =>
+      'Breathing together needs a connection. Breathe solo instead?';
+
+  @override
+  String get ripples_paused =>
+      'Breath Ripples is resting for a bit. Breathe solo instead?';
+
+  @override
+  String get ripples_suspended =>
+      'Breathing together is paused for this account right now. You can still breathe on your own.';
+
+  @override
+  String get ripples_closed =>
+      'This account can\'t breathe together with others. You can still breathe on your own.';
+
+  @override
+  String get ripples_guidelines =>
+      'The community guidelines come first. Open Rooms to read them, or breathe on your own for now.';
+
+  @override
+  String get ripples_breatheSolo => 'Breathe solo';
+
+  @override
+  String get ripples_settle => 'Settle in';
+
+  @override
+  String get ripples_fade => 'Let it fade';
+
+  @override
+  String ripples_together(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people breathing together',
+      one: 'Just you and the ocean',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_echoesJoined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count echoes joined. They\'re recordings of real people who breathed here before.',
+      one: '1 echo joined. It\'s a recording of a real person who breathed here before.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_guides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count guide lights breathe with you.',
+      one: 'A guide light breathes with you.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_solo =>
+      'Breathing on your own this time. The ocean still listens.';
+
+  @override
+  String get ripples_linkLost => 'You\'re breathing on your own for a moment.';
+
+  @override
+  String get ripples_alone => 'Keep breathing. The ocean is still here.';
+
+  @override
+  String get ripples_leave => 'Leave';
+
+  @override
+  String get ripples_accessibleMode => 'Accessible mode';
+
+  @override
+  String get ripples_accessibleModeHint =>
+      'Tap to switch between in and out. Tones and firmer haptics tell you when you\'re in step with the others.';
+
+  @override
+  String ripples_oceanSemantic(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'A night ocean with $count lights',
+      one: 'A night ocean with your light',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_lightMe => 'Your light';
+
+  @override
+  String ripples_lightHuman(String name) {
+    return '$name\'s light';
+  }
+
+  @override
+  String get ripples_lightEcho => 'An echo of someone who breathed here before';
+
+  @override
+  String get ripples_lightGuide => 'A guide light, breathing with the pacer';
+
+  @override
+  String get ripples_echo => 'echo';
+
+  @override
+  String get ripples_guide => 'guide';
+
+  @override
+  String get ripples_you => 'you';
+
+  @override
+  String get ripples_pulse => 'Send a pulse';
+
+  @override
+  String get ripples_gestureHug => 'Hug';
+
+  @override
+  String get ripples_gestureDeepBreath => 'Deep breath';
+
+  @override
+  String get ripples_gestureNotAlone => 'You\'re not alone';
+
+  @override
+  String ripples_pulseFrom(String name) {
+    return '$name sent a pulse';
+  }
+
+  @override
+  String ripples_gestureFrom(String name, String gesture) {
+    return '$name · $gesture';
+  }
+
+  @override
+  String get ripples_contactTray => 'Send something kind';
+
+  @override
+  String get ripples_mute => 'Mute';
+
+  @override
+  String get ripples_unmute => 'Unmute';
+
+  @override
+  String get ripples_block => 'Block';
+
+  @override
+  String get ripples_report => 'Report';
+
+  @override
+  String get ripples_blocked =>
+      'Blocked. You won\'t be matched together again.';
+
+  @override
+  String get ripples_reported =>
+      'Thank you. Someone from Aura will look at it.';
+
+  @override
+  String get ripples_actionFailed =>
+      'That didn\'t go through. Please try again.';
+
+  @override
+  String get ripples_endTitle => 'That was a few minutes together.';
+
+  @override
+  String get ripples_again => 'Breathe again';
+
+  @override
+  String get ripples_backToRoom => 'Back to room';
+
+  @override
+  String get ripples_feelNow => 'How do you feel now?';
+
+  @override
+  String get ripples_echoToggle => 'Let my breathing become an echo';
+
+  @override
+  String get ripples_echoToggleHint =>
+      'An echo keeps only the timing of your breaths, never who you are, so it can\'t be traced back to you. Turning this off stops future echoes.';
 
   @override
   String get rooms_title => 'Rooms';

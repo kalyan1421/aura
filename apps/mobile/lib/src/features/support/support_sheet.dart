@@ -9,12 +9,15 @@ import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../safety/helpline_list.dart';
 import '../sanctuary/habit_auto_complete.dart';
 import '../safety/safety_center_screen.dart';
+import '../plus/paywall_gate.dart' show markCrisisFlow;
+import 'crisis_follow_up.dart';
 
 /// Opens the support sheet: contextual help that keeps the task underneath
 /// (a crisis-lexicon hit after saving, a custom habit name). "I need help
@@ -246,6 +249,24 @@ class SupportSheet extends ConsumerStatefulWidget {
 class _SupportSheetState extends ConsumerState<SupportSheet> {
   /// Set when the finished minute ticked off today's Breathe habit.
   bool _breatheLogged = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // PRD 12 crisis follow-up: an in-app card on the next open 12–72 h later
+    // (crisis_follow_up.dart). Kept on this phone only.
+    if (widget.crisis) {
+      unawaited(
+        recordCrisisSheetShown(
+          ref.read(kvStoreProvider),
+          ref.read(timeContextProvider).now(),
+        ),
+      );
+    }
+    // F12 P0: no Aura Plus paywall for the rest of this Aura day after any
+    // support / crisis sheet (features/plus/paywall_gate.dart).
+    unawaited(markCrisisFlow(ref));
+  }
 
   Future<void> _completeBreathe() async {
     // F2: the finished 60 s grounding ticks off today's Breathe (the shared

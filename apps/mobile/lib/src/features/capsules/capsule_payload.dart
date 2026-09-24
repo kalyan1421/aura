@@ -13,8 +13,16 @@ const int maxCapsuleTitleLength = 60;
 /// The note inside.
 const int maxCapsuleTextLength = 2000;
 
-/// Free: 2 minutes (REQ-CAP-05). Plus (10 min) is not built.
+/// Free: 2 minutes (REQ-CAP-05).
 const Duration maxCapsuleVoiceDuration = Duration(minutes: 2);
+
+/// Aura Plus: 10 minutes (REQ-CAP-05, F12). Old 10-min recordings still play
+/// after a downgrade.
+const Duration maxPlusCapsuleVoiceDuration = Duration(minutes: 10);
+
+/// The recording limit for this account.
+Duration capsuleVoiceLimit({required bool plus}) =>
+    plus ? maxPlusCapsuleVoiceDuration : maxCapsuleVoiceDuration;
 
 /// Photos per capsule, and their longest edge after resizing.
 const int maxCapsulePhotos = 3;

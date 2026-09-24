@@ -9,7 +9,7 @@ import { COPY_KEYS, copyTableFor, PUSH_LOCALES, type PushLocale } from './push-c
  * (ARB keys starting with `notif`).
  */
 export type LintLocale = PushLocale;
-export type LintReason = 'banned_word' | 'mood_name' | 'quadrant_name' | 'theme_name';
+export type LintReason = 'banned_word' | 'mood_name' | 'quadrant_name' | 'theme_name' | 'health_claim';
 
 export interface LintTerm {
   /** What is reported (the term as written in the list). */
@@ -52,6 +52,16 @@ export const BANNED_WORDS: Readonly<Record<LintLocale, readonly string[]>> = {
   hi: ['मिस', 'खो दे', 'खो दो', 'खोना', 'खो जा', 'स्ट्रीक', 'टूट', 'फीका', 'आखिरी मौका', 'आख़िरी मौका', 'जल्दी'],
   'hi-Latn': ['kho do', 'kho doge', 'kho denge', 'khona', 'kho ja*', 'toot*', 'tut gaya', 'pheeka', 'feeka', 'aakhri mauka', 'akhri mauka', 'jaldi'],
 };
+
+/**
+ * "Calm, not treatment" (PRD 06d REQ-SAN-12) and REQ-NTF-04 ("no copy promises better sleep"): treatment words and
+ * sleep or health outcome claims, for every template (the wind-down reminder above all). Whole words (Latin script).
+ */
+export const CLAIM_WORDS: readonly string[] = [
+  'binaural', 'heal', 'heals', 'healing', 'healed', 'cure', 'cures', 'cured', 'treat', 'treats', 'treatment',
+  'therapy', 'therapeutic', 'therapist', 'clinical', 'clinically', 'insomnia', 'better sleep', 'sleep better',
+  'fall asleep', 'deep sleep', 'sleep faster', 'guaranteed',
+];
 
 /** Quadrant names (the app's `quadrant_*` strings; hi / hi-Latn drafts). Theme names stay English in every language. */
 export const QUADRANT_NAMES: readonly string[] = [
@@ -112,6 +122,7 @@ export function buildLintTerms(moods: readonly MoodNames[]): LintTerm[] {
     }
   }
   for (const q of QUADRANT_NAMES) add(q, 'quadrant_name');
+  for (const c of CLAIM_WORDS) add(c, 'health_claim');
   for (const t of THEME_NAMES) add(t, 'theme_name');
   return terms;
 }

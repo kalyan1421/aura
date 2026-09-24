@@ -16,6 +16,7 @@ import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/legal_links.dart';
 import '../account/deletion_pending.dart';
 import '../onboarding/language_screen.dart';
+import '../plus/plus_settings_section.dart';
 import '../push/notifications_settings_section.dart';
 
 /// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
@@ -203,6 +204,13 @@ class SettingsScreen extends ConsumerWidget {
                 email: supportEmail,
                 subject: l.set_supportSubject,
               ),
+
+            // ---- Aura Plus (F12: status, manage, Restore, sky + Stardust;
+            // features/plus). Signed-in accounts only (purchases are online).
+            if (auth.isAvailable && user != null) ...[
+              section(l.plus_title, 'plus'),
+              const PlusSettingsSection(),
+            ],
 
             // ---- About ------------------------------------------------------
             section(l.settings_about, 'about'),

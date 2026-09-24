@@ -6,6 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../checkin/quadrant_glyph.dart';
+import '../plus/gift_sheet.dart';
 import 'room_controller.dart';
 import 'room_models.dart';
 import 'room_widgets.dart';
@@ -199,6 +200,22 @@ class MemberSheet extends ConsumerWidget {
                 );
               },
             ),
+            // F12 gifts (REQ-ROOM-09): for every 13+ account, never for
+            // yourself; blocked people are never listed, so never here.
+            // Checked by the server before any store sheet.
+            if (!m.isMe && ref.watch(giftEntryVisibleProvider)) ...[
+              const SizedBox(height: AuraSpace.m),
+              OutlinedButton.icon(
+                key: const ValueKey('member-gift'),
+                onPressed: () => showGiftSheet(
+                  context,
+                  roomId: roomId,
+                  memberId: m.memberId,
+                ),
+                icon: const Icon(Icons.card_giftcard_outlined, size: 18),
+                label: Text(l.plus_giftTitle),
+              ),
+            ],
           ],
         ],
       ),

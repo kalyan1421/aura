@@ -73,6 +73,9 @@ abstract interface class RoomsApi {
   /// Leaves for good → whether to ask "Did you feel less alone?".
   Future<bool> leave(String roomId);
 
+  /// Holds tonight's intention (Milestone B, §1.9): one tap, idempotent.
+  Future<IntentionHoldResult> holdIntention(String roomId);
+
   Future<void> survey(String roomId, SurveyAnswer answer);
 
   Future<void> mute(String roomId, String memberId);
@@ -220,6 +223,12 @@ class HttpRoomsApi implements RoomsApi {
       'toMemberId': ?toMemberId,
     }),
   );
+
+  @override
+  Future<IntentionHoldResult> holdIntention(String roomId) async =>
+      IntentionHoldResult.fromJson(
+        await _post('/v1/rooms/${_id(roomId)}/intention/hold'),
+      );
 
   @override
   Future<bool> leave(String roomId) async =>

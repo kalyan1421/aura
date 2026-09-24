@@ -14,7 +14,14 @@ import { hasActiveSanction, type SafetyConfig } from './safety.queries';
  */
 export interface NewReport {
   source: 'user' | 'auto';
-  autoSignal?: 'gesture_flood' | 'reflection_hold' | 'reflection_crisis' | 'reflection_minor_safety' | 'reflection_violation';
+  autoSignal?:
+    | 'gesture_flood'
+    | 'reflection_hold'
+    | 'reflection_crisis'
+    | 'reflection_minor_safety'
+    | 'reflection_violation'
+    /** F12: 3+ gifts in 7 days from one adult to the same under-18 account (src/billing/gifts.ts). */
+    | 'gift_pattern';
   reporterUserId: string | null;
   reporterMemberId: string | null;
   reason: ReportReason;

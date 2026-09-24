@@ -32,6 +32,10 @@ export const PERSONAL_TABLES = [
   // F6: the account's reflections (encrypted text); gestures sent to them cascade. Reported / queued ones were copied
   // into evidence_holds first (LEGAL_HOLD_TABLES). Before room_members (they reference the membership).
   'reflections',
+  // F7 Breath Ripples: queue tickets, room invites and seats (seat labels, times, cycles). Before room_members (they
+  // reference the membership). Echoes hold nothing that links them to anyone, so there is nothing to delete there.
+  'ripple_tickets',
+  'ripple_seats',
   // F5 rooms: memberships (pseudonyms, heartbeats, survey marks); their gestures — incl. limit-hit rows — and mutes
   // in both directions cascade from room_members.
   'room_members',
@@ -48,6 +52,21 @@ export const PERSONAL_TABLES = [
   'guidelines_acceptances',
   // F5 "Tell me when they open" (Hindi + Hinglish pool): pending opt-ins (migration 20261005000019).
   'room_pool_waitlist',
+  // F15: content-free Sanctuary session records; F14 (Milestone B): the user-timed push plan, the welcome-back
+  // activity marker and the gestures-received push log (migration 20261005000023).
+  'sanctuary_sessions',
+  'notification_schedule',
+  'notification_activity',
+  'gesture_push_log',
+  // F12 (migration 20261005000020): the store account token, the derived entitlement, owned cosmetics, the sky choice
+  // and the Stardust ledger. Store purchase records (subscriptions, purchases) and gifts are NOT deleted: they are
+  // de-identified below (ACCOUNT_REFERENCE_CLEANUP) and kept as purchase / tax records "only as law requires" [LEGAL]
+  // (PRD 06c F8 "Deletion and export").
+  'billing_accounts',
+  'entitlements',
+  'user_cosmetics',
+  'sky_preferences',
+  'stardust_ledger',
   'profiles',
 ] as const;
 
@@ -71,6 +90,13 @@ export const ACCOUNT_REFERENCE_CLEANUP = [
   'delete from public.blocks where blocker_user_id = $1 or blocked_user_id = $1',
   'update public.reports set reporter_user_id = null where reporter_user_id = $1',
   'update public.reports set target_user_id = null where target_user_id = $1',
+  // F12 [LEGAL]: purchase records stay (tax / refund reconciliation), without the account link.
+  'update public.subscriptions set owner_user_id = null where owner_user_id = $1',
+  'update public.purchases set owner_user_id = null where owner_user_id = $1',
+  'update public.gifts set sender_user_id = null where sender_user_id = $1',
+  'update public.gifts set recipient_user_id = null, recipient_member_id = null where recipient_user_id = $1',
+  // F7: a room's "Breathe together" invite outlives its inviter (other members' tickets hang off it).
+  'update public.ripple_invites set inviter_user_id = null, inviter_member_id = null where inviter_user_id = $1',
 ] as const;
 
 /**

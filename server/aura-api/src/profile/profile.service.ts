@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ApiError, profileRequired } from '../common/api-error';
 import { pgCode, pgConstraint } from '../db/db';
 import { lockUser } from '../db/locks';
@@ -9,6 +9,7 @@ import { localDate } from '../rules';
 import { isUnder13 } from './age';
 import { ProfileRepository } from './profile.repository';
 import { languagePoolFor, SIGNAL_MINOR_YEARS, type ProfileDto, type ProfileRequest } from './profile.schema';
+import { SignupThrottle } from './signup-throttle';
 
 const under13 = (): ApiError =>
   ApiError.forbidden('under_13', 'Aura is for people aged 13 and over.');
@@ -23,6 +24,11 @@ export class ProfileService {
     private readonly db: DbService,
     private readonly repo: ProfileRepository,
     private readonly progression: ProgressionService,
+    /**
+     * Reduced mode's sign-up throttle (PRD 19). Always injected by Nest (explicit token); optional only for unit tests
+     * that build the service by hand — without it nothing is throttled.
+     */
+    @Inject(SignupThrottle) private readonly signups?: SignupThrottle,
   ) {}
 
   /**
@@ -30,6 +36,8 @@ export class ProfileService {
    * any write: nothing is stored. Later calls may change locale/timezone/country but never the date of birth.
    * `ageSignal: "under18"` switches on the invisible under-18 protections (`minor_signals`, REQ-ACC-10) even with an
    * adult DOB — also when the DOB-locked refusal answers — and is never returned (DS-10).
+   * A NEW profile (a sign-up) while reduced mode is on may be refused with `503 signups_throttled` (PRD 19,
+   * SignupThrottle); updates of an existing profile never are.
    */
   async upsert(userId: string, req: ProfileRequest, now = new Date()): Promise<{ profile: ProfileDto; snapshot: Snapshot }> {
     if (req.ageSignal === 'under13' || isUnder13(req.birthDate, now, req.timezone)) throw under13();
@@ -44,6 +52,7 @@ export class ProfileService {
           if (signalMinor) await this.repo.extendMinorSignal(tx, userId, today, SIGNAL_MINOR_YEARS);
           return null;
         }
+        if (!existing) await this.signups?.check(tx); // reduced mode: new sign-ups are throttled (PRD 19)
         const profile = await this.repo.upsert(tx, {
           userId,
           birthDate: req.birthDate,

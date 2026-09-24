@@ -58,3 +58,10 @@ export const languagePoolUnavailable = (): ApiError =>
   ApiError.conflict('language_pool_unavailable', 'Hindi and Hinglish rooms are opening soon. Retry with allowPoolFallback to join an English room.');
 export const joinLimit = (): ApiError =>
   new ApiError(429, 'room_join_limit', 'That is 3 new rooms for this feeling today. Your current rooms are still open to you.');
+
+/** `POST /v1/rooms/:roomId/intention/hold` outside the room's Lantern Hour (or a memory): nothing to hold now. */
+export const intentionClosed = (): ApiError =>
+  ApiError.conflict('intention_closed', "Tonight's intention opens with Lantern Hour.");
+/** Kill switch `room_intention_enabled` off. */
+export const intentionPaused = (): ApiError =>
+  new ApiError(503, 'intention_paused', "Tonight's intention is resting for a bit.");

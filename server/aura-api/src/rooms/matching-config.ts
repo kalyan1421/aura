@@ -1,5 +1,6 @@
 import type { Queryable } from '../db/db';
 import type { GestureLimitConfig } from './gesture-limits';
+import { DEFAULT_LANTERN_CONFIG, type LanternConfig } from './lantern-rules';
 import type { LadderConfig, PartitionConfig } from './matching';
 import { isTzRegion, parseClockTime, type ClockTime, type TzRegion } from './regions';
 
@@ -17,6 +18,8 @@ export interface MatchingConfig {
   joinsPerQuadrant24h: number;
   lanternStart: ClockTime;
   lanternEnd: ClockTime;
+  /** Room lanterns and Tonight's intention (Milestone B): tunables + the two kill switches. */
+  lanterns: LanternConfig;
 }
 
 interface Row {
@@ -41,7 +44,18 @@ interface Row {
   gesture_shadow_mute_h: number;
   lantern_start: string;
   lantern_end: string;
+  // Migration 20261005000022 (numeric columns arrive as strings) + the kill-switch flags joined in by the loader.
+  lantern_units_per_member?: string | number | null;
+  lantern_min_units_per_level?: number | null;
+  lantern_breath_cycle_weight?: string | number | null;
+  lanterns_flag?: boolean | null;
+  intention_flag?: boolean | null;
 }
+
+const num = (v: unknown, fallback: number): number => {
+  const n = typeof v === 'number' ? v : typeof v === 'string' ? Number(v) : NaN;
+  return Number.isFinite(n) ? n : fallback;
+};
 
 /** Defaults = the migration's column defaults (used only if the row is missing). */
 export const DEFAULT_MATCHING_CONFIG: MatchingConfig = fromRow({
@@ -95,10 +109,23 @@ function fromRow(r: Row): MatchingConfig {
     joinsPerQuadrant24h: r.joins_per_quadrant_24h,
     lanternStart: parseClockTime(r.lantern_start),
     lanternEnd: parseClockTime(r.lantern_end),
+    lanterns: {
+      // A missing flag counts as on (kill switches only ever take things away).
+      enabled: r.lanterns_flag !== false,
+      intentionEnabled: r.intention_flag !== false,
+      unitsPerMember: num(r.lantern_units_per_member, DEFAULT_LANTERN_CONFIG.unitsPerMember),
+      minUnitsPerLevel: num(r.lantern_min_units_per_level, DEFAULT_LANTERN_CONFIG.minUnitsPerLevel),
+      breathCycleWeight: num(r.lantern_breath_cycle_weight, DEFAULT_LANTERN_CONFIG.breathCycleWeight),
+    },
   };
 }
 
 export async function loadMatchingConfig(q: Queryable): Promise<MatchingConfig> {
-  const r = await q.query<Row>('select * from public.matching_config where id');
+  const r = await q.query<Row>(
+    `select mc.*,
+            (select f.enabled from public.feature_flags f where f.key = 'room_lanterns_enabled') as lanterns_flag,
+            (select f.enabled from public.feature_flags f where f.key = 'room_intention_enabled') as intention_flag
+       from public.matching_config mc where mc.id`,
+  );
   return r.rows[0] ? fromRow(r.rows[0]) : DEFAULT_MATCHING_CONFIG;
 }

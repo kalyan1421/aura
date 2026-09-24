@@ -21,7 +21,7 @@ export type NotificationKind = (typeof PRECEDENCE)[number];
 export const DAILY_PUSH_CAP = 2;
 
 /** Push kinds that never count toward the daily cap (rule 2). None ships yet; the trial-ending reminder will. */
-export const CAP_EXEMPT: readonly string[] = [];
+export const CAP_EXEMPT: readonly string[] = ['trial_ending'];
 
 export const priorityOf = (kind: string): number => {
   const i = (PRECEDENCE as readonly string[]).indexOf(kind);
@@ -61,6 +61,21 @@ export const TYPE_RULES: Readonly<Record<NotificationType, TypeRules>> = {
   // "Tell me when they open": one push the person asked for, whenever the pool opens — waits out quiet hours and a
   // full day, and is dropped after 3 days (the pool screen tells them too).
   rooms_pool_open: { perDay: 1, quiet: 'defer', maxAgeMs: 72 * H, channel: 'rooms', ttlSeconds: 24 * 3600, capped: 'defer' },
+  // ---- Milestone B (PRD 12 catalogue; contracts/api/v1-notifications.md §6) ----
+  // Batched, "1 push per room per day" (gesture_push_log); the per-type daily log makes it one room's push a day.
+  // Inside quiet hours it is dropped: the room shows the gestures, and a morning push about last night's room would
+  // only pull. Stale after 6 h.
+  gestures_received: { perDay: 1, quiet: 'skip', maxAgeMs: 6 * H, channel: 'rooms', ttlSeconds: 6 * 3600 },
+  // At the start of the region's Lantern Hour (21:00 region clock); pointless an hour later (the window is 2 h).
+  lantern_hour: { perDay: 1, quiet: 'skip', maxAgeMs: 1 * H, channel: 'rooms', ttlSeconds: 3600 },
+  // The person's own time, like the daily reminder (rule 1's confirmation honours a time inside quiet hours).
+  wind_down_reminder: { perDay: 1, quiet: 'skip', maxAgeMs: 2 * H, channel: 'reminders', ttlSeconds: 2 * 3600 },
+  // Per-habit times, one bundled push a day at most; inside quiet hours skipped (no confirmation for nudges).
+  habit_nudge: { perDay: 1, quiet: 'skip', maxAgeMs: 2 * H, channel: 'reminders', ttlSeconds: 2 * 3600 },
+  // Early evening after 7 / 21 quiet days; waits out quiet hours; still true the next day (capped → next day).
+  welcome_back: { perDay: 1, quiet: 'defer', maxAgeMs: 36 * H, channel: 'reminders', ttlSeconds: 12 * 3600, capped: 'defer' },
+  // F12: queued 48 h before the free month ends; waits out quiet hours; must land well before the end (40 h).
+  trial_ending: { perDay: 1, quiet: 'defer', maxAgeMs: 40 * H, channel: 'account', ttlSeconds: 24 * 3600 },
 };
 
 /** Base of the capsule notice ids (apps/mobile features/capsules/capsule_notifications.dart `capsuleNoticeId`). */

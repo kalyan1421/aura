@@ -3,6 +3,9 @@ import { z } from 'zod';
 import type { Queryable, Tx } from '../db/db';
 import { reject } from '../sync/mutation-rejected';
 import type { Mutation } from '../sync/sync.schema';
+import { UUID_RE } from '../common/uuid';
+import { milestoneBPrefsSql, saveMilestoneBPrefs } from './prefs-milestone-b';
+import { planSchedules } from './schedules';
 import {
   DEFAULT_NOTIFICATION_PREFS,
   isHm,
@@ -31,11 +34,25 @@ export const PREF_COLUMNS = {
   quietStart: 'quiet_start',
   quietEnd: 'quiet_end',
   discreet: 'discreet',
+  // Milestone B (contracts/api/v1-notifications.md §6).
+  gestures: 'gestures_enabled',
+  lanternHour: 'lantern_opt_in',
+  windDownEnabled: 'wind_down_enabled',
+  windDownTime: 'wind_down_time',
+  windDownInQuietHours: 'wind_down_in_quiet_ok',
+  welcomeBack: 'welcome_back_enabled',
+  habitNudges: 'habit_nudges',
 } as const satisfies Record<keyof NotificationPrefsValues, string>;
 export type PrefField = keyof typeof PREF_COLUMNS;
 export const PREF_FIELDS = Object.keys(PREF_COLUMNS) as PrefField[];
 
 const hm = z.string().refine(isHm, 'must be HH:MM (24 h)');
+
+/** Habit nudges: at most this many habits (6 presets + 3 custom fit; the table's check allows 16). */
+export const MAX_HABIT_NUDGES = 16;
+const habitNudgesSchema = z
+  .record(z.string().regex(UUID_RE, 'habit ids are UUIDs').transform((k) => k.toLowerCase()), hm)
+  .refine((m) => Object.keys(m).length <= MAX_HABIT_NUDGES, `at most ${MAX_HABIT_NUDGES} habits`);
 
 /** A patch: any subset of the settings (unknown keys are ignored, so newer apps can add fields). */
 export const prefsPatchSchema = z
@@ -48,6 +65,13 @@ export const prefsPatchSchema = z
     quietStart: hm,
     quietEnd: hm,
     discreet: z.boolean(),
+    gestures: z.boolean(),
+    lanternHour: z.boolean(),
+    windDownEnabled: z.boolean(),
+    windDownTime: hm.nullable(),
+    windDownInQuietHours: z.boolean(),
+    welcomeBack: z.boolean(),
+    habitNudges: habitNudgesSchema,
   })
   .partial()
   .refine((p) => PREF_FIELDS.some((f) => p[f] !== undefined), 'at least one setting');
@@ -89,6 +113,24 @@ interface PrefsRow {
   quiet_end: string;
   discreet: boolean;
   field_ts: Record<string, unknown> | null;
+  // Milestone B columns: absent when a caller selects only the Milestone A ones (→ defaults).
+  gestures_enabled?: boolean;
+  lantern_opt_in?: boolean;
+  wind_down_enabled?: boolean;
+  wind_down_time?: string | null;
+  wind_down_in_quiet_ok?: boolean;
+  welcome_back_enabled?: boolean;
+  habit_nudges?: Record<string, unknown> | null;
+}
+
+/** `habit_nudges` jsonb → a clean map (anything malformed is dropped). */
+export function habitNudgesFrom(v: unknown): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return out;
+  for (const [k, t] of Object.entries(v as Record<string, unknown>)) {
+    if (UUID_RE.test(k) && isHm(t)) out[k.toLowerCase()] = t;
+  }
+  return out;
 }
 
 /** Row → values (`time` columns come back as `HH:MM:SS`). */
@@ -109,6 +151,13 @@ export function prefsFromRow(r: PrefsRow | undefined): StoredPrefs {
       quietStart: pgTimeToHm(r.quiet_start) ?? DEFAULT_NOTIFICATION_PREFS.quietStart,
       quietEnd: pgTimeToHm(r.quiet_end) ?? DEFAULT_NOTIFICATION_PREFS.quietEnd,
       discreet: r.discreet,
+      gestures: r.gestures_enabled ?? DEFAULT_NOTIFICATION_PREFS.gestures,
+      lanternHour: r.lantern_opt_in ?? DEFAULT_NOTIFICATION_PREFS.lanternHour,
+      windDownEnabled: r.wind_down_enabled ?? DEFAULT_NOTIFICATION_PREFS.windDownEnabled,
+      windDownTime: pgTimeToHm(r.wind_down_time ?? null),
+      windDownInQuietHours: r.wind_down_in_quiet_ok ?? DEFAULT_NOTIFICATION_PREFS.windDownInQuietHours,
+      welcomeBack: r.welcome_back_enabled ?? DEFAULT_NOTIFICATION_PREFS.welcomeBack,
+      habitNudges: habitNudgesFrom(r.habit_nudges),
     },
     fieldTs,
   };
@@ -116,7 +165,8 @@ export function prefsFromRow(r: PrefsRow | undefined): StoredPrefs {
 
 export const PREFS_COLUMNS_SQL =
   'enabled, reminder_enabled, reminder_time::text as reminder_time, reminder_in_quiet_ok, capsule_enabled, ' +
-  'quiet_start::text as quiet_start, quiet_end::text as quiet_end, discreet, field_ts';
+  'quiet_start::text as quiet_start, quiet_end::text as quiet_end, discreet, field_ts, ' +
+  milestoneBPrefsSql('');
 
 /** The user's settings (defaults when no row). */
 export async function loadPrefs(q: Queryable, userId: string, forUpdate = false): Promise<StoredPrefs> {
@@ -182,5 +232,8 @@ export class NotificationPrefsSyncHandler {
         nextAt ? ctx.tz : null,
       ],
     );
+    // Milestone B: its columns on the (now existing) row, then the user-timed pushes re-planned (schedules.ts).
+    await saveMilestoneBPrefs(ctx.tx, ctx.userId, v);
+    await planSchedules(ctx.tx, ctx.userId, ctx.tz, ctx.now, v);
   }
 }

@@ -1,3 +1,4 @@
+import type { Queryable } from '../db/db';
 import { Injectable, Logger } from '@nestjs/common';
 import { MediaStoreError, PrivateMediaStore } from '../account/private-media';
 import { CatalogueService } from '../catalogue/catalogue.service';
@@ -94,9 +95,9 @@ export class CapsuleSyncHandler {
     private readonly db: DbService,
   ) {}
 
-  /** Free = 3 active trigger capsules. Plus (unlimited) is not built yet, so this is everyone's limit. */
-  maxActiveTriggers(_userId: string): number {
-    return MAX_ACTIVE_TRIGGER_CAPSULES;
+  /** Free = 3 active trigger capsules; Aura Plus = unlimited (F12, the server-owned entitlement). */
+  async maxActiveTriggers(q: Queryable, userId: string): Promise<number> {
+    return (await this.repo.plusActive(q, userId)) ? Number.POSITIVE_INFINITY : MAX_ACTIVE_TRIGGER_CAPSULES;
   }
 
   async apply(ctx: CapsuleCtx, m: Mutation, fx: CapsuleEffects): Promise<void> {
@@ -158,7 +159,7 @@ export class CapsuleSyncHandler {
       const serverMax = addDays(addYears(localDate(ctx.now, tz), UNLOCK_MAX_YEARS), SERVER_UNLOCK_SLACK_DAYS);
       if (p.unlockLocalDate > serverMax) reject('invalid_unlock_date');
       if ((await this.repo.countPendingDates(ctx.tx, ctx.userId)) >= MAX_PENDING_DATE_CAPSULES) reject('date_capsule_limit');
-    } else if ((await this.repo.countActiveTriggers(ctx.tx, ctx.userId)) >= this.maxActiveTriggers(ctx.userId)) {
+    } else if ((await this.repo.countActiveTriggers(ctx.tx, ctx.userId)) >= (await this.maxActiveTriggers(ctx.tx, ctx.userId))) {
       reject('trigger_capsule_limit');
     }
 
@@ -212,7 +213,7 @@ export class CapsuleSyncHandler {
     const c = await this.current(ctx, p.id, p.cycle);
     if (c.unlockType !== 'mood') reject('not_a_trigger_capsule');
     if (!c.openedAt) reject('capsule_not_opened');
-    if ((await this.repo.countActiveTriggers(ctx.tx, ctx.userId, c.id)) >= this.maxActiveTriggers(ctx.userId)) {
+    if ((await this.repo.countActiveTriggers(ctx.tx, ctx.userId, c.id)) >= (await this.maxActiveTriggers(ctx.tx, ctx.userId))) {
       reject('trigger_capsule_limit');
     }
     await this.repo.rearm(ctx.tx, c.id, clampToNow(at, ctx.now));

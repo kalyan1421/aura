@@ -112,7 +112,8 @@ Future<ProviderContainer> _pump(
   _Account? account,
   double width = 390,
 }) async {
-  tester.view.physicalSize = Size(width * 3, 7200);
+  // Tall enough for every section (Notifications grew in Milestone B).
+  tester.view.physicalSize = Size(width * 3, 12000);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   final container = ProviderContainer(

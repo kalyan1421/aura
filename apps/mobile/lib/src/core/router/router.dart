@@ -17,6 +17,10 @@ import '../../features/onboarding/gate_controller.dart';
 import '../../features/onboarding/language_screen.dart';
 import '../../features/onboarding/trust_screen.dart';
 import '../../features/onboarding/welcome_screen.dart';
+import '../../features/plus/paywall_gate.dart' show PaywallSurface;
+import '../../features/plus/paywall_screen.dart';
+import '../../features/plus/plus_entry.dart' show plusRoute, plusSkiesRoute;
+import '../../features/plus/sky_themes_screen.dart';
 import '../../features/rooms/room_join_screen.dart';
 import '../../features/rooms/room_navigation.dart' show RoomJoinRequest;
 import '../../features/rooms/room_screen.dart';
@@ -138,6 +142,18 @@ GoRouter router(Ref ref) {
       ),
       route(Routes.safety, (_) => const SafetyCenterScreen()),
       route(Routes.settings, (_) => const SettingsScreen()),
+      // F12 Aura Plus: opened only from a limit screen or Settings (`from`
+      // names the surface; the screen re-checks the P0 exclusions itself).
+      route(
+        plusRoute,
+        (s) => PaywallScreen(
+          surface:
+              PaywallSurface.values
+                  .asNameMap()[s.uri.queryParameters['from']] ??
+              PaywallSurface.settings,
+        ),
+      ),
+      route(plusSkiesRoute, (_) => const SkyThemesScreen()),
       route(Routes.deleteAccount, (_) => const DeleteAccountScreen()),
       // The history list lives in the Insights tab; older links land there.
       GoRoute(path: Routes.history, redirect: (_, _) => Routes.insightsHistory),

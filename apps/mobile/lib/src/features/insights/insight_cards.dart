@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/theme/aura_tokens.dart';
+import '../plus/paywall_gate.dart' show PaywallSurface;
+import '../plus/plus_entry.dart' show PlusOpenButton;
 
 /// A quiet card on the sky: translucent surface, hairline border, 26 dp
 /// radius (design system "Cards"). One screen-reader container.
@@ -246,7 +248,7 @@ class MonthInStarsCard extends StatelessWidget {
 
 /// A Plus-only extra shown locked (PRD 14-states "Plus preview": a blurred
 /// deeper chart; the basic sky stays free). Calm copy, no countdown, no
-/// pressure; the paywall arrives with F12.
+/// pressure; the way to the F12 paywall follows its P0 rules (PlusOpenButton).
 class PlusLocked extends StatelessWidget {
   const PlusLocked({super.key, required this.message});
 
@@ -304,6 +306,9 @@ class PlusLocked extends StatelessWidget {
                     message,
                     style: t.bodyMedium?.copyWith(color: AuraColors.textSoft),
                   ),
+                  // F12: the way to Aura Plus, under the paywall rules
+                  // (nothing at an excluded moment; the free sky stays).
+                  const PlusOpenButton(surface: PaywallSurface.insightsDepth),
                 ],
               ),
             ),

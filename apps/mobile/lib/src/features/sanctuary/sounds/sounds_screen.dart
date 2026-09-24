@@ -9,6 +9,8 @@ import '../../../core/entitlements/plus.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/aura_tokens.dart';
 import '../../../core/widgets/inline_notice.dart';
+import '../../plus/paywall_gate.dart' show PaywallSurface;
+import '../../plus/plus_entry.dart' show showPlusNoteSheet;
 import '../activity_scaffold.dart';
 import 'saved_mixes.dart';
 import 'sounds_controller.dart';
@@ -16,6 +18,7 @@ import 'sounds_library.dart';
 import 'stem_labels.dart';
 import 'stem_manifest.dart';
 import 'stem_store.dart';
+import 'wind_down_reminder.dart';
 
 /// Whether downloads can run now (tests set it directly).
 final soundsOnlineProvider = Provider<bool>(
@@ -78,8 +81,13 @@ class _SoundsScreenState extends ConsumerState<SoundsScreen> {
       case SoundsToggle.added || SoundsToggle.removed:
         AuraHaptics.selection();
       case SoundsToggle.locked:
-        // F12 owns the Plus explainer; until then, one calm line.
-        _note(_l.sounds_plusNote);
+        // F12 Plus explainer (REQ-PAY-11): straight after a Storm/Rain
+        // check-in or in a crisis flow it says only "Part of Aura Plus".
+        await showPlusNoteSheet(
+          context,
+          surface: PaywallSurface.soundsStem,
+          explainer: _l.plus_explainerSounds,
+        );
       case SoundsToggle.full:
         _note(_l.sounds_full);
       case SoundsToggle.busy:
@@ -294,8 +302,7 @@ class _SoundsScreenState extends ConsumerState<SoundsScreen> {
               ],
             ),
           ),
-          if (!sounds.isIdle)
-            _TransportBar(state: sounds, onTimer: _pickTimer),
+          if (!sounds.isIdle) _TransportBar(state: sounds, onTimer: _pickTimer),
         ],
       ),
     );
@@ -383,10 +390,7 @@ class _WindDownCard extends StatelessWidget {
           Row(
             children: [
               const ExcludeSemantics(
-                child: Icon(
-                  Icons.bedtime_outlined,
-                  color: AuraColors.lavender,
-                ),
+                child: Icon(Icons.bedtime_outlined, color: AuraColors.lavender),
               ),
               const SizedBox(width: AuraSpace.s),
               Expanded(
@@ -410,6 +414,8 @@ class _WindDownCard extends StatelessWidget {
               child: Text(l.sounds_windDownBegin),
             ),
           ],
+          // The opt-in wind-down reminder (F14, REQ-NTF-04).
+          const WindDownReminderRow(),
         ],
       ),
     );

@@ -227,6 +227,24 @@ class FakeRoomsApi implements RoomsApi {
     );
   }
 
+  /// Tonight's intention (Milestone B): the room total the fake answers.
+  int intentionHolds = 0;
+
+  @override
+  Future<IntentionHoldResult> holdIntention(String roomId) async {
+    await _call('holdIntention');
+    final room = detail['room'] as Map<String, dynamic>;
+    final intention = room['intention'] as Map<String, dynamic>?;
+    intentionHolds += 1;
+    return IntentionHoldResult(
+      intention: RoomIntention(
+        key: (intention?['key'] as String?) ?? 'gentle_with_myself',
+        holds: intentionHolds,
+        open: true,
+      ),
+    );
+  }
+
   @override
   Future<bool> leave(String roomId) async {
     await _call('leave');

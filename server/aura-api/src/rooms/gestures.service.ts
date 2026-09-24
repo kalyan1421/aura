@@ -9,6 +9,7 @@ import { insertReport } from '../safety/reports.core';
 import { anyMinor, assertRoomAccess, blockBetween, isHiddenAccount, isShadowMuted, loadSafetyConfig } from '../safety/safety.queries';
 import { Broadcast } from './broadcast';
 import { gestureLimitBreach, shouldShadowMute, type SenderHistory } from './gesture-limits';
+import { addGestureLight } from './lanterns';
 import { loadMatchingConfig, type MatchingConfig } from './matching-config';
 import { acceptsGestures } from './room-state';
 import type { GestureDrop } from './room-types';
@@ -110,6 +111,10 @@ export class GesturesService {
             g.created_at,
           );
         }
+        // Room lantern (Milestone B, REQ-ROOM-13): only delivered, within-limit gestures from a member add light —
+        // over-limit, shadow-muted, blocked-pair, muted and hidden ones returned or were dropped above. Room total
+        // only; `room_state` goes out when the level rises. The sender's answer never changes.
+        await addGestureLight(tx, roomId, now, cfg);
       }
       return { gestureId: g.id, at: g.created_at.toISOString() };
     });

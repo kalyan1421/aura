@@ -10,8 +10,8 @@ import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
-import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
+import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
 import '../shell/app_shell.dart'
     show ShellSettingsButton, isShellTabRoot, openCheckIn;
@@ -52,7 +52,8 @@ class InsightsScreen extends ConsumerWidget {
         // The tab's first screen: Settings instead of Back (app shell).
         leading: isShellTabRoot(context) ? const ShellSettingsButton() : null,
       ),
-      body: CosmicBackground(
+      body: PersonalSkyBackground(
+        // F12: the person's own sky theme
         child: !model.loaded
             ? const SizedBox.shrink() // local read: a blink at most
             : _Body(model: model, localeTag: localeTag),

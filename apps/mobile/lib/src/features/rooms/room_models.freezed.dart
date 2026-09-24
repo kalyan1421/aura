@@ -310,11 +310,597 @@ as DateTime,
 
 
 /// @nodoc
+mixin _$RoomLantern implements DiagnosticableTreeMixin {
+
+ int get level; int get maxLevel;/// Taking light now (the room is in Lantern Hour). Afterwards it is
+/// "Tonight's lantern", kept at the level it reached.
+ bool get active;
+/// Create a copy of RoomLantern
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RoomLanternCopyWith<RoomLantern> get copyWith => _$RoomLanternCopyWithImpl<RoomLantern>(this as RoomLantern, _$identity);
+
+  /// Serializes this RoomLantern to a JSON map.
+  Map<String, dynamic> toJson();
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as RoomLantern;
+  properties
+    ..add(DiagnosticsProperty('type', 'RoomLantern'))
+    ..add(DiagnosticsProperty('level', _this.level))..add(DiagnosticsProperty('maxLevel', _this.maxLevel))..add(DiagnosticsProperty('active', _this.active));
+}
+
+@override
+bool operator ==(Object other) {
+  final _this = this as RoomLantern;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomLantern&&(identical(other.level, _this.level) || other.level == _this.level)&&(identical(other.maxLevel, _this.maxLevel) || other.maxLevel == _this.maxLevel)&&(identical(other.active, _this.active) || other.active == _this.active));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as RoomLantern;
+  return Object.hash(runtimeType,_this.level,_this.maxLevel,_this.active);
+}
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  final _this = this as RoomLantern;
+  return 'RoomLantern(level: ${_this.level}, maxLevel: ${_this.maxLevel}, active: ${_this.active})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RoomLanternCopyWith<$Res>  {
+  factory $RoomLanternCopyWith(RoomLantern value, $Res Function(RoomLantern) _then) = _$RoomLanternCopyWithImpl;
+@useResult
+$Res call({
+ int level, int maxLevel, bool active
+});
+
+
+
+
+}
+/// @nodoc
+class _$RoomLanternCopyWithImpl<$Res>
+    implements $RoomLanternCopyWith<$Res> {
+  _$RoomLanternCopyWithImpl(this._self, this._then);
+
+  final RoomLantern _self;
+  final $Res Function(RoomLantern) _then;
+
+/// Create a copy of RoomLantern
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? level = null,Object? maxLevel = null,Object? active = null,}) {
+  return _then(RoomLantern(
+level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,maxLevel: null == maxLevel ? _self.maxLevel : maxLevel // ignore: cast_nullable_to_non_nullable
+as int,active: null == active ? _self.active : active // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [RoomLantern].
+extension RoomLanternPatterns on RoomLantern {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RoomLantern value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _RoomLantern() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RoomLantern value)  $default,){
+final _that = this;
+switch (_that) {
+case _RoomLantern():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RoomLantern value)?  $default,){
+final _that = this;
+switch (_that) {
+case _RoomLantern() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int level,  int maxLevel,  bool active)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _RoomLantern() when $default != null:
+return $default(_that.level,_that.maxLevel,_that.active);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int level,  int maxLevel,  bool active)  $default,) {final _that = this;
+switch (_that) {
+case _RoomLantern():
+return $default(_that.level,_that.maxLevel,_that.active);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int level,  int maxLevel,  bool active)?  $default,) {final _that = this;
+switch (_that) {
+case _RoomLantern() when $default != null:
+return $default(_that.level,_that.maxLevel,_that.active);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _RoomLantern extends RoomLantern with DiagnosticableTreeMixin {
+  const _RoomLantern({this.level = 0, this.maxLevel = 5, this.active = false}): super._();
+  factory _RoomLantern.fromJson(Map<String, dynamic> json) => _$RoomLanternFromJson(json);
+
+@override@JsonKey() final  int level;
+@override@JsonKey() final  int maxLevel;
+/// Taking light now (the room is in Lantern Hour). Afterwards it is
+/// "Tonight's lantern", kept at the level it reached.
+@override@JsonKey() final  bool active;
+
+/// Create a copy of RoomLantern
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RoomLanternCopyWith<_RoomLantern> get copyWith => __$RoomLanternCopyWithImpl<_RoomLantern>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$RoomLanternToJson(this, );
+}
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+    ..add(DiagnosticsProperty('type', 'RoomLantern'))
+    ..add(DiagnosticsProperty('level', level))..add(DiagnosticsProperty('maxLevel', maxLevel))..add(DiagnosticsProperty('active', active));
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomLantern&&(identical(other.level, level) || other.level == level)&&(identical(other.maxLevel, maxLevel) || other.maxLevel == maxLevel)&&(identical(other.active, active) || other.active == active));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,level,maxLevel,active);
+}
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+    return 'RoomLantern(level: $level, maxLevel: $maxLevel, active: $active)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RoomLanternCopyWith<$Res> implements $RoomLanternCopyWith<$Res> {
+  factory _$RoomLanternCopyWith(_RoomLantern value, $Res Function(_RoomLantern) _then) = __$RoomLanternCopyWithImpl;
+@override @useResult
+$Res call({
+ int level, int maxLevel, bool active
+});
+
+
+
+
+}
+/// @nodoc
+class __$RoomLanternCopyWithImpl<$Res>
+    implements _$RoomLanternCopyWith<$Res> {
+  __$RoomLanternCopyWithImpl(this._self, this._then);
+
+  final _RoomLantern _self;
+  final $Res Function(_RoomLantern) _then;
+
+/// Create a copy of RoomLantern
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? level = null,Object? maxLevel = null,Object? active = null,}) {
+  return _then(_RoomLantern(
+level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
+as int,maxLevel: null == maxLevel ? _self.maxLevel : maxLevel // ignore: cast_nullable_to_non_nullable
+as int,active: null == active ? _self.active : active // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$RoomIntention implements DiagnosticableTreeMixin {
+
+ String get key; int get holds;/// Holding is possible now (Lantern Hour); afterwards read-only.
+ bool get open;
+/// Create a copy of RoomIntention
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$RoomIntentionCopyWith<RoomIntention> get copyWith => _$RoomIntentionCopyWithImpl<RoomIntention>(this as RoomIntention, _$identity);
+
+  /// Serializes this RoomIntention to a JSON map.
+  Map<String, dynamic> toJson();
+
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as RoomIntention;
+  properties
+    ..add(DiagnosticsProperty('type', 'RoomIntention'))
+    ..add(DiagnosticsProperty('key', _this.key))..add(DiagnosticsProperty('holds', _this.holds))..add(DiagnosticsProperty('open', _this.open));
+}
+
+@override
+bool operator ==(Object other) {
+  final _this = this as RoomIntention;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomIntention&&(identical(other.key, _this.key) || other.key == _this.key)&&(identical(other.holds, _this.holds) || other.holds == _this.holds)&&(identical(other.open, _this.open) || other.open == _this.open));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+  final _this = this as RoomIntention;
+  return Object.hash(runtimeType,_this.key,_this.holds,_this.open);
+}
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+  final _this = this as RoomIntention;
+  return 'RoomIntention(key: ${_this.key}, holds: ${_this.holds}, open: ${_this.open})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $RoomIntentionCopyWith<$Res>  {
+  factory $RoomIntentionCopyWith(RoomIntention value, $Res Function(RoomIntention) _then) = _$RoomIntentionCopyWithImpl;
+@useResult
+$Res call({
+ String key, int holds, bool open
+});
+
+
+
+
+}
+/// @nodoc
+class _$RoomIntentionCopyWithImpl<$Res>
+    implements $RoomIntentionCopyWith<$Res> {
+  _$RoomIntentionCopyWithImpl(this._self, this._then);
+
+  final RoomIntention _self;
+  final $Res Function(RoomIntention) _then;
+
+/// Create a copy of RoomIntention
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? key = null,Object? holds = null,Object? open = null,}) {
+  return _then(RoomIntention(
+key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String,holds: null == holds ? _self.holds : holds // ignore: cast_nullable_to_non_nullable
+as int,open: null == open ? _self.open : open // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [RoomIntention].
+extension RoomIntentionPatterns on RoomIntention {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RoomIntention value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _RoomIntention() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RoomIntention value)  $default,){
+final _that = this;
+switch (_that) {
+case _RoomIntention():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RoomIntention value)?  $default,){
+final _that = this;
+switch (_that) {
+case _RoomIntention() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String key,  int holds,  bool open)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _RoomIntention() when $default != null:
+return $default(_that.key,_that.holds,_that.open);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String key,  int holds,  bool open)  $default,) {final _that = this;
+switch (_that) {
+case _RoomIntention():
+return $default(_that.key,_that.holds,_that.open);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String key,  int holds,  bool open)?  $default,) {final _that = this;
+switch (_that) {
+case _RoomIntention() when $default != null:
+return $default(_that.key,_that.holds,_that.open);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _RoomIntention with DiagnosticableTreeMixin implements RoomIntention {
+  const _RoomIntention({required this.key, this.holds = 0, this.open = false});
+  factory _RoomIntention.fromJson(Map<String, dynamic> json) => _$RoomIntentionFromJson(json);
+
+@override final  String key;
+@override@JsonKey() final  int holds;
+/// Holding is possible now (Lantern Hour); afterwards read-only.
+@override@JsonKey() final  bool open;
+
+/// Create a copy of RoomIntention
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$RoomIntentionCopyWith<_RoomIntention> get copyWith => __$RoomIntentionCopyWithImpl<_RoomIntention>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$RoomIntentionToJson(this, );
+}
+@override
+void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+    ..add(DiagnosticsProperty('type', 'RoomIntention'))
+    ..add(DiagnosticsProperty('key', key))..add(DiagnosticsProperty('holds', holds))..add(DiagnosticsProperty('open', open));
+}
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomIntention&&(identical(other.key, key) || other.key == key)&&(identical(other.holds, holds) || other.holds == holds)&&(identical(other.open, open) || other.open == open));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode {
+    return Object.hash(runtimeType,key,holds,open);
+}
+
+@override
+String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+    return 'RoomIntention(key: $key, holds: $holds, open: $open)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$RoomIntentionCopyWith<$Res> implements $RoomIntentionCopyWith<$Res> {
+  factory _$RoomIntentionCopyWith(_RoomIntention value, $Res Function(_RoomIntention) _then) = __$RoomIntentionCopyWithImpl;
+@override @useResult
+$Res call({
+ String key, int holds, bool open
+});
+
+
+
+
+}
+/// @nodoc
+class __$RoomIntentionCopyWithImpl<$Res>
+    implements _$RoomIntentionCopyWith<$Res> {
+  __$RoomIntentionCopyWithImpl(this._self, this._then);
+
+  final _RoomIntention _self;
+  final $Res Function(_RoomIntention) _then;
+
+/// Create a copy of RoomIntention
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? key = null,Object? holds = null,Object? open = null,}) {
+  return _then(_RoomIntention(
+key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
+as String,holds: null == holds ? _self.holds : holds // ignore: cast_nullable_to_non_nullable
+as int,open: null == open ? _self.open : open // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$RoomInfo implements DiagnosticableTreeMixin {
 
  String get roomId; String get quadrant; String get theme; String get state; bool get readOnly; DateTime get createdAt;/// No new members after this ("closing").
  DateTime get joinsCloseAt;/// Read-only memory from here ("becomes a memory at …").
- DateTime get memoryAt; DateTime get purgeAt; LanternHour get lanternHour;
+ DateTime get memoryAt; DateTime get purgeAt; LanternHour get lanternHour;/// Milestone B: null before the room's first Lantern Hour (or when the
+/// server hides it).
+ RoomLantern? get lantern; RoomIntention? get intention;
 /// Create a copy of RoomInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -329,26 +915,26 @@ void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   final _this = this as RoomInfo;
   properties
     ..add(DiagnosticsProperty('type', 'RoomInfo'))
-    ..add(DiagnosticsProperty('roomId', _this.roomId))..add(DiagnosticsProperty('quadrant', _this.quadrant))..add(DiagnosticsProperty('theme', _this.theme))..add(DiagnosticsProperty('state', _this.state))..add(DiagnosticsProperty('readOnly', _this.readOnly))..add(DiagnosticsProperty('createdAt', _this.createdAt))..add(DiagnosticsProperty('joinsCloseAt', _this.joinsCloseAt))..add(DiagnosticsProperty('memoryAt', _this.memoryAt))..add(DiagnosticsProperty('purgeAt', _this.purgeAt))..add(DiagnosticsProperty('lanternHour', _this.lanternHour));
+    ..add(DiagnosticsProperty('roomId', _this.roomId))..add(DiagnosticsProperty('quadrant', _this.quadrant))..add(DiagnosticsProperty('theme', _this.theme))..add(DiagnosticsProperty('state', _this.state))..add(DiagnosticsProperty('readOnly', _this.readOnly))..add(DiagnosticsProperty('createdAt', _this.createdAt))..add(DiagnosticsProperty('joinsCloseAt', _this.joinsCloseAt))..add(DiagnosticsProperty('memoryAt', _this.memoryAt))..add(DiagnosticsProperty('purgeAt', _this.purgeAt))..add(DiagnosticsProperty('lanternHour', _this.lanternHour))..add(DiagnosticsProperty('lantern', _this.lantern))..add(DiagnosticsProperty('intention', _this.intention));
 }
 
 @override
 bool operator ==(Object other) {
   final _this = this as RoomInfo;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomInfo&&(identical(other.roomId, _this.roomId) || other.roomId == _this.roomId)&&(identical(other.quadrant, _this.quadrant) || other.quadrant == _this.quadrant)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.state, _this.state) || other.state == _this.state)&&(identical(other.readOnly, _this.readOnly) || other.readOnly == _this.readOnly)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.joinsCloseAt, _this.joinsCloseAt) || other.joinsCloseAt == _this.joinsCloseAt)&&(identical(other.memoryAt, _this.memoryAt) || other.memoryAt == _this.memoryAt)&&(identical(other.purgeAt, _this.purgeAt) || other.purgeAt == _this.purgeAt)&&(identical(other.lanternHour, _this.lanternHour) || other.lanternHour == _this.lanternHour));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomInfo&&(identical(other.roomId, _this.roomId) || other.roomId == _this.roomId)&&(identical(other.quadrant, _this.quadrant) || other.quadrant == _this.quadrant)&&(identical(other.theme, _this.theme) || other.theme == _this.theme)&&(identical(other.state, _this.state) || other.state == _this.state)&&(identical(other.readOnly, _this.readOnly) || other.readOnly == _this.readOnly)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.joinsCloseAt, _this.joinsCloseAt) || other.joinsCloseAt == _this.joinsCloseAt)&&(identical(other.memoryAt, _this.memoryAt) || other.memoryAt == _this.memoryAt)&&(identical(other.purgeAt, _this.purgeAt) || other.purgeAt == _this.purgeAt)&&(identical(other.lanternHour, _this.lanternHour) || other.lanternHour == _this.lanternHour)&&(identical(other.lantern, _this.lantern) || other.lantern == _this.lantern)&&(identical(other.intention, _this.intention) || other.intention == _this.intention));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as RoomInfo;
-  return Object.hash(runtimeType,_this.roomId,_this.quadrant,_this.theme,_this.state,_this.readOnly,_this.createdAt,_this.joinsCloseAt,_this.memoryAt,_this.purgeAt,_this.lanternHour);
+  return Object.hash(runtimeType,_this.roomId,_this.quadrant,_this.theme,_this.state,_this.readOnly,_this.createdAt,_this.joinsCloseAt,_this.memoryAt,_this.purgeAt,_this.lanternHour,_this.lantern,_this.intention);
 }
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   final _this = this as RoomInfo;
-  return 'RoomInfo(roomId: ${_this.roomId}, quadrant: ${_this.quadrant}, theme: ${_this.theme}, state: ${_this.state}, readOnly: ${_this.readOnly}, createdAt: ${_this.createdAt}, joinsCloseAt: ${_this.joinsCloseAt}, memoryAt: ${_this.memoryAt}, purgeAt: ${_this.purgeAt}, lanternHour: ${_this.lanternHour})';
+  return 'RoomInfo(roomId: ${_this.roomId}, quadrant: ${_this.quadrant}, theme: ${_this.theme}, state: ${_this.state}, readOnly: ${_this.readOnly}, createdAt: ${_this.createdAt}, joinsCloseAt: ${_this.joinsCloseAt}, memoryAt: ${_this.memoryAt}, purgeAt: ${_this.purgeAt}, lanternHour: ${_this.lanternHour}, lantern: ${_this.lantern}, intention: ${_this.intention})';
 }
 
 
@@ -359,11 +945,11 @@ abstract mixin class $RoomInfoCopyWith<$Res>  {
   factory $RoomInfoCopyWith(RoomInfo value, $Res Function(RoomInfo) _then) = _$RoomInfoCopyWithImpl;
 @useResult
 $Res call({
- String roomId, String quadrant, String theme, String state, bool readOnly, DateTime createdAt, DateTime joinsCloseAt, DateTime memoryAt, DateTime purgeAt, LanternHour lanternHour
+ String roomId, String quadrant, String theme, String state, bool readOnly, DateTime createdAt, DateTime joinsCloseAt, DateTime memoryAt, DateTime purgeAt, LanternHour lanternHour, RoomLantern? lantern, RoomIntention? intention
 });
 
 
-$LanternHourCopyWith<$Res> get lanternHour;
+$LanternHourCopyWith<$Res> get lanternHour;$RoomLanternCopyWith<$Res>? get lantern;$RoomIntentionCopyWith<$Res>? get intention;
 
 }
 /// @nodoc
@@ -376,7 +962,7 @@ class _$RoomInfoCopyWithImpl<$Res>
 
 /// Create a copy of RoomInfo
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? roomId = null,Object? quadrant = null,Object? theme = null,Object? state = null,Object? readOnly = null,Object? createdAt = null,Object? joinsCloseAt = null,Object? memoryAt = null,Object? purgeAt = null,Object? lanternHour = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? roomId = null,Object? quadrant = null,Object? theme = null,Object? state = null,Object? readOnly = null,Object? createdAt = null,Object? joinsCloseAt = null,Object? memoryAt = null,Object? purgeAt = null,Object? lanternHour = null,Object? lantern = freezed,Object? intention = freezed,}) {
   return _then(RoomInfo(
 roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
 as String,quadrant: null == quadrant ? _self.quadrant : quadrant // ignore: cast_nullable_to_non_nullable
@@ -388,7 +974,9 @@ as DateTime,joinsCloseAt: null == joinsCloseAt ? _self.joinsCloseAt : joinsClose
 as DateTime,memoryAt: null == memoryAt ? _self.memoryAt : memoryAt // ignore: cast_nullable_to_non_nullable
 as DateTime,purgeAt: null == purgeAt ? _self.purgeAt : purgeAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lanternHour: null == lanternHour ? _self.lanternHour : lanternHour // ignore: cast_nullable_to_non_nullable
-as LanternHour,
+as LanternHour,lantern: freezed == lantern ? _self.lantern : lantern // ignore: cast_nullable_to_non_nullable
+as RoomLantern?,intention: freezed == intention ? _self.intention : intention // ignore: cast_nullable_to_non_nullable
+as RoomIntention?,
   ));
 }
 /// Create a copy of RoomInfo
@@ -399,6 +987,30 @@ $LanternHourCopyWith<$Res> get lanternHour {
   
   return $LanternHourCopyWith<$Res>(_self.lanternHour, (value) {
     return _then(_self.copyWith(lanternHour: value));
+  });
+}/// Create a copy of RoomInfo
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RoomLanternCopyWith<$Res>? get lantern {
+    if (_self.lantern == null) {
+    return null;
+  }
+
+  return $RoomLanternCopyWith<$Res>(_self.lantern!, (value) {
+    return _then(_self.copyWith(lantern: value));
+  });
+}/// Create a copy of RoomInfo
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RoomIntentionCopyWith<$Res>? get intention {
+    if (_self.intention == null) {
+    return null;
+  }
+
+  return $RoomIntentionCopyWith<$Res>(_self.intention!, (value) {
+    return _then(_self.copyWith(intention: value));
   });
 }
 }
@@ -482,10 +1094,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour,  RoomLantern? lantern,  RoomIntention? intention)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomInfo() when $default != null:
-return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour);case _:
+return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour,_that.lantern,_that.intention);case _:
   return orElse();
 
 }
@@ -503,10 +1115,10 @@ return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOn
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour,  RoomLantern? lantern,  RoomIntention? intention)  $default,) {final _that = this;
 switch (_that) {
 case _RoomInfo():
-return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour);case _:
+return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour,_that.lantern,_that.intention);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -523,10 +1135,10 @@ return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOn
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String roomId,  String quadrant,  String theme,  String state,  bool readOnly,  DateTime createdAt,  DateTime joinsCloseAt,  DateTime memoryAt,  DateTime purgeAt,  LanternHour lanternHour,  RoomLantern? lantern,  RoomIntention? intention)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomInfo() when $default != null:
-return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour);case _:
+return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOnly,_that.createdAt,_that.joinsCloseAt,_that.memoryAt,_that.purgeAt,_that.lanternHour,_that.lantern,_that.intention);case _:
   return null;
 
 }
@@ -538,7 +1150,7 @@ return $default(_that.roomId,_that.quadrant,_that.theme,_that.state,_that.readOn
 @JsonSerializable()
 
 class _RoomInfo extends RoomInfo with DiagnosticableTreeMixin {
-  const _RoomInfo({required this.roomId, required this.quadrant, this.theme = '', this.state = 'open', this.readOnly = false, required this.createdAt, required this.joinsCloseAt, required this.memoryAt, required this.purgeAt, required this.lanternHour}): super._();
+  const _RoomInfo({required this.roomId, required this.quadrant, this.theme = '', this.state = 'open', this.readOnly = false, required this.createdAt, required this.joinsCloseAt, required this.memoryAt, required this.purgeAt, required this.lanternHour, this.lantern, this.intention}): super._();
   factory _RoomInfo.fromJson(Map<String, dynamic> json) => _$RoomInfoFromJson(json);
 
 @override final  String roomId;
@@ -553,6 +1165,10 @@ class _RoomInfo extends RoomInfo with DiagnosticableTreeMixin {
 @override final  DateTime memoryAt;
 @override final  DateTime purgeAt;
 @override final  LanternHour lanternHour;
+/// Milestone B: null before the room's first Lantern Hour (or when the
+/// server hides it).
+@override final  RoomLantern? lantern;
+@override final  RoomIntention? intention;
 
 /// Create a copy of RoomInfo
 /// with the given fields replaced by the non-null parameter values.
@@ -568,23 +1184,23 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
     ..add(DiagnosticsProperty('type', 'RoomInfo'))
-    ..add(DiagnosticsProperty('roomId', roomId))..add(DiagnosticsProperty('quadrant', quadrant))..add(DiagnosticsProperty('theme', theme))..add(DiagnosticsProperty('state', state))..add(DiagnosticsProperty('readOnly', readOnly))..add(DiagnosticsProperty('createdAt', createdAt))..add(DiagnosticsProperty('joinsCloseAt', joinsCloseAt))..add(DiagnosticsProperty('memoryAt', memoryAt))..add(DiagnosticsProperty('purgeAt', purgeAt))..add(DiagnosticsProperty('lanternHour', lanternHour));
+    ..add(DiagnosticsProperty('roomId', roomId))..add(DiagnosticsProperty('quadrant', quadrant))..add(DiagnosticsProperty('theme', theme))..add(DiagnosticsProperty('state', state))..add(DiagnosticsProperty('readOnly', readOnly))..add(DiagnosticsProperty('createdAt', createdAt))..add(DiagnosticsProperty('joinsCloseAt', joinsCloseAt))..add(DiagnosticsProperty('memoryAt', memoryAt))..add(DiagnosticsProperty('purgeAt', purgeAt))..add(DiagnosticsProperty('lanternHour', lanternHour))..add(DiagnosticsProperty('lantern', lantern))..add(DiagnosticsProperty('intention', intention));
 }
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomInfo&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.quadrant, quadrant) || other.quadrant == quadrant)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.state, state) || other.state == state)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.joinsCloseAt, joinsCloseAt) || other.joinsCloseAt == joinsCloseAt)&&(identical(other.memoryAt, memoryAt) || other.memoryAt == memoryAt)&&(identical(other.purgeAt, purgeAt) || other.purgeAt == purgeAt)&&(identical(other.lanternHour, lanternHour) || other.lanternHour == lanternHour));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomInfo&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.quadrant, quadrant) || other.quadrant == quadrant)&&(identical(other.theme, theme) || other.theme == theme)&&(identical(other.state, state) || other.state == state)&&(identical(other.readOnly, readOnly) || other.readOnly == readOnly)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.joinsCloseAt, joinsCloseAt) || other.joinsCloseAt == joinsCloseAt)&&(identical(other.memoryAt, memoryAt) || other.memoryAt == memoryAt)&&(identical(other.purgeAt, purgeAt) || other.purgeAt == purgeAt)&&(identical(other.lanternHour, lanternHour) || other.lanternHour == lanternHour)&&(identical(other.lantern, lantern) || other.lantern == lantern)&&(identical(other.intention, intention) || other.intention == intention));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,roomId,quadrant,theme,state,readOnly,createdAt,joinsCloseAt,memoryAt,purgeAt,lanternHour);
+    return Object.hash(runtimeType,roomId,quadrant,theme,state,readOnly,createdAt,joinsCloseAt,memoryAt,purgeAt,lanternHour,lantern,intention);
 }
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-    return 'RoomInfo(roomId: $roomId, quadrant: $quadrant, theme: $theme, state: $state, readOnly: $readOnly, createdAt: $createdAt, joinsCloseAt: $joinsCloseAt, memoryAt: $memoryAt, purgeAt: $purgeAt, lanternHour: $lanternHour)';
+    return 'RoomInfo(roomId: $roomId, quadrant: $quadrant, theme: $theme, state: $state, readOnly: $readOnly, createdAt: $createdAt, joinsCloseAt: $joinsCloseAt, memoryAt: $memoryAt, purgeAt: $purgeAt, lanternHour: $lanternHour, lantern: $lantern, intention: $intention)';
 }
 
 
@@ -595,11 +1211,11 @@ abstract mixin class _$RoomInfoCopyWith<$Res> implements $RoomInfoCopyWith<$Res>
   factory _$RoomInfoCopyWith(_RoomInfo value, $Res Function(_RoomInfo) _then) = __$RoomInfoCopyWithImpl;
 @override @useResult
 $Res call({
- String roomId, String quadrant, String theme, String state, bool readOnly, DateTime createdAt, DateTime joinsCloseAt, DateTime memoryAt, DateTime purgeAt, LanternHour lanternHour
+ String roomId, String quadrant, String theme, String state, bool readOnly, DateTime createdAt, DateTime joinsCloseAt, DateTime memoryAt, DateTime purgeAt, LanternHour lanternHour, RoomLantern? lantern, RoomIntention? intention
 });
 
 
-@override $LanternHourCopyWith<$Res> get lanternHour;
+@override $LanternHourCopyWith<$Res> get lanternHour;@override $RoomLanternCopyWith<$Res>? get lantern;@override $RoomIntentionCopyWith<$Res>? get intention;
 
 }
 /// @nodoc
@@ -612,7 +1228,7 @@ class __$RoomInfoCopyWithImpl<$Res>
 
 /// Create a copy of RoomInfo
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? roomId = null,Object? quadrant = null,Object? theme = null,Object? state = null,Object? readOnly = null,Object? createdAt = null,Object? joinsCloseAt = null,Object? memoryAt = null,Object? purgeAt = null,Object? lanternHour = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? roomId = null,Object? quadrant = null,Object? theme = null,Object? state = null,Object? readOnly = null,Object? createdAt = null,Object? joinsCloseAt = null,Object? memoryAt = null,Object? purgeAt = null,Object? lanternHour = null,Object? lantern = freezed,Object? intention = freezed,}) {
   return _then(_RoomInfo(
 roomId: null == roomId ? _self.roomId : roomId // ignore: cast_nullable_to_non_nullable
 as String,quadrant: null == quadrant ? _self.quadrant : quadrant // ignore: cast_nullable_to_non_nullable
@@ -624,7 +1240,9 @@ as DateTime,joinsCloseAt: null == joinsCloseAt ? _self.joinsCloseAt : joinsClose
 as DateTime,memoryAt: null == memoryAt ? _self.memoryAt : memoryAt // ignore: cast_nullable_to_non_nullable
 as DateTime,purgeAt: null == purgeAt ? _self.purgeAt : purgeAt // ignore: cast_nullable_to_non_nullable
 as DateTime,lanternHour: null == lanternHour ? _self.lanternHour : lanternHour // ignore: cast_nullable_to_non_nullable
-as LanternHour,
+as LanternHour,lantern: freezed == lantern ? _self.lantern : lantern // ignore: cast_nullable_to_non_nullable
+as RoomLantern?,intention: freezed == intention ? _self.intention : intention // ignore: cast_nullable_to_non_nullable
+as RoomIntention?,
   ));
 }
 
@@ -636,6 +1254,30 @@ $LanternHourCopyWith<$Res> get lanternHour {
   
   return $LanternHourCopyWith<$Res>(_self.lanternHour, (value) {
     return _then(_self.copyWith(lanternHour: value));
+  });
+}/// Create a copy of RoomInfo
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RoomLanternCopyWith<$Res>? get lantern {
+    if (_self.lantern == null) {
+    return null;
+  }
+
+  return $RoomLanternCopyWith<$Res>(_self.lantern!, (value) {
+    return _then(_self.copyWith(lantern: value));
+  });
+}/// Create a copy of RoomInfo
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$RoomIntentionCopyWith<$Res>? get intention {
+    if (_self.intention == null) {
+    return null;
+  }
+
+  return $RoomIntentionCopyWith<$Res>(_self.intention!, (value) {
+    return _then(_self.copyWith(intention: value));
   });
 }
 }
@@ -2432,7 +3074,8 @@ mixin _$RoomMe implements DiagnosticableTreeMixin {
 
  String get memberId; String get pseudonym; String get moodChip; Silhouette? get silhouette; DateTime get joinedAt;/// Show "Did you feel less alone?" on exit (≥ 30 s here, not asked in
 /// the last 24 h).
- bool get surveyEligible;
+ bool get surveyEligible;/// You hold tonight's intention (only you ever see this).
+ bool get holdingIntention;
 /// Create a copy of RoomMe
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2447,26 +3090,26 @@ void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   final _this = this as RoomMe;
   properties
     ..add(DiagnosticsProperty('type', 'RoomMe'))
-    ..add(DiagnosticsProperty('memberId', _this.memberId))..add(DiagnosticsProperty('pseudonym', _this.pseudonym))..add(DiagnosticsProperty('moodChip', _this.moodChip))..add(DiagnosticsProperty('silhouette', _this.silhouette))..add(DiagnosticsProperty('joinedAt', _this.joinedAt))..add(DiagnosticsProperty('surveyEligible', _this.surveyEligible));
+    ..add(DiagnosticsProperty('memberId', _this.memberId))..add(DiagnosticsProperty('pseudonym', _this.pseudonym))..add(DiagnosticsProperty('moodChip', _this.moodChip))..add(DiagnosticsProperty('silhouette', _this.silhouette))..add(DiagnosticsProperty('joinedAt', _this.joinedAt))..add(DiagnosticsProperty('surveyEligible', _this.surveyEligible))..add(DiagnosticsProperty('holdingIntention', _this.holdingIntention));
 }
 
 @override
 bool operator ==(Object other) {
   final _this = this as RoomMe;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomMe&&(identical(other.memberId, _this.memberId) || other.memberId == _this.memberId)&&(identical(other.pseudonym, _this.pseudonym) || other.pseudonym == _this.pseudonym)&&(identical(other.moodChip, _this.moodChip) || other.moodChip == _this.moodChip)&&(identical(other.silhouette, _this.silhouette) || other.silhouette == _this.silhouette)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt)&&(identical(other.surveyEligible, _this.surveyEligible) || other.surveyEligible == _this.surveyEligible));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomMe&&(identical(other.memberId, _this.memberId) || other.memberId == _this.memberId)&&(identical(other.pseudonym, _this.pseudonym) || other.pseudonym == _this.pseudonym)&&(identical(other.moodChip, _this.moodChip) || other.moodChip == _this.moodChip)&&(identical(other.silhouette, _this.silhouette) || other.silhouette == _this.silhouette)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt)&&(identical(other.surveyEligible, _this.surveyEligible) || other.surveyEligible == _this.surveyEligible)&&(identical(other.holdingIntention, _this.holdingIntention) || other.holdingIntention == _this.holdingIntention));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as RoomMe;
-  return Object.hash(runtimeType,_this.memberId,_this.pseudonym,_this.moodChip,_this.silhouette,_this.joinedAt,_this.surveyEligible);
+  return Object.hash(runtimeType,_this.memberId,_this.pseudonym,_this.moodChip,_this.silhouette,_this.joinedAt,_this.surveyEligible,_this.holdingIntention);
 }
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
   final _this = this as RoomMe;
-  return 'RoomMe(memberId: ${_this.memberId}, pseudonym: ${_this.pseudonym}, moodChip: ${_this.moodChip}, silhouette: ${_this.silhouette}, joinedAt: ${_this.joinedAt}, surveyEligible: ${_this.surveyEligible})';
+  return 'RoomMe(memberId: ${_this.memberId}, pseudonym: ${_this.pseudonym}, moodChip: ${_this.moodChip}, silhouette: ${_this.silhouette}, joinedAt: ${_this.joinedAt}, surveyEligible: ${_this.surveyEligible}, holdingIntention: ${_this.holdingIntention})';
 }
 
 
@@ -2477,7 +3120,7 @@ abstract mixin class $RoomMeCopyWith<$Res>  {
   factory $RoomMeCopyWith(RoomMe value, $Res Function(RoomMe) _then) = _$RoomMeCopyWithImpl;
 @useResult
 $Res call({
- String memberId, String pseudonym, String moodChip, Silhouette? silhouette, DateTime joinedAt, bool surveyEligible
+ String memberId, String pseudonym, String moodChip, Silhouette? silhouette, DateTime joinedAt, bool surveyEligible, bool holdingIntention
 });
 
 
@@ -2494,7 +3137,7 @@ class _$RoomMeCopyWithImpl<$Res>
 
 /// Create a copy of RoomMe
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? memberId = null,Object? pseudonym = null,Object? moodChip = null,Object? silhouette = freezed,Object? joinedAt = null,Object? surveyEligible = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? memberId = null,Object? pseudonym = null,Object? moodChip = null,Object? silhouette = freezed,Object? joinedAt = null,Object? surveyEligible = null,Object? holdingIntention = null,}) {
   return _then(RoomMe(
 memberId: null == memberId ? _self.memberId : memberId // ignore: cast_nullable_to_non_nullable
 as String,pseudonym: null == pseudonym ? _self.pseudonym : pseudonym // ignore: cast_nullable_to_non_nullable
@@ -2502,6 +3145,7 @@ as String,moodChip: null == moodChip ? _self.moodChip : moodChip // ignore: cast
 as String,silhouette: freezed == silhouette ? _self.silhouette : silhouette // ignore: cast_nullable_to_non_nullable
 as Silhouette?,joinedAt: null == joinedAt ? _self.joinedAt : joinedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,surveyEligible: null == surveyEligible ? _self.surveyEligible : surveyEligible // ignore: cast_nullable_to_non_nullable
+as bool,holdingIntention: null == holdingIntention ? _self.holdingIntention : holdingIntention // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -2599,10 +3243,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible,  bool holdingIntention)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomMe() when $default != null:
-return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible);case _:
+return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible,_that.holdingIntention);case _:
   return orElse();
 
 }
@@ -2620,10 +3264,10 @@ return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible,  bool holdingIntention)  $default,) {final _that = this;
 switch (_that) {
 case _RoomMe():
-return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible);case _:
+return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible,_that.holdingIntention);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2640,10 +3284,10 @@ return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String memberId,  String pseudonym,  String moodChip,  Silhouette? silhouette,  DateTime joinedAt,  bool surveyEligible,  bool holdingIntention)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomMe() when $default != null:
-return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible);case _:
+return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_that.joinedAt,_that.surveyEligible,_that.holdingIntention);case _:
   return null;
 
 }
@@ -2655,7 +3299,7 @@ return $default(_that.memberId,_that.pseudonym,_that.moodChip,_that.silhouette,_
 @JsonSerializable()
 
 class _RoomMe with DiagnosticableTreeMixin implements RoomMe {
-  const _RoomMe({required this.memberId, required this.pseudonym, this.moodChip = '', this.silhouette, required this.joinedAt, this.surveyEligible = false});
+  const _RoomMe({required this.memberId, required this.pseudonym, this.moodChip = '', this.silhouette, required this.joinedAt, this.surveyEligible = false, this.holdingIntention = false});
   factory _RoomMe.fromJson(Map<String, dynamic> json) => _$RoomMeFromJson(json);
 
 @override final  String memberId;
@@ -2666,6 +3310,8 @@ class _RoomMe with DiagnosticableTreeMixin implements RoomMe {
 /// Show "Did you feel less alone?" on exit (≥ 30 s here, not asked in
 /// the last 24 h).
 @override@JsonKey() final  bool surveyEligible;
+/// You hold tonight's intention (only you ever see this).
+@override@JsonKey() final  bool holdingIntention;
 
 /// Create a copy of RoomMe
 /// with the given fields replaced by the non-null parameter values.
@@ -2681,23 +3327,23 @@ Map<String, dynamic> toJson() {
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     properties
     ..add(DiagnosticsProperty('type', 'RoomMe'))
-    ..add(DiagnosticsProperty('memberId', memberId))..add(DiagnosticsProperty('pseudonym', pseudonym))..add(DiagnosticsProperty('moodChip', moodChip))..add(DiagnosticsProperty('silhouette', silhouette))..add(DiagnosticsProperty('joinedAt', joinedAt))..add(DiagnosticsProperty('surveyEligible', surveyEligible));
+    ..add(DiagnosticsProperty('memberId', memberId))..add(DiagnosticsProperty('pseudonym', pseudonym))..add(DiagnosticsProperty('moodChip', moodChip))..add(DiagnosticsProperty('silhouette', silhouette))..add(DiagnosticsProperty('joinedAt', joinedAt))..add(DiagnosticsProperty('surveyEligible', surveyEligible))..add(DiagnosticsProperty('holdingIntention', holdingIntention));
 }
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomMe&&(identical(other.memberId, memberId) || other.memberId == memberId)&&(identical(other.pseudonym, pseudonym) || other.pseudonym == pseudonym)&&(identical(other.moodChip, moodChip) || other.moodChip == moodChip)&&(identical(other.silhouette, silhouette) || other.silhouette == silhouette)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.surveyEligible, surveyEligible) || other.surveyEligible == surveyEligible));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomMe&&(identical(other.memberId, memberId) || other.memberId == memberId)&&(identical(other.pseudonym, pseudonym) || other.pseudonym == pseudonym)&&(identical(other.moodChip, moodChip) || other.moodChip == moodChip)&&(identical(other.silhouette, silhouette) || other.silhouette == silhouette)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt)&&(identical(other.surveyEligible, surveyEligible) || other.surveyEligible == surveyEligible)&&(identical(other.holdingIntention, holdingIntention) || other.holdingIntention == holdingIntention));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,memberId,pseudonym,moodChip,silhouette,joinedAt,surveyEligible);
+    return Object.hash(runtimeType,memberId,pseudonym,moodChip,silhouette,joinedAt,surveyEligible,holdingIntention);
 }
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-    return 'RoomMe(memberId: $memberId, pseudonym: $pseudonym, moodChip: $moodChip, silhouette: $silhouette, joinedAt: $joinedAt, surveyEligible: $surveyEligible)';
+    return 'RoomMe(memberId: $memberId, pseudonym: $pseudonym, moodChip: $moodChip, silhouette: $silhouette, joinedAt: $joinedAt, surveyEligible: $surveyEligible, holdingIntention: $holdingIntention)';
 }
 
 
@@ -2708,7 +3354,7 @@ abstract mixin class _$RoomMeCopyWith<$Res> implements $RoomMeCopyWith<$Res> {
   factory _$RoomMeCopyWith(_RoomMe value, $Res Function(_RoomMe) _then) = __$RoomMeCopyWithImpl;
 @override @useResult
 $Res call({
- String memberId, String pseudonym, String moodChip, Silhouette? silhouette, DateTime joinedAt, bool surveyEligible
+ String memberId, String pseudonym, String moodChip, Silhouette? silhouette, DateTime joinedAt, bool surveyEligible, bool holdingIntention
 });
 
 
@@ -2725,7 +3371,7 @@ class __$RoomMeCopyWithImpl<$Res>
 
 /// Create a copy of RoomMe
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? memberId = null,Object? pseudonym = null,Object? moodChip = null,Object? silhouette = freezed,Object? joinedAt = null,Object? surveyEligible = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? memberId = null,Object? pseudonym = null,Object? moodChip = null,Object? silhouette = freezed,Object? joinedAt = null,Object? surveyEligible = null,Object? holdingIntention = null,}) {
   return _then(_RoomMe(
 memberId: null == memberId ? _self.memberId : memberId // ignore: cast_nullable_to_non_nullable
 as String,pseudonym: null == pseudonym ? _self.pseudonym : pseudonym // ignore: cast_nullable_to_non_nullable
@@ -2733,6 +3379,7 @@ as String,moodChip: null == moodChip ? _self.moodChip : moodChip // ignore: cast
 as String,silhouette: freezed == silhouette ? _self.silhouette : silhouette // ignore: cast_nullable_to_non_nullable
 as Silhouette?,joinedAt: null == joinedAt ? _self.joinedAt : joinedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,surveyEligible: null == surveyEligible ? _self.surveyEligible : surveyEligible // ignore: cast_nullable_to_non_nullable
+as bool,holdingIntention: null == holdingIntention ? _self.holdingIntention : holdingIntention // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

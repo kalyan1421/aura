@@ -227,6 +227,9 @@ class CapsuleRepository {
     required CapsuleContent content,
     required CapsuleUnlock unlock,
     bool hardMoment = false,
+
+    /// Aura Plus (F12, server-validated): no trigger limit, 10-min voice.
+    bool plus = false,
   }) async {
     final existing = await row(id);
     if (existing != null) return existing;
@@ -235,6 +238,7 @@ class CapsuleRepository {
     final tz = _time.timezone;
     _checkUnlock(unlock, now, tz);
     if (unlock is MoodUnlock &&
+        !plus &&
         await activeTriggerCount() >= maxActiveTriggerCapsules) {
       throw const TriggerCapsuleLimitReached();
     }
@@ -245,9 +249,8 @@ class CapsuleRepository {
     final voice = content.voice;
     if (voice != null) {
       files[CapsuleSlots.voice] = voice.path;
-      final d = voice.duration > maxCapsuleVoiceDuration
-          ? maxCapsuleVoiceDuration
-          : voice.duration;
+      final limit = capsuleVoiceLimit(plus: plus);
+      final d = voice.duration > limit ? limit : voice.duration;
       refs.add(
         CapsuleMediaRef(slot: CapsuleSlots.voice, durationMs: d.inMilliseconds),
       );
@@ -423,7 +426,7 @@ class CapsuleRepository {
   /// "Keep for next time": an opened trigger capsule waits for its feeling
   /// again (a new cycle, armed at once; the running cooldown still holds
   /// it). Throws [TriggerCapsuleLimitReached] when 3 others are active.
-  Future<void> rearm(String id) async {
+  Future<void> rearm(String id, {bool plus = false}) async {
     final now = _time.now();
     await _db.transaction(() async {
       final r = await row(id);
@@ -433,7 +436,8 @@ class CapsuleRepository {
           r.openedAt == null) {
         throw const CapsuleNotOpenable();
       }
-      if (await activeTriggerCount(excluding: id) >= maxActiveTriggerCapsules) {
+      if (!plus &&
+          await activeTriggerCount(excluding: id) >= maxActiveTriggerCapsules) {
         throw const TriggerCapsuleLimitReached();
       }
       await (_db.update(_db.capsules)..where((t) => t.id.equals(id))).write(

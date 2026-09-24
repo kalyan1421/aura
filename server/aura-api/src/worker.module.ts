@@ -1,6 +1,7 @@
 import { Controller, Get, HttpStatus, Module, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { AdminWorkerModule } from './admin/paging/paging.worker';
+import { BillingWorkerModule } from './billing/billing.worker';
 import { CapsuleUnlockModule } from './capsules/capsule-unlock.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
@@ -10,6 +11,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { QueuesModule } from './queues/queues.module';
 import { QueuesService } from './queues/queues.service';
 import { ReflectionsWorkerModule } from './reflections/reflections.worker';
+import { RipplesWorkerModule } from './ripples/ripples.worker';
 import { WorkerHostService } from './queues/worker-host.service';
 
 /** `GET /health` on :3311 — redis, db, worker state and the last heartbeat. */
@@ -41,7 +43,9 @@ class WorkerHealthController {
 @Module({
   // AdminWorkerModule: the admin console's pager (30 s tick, repeats / escalation, weekly test page).
   // ReflectionsWorkerModule: F6 (30 s tick: stuck pending → held, memory → expired, pool auto-pause).
-  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule, ReflectionsWorkerModule],
+  // BillingWorkerModule: F12 (10 min tick: trial reminders, notification retries, rolling reconcile; daily voided purchases).
+  // RipplesWorkerModule: F7 (15 s tick: session end, quiet tickets, due room invites, retention).
+  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule, ReflectionsWorkerModule, RipplesWorkerModule, BillingWorkerModule],
   controllers: [WorkerHealthController],
   providers: [WorkerHostService],
 })

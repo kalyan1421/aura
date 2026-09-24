@@ -17,6 +17,7 @@ import { voiceObjectPath } from '../media/media-paths';
 import { NotificationPrefsSyncHandler } from '../notifications/notification-prefs';
 import { PoolWaitlistSyncHandler } from '../notifications/pool-waitlist';
 import { ProfileService } from '../profile/profile.service';
+import { SanctuarySessionSyncHandler } from '../sanctuary/sanctuary-sessions';
 import type { Snapshot } from '../progression/snapshot';
 import { ProgressionService } from '../progression/progression.service';
 import { auraDay, awardFor, daysBetween, isEligible, MAX_FUTURE_SKEW_MS, type StarlightEvent } from '../rules';
@@ -111,6 +112,8 @@ export class SyncService {
     @Inject(NotificationPrefsSyncHandler) private readonly notificationPrefs?: NotificationPrefsSyncHandler,
     /** F5 entity `room_pool_waitlist` ("Tell me when they open"), from NotificationsModule. Same injection rule. */
     @Inject(PoolWaitlistSyncHandler) private readonly poolWaitlist?: PoolWaitlistSyncHandler,
+    /** F15 entity `sanctuary_session` (content-free session records), from SanctuaryModule. Same injection rule. */
+    @Inject(SanctuarySessionSyncHandler) private readonly sanctuarySessions?: SanctuarySessionSyncHandler,
   ) {}
 
   async push(userId: string, body: unknown, now = new Date()): Promise<PushResponse> {
@@ -245,6 +248,10 @@ export class SyncService {
       case 'room_pool_waitlist:delete':
         if (!this.poolWaitlist) return reject('unknown_entity');
         return this.poolWaitlist.apply(ctx, m);
+      case 'sanctuary_session:upsert':
+      case 'sanctuary_session:delete':
+        if (!this.sanctuarySessions) return reject('unknown_entity');
+        return this.sanctuarySessions.apply(ctx, m); // op `upsert` only (`delete` → unknown_op)
       default:
         return reject('unknown_op'); // a valid op the entity doesn't support (e.g. capsule:upsert, check_in:seal)
     }

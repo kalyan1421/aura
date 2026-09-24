@@ -108,6 +108,14 @@ abstract class RoomViewState with _$RoomViewState {
 
     /// You left: nothing more is sent or heard.
     @Default(false) bool left,
+
+    /// Bumped when the room's lantern becomes fully lit while you are here
+    /// (not when you open a room that is already lit): the screen plays
+    /// the one shared "lanterns rise" moment for each bump.
+    @Default(0) int lanternRise,
+
+    /// A hold of tonight's intention is on its way.
+    @Default(false) bool holding,
   }) = _RoomViewState;
 
   const RoomViewState._();
@@ -123,7 +131,43 @@ abstract class RoomViewState with _$RoomViewState {
 
   bool get canSend =>
       detail != null && !isMemory && !left && !coolingDown && failure == null;
+
+  /// Tonight's intention can be held now (one tap, once).
+  bool get canHoldIntention {
+    final d = detail;
+    return d != null &&
+        !left &&
+        !holding &&
+        failure == null &&
+        !d.room.isMemory &&
+        !d.me.holdingIntention &&
+        (d.room.intention?.open ?? false);
+  }
 }
+
+/// The room totals as shown: a newer view of the same room never dims the
+/// lantern, lowers the hold count or un-holds your intention (a stale poll
+/// or a late event can't undo what already happened).
+RoomDetail keepRoomTotals(RoomDetail next, RoomDetail? shown) {
+  if (shown == null || shown.room.roomId != next.room.roomId) return next;
+  return next.copyWith(
+    room: next.room.copyWith(
+      lantern: brighterLantern(shown.room.lantern, next.room.lantern),
+      intention: higherIntention(shown.room.intention, next.room.intention),
+    ),
+    me: shown.me.holdingIntention && !next.me.holdingIntention
+        ? next.me.copyWith(holdingIntention: true)
+        : next.me,
+  );
+}
+
+/// The lantern just became fully lit (seen live, not on first load).
+bool lanternJustFilled(RoomDetail? before, RoomDetail after) =>
+    before != null &&
+    before.room.roomId == after.room.roomId &&
+    !(before.room.lantern?.isFull ?? false) &&
+    (after.room.lantern?.isFull ?? false) &&
+    !after.room.isMemory;
 
 /// One open room (`/rooms/:id`): the detail, the two private Realtime topics,
 /// the 45 s heartbeat while the app is in the foreground, and gestures with
@@ -354,12 +398,20 @@ class RoomController extends _$RoomController {
     }
   }
 
-  void _adopt(RoomDetail detail) {
-    _ownIds.addAll(detail.gestures.sent.map((g) => g.gestureId));
-    _receivedIds.addAll(detail.gestures.received.map((g) => g.gestureId));
-    final wasMemory = state.detail?.room.isMemory ?? false;
+  void _adopt(RoomDetail fetched) {
+    _ownIds.addAll(fetched.gestures.sent.map((g) => g.gestureId));
+    _receivedIds.addAll(fetched.gestures.received.map((g) => g.gestureId));
+    final before = state.detail;
+    final wasMemory = before?.room.isMemory ?? false;
+    final detail = keepRoomTotals(fetched, before);
+    final rise = lanternJustFilled(before, detail);
     _set(
-      (s) => s.copyWith(load: RoomLoad.ready, detail: detail, failure: null),
+      (s) => s.copyWith(
+        load: RoomLoad.ready,
+        detail: detail,
+        failure: null,
+        lanternRise: rise ? s.lanternRise + 1 : s.lanternRise,
+      ),
     );
     _schedule(detail);
     if (detail.room.isMemory && !wasMemory) unawaited(_enterMemory());
@@ -411,16 +463,25 @@ class RoomController extends _$RoomController {
     _set(
       (s) => s.copyWith(
         detail: d.copyWith(
-          room: d.room.copyWith(
-            lanternHour: d.room.lanternHour.copyWith(active: false),
-            state: d.room.phase == RoomPhase.lanternHour
-                ? 'open'
-                : d.room.state,
+          room: _lanternOver(
+            d.room.copyWith(
+              lanternHour: d.room.lanternHour.copyWith(active: false),
+              state: d.room.phase == RoomPhase.lanternHour
+                  ? 'open'
+                  : d.room.state,
+            ),
           ),
         ),
       ),
     );
   }
+
+  /// At 23:00 the lantern keeps its level ("Tonight's lantern") and the
+  /// intention turns read-only, even before the server says so.
+  static RoomInfo _lanternOver(RoomInfo room) => room.copyWith(
+    lantern: room.lantern?.copyWith(active: false),
+    intention: room.intention?.copyWith(open: false),
+  );
 
   /// The room became a memory: read-only, so nothing live is needed.
   Future<void> _enterMemory() async {
@@ -456,8 +517,17 @@ class RoomController extends _$RoomController {
       final changed =
           beat.room.state != now.room.state ||
           beat.room.readOnly != now.room.readOnly;
-      final next = now.copyWith(room: beat.room, counts: beat.counts);
-      _set((s) => s.copyWith(detail: next));
+      final next = keepRoomTotals(
+        now.copyWith(room: beat.room, counts: beat.counts),
+        now,
+      );
+      final rise = lanternJustFilled(now, next);
+      _set(
+        (s) => s.copyWith(
+          detail: next,
+          lanternRise: rise ? s.lanternRise + 1 : s.lanternRise,
+        ),
+      );
       _schedule(next);
       // Without realtime the heartbeat is the only poll: refetch gestures.
       if (changed || _realtime == null) unawaited(refresh());
@@ -519,32 +589,46 @@ class RoomController extends _$RoomController {
       case ReflectionEvent():
         _reflectionEvents.add(event);
       case RoomStateEvent():
+        final changed =
+            event.state != d.room.state || event.readOnly != d.room.readOnly;
+        var room = d.room.copyWith(
+          state: event.state,
+          readOnly: event.readOnly,
+          joinsCloseAt: event.joinsCloseAt ?? d.room.joinsCloseAt,
+          memoryAt: event.memoryAt ?? d.room.memoryAt,
+          purgeAt: event.purgeAt ?? d.room.purgeAt,
+        );
+        if (event.carriesTotals) {
+          // Room totals (Milestone B): applied as they are, never dimmer.
+          room = room.copyWith(
+            lantern: brighterLantern(d.room.lantern, event.lantern),
+            intention: higherIntention(d.room.intention, event.intention),
+          );
+        }
+        final updated = d.copyWith(room: room);
+        final rise = lanternJustFilled(d, updated);
         _set(
           (s) => s.copyWith(
-            detail: d.copyWith(
-              room: d.room.copyWith(
-                state: event.state,
-                readOnly: event.readOnly,
-                joinsCloseAt: event.joinsCloseAt ?? d.room.joinsCloseAt,
-                memoryAt: event.memoryAt ?? d.room.memoryAt,
-                purgeAt: event.purgeAt ?? d.room.purgeAt,
-              ),
-            ),
+            detail: updated,
+            lanternRise: rise ? s.lanternRise + 1 : s.lanternRise,
           ),
         );
         final next = state.detail;
         if (next != null && next.room.isMemory) unawaited(_enterMemory());
-        unawaited(refresh());
+        // The detail is the truth after a state change; a totals-only
+        // update (a level rising, a hold) needs no refetch (§3).
+        if (changed || !event.carriesTotals) unawaited(refresh());
       case LanternHourEvent(:final lanternHour):
+        final moved = d.room.copyWith(
+          lanternHour: lanternHour,
+          state: switch (d.room.phase) {
+            RoomPhase.open when lanternHour.active => 'lantern_hour',
+            RoomPhase.lanternHour when !lanternHour.active => 'open',
+            _ => d.room.state,
+          },
+        );
         final next = d.copyWith(
-          room: d.room.copyWith(
-            lanternHour: lanternHour,
-            state: switch (d.room.phase) {
-              RoomPhase.open when lanternHour.active => 'lantern_hour',
-              RoomPhase.lanternHour when !lanternHour.active => 'open',
-              _ => d.room.state,
-            },
-          ),
+          room: lanternHour.active ? moved : _lanternOver(moved),
         );
         _set((s) => s.copyWith(detail: next));
         _schedule(next);
@@ -758,6 +842,51 @@ class RoomController extends _$RoomController {
     } finally {
       _flushing = false;
     }
+  }
+
+  // ---- tonight's intention -------------------------------------------------------
+
+  /// Holds tonight's intention (one tap; it can't be taken back). Shows as
+  /// held at once; the room total comes from the server. `false` when it
+  /// didn't go through (the hour ended, or no connection): nothing changed.
+  Future<bool> holdIntention() async {
+    if (!state.canHoldIntention) return false;
+    _setMe((me) => me.copyWith(holdingIntention: true), holding: true);
+    try {
+      final r = await _repo.holdIntention(_roomId);
+      final d = state.detail;
+      if (_disposed || d == null) return true;
+      _set(
+        (s) => s.copyWith(
+          holding: false,
+          detail: d.copyWith(
+            room: d.room.copyWith(
+              intention: higherIntention(d.room.intention, r.intention),
+            ),
+          ),
+        ),
+      );
+      return true;
+    } on RoomsFailure catch (f) {
+      if (_disposed) return false;
+      _setMe((me) => me.copyWith(holdingIntention: false), holding: false);
+      if (f.code == 'intention_closed' ||
+          f.code == 'intention_paused' ||
+          f.isTerminal) {
+        unawaited(refresh());
+      }
+      return false;
+    }
+  }
+
+  void _setMe(RoomMe Function(RoomMe me) change, {required bool holding}) {
+    final d = state.detail;
+    _set(
+      (s) => s.copyWith(
+        holding: holding,
+        detail: d?.copyWith(me: change(d.me)),
+      ),
+    );
   }
 
   // ---- safety ---------------------------------------------------------------------

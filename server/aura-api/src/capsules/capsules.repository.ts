@@ -1,3 +1,4 @@
+import { hasPlus } from '../billing/entitlement-check';
 import { Injectable } from '@nestjs/common';
 import { PRIVATE_MEDIA_BUCKET } from '../account/private-media';
 import type { Queryable } from '../db/db';
@@ -92,6 +93,11 @@ export class CapsulesRepository {
        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [c.id, c.userId, c.unlockType, c.unlockLocalDate, c.triggerMoodId, c.triggerQuadrant, c.payloadCt, c.sealedAt, c.armedAt],
     );
+  }
+
+  /** F12: Aura Plus is on (server-owned entitlement) — unlimited trigger capsules. */
+  plusActive(q: Queryable, userId: string): Promise<boolean> {
+    return hasPlus(q, userId);
   }
 
   /** Active trigger capsules (not deleted, not opened in their cycle), not counting `exceptId`. */

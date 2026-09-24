@@ -246,7 +246,8 @@ void main() {
     expect(find.text('That was time just for you.'), findsOneWidget);
     expect(find.text('Breathe is marked done for today.'), findsOneWidget);
     expect(await habitLogKeys(tester, db), ['breathe']);
-    expect(sync.writes, 1);
+    // The habit log, then the finished session's record (F15).
+    expect(sync.writes, 2);
 
     // Again, the same day: still one completion.
     await tester.tap(find.byKey(const ValueKey('breathe-again')));

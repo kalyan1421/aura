@@ -71,12 +71,18 @@ describe('NotificationPrefsSyncHandler', () => {
   class FakeTx {
     row: Record<string, unknown> | undefined;
     writes: unknown[][] = [];
+    milestoneB: string[] = [];
     async query(sql: string, params: unknown[] = []) {
       if (sql.includes('from public.notification_prefs where user_id = $1')) {
         return { rows: this.row ? [this.row] : [], rowCount: this.row ? 1 : 0 };
       }
       if (sql.includes('insert into public.notification_prefs as np')) {
         this.writes.push(params);
+        return { rows: [], rowCount: 1 };
+      }
+      // Milestone B: its columns, then the user-timed pushes re-planned (notifications.milestone-b.spec.ts covers them).
+      if (sql.includes('update public.notification_prefs set') || sql.includes('public.notification_schedule')) {
+        this.milestoneB.push(sql.replace(/\s+/g, ' ').trim().slice(0, 40));
         return { rows: [], rowCount: 1 };
       }
       throw new Error(`unexpected SQL ${sql.slice(0, 60)}`);

@@ -2,6 +2,7 @@ import { zonedInstant } from '../capsules/capsule-rules';
 import { addDays, auraDay, localDate, ROLLOVER_HOUR, wallClock } from '../rules';
 import { CAP_EXEMPT, DAILY_PUSH_CAP, priorityOf, TYPE_RULES } from './catalogue';
 import type { NotificationType } from './notification-types';
+import type { TrialEndingFacts } from './trial-ending';
 
 /**
  * The global push rules (PRD 12-notifications) as pure functions — the worker's delivery path feeds them facts read
@@ -26,6 +27,21 @@ export interface NotificationPrefsValues {
   quietStart: string;
   quietEnd: string;
   discreet: boolean;
+  // ---- Milestone B (contracts/api/v1-notifications.md §6) ----
+  /** "Gestures received" (batched, 1 per room per day). */
+  gestures: boolean;
+  /** Lantern Hour (opt-in): when the timezone region's Lantern Hour starts. Column `lantern_opt_in`. */
+  lanternHour: boolean;
+  /** Wind-down reminder (opt-in, REQ-NTF-04): off until a time is picked. */
+  windDownEnabled: boolean;
+  /** `HH:MM`, local time in the profile zone; null = never picked. */
+  windDownTime: string | null;
+  /** Rule 1's one-time confirmation for a wind-down time inside quiet hours. */
+  windDownInQuietHours: boolean;
+  /** "Welcome back" after 7 and 21 quiet days. */
+  welcomeBack: boolean;
+  /** Habit nudges (opt-in): habit id → local `HH:MM`. A habit with a time is opted in. */
+  habitNudges: Readonly<Record<string, string>>;
 }
 
 /**
@@ -41,10 +57,20 @@ export const DEFAULT_NOTIFICATION_PREFS: Readonly<NotificationPrefsValues> = Obj
   quietStart: '23:00',
   quietEnd: '08:00',
   discreet: false,
+  gestures: true,
+  lanternHour: false,
+  windDownEnabled: false,
+  windDownTime: null,
+  windDownInQuietHours: false,
+  welcomeBack: true,
+  habitNudges: Object.freeze({}),
 });
 
 /** The reminder time the app suggests (PRD catalogue "suggested 8 pm" `[ASSUMPTION]`). */
 export const SUGGESTED_REMINDER_TIME = '20:00';
+
+/** The wind-down time the app suggests (PRD catalogue "suggested 10:30 pm" `[ASSUMPTION]`). */
+export const SUGGESTED_WIND_DOWN_TIME = '22:30';
 
 const HM_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 export const isHm = (v: unknown): v is string => typeof v === 'string' && HM_RE.test(v);
@@ -115,7 +141,21 @@ export type SkipReason =
   | 'quiet_hours'
   | 'capped'
   /** rooms_pool_open: the pool closed again before the push went out. */
-  | 'pool_closed';
+  | 'pool_closed'
+  /** wind_down_reminder: a Sanctuary activity was finished this evening (REQ-NTF-04). */
+  | 'sanctuary_opened'
+  /** lantern_hour: already in a room this Aura day. */
+  | 'in_room_today'
+  /** lantern_hour / gestures_received: rooms are switched off, or the account may not use them (ban, pause). */
+  | 'rooms_closed'
+  /** gestures_received: nothing left to tell (the gestures are gone). */
+  | 'nothing_new'
+  /** welcome_back: the person came back before it went out. */
+  | 'active_again'
+  /** habit_nudge: every nudged habit is done today (or none is due yet). */
+  | 'nothing_due'
+  /** trial_ending (F12): converted, lapsed, auto-renew turned off, or moved to another account. */
+  | 'trial_changed';
 
 export type Decision = { action: 'send' } | { action: 'skip'; reason: SkipReason } | { action: 'defer'; until: Date };
 
@@ -141,6 +181,20 @@ export interface DeliveryFacts {
   capsuleSealed?: boolean;
   /** rooms_pool_open: the pool's flag is still on. */
   poolOpen?: boolean;
+  /** wind_down_reminder: a Sanctuary session record finished this evening. */
+  sanctuaryThisEvening?: boolean;
+  /** lantern_hour / gestures_received: rooms are on and the account may use them. */
+  roomsOpen?: boolean;
+  /** lantern_hour: joined a room this Aura day. */
+  inRoomToday?: boolean;
+  /** gestures_received: distinct people who sent gestures to the person in that room this Aura day. */
+  gestureCount?: number;
+  /** welcome_back: the account wrote something after the push was requested. */
+  activeAgain?: boolean;
+  /** habit_nudge: preset keys (or `custom`) of the nudged habits that are due and not done today. */
+  dueHabits?: readonly string[];
+  /** trial_ending (F12, trial-ending.ts): the subscription's trial facts. */
+  trialEnding?: TrialEndingFacts;
 }
 
 const countsTowardCap = (kind: string): boolean => !CAP_EXEMPT.includes(kind);
@@ -169,6 +223,18 @@ const typeEnabled = (type: NotificationType, p: NotificationPrefsValues): boolea
       return p.capsuleUnlocked;
     case 'rooms_pool_open':
       return true;
+    case 'gestures_received':
+      return p.gestures;
+    case 'lantern_hour':
+      return p.lanternHour;
+    case 'wind_down_reminder':
+      return p.windDownEnabled && p.windDownTime !== null;
+    case 'welcome_back':
+      return p.welcomeBack;
+    case 'habit_nudge':
+      return Object.keys(p.habitNudges).length > 0;
+    case 'trial_ending':
+      return true; // F12: a transactional fact about a paid product; the master switch still applies
   }
 };
 
@@ -185,12 +251,16 @@ export function decide(f: DeliveryFacts): Decision {
   if (f.type === 'daily_reminder' && f.checkedInToday) return skip('checked_in');
   if (f.type === 'capsule_unlocked' && !f.capsuleSealed) return skip('not_sealed');
   if (f.type === 'rooms_pool_open' && !f.poolOpen) return skip('pool_closed');
+  const b = milestoneBSkip(f);
+  if (b) return skip(b);
   if (f.sentToday.filter((t) => t === f.type).length >= rules.perDay) return skip('already_sent');
 
   if (inQuietHours(f.now, f.tz, f.prefs.quietStart, f.prefs.quietEnd)) {
     // Rule 1: nothing system-initiated inside quiet hours. The one exception is a reminder the user deliberately
     // placed there (night shifts) after the one-time confirmation in the app.
-    const userScheduled = f.type === 'daily_reminder' && f.prefs.reminderInQuietHours;
+    const userScheduled =
+      (f.type === 'daily_reminder' && f.prefs.reminderInQuietHours) ||
+      (f.type === 'wind_down_reminder' && f.prefs.windDownInQuietHours);
     if (!userScheduled) {
       if (rules.quiet === 'skip') return skip('quiet_hours');
       const until = nextWallTime(f.now, f.tz, f.prefs.quietEnd);
@@ -201,6 +271,28 @@ export function decide(f: DeliveryFacts): Decision {
 
   if (capBudget(f.type, f.sentToday, f.expectedLater) <= 0) return cappedDecision(f);
   return { action: 'send' };
+}
+
+/** The type-specific checks of the Milestone B kinds (PRD 12 catalogue "Trigger" column). */
+function milestoneBSkip(f: DeliveryFacts): SkipReason | null {
+  switch (f.type) {
+    case 'wind_down_reminder':
+      return f.sanctuaryThisEvening ? 'sanctuary_opened' : null;
+    case 'lantern_hour':
+      if (!f.roomsOpen) return 'rooms_closed';
+      return f.inRoomToday ? 'in_room_today' : null;
+    case 'gestures_received':
+      if (!f.roomsOpen) return 'rooms_closed';
+      return (f.gestureCount ?? 0) > 0 ? null : 'nothing_new';
+    case 'welcome_back':
+      return f.activeAgain ? 'active_again' : null;
+    case 'habit_nudge':
+      return (f.dueHabits ?? []).length > 0 ? null : 'nothing_due';
+    case 'trial_ending':
+      return f.trialEnding?.stillEnding ? null : 'trial_changed';
+    default:
+      return null;
+  }
 }
 
 /** Today's cap is used: dropped, or (TypeRules.capped `defer`) moved to the start of the next Aura day. */

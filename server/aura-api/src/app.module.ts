@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AccountModule } from './account/account.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
+import { BillingModule } from './billing/billing.module';
 import { CatalogueModule } from './catalogue/catalogue.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
@@ -14,6 +15,7 @@ import { ProgressionModule } from './progression/progression.module';
 import { QueuesModule } from './queues/queues.module';
 import { ReflectionsModule } from './reflections/reflections.module';
 import { RemoteConfigModule } from './remote-config/remote-config.module';
+import { RipplesModule } from './ripples/ripples.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { SafetyModule } from './safety/safety.module';
 import { SyncModule } from './sync/sync.module';
@@ -39,6 +41,8 @@ import { SyncModule } from './sync/sync.module';
     AdminModule, // admin console v0: /admin/*, public grievance form, legal-order intake (docs/setup/admin-console.md)
     RemoteConfigModule, // REQ-ADM-12: GET /v1/config (flags, kill switches), signed lexicon versions (docs/setup/lexicon-and-flags.md)
     ReflectionsModule, // F6 Reflections + moderation pipeline, /admin/reflections* — contracts/api/v1-reflections.md
+    RipplesModule, // F7 Breath Ripples — contracts/api/v1-ripples.md
+    BillingModule, // F12 Monetization: /v1/billing/*, store webhooks — contracts/api/v1-billing.md
   ],
 })
 export class AppModule {}

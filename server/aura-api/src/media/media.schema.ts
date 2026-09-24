@@ -8,7 +8,7 @@ export type MediaKind = (typeof MEDIA_KINDS)[number];
 /**
  * Ciphertext size limits (the server never sees the plaintext):
  * - voice ≤ 60 s (PRD F1): AAC at ≤ 64 kbps is ~480 KB, plus the AES-GCM envelope — 1 MiB is ample;
- * - capsule voice ≤ 2:00 on Free (PRD F4; Plus 10:00 is not built): ~960 KB of AAC — 2 MiB;
+ * - capsule voice ≤ 2:00 on Free (PRD F4): ~960 KB of AAC — 2 MiB; Plus (10:00) gets PLUS_CAPSULE_VOICE_BYTES (billing/entitlement-check.ts);
  * - capsule photo ≤ 2,048 px on the long edge, EXIF/GPS stripped on the device: 4 MiB.
  */
 export const MAX_MEDIA_BYTES: Record<MediaKind, number> = {

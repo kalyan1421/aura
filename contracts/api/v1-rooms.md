@@ -2,7 +2,8 @@
 
 Companion to `contracts/api/v1.md` (same base URL, auth, error shape and pending-deletion guard). Server:
 `server/aura-api/src/rooms` and `src/safety`; schema `supabase/migrations/20261005000010_rooms_safety.sql` (+
-`20261005000015_safety_reason_guidelines.sql`: report reason 9, community guidelines acceptance).
+`20261005000015_safety_reason_guidelines.sql`: report reason 9, community guidelines acceptance; +
+`20261005000022_room_lanterns.sql`: room lanterns and Tonight's intention, Milestone B).
 PRD: `06b-features-social.md` (F5, shared stranger-surface rules), `06c-features-platform.md` (F9),
 `14-states.md` (Room states), `19-admin-console.md` (lanes, strikes, evidence).
 
@@ -60,6 +61,19 @@ type RoomInfo = {
   memoryAt: string;        // createdAt + 24 h: read-only memory ("This room has become a memory")
   purgeAt: string;         // memoryAt + 7 d: everything is deleted
   lanternHour: LanternHour;
+  lantern: RoomLantern | null;       // Milestone B (§1.9): null before the room's first Lantern Hour / kill switch off
+  intention: RoomIntention | null;   // Milestone B (§1.9): null until tonight's intention is set / kill switch off
+};
+// Room totals only (REQ-ROOM-13/14): never who added light or held, not even your own share.
+type RoomLantern = {
+  level: number;           // 0–5: how brightly tonight's lantern glows. Only ever rises (never dims, never resets)
+  maxLevel: number;        // 5
+  active: boolean;         // taking light now (state === 'lantern_hour'); false afterwards: "Tonight's lantern"
+};
+type RoomIntention = {
+  key: string;             // preset key, the app localises it (e.g. "sleep_before_midnight"); unknown key → hide the card
+  holds: number;           // "12 holding this tonight" — the room total; only ever rises
+  open: boolean;           // holding is possible now (state === 'lantern_hour'); afterwards read-only
 };
 type Counts = {
   hereNow: number;         // current members seen in the last 2 min (heartbeat), real members only
@@ -89,7 +103,8 @@ type RoomSummary = {
 type RoomDetail = {
   room: RoomInfo;
   me: { memberId: string; pseudonym: string; moodChip: string; silhouette: Silhouette; joinedAt: string;
-        surveyEligible: boolean };   // show "Did you feel less alone?" on exit when true (see §1.7)
+        surveyEligible: boolean;     // show "Did you feel less alone?" on exit when true (see §1.7)
+        holdingIntention: boolean }; // you hold tonight's intention (§1.9) — yours only, never anyone else's
   counts: Counts;
   members: Member[];       // current members incl. you (isMe), oldest first; members you blocked are left out
   gestures: {
@@ -201,6 +216,51 @@ leaving. A not-eligible answer is ignored (still `204`). Non-member → `404`.
   to you are dropped (they see them as sent). Works in memories. `400 invalid_target` (yourself),
   `404 not_found` (not your room), `404 member_not_found` (not a member of this room).
 
+### 1.9 Room lanterns and Tonight's intention (Milestone B, P1 — REQ-ROOM-13 / REQ-ROOM-14)
+PRD 06b "Room lanterns and Tonight's intention". Both are **room totals** in `RoomInfo` (`lantern`, `intention`) and in
+the `room_state` broadcast (§3) — never per member, never who, not even your own share.
+
+**Room lantern** — one per room, 5 levels `[ASSUMPTION]`, lit only while the room is in Lantern Hour (`state:
+lantern_hour`: open rooms, 21:00–23:00 on the region clock; forming and closing rooms keep what they have).
+- **Adds light:** every **delivered** gesture from a member (§1.5; a gesture = 1 unit), and breath cycles finished by
+  **human** seats in Breath Ripples sessions started from the room (0.25 unit per cycle `[ASSUMPTION]`). **Adds
+  nothing:** over-limit or shadow-muted gestures, gestures dropped for a block (either way), a mute or a hidden
+  recipient, echoes and guide lights, anything outside Lantern Hour. The gesture answer (`202`) is identical either way.
+- **Scaled to the room:** a level needs `max(3, ceil(1.5 × members live when the light arrives))` units
+  (`matching_config.lantern_min_units_per_level` / `lantern_units_per_member`, tunable) — a room of 3 can light it too.
+- **Additive only:** stored as a running total that only rises (a DB trigger refuses anything lower). Leaving,
+  blocking, removals (a removed reflection and its gestures included), people going quiet and the end of the hour
+  never lower it. At 23:00 it keeps its level (`active: false`); the memory shows it as "Tonight's lantern" — no
+  failed / missed / almost copy (14-states).
+- **Fully lit** (`level === maxLevel`): each app that sees the level reach 5 **live** (a `room_state` while in the
+  room) plays one short shared moment (lanterns rise; under Reduce Motion a still image and a line of text). Loading a
+  room that is already lit doesn't replay it.
+
+**Tonight's intention** — at the start of Lantern Hour each room gets one preset (a key, rotated nightly from the
+room's language-pool list `room_intention_presets`; the app localises the key). Set once per room and night.
+
+`POST /v1/rooms/:roomId/intention/hold` (no body) → `200 { "intention": RoomIntention, "holding": true }`
+- One tap; **idempotent** (holding again answers `200` with the same total). There is no un-hold: it can't be taken
+  back, and the total never falls — leaving the room doesn't lower it either (a falling count would name a leaver).
+- Creates no habit, reminder or record beyond the room's total (plus your own `me.holdingIntention`), purged with the
+  room. No free text, no pairing, no named holders, no follow-up question or push the next day.
+- The room gets `room_state` with the new total. Holding also counts as being here.
+
+| Error | When |
+|---|---|
+| `404 not_found` | not a current member of the room / room gone (same as §1.3) |
+| `409 intention_closed` | the room isn't in Lantern Hour (before 21:00, after 23:00, forming, closing, memory), or no preset is enabled for its pool |
+| `503 intention_paused` | the `room_intention_enabled` kill switch is off |
+
+**Kill switches** (feature flags, v1.md "Remote config"): `room_lanterns_enabled` off → no light is added and
+`lantern` is `null` everywhere (the stored level is kept for when it comes back); `room_intention_enabled` off →
+`intention` is `null` and holding answers `503 intention_paused`. `rooms_enabled` (the rooms kill switch) only stops
+new joins: rooms already joined keep their lantern and intention.
+
+**For F7 Breath Ripples (server):** `addBreathCyclesToRoomLantern(tx, roomId, humanCycles, now?)` in
+`server/aura-api/src/rooms/lanterns.ts` — call once when a session started from a room ends, inside the transaction
+that records it, with the cycles finished by human seats only. A no-op outside that room's Lantern Hour.
+
 ## 2. Safety
 
 ### 2.1 `POST /v1/safety/reports`
@@ -302,7 +362,7 @@ Shadow-mutes are never shown anywhere (no notice, `rooms` stays `available`).
 | room | `member_left` | `{ memberId, counts, at }` | a member leaves, or is removed from view (room access suspended/paused/closed) |
 | room | `presence` | `{ counts, at }` | "here now" changed (a member became live, or the ≤ 60 s sweep saw someone go quiet) |
 | room | `gesture_sent` | `{ gestureId, type, target, at }` — anonymous | every delivered gesture (the recipient dedupes with its `gesture_received` by `gestureId`) |
-| room | `room_state` | `{ state, readOnly, joinsCloseAt, memoryAt, purgeAt, at }` | forming→open, open↔lantern_hour, →closing, →memory |
+| room | `room_state` | `{ state, readOnly, joinsCloseAt, memoryAt, purgeAt, lantern, intention, at }` — `lantern` / `intention` are the §1.9 room totals (or null); **no member id or per-member value, ever** | forming→open, open↔lantern_hour, →closing, →memory; **and** when the lantern's level rises or the intention's hold count changes (§1.9). Refetch the detail only when `state` / `readOnly` changed; otherwise apply `lantern` / `intention` as they are (never lower a level you already show) |
 | room | `lantern_hour` | `{ lanternHour, at }` | the region clock hits 21:00 (active) or 23:00 (ended); end the lantern locally at `lanternHour.endsAt` even if this arrives late |
 | member | `gesture_received` | `{ gestureId, type, fromMemberId, fromPseudonym, at }` | a gesture to you was delivered ("Quiet Comet sent you Warm Tea") |
 
@@ -346,7 +406,8 @@ the evidence store) → `404`.
 
 ### 4.4 Codes introduced here
 `invalid_target`, `member_not_found`, `room_read_only`, `language_pool_unavailable`, `room_join_limit`,
-`report_limit`, `rooms_suspended`, `account_closed`, `guidelines_required` (plus v1.md's `invalid_request`,
+`report_limit`, `rooms_suspended`, `account_closed`, `guidelines_required`, `intention_closed`, `intention_paused`
+(plus v1.md's `invalid_request`,
 `not_found`, `profile_required`, `account_deletion_pending`, `unauthorized`).
 
 ## 5. For the admin console (next stage): internal `ModerationService` (`server/aura-api/src/safety/moderation.service.ts`)
@@ -376,7 +437,5 @@ Reflections are specified in `contracts/api/v1-reflections.md` (F6: gesture `tar
 `game:<sessionId>` topics), gifts (F12: fail before charge on a block), gesture pushes (F14: "3 people in your room
 sent you warmth", batched, 1 per room per day), bring-a-friend rooms (`rooms.kind`), the admin console HTTP layer
 (the internal `ModerationService` exists: queue by lane, act, audit log).
-Milestone B: room lanterns and Tonight's intention add room totals to `room_state` (lantern level, holders) —
-delivered, within-limit human gestures only (dropped / over-limit / blocked-pair gestures add nothing), never a
-per-member value. Milestone C: Quiet Together (F16) reports use a new `target.kind` (`session`); the report body
+Milestone B: room lanterns and Tonight's intention — §1.9 (room totals in `RoomInfo` and `room_state`). Milestone C: Quiet Together (F16) reports use a new `target.kind` (`session`); the report body
 shape stays the same.

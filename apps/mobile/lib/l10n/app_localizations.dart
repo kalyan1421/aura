@@ -2222,7 +2222,7 @@ abstract class AppLocalizations {
   /// Android notification channel description (phone Settings).
   ///
   /// In en, this message translates to:
-  /// **'When rooms you asked about open.'**
+  /// **'Lantern Hour, warmth from your room, and rooms you asked about.'**
   String get notif_channelRoomsDescription;
 
   /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
@@ -2831,6 +2831,126 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 day in your sky} other{{count} days in your sky}}'**
   String insights_statsDays(int count);
 
+  /// Room card title: the room's shared lantern (lit together during Lantern Hour).
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight\'s lantern'**
+  String get rooms_lanternTitle;
+
+  /// Room lantern during Lantern Hour, not lit yet. Invitation, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Every gesture here adds a little light.'**
+  String get rooms_lanternStart;
+
+  /// Room lantern during Lantern Hour, partly lit. Never a count or a score.
+  ///
+  /// In en, this message translates to:
+  /// **'It glows brighter with every gesture here.'**
+  String get rooms_lanternGlowing;
+
+  /// Room lantern fully lit (all levels).
+  ///
+  /// In en, this message translates to:
+  /// **'Fully lit, together.'**
+  String get rooms_lanternFull;
+
+  /// After Lantern Hour and in the room memory: the level the lantern reached. PRD 14-states copy; never 'failed', 'missed' or 'almost'.
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight\'s lantern glowed this bright.'**
+  String get rooms_lanternKept;
+
+  /// Screen-reader label for the room lantern (a room total).
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight\'s lantern, {level} of {max} lights lit'**
+  String rooms_lanternSemantic(int level, int max);
+
+  /// The one shared moment when the room's lantern becomes fully lit (announced; shown as a line under Reduce Motion).
+  ///
+  /// In en, this message translates to:
+  /// **'The lantern is fully lit. Lanterns rise, together.'**
+  String get rooms_lanternRise;
+
+  /// Room card title: one preset intention the room can hold together during Lantern Hour.
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight\'s intention'**
+  String get rooms_intentionTitle;
+
+  /// Button: hold tonight's intention (one tap, can't be undone). No pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold this tonight'**
+  String get rooms_intentionHold;
+
+  /// After you held tonight's intention (only you see this).
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re holding this tonight'**
+  String get rooms_intentionHolding;
+
+  /// The room total holding tonight's intention (never who).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Hold it with one tap} =1{1 holding this tonight} other{{count} holding this tonight}}'**
+  String rooms_intentionHolds(int count);
+
+  /// After Lantern Hour: how many held tonight's intention. No failure copy.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Resting until the next Lantern Hour} =1{1 held this tonight} other{{count} held this tonight}}'**
+  String rooms_intentionHeld(int count);
+
+  /// Under tonight's intention: holders are never named; no follow-up.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody sees who holds it, and nobody will ask about it tomorrow.'**
+  String get rooms_intentionPrivate;
+
+  /// Holding tonight's intention failed (connection, or the hour ended). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Please try again.'**
+  String get rooms_intentionFailed;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep before midnight'**
+  String get rooms_intention_sleep_before_midnight;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'Be gentle with myself tonight'**
+  String get rooms_intention_gentle_with_myself;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'Phone down for 10 minutes'**
+  String get rooms_intention_phone_down_10;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'A glass of water before bed'**
+  String get rooms_intention_water_before_bed;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'One kind thought about today'**
+  String get rooms_intention_one_kind_thought;
+
+  /// Tonight's intention preset (first person, gentle, never a goal to fail).
+  ///
+  /// In en, this message translates to:
+  /// **'Three slow breaths before sleep'**
+  String get rooms_intention_slow_breaths;
+
   /// In-app notice when the daily check-in reminder arrives while the app is open (same line as the push, PRD 12-notifications catalogue). Never guilt, never a streak.
   ///
   /// In en, this message translates to:
@@ -2864,7 +2984,7 @@ abstract class AppLocalizations {
   /// Android notification channel description (phone Settings).
   ///
   /// In en, this message translates to:
-  /// **'Your daily check-in reminder.'**
+  /// **'Your check-in, wind-down and habit reminders.'**
   String get notif_channelRemindersDescription;
 
   /// Settings section heading.
@@ -3011,6 +3131,186 @@ abstract class AppLocalizations {
   /// **'Keep them discreet'**
   String get push_discreet;
 
+  /// In-app notice when the 'gestures received' push arrives while the app is open. Never a pseudonym, count of gestures, theme or mood.
+  ///
+  /// In en, this message translates to:
+  /// **'People in your room sent you warmth.'**
+  String get notif_gesturesBanner;
+
+  /// Action on the gestures notice: opens that room.
+  ///
+  /// In en, this message translates to:
+  /// **'Open room'**
+  String get notif_gesturesAction;
+
+  /// In-app notice when the Lantern Hour push arrives while the app is open (PRD catalogue line).
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Hour is on. Others are here tonight.'**
+  String get notif_lanternBanner;
+
+  /// Action on the Lantern Hour notice: opens Rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'See rooms'**
+  String get notif_lanternAction;
+
+  /// In-app notice for the wind-down reminder (PRD line). Never promises better sleep (REQ-NTF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'A few quiet minutes before sleep, whenever you want them.'**
+  String get notif_windDownBanner;
+
+  /// Action on the wind-down notice: opens Sanctuary › Sounds (nothing plays until a tap).
+  ///
+  /// In en, this message translates to:
+  /// **'Open Sounds'**
+  String get notif_windDownAction;
+
+  /// In-app notice for a habit nudge. Never a habit's name.
+  ///
+  /// In en, this message translates to:
+  /// **'A small habit or two, whenever you\'re ready.'**
+  String get notif_habitBanner;
+
+  /// Action on the habit nudge notice: opens Home.
+  ///
+  /// In en, this message translates to:
+  /// **'See habits'**
+  String get notif_habitAction;
+
+  /// Crisis follow-up (PRD 12): an in-app card on the next open 12–72 h after the support sheet showed. Never a push, never mentions distress or what happened.
+  ///
+  /// In en, this message translates to:
+  /// **'Just checking in. However today feels, help is one tap away.'**
+  String get notif_crisisFollowUp;
+
+  /// Closes the follow-up card (it doesn't come back for this time).
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get notif_crisisFollowUpDismiss;
+
+  /// Switch: the 'gestures received' push (batched).
+  ///
+  /// In en, this message translates to:
+  /// **'Warmth from your room'**
+  String get set_notifGestures;
+
+  /// Under the gestures switch.
+  ///
+  /// In en, this message translates to:
+  /// **'When people in your room send you a gesture. One a day at most.'**
+  String get set_notifGesturesNote;
+
+  /// Switch: the opt-in Lantern Hour push.
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern Hour'**
+  String get set_notifLantern;
+
+  /// Under the Lantern Hour switch (region clock, around 9 pm).
+  ///
+  /// In en, this message translates to:
+  /// **'When Lantern Hour starts in your evening. Not if you\'ve already been in a room that day.'**
+  String get set_notifLanternNote;
+
+  /// Switch: the opt-in wind-down reminder (REQ-NTF-04).
+  ///
+  /// In en, this message translates to:
+  /// **'Wind-down reminder'**
+  String get set_notifWindDown;
+
+  /// Under the wind-down switch when on; {time} e.g. '10:30 PM'. No sleep promise.
+  ///
+  /// In en, this message translates to:
+  /// **'A few quiet minutes at {time}. Not sent once you\'ve used Sanctuary that evening.'**
+  String set_notifWindDownNote(String time);
+
+  /// Under the wind-down switch when off.
+  ///
+  /// In en, this message translates to:
+  /// **'Off. Pick a time for a quiet nudge before sleep.'**
+  String get set_notifWindDownOffNote;
+
+  /// Row that opens the time picker for the wind-down reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind-down time'**
+  String get set_notifWindDownTime;
+
+  /// Switch: the 'welcome back' push.
+  ///
+  /// In en, this message translates to:
+  /// **'After a quiet while'**
+  String get set_notifWelcomeBack;
+
+  /// Under the welcome-back switch. No guilt.
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'ve been away a week or more, one gentle hello. Twice at most.'**
+  String get set_notifWelcomeBackNote;
+
+  /// Sub-heading: per-habit nudge times (opt-in).
+  ///
+  /// In en, this message translates to:
+  /// **'Habit nudges'**
+  String get set_notifHabits;
+
+  /// Under the habit nudges heading.
+  ///
+  /// In en, this message translates to:
+  /// **'A small nudge at a time you pick, for any habit on Home. One a day at most.'**
+  String get set_notifHabitsNote;
+
+  /// Habit nudges when there are no active habits.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a habit on Home to get a nudge for it.'**
+  String get set_notifHabitsNone;
+
+  /// Trailing value of a habit row without a nudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get set_notifHabitOff;
+
+  /// Under a habit nudge whose time is inside quiet hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside your quiet hours, so it won\'t be sent.'**
+  String get set_notifHabitQuiet;
+
+  /// Dialog action on a habit with a nudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Change time'**
+  String get set_notifHabitChange;
+
+  /// Dialog action: remove this habit's nudge.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get set_notifHabitTurnOff;
+
+  /// On the night wind-down card: turns on the opt-in wind-down reminder (asks for a time first). {time} e.g. '10:30 PM'.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me at {time}'**
+  String sounds_windDownRemind(String time);
+
+  /// On the wind-down card when the reminder is on.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle reminder comes at {time}.'**
+  String sounds_windDownReminderOn(String time);
+
+  /// Turns the wind-down reminder off from the card.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get sounds_windDownReminderOff;
+
   /// Trust step title (privacy and boundaries). Calm.
   ///
   /// In en, this message translates to:
@@ -3094,6 +3394,666 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t open an email app. You can write to us at {email}.'**
   String onb_blockedMailFailed(String email);
+
+  /// Name of the optional subscription (brand, never translated).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus'**
+  String get plus_title;
+
+  /// Paywall intro. Plus is 'more of', never 'better calm'.
+  ///
+  /// In en, this message translates to:
+  /// **'More of what you already have. Everything that helps you feel better stays free.'**
+  String get plus_intro;
+
+  /// Paywall section header: what the subscription adds.
+  ///
+  /// In en, this message translates to:
+  /// **'Plus adds'**
+  String get plus_addsTitle;
+
+  /// Plus perk (free keeps 3 waiting).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited mood-trigger capsules'**
+  String get plus_addCapsules;
+
+  /// Plus perk (free: 2 minutes).
+  ///
+  /// In en, this message translates to:
+  /// **'Voice up to 10 minutes in a capsule'**
+  String get plus_addVoice;
+
+  /// Plus perk.
+  ///
+  /// In en, this message translates to:
+  /// **'Deeper Insights: any range, habit × mood, the deeper month in stars'**
+  String get plus_addInsights;
+
+  /// Plus perk: extra Sounds stems and themes.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra sounds and two Plus skies'**
+  String get plus_addSounds;
+
+  /// Paywall section header: what never needs Plus.
+  ///
+  /// In en, this message translates to:
+  /// **'Always free'**
+  String get plus_freeTitle;
+
+  /// The never-paywalled list (PRD F12).
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins, habits, rest days, rooms, Breath Ripples, date capsules, crisis support, Breathe, grounding, Today\'s minute, every base sound and the night wind-down.'**
+  String get plus_freeBody;
+
+  /// Plan choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get plus_planMonthly;
+
+  /// Plan choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get plus_planAnnual;
+
+  /// Headline price line when the store account can get the free month. {price} is the store's own localized price.
+  ///
+  /// In en, this message translates to:
+  /// **'1 month free, then {price}/month'**
+  String plus_trialLineMonthly(String price);
+
+  /// Headline for the yearly plan with the free month.
+  ///
+  /// In en, this message translates to:
+  /// **'1 month free, then {price}/year'**
+  String plus_trialLineAnnual(String price);
+
+  /// Plain price (no free month on this store account).
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/month'**
+  String plus_priceMonthly(String price);
+
+  /// Plain yearly price.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}/year'**
+  String plus_priceAnnual(String price);
+
+  /// Trial end date on the paywall ({date} is formatted).
+  ///
+  /// In en, this message translates to:
+  /// **'Your free month ends on {date}. The first charge is on {date} unless you cancel before then.'**
+  String plus_trialEnds(String date);
+
+  /// Auto-renew disclosure (App Review 3.1.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Renews automatically until you cancel. Paid through your {store} account.'**
+  String plus_renews(String store);
+
+  /// How to cancel on iOS (no retention screen).
+  ///
+  /// In en, this message translates to:
+  /// **'To cancel: iPhone Settings › your name › Subscriptions › Aura. Cancel at least a day before a charge.'**
+  String get plus_cancelApple;
+
+  /// How to cancel on Android.
+  ///
+  /// In en, this message translates to:
+  /// **'To cancel: Play Store › your profile › Payments & subscriptions › Subscriptions › Aura.'**
+  String get plus_cancelGoogle;
+
+  /// Store name (brand).
+  ///
+  /// In en, this message translates to:
+  /// **'App Store'**
+  String get plus_storeApple;
+
+  /// Store name (brand).
+  ///
+  /// In en, this message translates to:
+  /// **'Google Play'**
+  String get plus_storeGoogle;
+
+  /// Buy button when the free month applies.
+  ///
+  /// In en, this message translates to:
+  /// **'Start free month'**
+  String get plus_startTrial;
+
+  /// Buy button without the free month.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get plus_subscribe;
+
+  /// Restore button (Apple 3.1.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get plus_restore;
+
+  /// Opens the store's own subscription page.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage in store'**
+  String get plus_manage;
+
+  /// Screen-reader label for the price skeleton.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading prices from the store'**
+  String get plus_loadingPrices;
+
+  /// PRD 14-states.
+  ///
+  /// In en, this message translates to:
+  /// **'The store isn\'t reachable right now. Nothing was charged.'**
+  String get plus_storeUnavailable;
+
+  /// Retry button.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get plus_retry;
+
+  /// While NestJS confirms with the store (PRD 14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming with the store…'**
+  String get plus_confirming;
+
+  /// PRD 14-states pending confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'The store has your request. Plus unlocks the moment it\'s confirmed. You can close this.'**
+  String get plus_confirmingLater;
+
+  /// PRD 14-states validation failed. Never asks to pay again.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t confirm this yet. If you were charged, it\'s safe. We\'ll keep checking.'**
+  String get plus_validationFailed;
+
+  /// UPI mandate / Ask to Buy pending (PRD).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for approval. You won\'t be charged until it goes through.'**
+  String get plus_pendingApproval;
+
+  /// PRD 14-states declined.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment didn\'t go through. You weren\'t charged.'**
+  String get plus_declined;
+
+  /// After the server confirmed the purchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus is on. Thank you.'**
+  String get plus_welcome;
+
+  /// Restore / buy found a purchase linked to another Aura account.
+  ///
+  /// In en, this message translates to:
+  /// **'This purchase belongs to another Aura account on this store account, so it stays there.'**
+  String get plus_ownedElsewhere;
+
+  /// After Restore purchases.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing to restore on this store account.} =1{1 purchase restored.} other{{count} purchases restored.}}'**
+  String plus_restored(int count);
+
+  /// The only line shown where an offer isn't appropriate (after a hard check-in, in a crisis flow). PRD copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Part of Aura Plus'**
+  String get plus_lockedOnly;
+
+  /// Small link to the paywall (the person chooses).
+  ///
+  /// In en, this message translates to:
+  /// **'About Aura Plus'**
+  String get plus_about;
+
+  /// Button on a limit explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'See Aura Plus'**
+  String get plus_seePlus;
+
+  /// Reminder under a limit explainer that a free path exists.
+  ///
+  /// In en, this message translates to:
+  /// **'The free way stays right here.'**
+  String get plus_freePath;
+
+  /// 4th mood-trigger capsule explainer (14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Free accounts keep 3 mood capsules waiting. Aura Plus keeps as many as you like. Date capsules are always unlimited.'**
+  String get plus_explainerCapsules;
+
+  /// Long voice explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice in a capsule stops at 2 minutes on free Aura, 10 minutes with Aura Plus.'**
+  String get plus_explainerVoice;
+
+  /// Plus Sounds stem explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'This sound comes with Aura Plus. Every base sound and the night wind-down stay free.'**
+  String get plus_explainerSounds;
+
+  /// Deeper Insights explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus adds any range, habit × mood and the deeper month. Your sky and history stay free.'**
+  String get plus_explainerInsights;
+
+  /// Plus sky explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'This sky comes with Aura Plus.'**
+  String get plus_explainerSky;
+
+  /// Settings Plus card, no Plus.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on free Aura.'**
+  String get plus_statusFree;
+
+  /// 14-states 'Trial active'.
+  ///
+  /// In en, this message translates to:
+  /// **'Free month: {days, plural, =0{ends today} =1{1 day left} other{{days} days left}}. First charge on {date}.'**
+  String plus_statusTrial(int days, String date);
+
+  /// 14-states 'Trial cancelled'.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free month stays on until {date}. After that you\'re on free Aura, and everything you made stays yours.'**
+  String plus_statusTrialCancelled(String date);
+
+  /// Active, auto-renew on.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus renews on {date}.'**
+  String plus_statusActive(String date);
+
+  /// Active, auto-renew off.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus stays on until {date}. You won\'t be charged again.'**
+  String plus_statusCancelled(String date);
+
+  /// 14-states billing retry, in grace.
+  ///
+  /// In en, this message translates to:
+  /// **'The store couldn\'t renew Aura Plus. Plus stays on while it tries again.'**
+  String get plus_statusGrace;
+
+  /// 14-states after grace.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus is paused until the store can renew it. Everything you made stays yours.'**
+  String get plus_statusBillingRetry;
+
+  /// Lapsed (PRD: nothing made is lost).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus has ended. Everything you made stays yours.'**
+  String get plus_statusExpired;
+
+  /// 14-states refunded.
+  ///
+  /// In en, this message translates to:
+  /// **'Your refund went through, so Aura Plus has ended. Everything you made stays yours.'**
+  String get plus_statusRefunded;
+
+  /// Pending purchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the store to confirm. You won\'t be charged until it goes through.'**
+  String get plus_statusPending;
+
+  /// 14-states billing retry action.
+  ///
+  /// In en, this message translates to:
+  /// **'Update payment in store'**
+  String get plus_updatePayment;
+
+  /// 14-states trial cancelled action (opens the store page).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Plus back on'**
+  String get plus_turnBackOn;
+
+  /// Plus bought on the other platform (PRD edge case).
+  ///
+  /// In en, this message translates to:
+  /// **'Bought on {store}. Manage it there.'**
+  String plus_managedElsewhere(String store);
+
+  /// Settings card in the first 24 h (no offer yet).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus opens up a day after you join. Everything you need is already free.'**
+  String get plus_notYet;
+
+  /// Quiet Home card, last 2 days of the trial (at most once a day).
+  ///
+  /// In en, this message translates to:
+  /// **'Your free month ends on {date}. Plus then continues at {price}/month unless you cancel in the store.'**
+  String plus_cardTrialEnding(String date, String price);
+
+  /// Same, yearly plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free month ends on {date}. Plus then continues at {price}/year unless you cancel in the store.'**
+  String plus_cardTrialEndingYear(String date, String price);
+
+  /// Same, when no store price was captured.
+  ///
+  /// In en, this message translates to:
+  /// **'Your free month ends on {date}. Plus then continues unless you cancel in the store.'**
+  String plus_cardTrialEndingNoPrice(String date);
+
+  /// Dismisses the trial card (14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Plus'**
+  String get plus_cardKeep;
+
+  /// One-time note when auto-renew is off in the trial (PRD 12).
+  ///
+  /// In en, this message translates to:
+  /// **'Plus stays on until {date}. You won\'t be charged.'**
+  String plus_cardTrialCancelled(String date);
+
+  /// In-app banner only (PRD 12 'Billing issue').
+  ///
+  /// In en, this message translates to:
+  /// **'Your Aura Plus payment didn\'t go through. Everything you\'ve made is safe.'**
+  String get plus_cardBillingIssue;
+
+  /// One small note after the trial converts (14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus continues. Thank you.'**
+  String get plus_cardContinues;
+
+  /// Close a notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get plus_dismiss;
+
+  /// Gift name (₹10).
+  ///
+  /// In en, this message translates to:
+  /// **'Warm Tea'**
+  String get plus_giftWarmTea;
+
+  /// Gift name (₹29).
+  ///
+  /// In en, this message translates to:
+  /// **'Comfort Lantern'**
+  String get plus_giftComfortLantern;
+
+  /// Gift name (₹49).
+  ///
+  /// In en, this message translates to:
+  /// **'Encouragement Bouquet'**
+  String get plus_giftBouquet;
+
+  /// What the recipient sees (PRD). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone here sent you a {gift}.'**
+  String plus_giftReceived(String gift);
+
+  /// Stardust the gift brought.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} Stardust'**
+  String plus_giftStardust(int count);
+
+  /// Gift sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a gift'**
+  String get plus_giftTitle;
+
+  /// Gift sheet body: what the recipient sees.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll see “Someone here sent you a gift” and get Stardust for a sky. No message and no name.'**
+  String get plus_giftBody;
+
+  /// Gift buy button with the store price.
+  ///
+  /// In en, this message translates to:
+  /// **'Send for {price}'**
+  String plus_giftSend(String price);
+
+  /// After the store and server confirmed a gift.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent. They\'ll see it the next time they open Aura.'**
+  String get plus_giftSent;
+
+  /// Pre-check refused (never says why).
+  ///
+  /// In en, this message translates to:
+  /// **'This gift can\'t be sent right now. Nothing was charged.'**
+  String get plus_giftUnavailable;
+
+  /// Daily cap reached (pre-check).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s 5 gifts today. You can send more tomorrow.'**
+  String get plus_giftDailyLimit;
+
+  /// Gifting paused / disabled / sanctioned (calm, no detail).
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts aren\'t available on this account right now.'**
+  String get plus_giftPaused;
+
+  /// Kill switch gifts_enabled off.
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts are resting for a bit. Nothing was charged.'**
+  String get plus_giftsOff;
+
+  /// Stardust balance (a count, never money).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Stardust'**
+  String plus_stardustBalance(int count);
+
+  /// What Stardust is.
+  ///
+  /// In en, this message translates to:
+  /// **'Stardust comes only from gifts people send you. It can\'t be bought, cashed or moved.'**
+  String get plus_stardustNote;
+
+  /// Personal sky themes screen title (Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky'**
+  String get plus_skiesTitle;
+
+  /// Intro: personal only, never shown to others.
+  ///
+  /// In en, this message translates to:
+  /// **'A sky for your own Home, Sanctuary and Insights. Only you see it.'**
+  String get plus_skiesIntro;
+
+  /// Sky name (free).
+  ///
+  /// In en, this message translates to:
+  /// **'Night sky'**
+  String get plus_skyNight;
+
+  /// Sky name (Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'Aurora'**
+  String get plus_skyAurora;
+
+  /// Sky name (Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'Monsoon dusk'**
+  String get plus_skyMonsoonDusk;
+
+  /// Sky name (₹10).
+  ///
+  /// In en, this message translates to:
+  /// **'First light'**
+  String get plus_skyFirstLight;
+
+  /// Sky name (₹29).
+  ///
+  /// In en, this message translates to:
+  /// **'Lantern festival'**
+  String get plus_skyLanternFestival;
+
+  /// Sky name (₹49).
+  ///
+  /// In en, this message translates to:
+  /// **'Deep ocean'**
+  String get plus_skyDeepOcean;
+
+  /// Sky name (₹99).
+  ///
+  /// In en, this message translates to:
+  /// **'Meteor shower'**
+  String get plus_skyMeteorShower;
+
+  /// Sky tag.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get plus_skyFree;
+
+  /// Sky tag.
+  ///
+  /// In en, this message translates to:
+  /// **'With Aura Plus'**
+  String get plus_skyWithPlus;
+
+  /// Sky tag: owned.
+  ///
+  /// In en, this message translates to:
+  /// **'Yours'**
+  String get plus_skyOwned;
+
+  /// Sky tag: equipped.
+  ///
+  /// In en, this message translates to:
+  /// **'In use'**
+  String get plus_skyInUse;
+
+  /// Equip button.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this sky'**
+  String get plus_skyUse;
+
+  /// Buy a cosmetic sky with the store price.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy for {price}'**
+  String plus_skyBuy(String price);
+
+  /// Redeem a sky with Stardust.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {count} Stardust'**
+  String plus_skyStardust(int count);
+
+  /// Redeem refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough Stardust for this sky yet.'**
+  String get plus_skyNotEnough;
+
+  /// Soundscape pairing section.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair a soundscape'**
+  String get plus_soundscapeTitle;
+
+  /// No pairing.
+  ///
+  /// In en, this message translates to:
+  /// **'No sounds'**
+  String get plus_soundscapeNone;
+
+  /// Soundscape: night insects + wind.
+  ///
+  /// In en, this message translates to:
+  /// **'Night air'**
+  String get plus_soundscapeNightAir;
+
+  /// Soundscape: wind + chimes.
+  ///
+  /// In en, this message translates to:
+  /// **'High wind'**
+  String get plus_soundscapeHighWind;
+
+  /// Soundscape: rain + brown noise.
+  ///
+  /// In en, this message translates to:
+  /// **'Monsoon'**
+  String get plus_soundscapeMonsoon;
+
+  /// Soundscape: singing bowl + chimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Bells'**
+  String get plus_soundscapeBells;
+
+  /// Soundscape: ocean + wind.
+  ///
+  /// In en, this message translates to:
+  /// **'Shore'**
+  String get plus_soundscapeShore;
+
+  /// Plays the paired soundscape in Sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Play these sounds'**
+  String get plus_soundscapePlay;
+
+  /// Settings row to the sky screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky and Stardust'**
+  String get plus_settingsSky;
+
+  /// Android notification channel (PRD 15-permissions): Aura Plus reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get plus_channelAccount;
+
+  /// Android channel description.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus reminders, like your free month ending.'**
+  String get plus_channelAccountDescription;
 
   /// Calm inline note under the Privacy policy / Terms links when no browser could open the page. {url} is the public page address (not personal data). No blame.
   ///
@@ -3466,6 +4426,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rooms are resting for a bit. Your check-in is saved.'**
   String get rooms_pausedJoin;
+
+  /// Product name of the co-breathing game (brand, never translated).
+  ///
+  /// In en, this message translates to:
+  /// **'Breath Ripples'**
+  String get ripples_title;
+
+  /// Home card: start a 3-minute co-breath with a few strangers.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe together'**
+  String get ripples_homeCard;
+
+  /// Under the Home card. Calm; no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Three quiet minutes with a few others. No words, no score.'**
+  String get ripples_homeCardBody;
+
+  /// Room button: invite the room's live members to a 3-minute co-breath.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe together'**
+  String get ripples_breatheTogether;
+
+  /// In-room banner for 20 s: someone invited the room to Breath Ripples. name = a room pseudonym.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} wants to breathe together · {count}/{capacity}'**
+  String ripples_invite(String name, int count, int capacity);
+
+  /// Banner button: join the room's Breath Ripples invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get ripples_inviteJoin;
+
+  /// Banner for the person who invited the room.
+  ///
+  /// In en, this message translates to:
+  /// **'Your invite is open · {count}/{capacity}'**
+  String ripples_inviteMine(int count, int capacity);
+
+  /// Lobby while matching (at most 20 s). The pacer already runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for others to breathe with…'**
+  String get ripples_lobby;
+
+  /// Under the lobby line.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe along while you wait. You can leave any time.'**
+  String get ripples_lobbyHint;
+
+  /// Input hint (hold mode).
+  ///
+  /// In en, this message translates to:
+  /// **'Hold to breathe in, let go to breathe out'**
+  String get ripples_holdHint;
+
+  /// Input hint (accessible mode: tap to switch).
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to switch between breathing in and out'**
+  String get ripples_tapHint;
+
+  /// Screen-reader label of the large area you hold (or tap) to breathe.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing area'**
+  String get ripples_breathArea;
+
+  /// PRD 14 Offline state.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing together needs a connection. Breathe solo instead?'**
+  String get ripples_offline;
+
+  /// Kill switch on (ripples_paused). Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Breath Ripples is resting for a bit. Breathe solo instead?'**
+  String get ripples_paused;
+
+  /// The account's social access is paused (sanction). Never says why.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing together is paused for this account right now. You can still breathe on your own.'**
+  String get ripples_suspended;
+
+  /// The account is closed (banned).
+  ///
+  /// In en, this message translates to:
+  /// **'This account can\'t breathe together with others. You can still breathe on your own.'**
+  String get ripples_closed;
+
+  /// 409 guidelines_required: the guidelines are accepted in Rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'The community guidelines come first. Open Rooms to read them, or breathe on your own for now.'**
+  String get ripples_guidelines;
+
+  /// Opens the Sanctuary's Breathe pacer.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe solo'**
+  String get ripples_breatheSolo;
+
+  /// Phase word during the 10 s settle-in before the first breath.
+  ///
+  /// In en, this message translates to:
+  /// **'Settle in'**
+  String get ripples_settle;
+
+  /// Phase word during the 10 s fade-out after the last breath.
+  ///
+  /// In en, this message translates to:
+  /// **'Let it fade'**
+  String get ripples_fade;
+
+  /// Intro line: the people who started this session (never echoes or guides).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Just you and the ocean} other{{count} people breathing together}}'**
+  String ripples_together(int count);
+
+  /// PRD 14: echoes fill empty seats. Honest: they are recordings, never counted as people.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 echo joined. It\'s a recording of a real person who breathed here before.} other{{count} echoes joined. They\'re recordings of real people who breathed here before.}}'**
+  String ripples_echoesJoined(int count);
+
+  /// Guide lights fill seats while the echo library is small. Never presented as people.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{A guide light breathes with you.} other{{count} guide lights breathe with you.}}'**
+  String ripples_guides(int count);
+
+  /// PRD 14: no echoes available; a solo pacer.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing on your own this time. The ocean still listens.'**
+  String get ripples_solo;
+
+  /// PRD 14: the connection dropped; the pacer continues locally. Never an error.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re breathing on your own for a moment.'**
+  String get ripples_linkLost;
+
+  /// After the rejoin window: the session finishes on this phone, gently.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep breathing. The ocean is still here.'**
+  String get ripples_alone;
+
+  /// Tooltip of ✕: leave quietly at any time (no penalty, nothing is said to others).
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get ripples_leave;
+
+  /// Toggle: tap to switch, tones and stronger haptics when in step (on automatically with a screen reader).
+  ///
+  /// In en, this message translates to:
+  /// **'Accessible mode'**
+  String get ripples_accessibleMode;
+
+  /// Explains accessible mode. Sync is never a number.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to switch between in and out. Tones and firmer haptics tell you when you\'re in step with the others.'**
+  String get ripples_accessibleModeHint;
+
+  /// Screen-reader label of the ocean (the art itself is hidden).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{A night ocean with your light} other{A night ocean with {count} lights}}'**
+  String ripples_oceanSemantic(int count);
+
+  /// Screen-reader label of your own light.
+  ///
+  /// In en, this message translates to:
+  /// **'Your light'**
+  String get ripples_lightMe;
+
+  /// Screen-reader label of another person's light (tap for mute, block, report).
+  ///
+  /// In en, this message translates to:
+  /// **'{name}\'s light'**
+  String ripples_lightHuman(String name);
+
+  /// Screen-reader label of an echo light (a recording, never a person here now).
+  ///
+  /// In en, this message translates to:
+  /// **'An echo of someone who breathed here before'**
+  String get ripples_lightEcho;
+
+  /// Screen-reader label of a guide light (never a person).
+  ///
+  /// In en, this message translates to:
+  /// **'A guide light, breathing with the pacer'**
+  String get ripples_lightGuide;
+
+  /// Tiny label under an echo light.
+  ///
+  /// In en, this message translates to:
+  /// **'echo'**
+  String get ripples_echo;
+
+  /// Tiny label under a guide light.
+  ///
+  /// In en, this message translates to:
+  /// **'guide'**
+  String get ripples_guide;
+
+  /// Tiny label under your own light.
+  ///
+  /// In en, this message translates to:
+  /// **'you'**
+  String get ripples_you;
+
+  /// One-tap haptic pulse to everyone in the session.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a pulse'**
+  String get ripples_pulse;
+
+  /// In-game gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Hug'**
+  String get ripples_gestureHug;
+
+  /// In-game gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'Deep breath'**
+  String get ripples_gestureDeepBreath;
+
+  /// In-game gesture.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not alone'**
+  String get ripples_gestureNotAlone;
+
+  /// Announced (and shown) when someone pulses.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} sent a pulse'**
+  String ripples_pulseFrom(String name);
+
+  /// Shown by a light and announced: who sent which gesture (gesture = its name).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {gesture}'**
+  String ripples_gestureFrom(String name, String gesture);
+
+  /// Screen-reader label of the pulse + gesture row.
+  ///
+  /// In en, this message translates to:
+  /// **'Send something kind'**
+  String get ripples_contactTray;
+
+  /// Stop this light's pulses, gestures and haptics for you, for this session.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get ripples_mute;
+
+  /// Undo mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get ripples_unmute;
+
+  /// Block this person: never matched again (they aren't told).
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get ripples_block;
+
+  /// Report this person (reasons, optional note).
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get ripples_report;
+
+  /// After block. The other person is never told.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked. You won\'t be matched together again.'**
+  String get ripples_blocked;
+
+  /// After a report.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. Someone from Aura will look at it.'**
+  String get ripples_reported;
+
+  /// Mute/block/report failed (connection). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Please try again.'**
+  String get ripples_actionFailed;
+
+  /// End screen. Never a score or how well it went.
+  ///
+  /// In en, this message translates to:
+  /// **'That was a few minutes together.'**
+  String get ripples_endTitle;
+
+  /// End screen: start another session (same entry).
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe again'**
+  String get ripples_again;
+
+  /// End screen (room sessions): back to the room.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to room'**
+  String get ripples_backToRoom;
+
+  /// End screen, optional: opens a check-in (F1).
+  ///
+  /// In en, this message translates to:
+  /// **'How do you feel now?'**
+  String get ripples_feelNow;
+
+  /// Echo opt-out switch (on by default, per the privacy notice).
+  ///
+  /// In en, this message translates to:
+  /// **'Let my breathing become an echo'**
+  String get ripples_echoToggle;
+
+  /// Under the echo switch. Honest about what is kept.
+  ///
+  /// In en, this message translates to:
+  /// **'An echo keeps only the timing of your breaths, never who you are, so it can\'t be traced back to you. Turning this off stops future echoes.'**
+  String get ripples_echoToggleHint;
 
   /// Rooms tab title (mood rooms with preset gestures). Never 'chat'.
   ///

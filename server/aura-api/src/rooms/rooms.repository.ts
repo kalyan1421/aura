@@ -21,6 +21,12 @@ export interface RoomRow {
   joins_close_at: Date;
   memory_at: Date;
   purge_at: Date;
+  // Room lanterns + Tonight's intention (migration 20261005000022): room totals only. Optional so rows built
+  // elsewhere (fakes, older callers) stay valid; missing = nothing lit, no intention.
+  lantern_progress?: number;
+  lantern_hour_at?: Date | null;
+  intention_key?: string | null;
+  intention_holds?: number;
 }
 
 export interface MemberRow {
@@ -37,6 +43,8 @@ export interface MemberRow {
   last_seen_at: Date;
   left_at: Date | null;
   survey_answered_at: Date | null;
+  /** This member holds tonight's intention (only ever shown to this member). */
+  holds_intention?: boolean;
 }
 
 export interface MemberViewRow {
@@ -79,10 +87,11 @@ export interface RoomGestureRow {
   created_at: Date;
 }
 
-const ROOM_COLS = `r.id, r.language_pool, r.quadrant, r.tz_region, r.seed_mood_id, r.theme, r.capacity, r.status,
-  r.here_now_broadcast, r.created_at, r.opened_at, r.joins_close_at, r.memory_at, r.purge_at`;
+export const ROOM_COLS = `r.id, r.language_pool, r.quadrant, r.tz_region, r.seed_mood_id, r.theme, r.capacity, r.status,
+  r.here_now_broadcast, r.created_at, r.opened_at, r.joins_close_at, r.memory_at, r.purge_at,
+  r.lantern_progress, r.lantern_hour_at, r.intention_key, r.intention_holds`;
 const MEMBER_COLS = `m.member_id, m.room_id, m.user_id, m.pseudonym, m.mood_at_join, m.entry_quadrant, m.stage, m.hue,
-  m.cosmetic, m.joined_at, m.last_seen_at, m.left_at, m.survey_answered_at`;
+  m.cosmetic, m.joined_at, m.last_seen_at, m.left_at, m.survey_answered_at, m.holds_intention`;
 
 /** Here-now: current members seen within the live window, minus hidden accounts (deactivated / suspended). */
 const HERE_NOW_SQL = (liveParam: string): string =>
@@ -477,5 +486,6 @@ function reviveRoom(j: RoomRow): RoomRow {
     joins_close_at: d(j.joins_close_at),
     memory_at: d(j.memory_at),
     purge_at: d(j.purge_at),
+    lantern_hour_at: j.lantern_hour_at === null || j.lantern_hour_at === undefined ? null : d(j.lantern_hour_at),
   };
 }

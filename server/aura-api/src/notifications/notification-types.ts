@@ -7,7 +7,19 @@ import { isUuid } from '../common/uuid';
  * router) before enqueueing it. `rooms_pool_open`: "Tell me when they open" (06b F5 / 14-states) — once, when a language
  * pool the person waited for opens (pool-waitlist.ts).
  */
-export const NOTIFICATION_TYPES = ['capsule_unlocked', 'daily_reminder', 'rooms_pool_open'] as const;
+export const NOTIFICATION_TYPES = [
+  'capsule_unlocked',
+  'daily_reminder',
+  'rooms_pool_open',
+  // F14 Milestone B (contracts/api/v1-notifications.md §6–§9): the rest of the catalogue's pushes.
+  'gestures_received',
+  'lantern_hour',
+  'wind_down_reminder',
+  'habit_nudge',
+  'welcome_back',
+  // F12 (src/billing/trial-reminder.ts, trial-ending.ts): 48 h before the free month ends; once per account, cap-exempt.
+  'trial_ending',
+] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
 export const isNotificationType = (v: unknown): v is NotificationType =>
@@ -39,7 +51,7 @@ export function parseNotificationJob(data: unknown): NotificationJobData | null 
  * be muted on its own). The app creates them; the ids are a contract with apps/mobile (features/push). `rooms` is
  * "Rooms & Lantern Hour" (the pool-open push now; Lantern Hour and gestures later).
  */
-export const ANDROID_CHANNELS = ['reminders', 'capsules', 'rooms'] as const;
+export const ANDROID_CHANNELS = ['reminders', 'capsules', 'rooms', 'account'] as const; // `account`: F12 trial reminder
 export type AndroidChannelId = (typeof ANDROID_CHANNELS)[number];
 
 /** One rendered push for one device: content-free data + generic, localized copy. */

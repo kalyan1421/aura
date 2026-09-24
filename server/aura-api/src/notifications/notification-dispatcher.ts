@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DelayedError, type Job } from 'bullmq';
 import { NotificationDelivery } from './delivery.service';
+import { MilestoneBJobs } from './milestone-b-jobs';
 import { NOTIFICATION_JOB, parseNotificationJob } from './notification-types';
 import { POOL_OPEN_SWEEP_JOB, PoolOpenSweep } from './pool-waitlist';
 import { REMINDER_RECONCILE_JOB, REMINDER_SWEEP_JOB, ReminderScheduler } from './reminder.service';
@@ -22,12 +23,15 @@ export class NotificationDispatcher {
     private readonly reminders: ReminderScheduler,
     /** Always injected by Nest (explicit token); optional only for hand-built unit tests. */
     @Inject(PoolOpenSweep) private readonly poolOpen?: PoolOpenSweep,
+    /** F14 Milestone B sweeps (schedules, welcome back, gestures). Same injection rule as `poolOpen`. */
+    @Inject(MilestoneBJobs) private readonly milestoneB?: MilestoneBJobs,
   ) {}
 
   /** Registers the repeatable reminder jobs (worker bootstrap). */
   async ensureSchedulers(): Promise<void> {
     await this.reminders.ensureSchedulers();
     await this.poolOpen?.ensureScheduler();
+    await this.milestoneB?.ensureSchedulers();
     this.logger.log(`push transport: ${this.delivery.transportName}`);
   }
 
@@ -49,6 +53,7 @@ export class NotificationDispatcher {
         await this.poolOpen?.sweep();
         return;
       default:
+        if (await this.milestoneB?.handle(job, now)) return;
         this.logger.warn(`ignored unknown notifications job ${job.name}`);
     }
   }

@@ -932,6 +932,26 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       await db.query(`insert into public.device_installs (user_id, install_hash, platform) values ($1, $2, 'ios')`, [u.id, randomBytes(32).toString('hex')]);
       // F5 "Tell me when they open" (migration 20261005000019): a waiting opt-in for the Hindi + Hinglish pool.
       await db.query(`insert into public.room_pool_waitlist (user_id, pool) values ($1, 'hi')`, [u.id]);
+      // F12 (migration 20261005000020): the store token, the derived entitlement, a cosmetic sky + its pairing and
+      // Stardust, as NestJS writes them (test/e2e/billing.e2e-spec.ts covers the real flows).
+      await as(u, http().get('/v1/billing/entitlement')).expect(200); // billing_accounts + entitlements
+      await db.query(`insert into public.user_cosmetics (user_id, cosmetic_id, source, redemption_id) values ($1, 'first_light', 'stardust', $2)`, [u.id, randomUUID()]);
+      await db.query(`insert into public.sky_preferences (user_id, sky_theme, soundscape) values ($1, 'first_light', 'bells')`, [u.id]);
+      await db.query(`insert into public.stardust_ledger (user_id, amount, reason, ref_id) values ($1, 10, 'gift_received', $2)`, [u.id, randomUUID()]);
+      // F15 + F14 Milestone B (migration 20261005000023): a Sanctuary session record (through the sync push), a planned
+      // user-timed push and a gestures-received log row (notification_activity comes from the sync push's trigger).
+      const session = { id: uuidv7(), entity: 'sanctuary_session', op: 'upsert', deviceTs: now(), localDay: localDate(new Date(), 'Asia/Kolkata'), tz: 'Asia/Kolkata', payload: { id: uuidv7(), activity: 'breathe', variant: 'calm', durationS: 64 } };
+      expect((await pushAs(u, [session]).expect(200)).body.results[0].status).toBe('applied');
+      await db.query(`insert into public.notification_schedule (user_id, kind, next_at, tz) values ($1, 'lantern_hour', now() + interval '1 hour', 'Asia/Kolkata')`, [u.id]);
+      await db.query('insert into public.gesture_push_log (user_id, room_id, local_day) values ($1, $2, current_date)', [u.id, matched.body.room.roomId]);
+      // F7 Breath Ripples (migration 20261005000021): "Breathe together" in the room opens an invite and a waiting
+      // ticket (through the API); a seat in a session, as the matcher writes it.
+      await as(u, http().post('/v1/ripples/match')).send({ ticketId: uuidv7(), entry: 'room', roomId: matched.body.room.roomId }).expect(200);
+      const rs = await db.query<{ id: string }>(
+        `insert into public.ripple_sessions (entry, start_rule, t0, settle_ms, inhale_ms, exhale_ms, cycles, fade_ms, pacer_version, ends_at, purge_at)
+         values ('quick', 'timeout', now(), 10000, 4000, 6000, 16, 10000, 1, now() + interval '180 seconds', now() + interval '7 days') returning id`,
+      );
+      await db.query(`insert into public.ripple_seats (session_id, seat, kind, user_id, pseudonym) values ($1, 1, 'human', $2, 'Quiet Comet')`, [rs.rows[0].id, u.id]);
       await db.query(`insert into public.apple_auth_tokens (user_id, client_id, wrapped_refresh_token) values ($1, 'com.akvega.aura', $2)`, [
         u.id,
         randomBytes(64).toString('base64'),

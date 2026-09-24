@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/haptics.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/entitlements/plus.dart';
 import '../../core/db/database.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
@@ -582,7 +583,7 @@ class _CapsuleOpenedViewState extends ConsumerState<CapsuleOpenedView> {
     final messenger = ScaffoldMessenger.maybeOf(context);
     final l = AppLocalizations.of(context);
     try {
-      await repo.rearm(widget.row.id);
+      await repo.rearm(widget.row.id, plus: ref.read(plusActiveProvider));
       sync.notifyLocalWrite();
       messenger?.showSnackBar(SnackBar(content: Text(l.capsules_keptNextTime)));
       if (mounted) Navigator.of(context).maybePop();

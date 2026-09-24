@@ -1650,7 +1650,7 @@
   "@notif_channelRooms": {
     "description": "Android notification channel name for room notices (phone Settings; PRD 15-permissions)."
   },
-  "notif_channelRoomsDescription": "When rooms you asked about open.",
+  "notif_channelRoomsDescription": "Lantern Hour, warmth from your room, and rooms you asked about.",
   "@notif_channelRoomsDescription": {
     "description": "Android notification channel description (phone Settings)."
   },
@@ -2254,6 +2254,104 @@
       }
     }
   },
+  "rooms_lanternTitle": "Tonight's lantern",
+  "@rooms_lanternTitle": {
+    "description": "Room card title: the room's shared lantern (lit together during Lantern Hour)."
+  },
+  "rooms_lanternStart": "Every gesture here adds a little light.",
+  "@rooms_lanternStart": {
+    "description": "Room lantern during Lantern Hour, not lit yet. Invitation, no pressure."
+  },
+  "rooms_lanternGlowing": "It glows brighter with every gesture here.",
+  "@rooms_lanternGlowing": {
+    "description": "Room lantern during Lantern Hour, partly lit. Never a count or a score."
+  },
+  "rooms_lanternFull": "Fully lit, together.",
+  "@rooms_lanternFull": {
+    "description": "Room lantern fully lit (all levels)."
+  },
+  "rooms_lanternKept": "Tonight's lantern glowed this bright.",
+  "@rooms_lanternKept": {
+    "description": "After Lantern Hour and in the room memory: the level the lantern reached. PRD 14-states copy; never 'failed', 'missed' or 'almost'."
+  },
+  "rooms_lanternSemantic": "Tonight's lantern, {level} of {max} lights lit",
+  "@rooms_lanternSemantic": {
+    "description": "Screen-reader label for the room lantern (a room total).",
+    "placeholders": {
+      "level": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_lanternRise": "The lantern is fully lit. Lanterns rise, together.",
+  "@rooms_lanternRise": {
+    "description": "The one shared moment when the room's lantern becomes fully lit (announced; shown as a line under Reduce Motion)."
+  },
+  "rooms_intentionTitle": "Tonight's intention",
+  "@rooms_intentionTitle": {
+    "description": "Room card title: one preset intention the room can hold together during Lantern Hour."
+  },
+  "rooms_intentionHold": "Hold this tonight",
+  "@rooms_intentionHold": {
+    "description": "Button: hold tonight's intention (one tap, can't be undone). No pressure."
+  },
+  "rooms_intentionHolding": "You're holding this tonight",
+  "@rooms_intentionHolding": {
+    "description": "After you held tonight's intention (only you see this)."
+  },
+  "rooms_intentionHolds": "{count, plural, =0{Hold it with one tap} =1{1 holding this tonight} other{{count} holding this tonight}}",
+  "@rooms_intentionHolds": {
+    "description": "The room total holding tonight's intention (never who).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_intentionHeld": "{count, plural, =0{Resting until the next Lantern Hour} =1{1 held this tonight} other{{count} held this tonight}}",
+  "@rooms_intentionHeld": {
+    "description": "After Lantern Hour: how many held tonight's intention. No failure copy.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_intentionPrivate": "Nobody sees who holds it, and nobody will ask about it tomorrow.",
+  "@rooms_intentionPrivate": {
+    "description": "Under tonight's intention: holders are never named; no follow-up."
+  },
+  "rooms_intentionFailed": "That didn't go through. Please try again.",
+  "@rooms_intentionFailed": {
+    "description": "Holding tonight's intention failed (connection, or the hour ended). No blame."
+  },
+  "rooms_intention_sleep_before_midnight": "Sleep before midnight",
+  "@rooms_intention_sleep_before_midnight": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
+  "rooms_intention_gentle_with_myself": "Be gentle with myself tonight",
+  "@rooms_intention_gentle_with_myself": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
+  "rooms_intention_phone_down_10": "Phone down for 10 minutes",
+  "@rooms_intention_phone_down_10": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
+  "rooms_intention_water_before_bed": "A glass of water before bed",
+  "@rooms_intention_water_before_bed": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
+  "rooms_intention_one_kind_thought": "One kind thought about today",
+  "@rooms_intention_one_kind_thought": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
+  "rooms_intention_slow_breaths": "Three slow breaths before sleep",
+  "@rooms_intention_slow_breaths": {
+    "description": "Tonight's intention preset (first person, gentle, never a goal to fail)."
+  },
   "notif_reminderBanner": "A quiet minute for you. How's today feeling?",
   "@notif_reminderBanner": {
     "description": "In-app notice when the daily check-in reminder arrives while the app is open (same line as the push, PRD 12-notifications catalogue). Never guilt, never a streak."
@@ -2274,7 +2372,7 @@
   "@notif_channelReminders": {
     "description": "Android notification channel name for the daily check-in reminder (phone Settings)."
   },
-  "notif_channelRemindersDescription": "Your daily check-in reminder.",
+  "notif_channelRemindersDescription": "Your check-in, wind-down and habit reminders.",
   "@notif_channelRemindersDescription": {
     "description": "Android notification channel description (phone Settings)."
   },
@@ -2403,6 +2501,141 @@
   "@push_discreet": {
     "description": "Checkbox on the explainer: discreet mode (PRD 12 rule 4, a one-tap choice on the permission screen). The line under it quotes the discreet text."
   },
+  "notif_gesturesBanner": "People in your room sent you warmth.",
+  "@notif_gesturesBanner": {
+    "description": "In-app notice when the 'gestures received' push arrives while the app is open. Never a pseudonym, count of gestures, theme or mood."
+  },
+  "notif_gesturesAction": "Open room",
+  "@notif_gesturesAction": {
+    "description": "Action on the gestures notice: opens that room."
+  },
+  "notif_lanternBanner": "Lantern Hour is on. Others are here tonight.",
+  "@notif_lanternBanner": {
+    "description": "In-app notice when the Lantern Hour push arrives while the app is open (PRD catalogue line)."
+  },
+  "notif_lanternAction": "See rooms",
+  "@notif_lanternAction": {
+    "description": "Action on the Lantern Hour notice: opens Rooms."
+  },
+  "notif_windDownBanner": "A few quiet minutes before sleep, whenever you want them.",
+  "@notif_windDownBanner": {
+    "description": "In-app notice for the wind-down reminder (PRD line). Never promises better sleep (REQ-NTF-04)."
+  },
+  "notif_windDownAction": "Open Sounds",
+  "@notif_windDownAction": {
+    "description": "Action on the wind-down notice: opens Sanctuary › Sounds (nothing plays until a tap)."
+  },
+  "notif_habitBanner": "A small habit or two, whenever you're ready.",
+  "@notif_habitBanner": {
+    "description": "In-app notice for a habit nudge. Never a habit's name."
+  },
+  "notif_habitAction": "See habits",
+  "@notif_habitAction": {
+    "description": "Action on the habit nudge notice: opens Home."
+  },
+  "notif_crisisFollowUp": "Just checking in. However today feels, help is one tap away.",
+  "@notif_crisisFollowUp": {
+    "description": "Crisis follow-up (PRD 12): an in-app card on the next open 12–72 h after the support sheet showed. Never a push, never mentions distress or what happened."
+  },
+  "notif_crisisFollowUpDismiss": "Close",
+  "@notif_crisisFollowUpDismiss": {
+    "description": "Closes the follow-up card (it doesn't come back for this time)."
+  },
+  "set_notifGestures": "Warmth from your room",
+  "@set_notifGestures": {
+    "description": "Switch: the 'gestures received' push (batched)."
+  },
+  "set_notifGesturesNote": "When people in your room send you a gesture. One a day at most.",
+  "@set_notifGesturesNote": {
+    "description": "Under the gestures switch."
+  },
+  "set_notifLantern": "Lantern Hour",
+  "@set_notifLantern": {
+    "description": "Switch: the opt-in Lantern Hour push."
+  },
+  "set_notifLanternNote": "When Lantern Hour starts in your evening. Not if you've already been in a room that day.",
+  "@set_notifLanternNote": {
+    "description": "Under the Lantern Hour switch (region clock, around 9 pm)."
+  },
+  "set_notifWindDown": "Wind-down reminder",
+  "@set_notifWindDown": {
+    "description": "Switch: the opt-in wind-down reminder (REQ-NTF-04)."
+  },
+  "set_notifWindDownNote": "A few quiet minutes at {time}. Not sent once you've used Sanctuary that evening.",
+  "@set_notifWindDownNote": {
+    "description": "Under the wind-down switch when on; {time} e.g. '10:30 PM'. No sleep promise.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "set_notifWindDownOffNote": "Off. Pick a time for a quiet nudge before sleep.",
+  "@set_notifWindDownOffNote": {
+    "description": "Under the wind-down switch when off."
+  },
+  "set_notifWindDownTime": "Wind-down time",
+  "@set_notifWindDownTime": {
+    "description": "Row that opens the time picker for the wind-down reminder."
+  },
+  "set_notifWelcomeBack": "After a quiet while",
+  "@set_notifWelcomeBack": {
+    "description": "Switch: the 'welcome back' push."
+  },
+  "set_notifWelcomeBackNote": "If you've been away a week or more, one gentle hello. Twice at most.",
+  "@set_notifWelcomeBackNote": {
+    "description": "Under the welcome-back switch. No guilt."
+  },
+  "set_notifHabits": "Habit nudges",
+  "@set_notifHabits": {
+    "description": "Sub-heading: per-habit nudge times (opt-in)."
+  },
+  "set_notifHabitsNote": "A small nudge at a time you pick, for any habit on Home. One a day at most.",
+  "@set_notifHabitsNote": {
+    "description": "Under the habit nudges heading."
+  },
+  "set_notifHabitsNone": "Add a habit on Home to get a nudge for it.",
+  "@set_notifHabitsNone": {
+    "description": "Habit nudges when there are no active habits."
+  },
+  "set_notifHabitOff": "Off",
+  "@set_notifHabitOff": {
+    "description": "Trailing value of a habit row without a nudge."
+  },
+  "set_notifHabitQuiet": "Inside your quiet hours, so it won't be sent.",
+  "@set_notifHabitQuiet": {
+    "description": "Under a habit nudge whose time is inside quiet hours."
+  },
+  "set_notifHabitChange": "Change time",
+  "@set_notifHabitChange": {
+    "description": "Dialog action on a habit with a nudge."
+  },
+  "set_notifHabitTurnOff": "Turn off",
+  "@set_notifHabitTurnOff": {
+    "description": "Dialog action: remove this habit's nudge."
+  },
+  "sounds_windDownRemind": "Remind me at {time}",
+  "@sounds_windDownRemind": {
+    "description": "On the night wind-down card: turns on the opt-in wind-down reminder (asks for a time first). {time} e.g. '10:30 PM'.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_windDownReminderOn": "A gentle reminder comes at {time}.",
+  "@sounds_windDownReminderOn": {
+    "description": "On the wind-down card when the reminder is on.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_windDownReminderOff": "Turn off",
+  "@sounds_windDownReminderOff": {
+    "description": "Turns the wind-down reminder off from the card."
+  },
   "onb_trustTitle": "Before we begin",
   "@onb_trustTitle": {
     "description": "Trust step title (privacy and boundaries). Calm."
@@ -2468,6 +2701,565 @@
         "type": "String"
       }
     }
+  },
+  "plus_title": "Aura Plus",
+  "@plus_title": {
+    "description": "Name of the optional subscription (brand, never translated)."
+  },
+  "plus_intro": "More of what you already have. Everything that helps you feel better stays free.",
+  "@plus_intro": {
+    "description": "Paywall intro. Plus is 'more of', never 'better calm'."
+  },
+  "plus_addsTitle": "Plus adds",
+  "@plus_addsTitle": {
+    "description": "Paywall section header: what the subscription adds."
+  },
+  "plus_addCapsules": "Unlimited mood-trigger capsules",
+  "@plus_addCapsules": {
+    "description": "Plus perk (free keeps 3 waiting)."
+  },
+  "plus_addVoice": "Voice up to 10 minutes in a capsule",
+  "@plus_addVoice": {
+    "description": "Plus perk (free: 2 minutes)."
+  },
+  "plus_addInsights": "Deeper Insights: any range, habit × mood, the deeper month in stars",
+  "@plus_addInsights": {
+    "description": "Plus perk."
+  },
+  "plus_addSounds": "Extra sounds and two Plus skies",
+  "@plus_addSounds": {
+    "description": "Plus perk: extra Sounds stems and themes."
+  },
+  "plus_freeTitle": "Always free",
+  "@plus_freeTitle": {
+    "description": "Paywall section header: what never needs Plus."
+  },
+  "plus_freeBody": "Check-ins, habits, rest days, rooms, Breath Ripples, date capsules, crisis support, Breathe, grounding, Today's minute, every base sound and the night wind-down.",
+  "@plus_freeBody": {
+    "description": "The never-paywalled list (PRD F12)."
+  },
+  "plus_planMonthly": "Monthly",
+  "@plus_planMonthly": {
+    "description": "Plan choice."
+  },
+  "plus_planAnnual": "Yearly",
+  "@plus_planAnnual": {
+    "description": "Plan choice."
+  },
+  "plus_trialLineMonthly": "1 month free, then {price}/month",
+  "@plus_trialLineMonthly": {
+    "description": "Headline price line when the store account can get the free month. {price} is the store's own localized price.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_trialLineAnnual": "1 month free, then {price}/year",
+  "@plus_trialLineAnnual": {
+    "description": "Headline for the yearly plan with the free month.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_priceMonthly": "{price}/month",
+  "@plus_priceMonthly": {
+    "description": "Plain price (no free month on this store account).",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_priceAnnual": "{price}/year",
+  "@plus_priceAnnual": {
+    "description": "Plain yearly price.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_trialEnds": "Your free month ends on {date}. The first charge is on {date} unless you cancel before then.",
+  "@plus_trialEnds": {
+    "description": "Trial end date on the paywall ({date} is formatted).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_renews": "Renews automatically until you cancel. Paid through your {store} account.",
+  "@plus_renews": {
+    "description": "Auto-renew disclosure (App Review 3.1.2).",
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_cancelApple": "To cancel: iPhone Settings › your name › Subscriptions › Aura. Cancel at least a day before a charge.",
+  "@plus_cancelApple": {
+    "description": "How to cancel on iOS (no retention screen)."
+  },
+  "plus_cancelGoogle": "To cancel: Play Store › your profile › Payments & subscriptions › Subscriptions › Aura.",
+  "@plus_cancelGoogle": {
+    "description": "How to cancel on Android."
+  },
+  "plus_storeApple": "App Store",
+  "@plus_storeApple": {
+    "description": "Store name (brand)."
+  },
+  "plus_storeGoogle": "Google Play",
+  "@plus_storeGoogle": {
+    "description": "Store name (brand)."
+  },
+  "plus_startTrial": "Start free month",
+  "@plus_startTrial": {
+    "description": "Buy button when the free month applies."
+  },
+  "plus_subscribe": "Subscribe",
+  "@plus_subscribe": {
+    "description": "Buy button without the free month."
+  },
+  "plus_restore": "Restore purchases",
+  "@plus_restore": {
+    "description": "Restore button (Apple 3.1.1)."
+  },
+  "plus_manage": "Manage in store",
+  "@plus_manage": {
+    "description": "Opens the store's own subscription page."
+  },
+  "plus_loadingPrices": "Loading prices from the store",
+  "@plus_loadingPrices": {
+    "description": "Screen-reader label for the price skeleton."
+  },
+  "plus_storeUnavailable": "The store isn't reachable right now. Nothing was charged.",
+  "@plus_storeUnavailable": {
+    "description": "PRD 14-states."
+  },
+  "plus_retry": "Try again",
+  "@plus_retry": {
+    "description": "Retry button."
+  },
+  "plus_confirming": "Confirming with the store…",
+  "@plus_confirming": {
+    "description": "While NestJS confirms with the store (PRD 14-states)."
+  },
+  "plus_confirmingLater": "The store has your request. Plus unlocks the moment it's confirmed. You can close this.",
+  "@plus_confirmingLater": {
+    "description": "PRD 14-states pending confirmation."
+  },
+  "plus_validationFailed": "We couldn't confirm this yet. If you were charged, it's safe. We'll keep checking.",
+  "@plus_validationFailed": {
+    "description": "PRD 14-states validation failed. Never asks to pay again."
+  },
+  "plus_pendingApproval": "Waiting for approval. You won't be charged until it goes through.",
+  "@plus_pendingApproval": {
+    "description": "UPI mandate / Ask to Buy pending (PRD)."
+  },
+  "plus_declined": "Payment didn't go through. You weren't charged.",
+  "@plus_declined": {
+    "description": "PRD 14-states declined."
+  },
+  "plus_welcome": "Aura Plus is on. Thank you.",
+  "@plus_welcome": {
+    "description": "After the server confirmed the purchase."
+  },
+  "plus_ownedElsewhere": "This purchase belongs to another Aura account on this store account, so it stays there.",
+  "@plus_ownedElsewhere": {
+    "description": "Restore / buy found a purchase linked to another Aura account."
+  },
+  "plus_restored": "{count, plural, =0{Nothing to restore on this store account.} =1{1 purchase restored.} other{{count} purchases restored.}}",
+  "@plus_restored": {
+    "description": "After Restore purchases.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plus_lockedOnly": "Part of Aura Plus",
+  "@plus_lockedOnly": {
+    "description": "The only line shown where an offer isn't appropriate (after a hard check-in, in a crisis flow). PRD copy."
+  },
+  "plus_about": "About Aura Plus",
+  "@plus_about": {
+    "description": "Small link to the paywall (the person chooses)."
+  },
+  "plus_seePlus": "See Aura Plus",
+  "@plus_seePlus": {
+    "description": "Button on a limit explainer."
+  },
+  "plus_freePath": "The free way stays right here.",
+  "@plus_freePath": {
+    "description": "Reminder under a limit explainer that a free path exists."
+  },
+  "plus_explainerCapsules": "Free accounts keep 3 mood capsules waiting. Aura Plus keeps as many as you like. Date capsules are always unlimited.",
+  "@plus_explainerCapsules": {
+    "description": "4th mood-trigger capsule explainer (14-states)."
+  },
+  "plus_explainerVoice": "Voice in a capsule stops at 2 minutes on free Aura, 10 minutes with Aura Plus.",
+  "@plus_explainerVoice": {
+    "description": "Long voice explainer."
+  },
+  "plus_explainerSounds": "This sound comes with Aura Plus. Every base sound and the night wind-down stay free.",
+  "@plus_explainerSounds": {
+    "description": "Plus Sounds stem explainer."
+  },
+  "plus_explainerInsights": "Aura Plus adds any range, habit × mood and the deeper month. Your sky and history stay free.",
+  "@plus_explainerInsights": {
+    "description": "Deeper Insights explainer."
+  },
+  "plus_explainerSky": "This sky comes with Aura Plus.",
+  "@plus_explainerSky": {
+    "description": "Plus sky explainer."
+  },
+  "plus_statusFree": "You're on free Aura.",
+  "@plus_statusFree": {
+    "description": "Settings Plus card, no Plus."
+  },
+  "plus_statusTrial": "Free month: {days, plural, =0{ends today} =1{1 day left} other{{days} days left}}. First charge on {date}.",
+  "@plus_statusTrial": {
+    "description": "14-states 'Trial active'.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_statusTrialCancelled": "Your free month stays on until {date}. After that you're on free Aura, and everything you made stays yours.",
+  "@plus_statusTrialCancelled": {
+    "description": "14-states 'Trial cancelled'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_statusActive": "Aura Plus renews on {date}.",
+  "@plus_statusActive": {
+    "description": "Active, auto-renew on.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_statusCancelled": "Aura Plus stays on until {date}. You won't be charged again.",
+  "@plus_statusCancelled": {
+    "description": "Active, auto-renew off.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_statusGrace": "The store couldn't renew Aura Plus. Plus stays on while it tries again.",
+  "@plus_statusGrace": {
+    "description": "14-states billing retry, in grace."
+  },
+  "plus_statusBillingRetry": "Aura Plus is paused until the store can renew it. Everything you made stays yours.",
+  "@plus_statusBillingRetry": {
+    "description": "14-states after grace."
+  },
+  "plus_statusExpired": "Aura Plus has ended. Everything you made stays yours.",
+  "@plus_statusExpired": {
+    "description": "Lapsed (PRD: nothing made is lost)."
+  },
+  "plus_statusRefunded": "Your refund went through, so Aura Plus has ended. Everything you made stays yours.",
+  "@plus_statusRefunded": {
+    "description": "14-states refunded."
+  },
+  "plus_statusPending": "Waiting for the store to confirm. You won't be charged until it goes through.",
+  "@plus_statusPending": {
+    "description": "Pending purchase."
+  },
+  "plus_updatePayment": "Update payment in store",
+  "@plus_updatePayment": {
+    "description": "14-states billing retry action."
+  },
+  "plus_turnBackOn": "Turn Plus back on",
+  "@plus_turnBackOn": {
+    "description": "14-states trial cancelled action (opens the store page)."
+  },
+  "plus_managedElsewhere": "Bought on {store}. Manage it there.",
+  "@plus_managedElsewhere": {
+    "description": "Plus bought on the other platform (PRD edge case).",
+    "placeholders": {
+      "store": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_notYet": "Aura Plus opens up a day after you join. Everything you need is already free.",
+  "@plus_notYet": {
+    "description": "Settings card in the first 24 h (no offer yet)."
+  },
+  "plus_cardTrialEnding": "Your free month ends on {date}. Plus then continues at {price}/month unless you cancel in the store.",
+  "@plus_cardTrialEnding": {
+    "description": "Quiet Home card, last 2 days of the trial (at most once a day).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_cardTrialEndingYear": "Your free month ends on {date}. Plus then continues at {price}/year unless you cancel in the store.",
+  "@plus_cardTrialEndingYear": {
+    "description": "Same, yearly plan.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_cardTrialEndingNoPrice": "Your free month ends on {date}. Plus then continues unless you cancel in the store.",
+  "@plus_cardTrialEndingNoPrice": {
+    "description": "Same, when no store price was captured.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_cardKeep": "Keep Plus",
+  "@plus_cardKeep": {
+    "description": "Dismisses the trial card (14-states)."
+  },
+  "plus_cardTrialCancelled": "Plus stays on until {date}. You won't be charged.",
+  "@plus_cardTrialCancelled": {
+    "description": "One-time note when auto-renew is off in the trial (PRD 12).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_cardBillingIssue": "Your Aura Plus payment didn't go through. Everything you've made is safe.",
+  "@plus_cardBillingIssue": {
+    "description": "In-app banner only (PRD 12 'Billing issue')."
+  },
+  "plus_cardContinues": "Aura Plus continues. Thank you.",
+  "@plus_cardContinues": {
+    "description": "One small note after the trial converts (14-states)."
+  },
+  "plus_dismiss": "Dismiss",
+  "@plus_dismiss": {
+    "description": "Close a notice."
+  },
+  "plus_giftWarmTea": "Warm Tea",
+  "@plus_giftWarmTea": {
+    "description": "Gift name (₹10)."
+  },
+  "plus_giftComfortLantern": "Comfort Lantern",
+  "@plus_giftComfortLantern": {
+    "description": "Gift name (₹29)."
+  },
+  "plus_giftBouquet": "Encouragement Bouquet",
+  "@plus_giftBouquet": {
+    "description": "Gift name (₹49)."
+  },
+  "plus_giftReceived": "Someone here sent you a {gift}.",
+  "@plus_giftReceived": {
+    "description": "What the recipient sees (PRD). Never who sent it.",
+    "placeholders": {
+      "gift": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_giftStardust": "+{count} Stardust",
+  "@plus_giftStardust": {
+    "description": "Stardust the gift brought.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plus_giftTitle": "Send a gift",
+  "@plus_giftTitle": {
+    "description": "Gift sheet title."
+  },
+  "plus_giftBody": "They'll see “Someone here sent you a gift” and get Stardust for a sky. No message and no name.",
+  "@plus_giftBody": {
+    "description": "Gift sheet body: what the recipient sees."
+  },
+  "plus_giftSend": "Send for {price}",
+  "@plus_giftSend": {
+    "description": "Gift buy button with the store price.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_giftSent": "Sent. They'll see it the next time they open Aura.",
+  "@plus_giftSent": {
+    "description": "After the store and server confirmed a gift."
+  },
+  "plus_giftUnavailable": "This gift can't be sent right now. Nothing was charged.",
+  "@plus_giftUnavailable": {
+    "description": "Pre-check refused (never says why)."
+  },
+  "plus_giftDailyLimit": "That's 5 gifts today. You can send more tomorrow.",
+  "@plus_giftDailyLimit": {
+    "description": "Daily cap reached (pre-check)."
+  },
+  "plus_giftPaused": "Gifts aren't available on this account right now.",
+  "@plus_giftPaused": {
+    "description": "Gifting paused / disabled / sanctioned (calm, no detail)."
+  },
+  "plus_giftsOff": "Gifts are resting for a bit. Nothing was charged.",
+  "@plus_giftsOff": {
+    "description": "Kill switch gifts_enabled off."
+  },
+  "plus_stardustBalance": "{count} Stardust",
+  "@plus_stardustBalance": {
+    "description": "Stardust balance (a count, never money).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plus_stardustNote": "Stardust comes only from gifts people send you. It can't be bought, cashed or moved.",
+  "@plus_stardustNote": {
+    "description": "What Stardust is."
+  },
+  "plus_skiesTitle": "Your sky",
+  "@plus_skiesTitle": {
+    "description": "Personal sky themes screen title (Settings)."
+  },
+  "plus_skiesIntro": "A sky for your own Home, Sanctuary and Insights. Only you see it.",
+  "@plus_skiesIntro": {
+    "description": "Intro: personal only, never shown to others."
+  },
+  "plus_skyNight": "Night sky",
+  "@plus_skyNight": {
+    "description": "Sky name (free)."
+  },
+  "plus_skyAurora": "Aurora",
+  "@plus_skyAurora": {
+    "description": "Sky name (Plus)."
+  },
+  "plus_skyMonsoonDusk": "Monsoon dusk",
+  "@plus_skyMonsoonDusk": {
+    "description": "Sky name (Plus)."
+  },
+  "plus_skyFirstLight": "First light",
+  "@plus_skyFirstLight": {
+    "description": "Sky name (₹10)."
+  },
+  "plus_skyLanternFestival": "Lantern festival",
+  "@plus_skyLanternFestival": {
+    "description": "Sky name (₹29)."
+  },
+  "plus_skyDeepOcean": "Deep ocean",
+  "@plus_skyDeepOcean": {
+    "description": "Sky name (₹49)."
+  },
+  "plus_skyMeteorShower": "Meteor shower",
+  "@plus_skyMeteorShower": {
+    "description": "Sky name (₹99)."
+  },
+  "plus_skyFree": "Free",
+  "@plus_skyFree": {
+    "description": "Sky tag."
+  },
+  "plus_skyWithPlus": "With Aura Plus",
+  "@plus_skyWithPlus": {
+    "description": "Sky tag."
+  },
+  "plus_skyOwned": "Yours",
+  "@plus_skyOwned": {
+    "description": "Sky tag: owned."
+  },
+  "plus_skyInUse": "In use",
+  "@plus_skyInUse": {
+    "description": "Sky tag: equipped."
+  },
+  "plus_skyUse": "Use this sky",
+  "@plus_skyUse": {
+    "description": "Equip button."
+  },
+  "plus_skyBuy": "Buy for {price}",
+  "@plus_skyBuy": {
+    "description": "Buy a cosmetic sky with the store price.",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "plus_skyStardust": "Use {count} Stardust",
+  "@plus_skyStardust": {
+    "description": "Redeem a sky with Stardust.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "plus_skyNotEnough": "Not enough Stardust for this sky yet.",
+  "@plus_skyNotEnough": {
+    "description": "Redeem refused."
+  },
+  "plus_soundscapeTitle": "Pair a soundscape",
+  "@plus_soundscapeTitle": {
+    "description": "Soundscape pairing section."
+  },
+  "plus_soundscapeNone": "No sounds",
+  "@plus_soundscapeNone": {
+    "description": "No pairing."
+  },
+  "plus_soundscapeNightAir": "Night air",
+  "@plus_soundscapeNightAir": {
+    "description": "Soundscape: night insects + wind."
+  },
+  "plus_soundscapeHighWind": "High wind",
+  "@plus_soundscapeHighWind": {
+    "description": "Soundscape: wind + chimes."
+  },
+  "plus_soundscapeMonsoon": "Monsoon",
+  "@plus_soundscapeMonsoon": {
+    "description": "Soundscape: rain + brown noise."
+  },
+  "plus_soundscapeBells": "Bells",
+  "@plus_soundscapeBells": {
+    "description": "Soundscape: singing bowl + chimes."
+  },
+  "plus_soundscapeShore": "Shore",
+  "@plus_soundscapeShore": {
+    "description": "Soundscape: ocean + wind."
+  },
+  "plus_soundscapePlay": "Play these sounds",
+  "@plus_soundscapePlay": {
+    "description": "Plays the paired soundscape in Sounds."
+  },
+  "plus_settingsSky": "Your sky and Stardust",
+  "@plus_settingsSky": {
+    "description": "Settings row to the sky screen."
+  },
+  "plus_channelAccount": "Account",
+  "@plus_channelAccount": {
+    "description": "Android notification channel (PRD 15-permissions): Aura Plus reminders."
+  },
+  "plus_channelAccountDescription": "Aura Plus reminders, like your free month ending.",
+  "@plus_channelAccountDescription": {
+    "description": "Android channel description."
   },
   "polish_legalOpenFailed": "Your browser didn't open. The page is at {url}.",
   "@polish_legalOpenFailed": {
@@ -2783,6 +3575,291 @@
   "rooms_pausedJoin": "Rooms are resting for a bit. Your check-in is saved.",
   "@rooms_pausedJoin": {
     "description": "After a check-in, when the rooms kill switch is off."
+  },
+  "ripples_title": "Breath Ripples",
+  "@ripples_title": {
+    "description": "Product name of the co-breathing game (brand, never translated)."
+  },
+  "ripples_homeCard": "Breathe together",
+  "@ripples_homeCard": {
+    "description": "Home card: start a 3-minute co-breath with a few strangers."
+  },
+  "ripples_homeCardBody": "Three quiet minutes with a few others. No words, no score.",
+  "@ripples_homeCardBody": {
+    "description": "Under the Home card. Calm; no pressure."
+  },
+  "ripples_breatheTogether": "Breathe together",
+  "@ripples_breatheTogether": {
+    "description": "Room button: invite the room's live members to a 3-minute co-breath."
+  },
+  "ripples_invite": "{name} wants to breathe together · {count}/{capacity}",
+  "@ripples_invite": {
+    "description": "In-room banner for 20 s: someone invited the room to Breath Ripples. name = a room pseudonym.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_inviteJoin": "Join",
+  "@ripples_inviteJoin": {
+    "description": "Banner button: join the room's Breath Ripples invite."
+  },
+  "ripples_inviteMine": "Your invite is open · {count}/{capacity}",
+  "@ripples_inviteMine": {
+    "description": "Banner for the person who invited the room.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_lobby": "Looking for others to breathe with…",
+  "@ripples_lobby": {
+    "description": "Lobby while matching (at most 20 s). The pacer already runs."
+  },
+  "ripples_lobbyHint": "Breathe along while you wait. You can leave any time.",
+  "@ripples_lobbyHint": {
+    "description": "Under the lobby line."
+  },
+  "ripples_holdHint": "Hold to breathe in, let go to breathe out",
+  "@ripples_holdHint": {
+    "description": "Input hint (hold mode)."
+  },
+  "ripples_tapHint": "Tap to switch between breathing in and out",
+  "@ripples_tapHint": {
+    "description": "Input hint (accessible mode: tap to switch)."
+  },
+  "ripples_breathArea": "Breathing area",
+  "@ripples_breathArea": {
+    "description": "Screen-reader label of the large area you hold (or tap) to breathe."
+  },
+  "ripples_offline": "Breathing together needs a connection. Breathe solo instead?",
+  "@ripples_offline": {
+    "description": "PRD 14 Offline state."
+  },
+  "ripples_paused": "Breath Ripples is resting for a bit. Breathe solo instead?",
+  "@ripples_paused": {
+    "description": "Kill switch on (ripples_paused). Calm."
+  },
+  "ripples_suspended": "Breathing together is paused for this account right now. You can still breathe on your own.",
+  "@ripples_suspended": {
+    "description": "The account's social access is paused (sanction). Never says why."
+  },
+  "ripples_closed": "This account can't breathe together with others. You can still breathe on your own.",
+  "@ripples_closed": {
+    "description": "The account is closed (banned)."
+  },
+  "ripples_guidelines": "The community guidelines come first. Open Rooms to read them, or breathe on your own for now.",
+  "@ripples_guidelines": {
+    "description": "409 guidelines_required: the guidelines are accepted in Rooms."
+  },
+  "ripples_breatheSolo": "Breathe solo",
+  "@ripples_breatheSolo": {
+    "description": "Opens the Sanctuary's Breathe pacer."
+  },
+  "ripples_settle": "Settle in",
+  "@ripples_settle": {
+    "description": "Phase word during the 10 s settle-in before the first breath."
+  },
+  "ripples_fade": "Let it fade",
+  "@ripples_fade": {
+    "description": "Phase word during the 10 s fade-out after the last breath."
+  },
+  "ripples_together": "{count, plural, =1{Just you and the ocean} other{{count} people breathing together}}",
+  "@ripples_together": {
+    "description": "Intro line: the people who started this session (never echoes or guides).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_echoesJoined": "{count, plural, =1{1 echo joined. It's a recording of a real person who breathed here before.} other{{count} echoes joined. They're recordings of real people who breathed here before.}}",
+  "@ripples_echoesJoined": {
+    "description": "PRD 14: echoes fill empty seats. Honest: they are recordings, never counted as people.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_guides": "{count, plural, =1{A guide light breathes with you.} other{{count} guide lights breathe with you.}}",
+  "@ripples_guides": {
+    "description": "Guide lights fill seats while the echo library is small. Never presented as people.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_solo": "Breathing on your own this time. The ocean still listens.",
+  "@ripples_solo": {
+    "description": "PRD 14: no echoes available; a solo pacer."
+  },
+  "ripples_linkLost": "You're breathing on your own for a moment.",
+  "@ripples_linkLost": {
+    "description": "PRD 14: the connection dropped; the pacer continues locally. Never an error."
+  },
+  "ripples_alone": "Keep breathing. The ocean is still here.",
+  "@ripples_alone": {
+    "description": "After the rejoin window: the session finishes on this phone, gently."
+  },
+  "ripples_leave": "Leave",
+  "@ripples_leave": {
+    "description": "Tooltip of ✕: leave quietly at any time (no penalty, nothing is said to others)."
+  },
+  "ripples_accessibleMode": "Accessible mode",
+  "@ripples_accessibleMode": {
+    "description": "Toggle: tap to switch, tones and stronger haptics when in step (on automatically with a screen reader)."
+  },
+  "ripples_accessibleModeHint": "Tap to switch between in and out. Tones and firmer haptics tell you when you're in step with the others.",
+  "@ripples_accessibleModeHint": {
+    "description": "Explains accessible mode. Sync is never a number."
+  },
+  "ripples_oceanSemantic": "{count, plural, =1{A night ocean with your light} other{A night ocean with {count} lights}}",
+  "@ripples_oceanSemantic": {
+    "description": "Screen-reader label of the ocean (the art itself is hidden).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ripples_lightMe": "Your light",
+  "@ripples_lightMe": {
+    "description": "Screen-reader label of your own light."
+  },
+  "ripples_lightHuman": "{name}'s light",
+  "@ripples_lightHuman": {
+    "description": "Screen-reader label of another person's light (tap for mute, block, report).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ripples_lightEcho": "An echo of someone who breathed here before",
+  "@ripples_lightEcho": {
+    "description": "Screen-reader label of an echo light (a recording, never a person here now)."
+  },
+  "ripples_lightGuide": "A guide light, breathing with the pacer",
+  "@ripples_lightGuide": {
+    "description": "Screen-reader label of a guide light (never a person)."
+  },
+  "ripples_echo": "echo",
+  "@ripples_echo": {
+    "description": "Tiny label under an echo light."
+  },
+  "ripples_guide": "guide",
+  "@ripples_guide": {
+    "description": "Tiny label under a guide light."
+  },
+  "ripples_you": "you",
+  "@ripples_you": {
+    "description": "Tiny label under your own light."
+  },
+  "ripples_pulse": "Send a pulse",
+  "@ripples_pulse": {
+    "description": "One-tap haptic pulse to everyone in the session."
+  },
+  "ripples_gestureHug": "Hug",
+  "@ripples_gestureHug": {
+    "description": "In-game gesture."
+  },
+  "ripples_gestureDeepBreath": "Deep breath",
+  "@ripples_gestureDeepBreath": {
+    "description": "In-game gesture."
+  },
+  "ripples_gestureNotAlone": "You're not alone",
+  "@ripples_gestureNotAlone": {
+    "description": "In-game gesture."
+  },
+  "ripples_pulseFrom": "{name} sent a pulse",
+  "@ripples_pulseFrom": {
+    "description": "Announced (and shown) when someone pulses.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "ripples_gestureFrom": "{name} · {gesture}",
+  "@ripples_gestureFrom": {
+    "description": "Shown by a light and announced: who sent which gesture (gesture = its name).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "ripples_contactTray": "Send something kind",
+  "@ripples_contactTray": {
+    "description": "Screen-reader label of the pulse + gesture row."
+  },
+  "ripples_mute": "Mute",
+  "@ripples_mute": {
+    "description": "Stop this light's pulses, gestures and haptics for you, for this session."
+  },
+  "ripples_unmute": "Unmute",
+  "@ripples_unmute": {
+    "description": "Undo mute."
+  },
+  "ripples_block": "Block",
+  "@ripples_block": {
+    "description": "Block this person: never matched again (they aren't told)."
+  },
+  "ripples_report": "Report",
+  "@ripples_report": {
+    "description": "Report this person (reasons, optional note)."
+  },
+  "ripples_blocked": "Blocked. You won't be matched together again.",
+  "@ripples_blocked": {
+    "description": "After block. The other person is never told."
+  },
+  "ripples_reported": "Thank you. Someone from Aura will look at it.",
+  "@ripples_reported": {
+    "description": "After a report."
+  },
+  "ripples_actionFailed": "That didn't go through. Please try again.",
+  "@ripples_actionFailed": {
+    "description": "Mute/block/report failed (connection). No blame."
+  },
+  "ripples_endTitle": "That was a few minutes together.",
+  "@ripples_endTitle": {
+    "description": "End screen. Never a score or how well it went."
+  },
+  "ripples_again": "Breathe again",
+  "@ripples_again": {
+    "description": "End screen: start another session (same entry)."
+  },
+  "ripples_backToRoom": "Back to room",
+  "@ripples_backToRoom": {
+    "description": "End screen (room sessions): back to the room."
+  },
+  "ripples_feelNow": "How do you feel now?",
+  "@ripples_feelNow": {
+    "description": "End screen, optional: opens a check-in (F1)."
+  },
+  "ripples_echoToggle": "Let my breathing become an echo",
+  "@ripples_echoToggle": {
+    "description": "Echo opt-out switch (on by default, per the privacy notice)."
+  },
+  "ripples_echoToggleHint": "An echo keeps only the timing of your breaths, never who you are, so it can't be traced back to you. Turning this off stops future echoes.",
+  "@ripples_echoToggleHint": {
+    "description": "Under the echo switch. Honest about what is kept."
   },
   "rooms_title": "Rooms",
   "@rooms_title": {

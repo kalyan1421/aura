@@ -14,11 +14,13 @@ import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../checkin/quadrant_glyph.dart';
 import '../reflections/reflections_section.dart';
+import '../ripples/ripple_entry.dart';
 import '../support/support_sheet.dart';
 import 'member_sheet.dart';
 import 'report_sheet.dart';
 import 'room_controller.dart';
 import 'room_copy.dart';
+import 'room_lantern.dart';
 import 'room_models.dart';
 import 'room_moments.dart';
 import 'room_navigation.dart';
@@ -330,6 +332,43 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
     }
   }
 
+  // ---- lanterns (Milestone B) ---------------------------------------------------------
+
+  /// Tonight's lantern and intention (room totals only), under the header.
+  /// Nothing before the room's first Lantern Hour; in the memory the
+  /// lantern stays as "Tonight's lantern".
+  List<Widget> _lanternSection(RoomViewState s) {
+    final l = AppLocalizations.of(context);
+    final room = s.detail!.room;
+    final lantern = room.lantern;
+    final intention = room.intention;
+    final text = intention == null ? null : intentionText(l, intention.key);
+    return [
+      if (lantern != null) ...[
+        const SizedBox(height: AuraSpace.m),
+        RoomLanternCard(lantern: lantern),
+      ],
+      if (intention != null && text != null && !room.isMemory) ...[
+        const SizedBox(height: AuraSpace.m),
+        IntentionCard(
+          intention: intention,
+          text: text,
+          holding: s.detail!.me.holdingIntention,
+          canHold: s.canHoldIntention,
+          onHold: () => unawaited(_holdIntention()),
+        ),
+      ],
+    ];
+  }
+
+  Future<void> _holdIntention() async {
+    final l = AppLocalizations.of(context);
+    AuraHaptics.selection();
+    final ok = await _controller.holdIntention();
+    if (!mounted || ok) return;
+    setState(() => _notice = _Notice(l.rooms_intentionFailed));
+  }
+
   // ---- build ------------------------------------------------------------------------
 
   @override
@@ -339,6 +378,11 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
     final s = ref.watch(provider);
     ref.listen(provider.select((s) => s.moment), (prev, next) {
       if (next != null && next.serial != prev?.serial) _play(next);
+    });
+    // The lantern just became fully lit while you're here: one shared
+    // moment, with words for screen readers (REQ-A11Y-16).
+    ref.listen(provider.select((s) => s.lanternRise), (prev, next) {
+      if (next > (prev ?? 0)) announceRoom(context, l.rooms_lanternRise);
     });
     final d = s.detail;
     final title = d == null ? l.rooms_title : roomThemeName(l, d.room.theme);
@@ -379,6 +423,7 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
                   ],
                 ),
               ),
+              Positioned.fill(child: LanternRiseLayer(serial: s.lanternRise)),
               Positioned.fill(
                 child: RoomMomentLayer(
                   moments: _moments,
@@ -465,6 +510,10 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
           const SizedBox(height: AuraSpace.m),
         ],
         _Header(state: s, onMenu: () => unawaited(_openMenu(s))),
+        ..._lanternSection(s),
+        // F7: "Breathe together" and the room's invite banner (entry only).
+        const SizedBox(height: AuraSpace.m),
+        RoomRippleEntry(roomId: widget.roomId, readOnly: d.room.isMemory),
         const SizedBox(height: AuraSpace.xl),
         _Members(detail: d, onOpen: (m) => unawaited(_openMember(m))),
         const SizedBox(height: AuraSpace.xl),

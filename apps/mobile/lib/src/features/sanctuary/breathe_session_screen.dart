@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../habits/habit_repository.dart' show breatheAutoCompleteAfter;
@@ -19,6 +20,7 @@ import 'breath_orb.dart';
 import 'breath_pacer.dart';
 import 'calm_route.dart';
 import 'habit_auto_complete.dart';
+import 'sanctuary_session_log.dart';
 
 /// How a paced breathing session is framed.
 enum BreathGuide {
@@ -59,6 +61,11 @@ const List<Duration?> breatheLengths = [
 ///
 /// ≥ [breatheAutoCompleteAfter] of active breathing in one session ticks off
 /// today's Breathe habit ([autoCompleteHabitToday]).
+///
+/// Reaching the end screen (the length ran out, or "Finish") writes one
+/// content-free session record ([recordSanctuarySession]: activity, pattern,
+/// active seconds, the Aura day it started). Leaving before that writes
+/// nothing. "Again" is a new session.
 class BreatheSessionScreen extends ConsumerStatefulWidget {
   const BreatheSessionScreen({
     super.key,
@@ -120,6 +127,10 @@ class _BreatheSessionScreenState extends ConsumerState<BreatheSessionScreen>
   bool _breatheTried = false;
   bool _breatheLogged = false;
 
+  /// The Aura day this session started, and whether its record was written.
+  LocalDay? _startDay;
+  bool _sessionRecorded = false;
+
   @override
   void initState() {
     super.initState();
@@ -154,6 +165,8 @@ class _BreatheSessionScreenState extends ConsumerState<BreatheSessionScreen>
     _paused = false;
     _stage = _Stage.running;
     _lastTick = Duration.zero;
+    _startDay = ref.read(timeContextProvider).today();
+    _sessionRecorded = false;
     if (_ticker.isActive) _ticker.stop();
     _ticker.start();
     // The caller rebuilds (initState, or inside setState).
@@ -218,7 +231,28 @@ class _BreatheSessionScreenState extends ConsumerState<BreatheSessionScreen>
     if (_ticker.isActive) _ticker.stop();
     _stage = _Stage.done;
     _paused = false;
+    _recordSession();
     if (notify && mounted) setState(() {});
+  }
+
+  /// One record per finished session (F15), never for an abandoned one.
+  void _recordSession() {
+    final day = _startDay;
+    final seconds = _active.inSeconds;
+    if (_sessionRecorded || day == null || seconds < 1) return;
+    _sessionRecorded = true;
+    final kind = breathSessionKind(widget.guide, _pattern);
+    unawaited(
+      recordSanctuarySession(
+        ref,
+        SanctuarySession(
+          activity: kind.activity,
+          variant: kind.variant,
+          durationS: seconds,
+          localDay: day,
+        ),
+      ),
+    );
   }
 
   void _keepGoing() => Navigator.of(context).pushReplacement(

@@ -7,12 +7,15 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/inline_notice.dart';
+import 'habit_nudges_section.dart';
 import 'notification_prefs.dart';
 import 'push_messaging.dart';
 
 /// Settings › Notifications (PRD 12-notifications rule 8, 15-permissions):
 /// a master switch, the daily check-in reminder (on/off + time), "a capsule
-/// is ready to open", quiet hours and discreet mode. Every change is a local
+/// is ready to open", warmth from your room, Lantern Hour (opt-in), the
+/// wind-down reminder (opt-in, on/off + time), "after a quiet while", quiet
+/// hours, discreet mode and per-habit nudges ([HabitNudgesSection]). Every change is a local
 /// write plus a patch in the sync outbox; the server applies the rules.
 ///
 /// - A reminder time inside quiet hours is honoured only after a one-time
@@ -125,6 +128,30 @@ class _NotificationsSectionState extends ConsumerState<NotificationsSection>
     });
   }
 
+  Future<void> _setWindDownEnabled(NotificationPrefs p, bool on) async {
+    if (!on) return _update({PrefFields.windDownEnabled: false});
+    final time = p.windDownTime ?? NotificationPrefs.suggestedWindDownTime;
+    return _setWindDownTime(p, time);
+  }
+
+  /// The wind-down reminder at [time] (and on): inside quiet hours only after
+  /// the same one-time confirmation as the daily reminder (rule 1).
+  Future<void> _setWindDownTime(NotificationPrefs p, DayTime time) async {
+    final inside = inQuietHours(time, p.quietStart, p.quietEnd);
+    var confirmed = false;
+    if (inside && !(p.windDownInQuietHours && time == p.windDownTime)) {
+      confirmed = await _confirmQuiet(time, p.quietStart, p.quietEnd);
+      if (!confirmed) return;
+    }
+    await _update({
+      PrefFields.windDownTime: time.hm,
+      PrefFields.windDownEnabled: true,
+      if (confirmed) PrefFields.windDownInQuietHours: true,
+      if (!inside && p.windDownInQuietHours)
+        PrefFields.windDownInQuietHours: false,
+    });
+  }
+
   Future<void> _setQuiet(
     NotificationPrefs p, {
     DayTime? start,
@@ -142,10 +169,20 @@ class _NotificationsSectionState extends ConsumerState<NotificationsSection>
       // waits until it's outside them (the server skips it inside).
       confirmed = await _confirmQuiet(reminder, s, e);
     }
+    final windDown = p.windDownTime;
+    var windDownConfirmed = false;
+    if (p.windDownEnabled &&
+        windDown != null &&
+        !p.windDownInQuietHours &&
+        inQuietHours(windDown, s, e) &&
+        mounted) {
+      windDownConfirmed = await _confirmQuiet(windDown, s, e);
+    }
     await _update({
       if (start != null) PrefFields.quietStart: start.hm,
       if (end != null) PrefFields.quietEnd: end.hm,
       if (confirmed) PrefFields.reminderInQuietHours: true,
+      if (windDownConfirmed) PrefFields.windDownInQuietHours: true,
     });
   }
 
@@ -195,6 +232,8 @@ class _NotificationsSectionState extends ConsumerState<NotificationsSection>
     final permission = _permission;
     final reminderTime =
         p.reminderTime ?? NotificationPrefs.suggestedReminderTime;
+    final windDownTime =
+        p.windDownTime ?? NotificationPrefs.suggestedWindDownTime;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -258,6 +297,53 @@ class _NotificationsSectionState extends ConsumerState<NotificationsSection>
               ? (v) => unawaited(_update({PrefFields.capsuleUnlocked: v}))
               : null,
         ),
+        toggle(
+          key: 'set-ntf-gestures',
+          title: l.set_notifGestures,
+          note: l.set_notifGesturesNote,
+          value: p.gestures,
+          onChanged: on
+              ? (v) => unawaited(_update({PrefFields.gestures: v}))
+              : null,
+        ),
+        toggle(
+          key: 'set-ntf-lantern',
+          title: l.set_notifLantern,
+          note: l.set_notifLanternNote,
+          value: p.lanternHour,
+          onChanged: on
+              ? (v) => unawaited(_update({PrefFields.lanternHour: v}))
+              : null,
+        ),
+        toggle(
+          key: 'set-ntf-wind-down',
+          title: l.set_notifWindDown,
+          note: p.windDownEnabled
+              ? l.set_notifWindDownNote(_time(context, windDownTime))
+              : l.set_notifWindDownOffNote,
+          value: p.windDownEnabled,
+          onChanged: on ? (v) => unawaited(_setWindDownEnabled(p, v)) : null,
+        ),
+        timeRow(
+          key: 'set-ntf-wind-down-time',
+          title: l.set_notifWindDownTime,
+          value: windDownTime,
+          onTap: on && p.windDownEnabled
+              ? () async {
+                  final picked = await _pick(windDownTime);
+                  if (picked != null) await _setWindDownTime(p, picked);
+                }
+              : null,
+        ),
+        toggle(
+          key: 'set-ntf-welcome-back',
+          title: l.set_notifWelcomeBack,
+          note: l.set_notifWelcomeBackNote,
+          value: p.welcomeBack,
+          onChanged: on
+              ? (v) => unawaited(_update({PrefFields.welcomeBack: v}))
+              : null,
+        ),
         Padding(
           padding: const EdgeInsets.only(top: AuraSpace.s),
           child: Text(
@@ -299,6 +385,13 @@ class _NotificationsSectionState extends ConsumerState<NotificationsSection>
           onChanged: on
               ? (v) => unawaited(_update({PrefFields.discreet: v}))
               : null,
+        ),
+        HabitNudgesSection(
+          prefs: p,
+          enabled: on,
+          pick: _pick,
+          formatTime: (t) => _time(context, t),
+          update: _update,
         ),
       ],
     );

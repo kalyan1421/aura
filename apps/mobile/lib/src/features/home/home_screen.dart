@@ -13,15 +13,18 @@ import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
-import '../../core/widgets/cosmic_background.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../avatar/aura_avatar.dart';
 import '../capsules/capsule_ready_card.dart';
 import '../avatar/moments_controller.dart';
 import '../habits/habits_section.dart';
+import '../plus/plus_home_cards.dart';
+import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
+import '../ripples/ripple_entry.dart';
 import '../rooms/your_rooms_strip.dart';
+import '../support/crisis_follow_up.dart';
 import '../support/support_sheet.dart';
 import 'rest_days_sheet.dart';
 import 'sync_status_sheet.dart';
@@ -92,7 +95,8 @@ class HomeScreen extends ConsumerWidget {
     final compact = MediaQuery.sizeOf(context).height < _shortScreen;
 
     return Scaffold(
-      body: CosmicBackground(
+      // F12: the person's own sky theme (features/plus/sky_themes.dart).
+      body: PersonalSkyBackground(
         tint: hue,
         child: SafeArea(
           bottom: false,
@@ -115,6 +119,9 @@ class HomeScreen extends ConsumerWidget {
                         const DeletionPendingCard(),
                         const SizedBox(height: AuraSpace.s),
                       ],
+                      // PRD 12 crisis follow-up: in-app only, 12–72 h after
+                      // the support sheet (nothing otherwise).
+                      const CrisisFollowUpCard(),
                       // F4: a date capsule is ready (nothing when none is).
                       const CapsuleReadyCard(),
                       _HeroFit(
@@ -154,6 +161,12 @@ class HomeScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+                      // F7: Breath Ripples quick-match, under the fold (it
+                      // never shrinks the hero; nothing when switched off).
+                      const RipplesHomeCard(),
+                      // F12: quiet Aura Plus / gift notices (trial ending,
+                      // billing issue, a gift received); nothing otherwise.
+                      const PlusHomeCards(),
                     ],
                   ),
                 ),

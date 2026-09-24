@@ -59,14 +59,14 @@ void main() {
           soundsOnlineProvider.overrideWithValue(online),
           soundsSessionLogProvider.overrideWithValue(log),
           savedMixesProvider.overrideWith(MemorySavedMixes.new),
-          if (manifest != null) stemManifestProvider.overrideWithValue(manifest),
+          if (manifest != null)
+            stemManifestProvider.overrideWithValue(manifest),
         ],
         child: localized(
           Builder(
             builder: (context) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(disableAnimations: reduceMotion),
+              data: MediaQuery.of(context)
+                  .copyWith(disableAnimations: reduceMotion),
               child: screen,
             ),
           ),
@@ -117,7 +117,12 @@ void main() {
     ]) {
       expect(toggle(id), findsOneWidget, reason: id);
     }
-    for (final id in ['monsoon_roof', 'stream', 'fireplace', 'distant_thunder']) {
+    for (final id in [
+      'monsoon_roof',
+      'stream',
+      'fireplace',
+      'distant_thunder',
+    ]) {
       expect(toggle(id), findsNothing, reason: id);
     }
     expect(find.text('Aura Plus'), findsNWidgets(2));
@@ -195,7 +200,7 @@ void main() {
     await end(tester);
   });
 
-  testWidgets('a locked Plus stem shows one calm line and plays nothing', (
+  testWidgets('a locked Plus stem opens the F12 Plus note and plays nothing', (
     tester,
   ) async {
     final semantics = tester.ensureSemantics();
@@ -205,12 +210,16 @@ void main() {
       findsOneWidget,
     );
     await tester.tap(toggle('pink_noise'));
-    await tester.pump();
-    expect(find.text('Coming with Aura Plus.'), findsOneWidget);
+    await tester.pumpAndSettle();
+    // The note sheet, never a new route. With no validated account the P0
+    // rules allow only "Part of Aura Plus" (no offer, no button).
+    expect(find.text('Part of Aura Plus'), findsOneWidget);
+    expect(find.text('See Aura Plus'), findsNothing);
     expect(backend.layers, isEmpty);
     expect(backend.prepares, 0);
-    // No paywall, no new route.
     expect(find.byType(SoundsScreen), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('plus-note-close')));
+    await tester.pumpAndSettle();
     expect(find.byType(BottomSheet), findsNothing);
     semantics.dispose();
     await end(tester);
@@ -279,9 +288,7 @@ void main() {
   });
 
   group('offline and downloads', () {
-    testWidgets('brown noise plays offline on a fresh install', (
-      tester,
-    ) async {
+    testWidgets('brown noise plays offline on a fresh install', (tester) async {
       await pump(tester, online: false);
       await tester.tap(toggle('brown_noise'));
       await tester.pump(const Duration(seconds: 3));
@@ -289,12 +296,13 @@ void main() {
       await end(tester);
     });
 
-    testWidgets('no recordings to download: no download card', (
-      tester,
-    ) async {
+    testWidgets('no recordings to download: no download card', (tester) async {
       await pump(tester);
       expect(find.text('Recorded sounds'), findsNothing);
-      expect(find.byKey(const ValueKey('sounds-remove-downloads')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('sounds-remove-downloads')),
+        findsNothing,
+      );
       await end(tester);
     });
 
@@ -331,10 +339,7 @@ void main() {
       await tester.pump();
       expect(store.removals, 1);
       expect(find.text('Recorded sounds'), findsOneWidget);
-      expect(
-        find.text(l10n(tester).sounds_downloadsRemoved),
-        findsOneWidget,
-      );
+      expect(find.text(l10n(tester).sounds_downloadsRemoved), findsOneWidget);
       await end(tester);
     });
 
@@ -415,9 +420,7 @@ void main() {
     await end(tester);
   });
 
-  testWidgets('Reduce Motion: nothing on the screen animates', (
-    tester,
-  ) async {
+  testWidgets('Reduce Motion: nothing on the screen animates', (tester) async {
     await pump(tester, reduceMotion: true);
     await tester.tap(toggle('rain'));
     await tester.pump(const Duration(seconds: 3));
@@ -434,12 +437,7 @@ void main() {
   testWidgets('large text (200%, Telugu): no overflow while playing', (
     tester,
   ) async {
-    await pump(
-      tester,
-      textScale: 2,
-      locale: 'te',
-      size: const Size(360, 780),
-    );
+    await pump(tester, textScale: 2, locale: 'te', size: const Size(360, 780));
     final list = find.descendant(
       of: find.byKey(const ValueKey('sounds-list')),
       matching: find.byType(Scrollable),
@@ -526,8 +524,13 @@ void main() {
       tester.getTopLeft(card).dy,
       greaterThan(tester.getTopLeft(find.text('Grounding')).dy),
     );
-    expect(find.text('Rain, ocean, wind and more. Nothing plays until you '
-        'choose.'), findsOneWidget);
+    expect(
+      find.text(
+        'Rain, ocean, wind and more. Nothing plays until you '
+        'choose.',
+      ),
+      findsOneWidget,
+    );
 
     await tester.tap(card);
     await tester.pump();

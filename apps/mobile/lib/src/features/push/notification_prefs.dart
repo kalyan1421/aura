@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,6 +70,17 @@ abstract final class PrefFields {
   static const String quietEnd = 'quietEnd';
   static const String discreet = 'discreet';
 
+  // Milestone B (contracts/api/v1-notifications.md §6).
+  static const String gestures = 'gestures';
+  static const String lanternHour = 'lanternHour';
+  static const String windDownEnabled = 'windDownEnabled';
+  static const String windDownTime = 'windDownTime';
+  static const String windDownInQuietHours = 'windDownInQuietHours';
+  static const String welcomeBack = 'welcomeBack';
+
+  /// `{habitId: "HH:MM"}` — one last-write-wins field: always the whole map.
+  static const String habitNudges = 'habitNudges';
+
   static const List<String> all = [
     enabled,
     reminderEnabled,
@@ -78,6 +90,13 @@ abstract final class PrefFields {
     quietStart,
     quietEnd,
     discreet,
+    gestures,
+    lanternHour,
+    windDownEnabled,
+    windDownTime,
+    windDownInQuietHours,
+    welcomeBack,
+    habitNudges,
   ];
 
   /// Server column of each field (the select-own pull).
@@ -90,8 +109,22 @@ abstract final class PrefFields {
     quietStart: 'quiet_start',
     quietEnd: 'quiet_end',
     discreet: 'discreet',
+    gestures: 'gestures_enabled',
+    lanternHour: 'lantern_opt_in',
+    windDownEnabled: 'wind_down_enabled',
+    windDownTime: 'wind_down_time',
+    windDownInQuietHours: 'wind_down_in_quiet_ok',
+    welcomeBack: 'welcome_back_enabled',
+    habitNudges: 'habit_nudges',
   };
 }
+
+/// `{habitId: DayTime}` from a JSON map (malformed entries dropped).
+Map<String, DayTime> habitNudgesFrom(Object? v) => {
+  if (v is Map)
+    for (final e in v.entries)
+      '${e.key}'.toLowerCase(): ?DayTime.tryParse(e.value),
+};
 
 /// Settings › Notifications. Defaults are the PRD's: everything on except
 /// the daily reminder (it starts when the person picks it, suggested
@@ -107,7 +140,21 @@ class NotificationPrefs {
     this.quietStart = const DayTime(23, 0),
     this.quietEnd = const DayTime(8, 0),
     this.discreet = false,
+    this.gestures = true,
+    this.lanternHour = false,
+    this.windDownEnabled = false,
+    this.windDownTime,
+    this.windDownInQuietHours = false,
+    this.welcomeBack = true,
+    this.habitNudges = const {},
   });
+
+  /// PRD catalogue: the wind-down reminder's "suggested 10:30 pm"
+  /// `[ASSUMPTION]`.
+  static const DayTime suggestedWindDownTime = DayTime(22, 30);
+
+  /// A habit nudge's first suggestion (the person changes it).
+  static const DayTime suggestedHabitNudgeTime = DayTime(9, 0);
 
   /// PRD catalogue: "suggested 8 pm" `[ASSUMPTION]`.
   static const DayTime suggestedReminderTime = DayTime(20, 0);
@@ -120,6 +167,29 @@ class NotificationPrefs {
   final DayTime quietStart;
   final DayTime quietEnd;
   final bool discreet;
+
+  /// "Gestures received" (batched, one per room a day).
+  final bool gestures;
+
+  /// Lantern Hour (opt-in).
+  final bool lanternHour;
+
+  /// Wind-down reminder (opt-in, REQ-NTF-04): on only with a time.
+  final bool windDownEnabled;
+  final DayTime? windDownTime;
+  final bool windDownInQuietHours;
+
+  /// "Welcome back" after quiet weeks.
+  final bool welcomeBack;
+
+  /// Habit nudges: habit id → time (a habit with a time is opted in).
+  final Map<String, DayTime> habitNudges;
+
+  /// The wind-down time falls inside quiet hours.
+  bool get windDownInsideQuietHours {
+    final t = windDownTime;
+    return t != null && inQuietHours(t, quietStart, quietEnd);
+  }
 
   /// The reminder time falls inside quiet hours.
   bool get reminderInsideQuietHours {
@@ -136,6 +206,15 @@ class NotificationPrefs {
     PrefFields.quietStart: quietStart.hm,
     PrefFields.quietEnd: quietEnd.hm,
     PrefFields.discreet: discreet,
+    PrefFields.gestures: gestures,
+    PrefFields.lanternHour: lanternHour,
+    PrefFields.windDownEnabled: windDownEnabled,
+    PrefFields.windDownTime: windDownTime?.hm,
+    PrefFields.windDownInQuietHours: windDownInQuietHours,
+    PrefFields.welcomeBack: welcomeBack,
+    PrefFields.habitNudges: {
+      for (final k in habitNudges.keys.toList()..sort()) k: habitNudges[k]!.hm,
+    },
   };
 
   /// Applies a patch (payload field → value); unknown or malformed values
@@ -160,6 +239,20 @@ class NotificationPrefs {
       quietStart: t(PrefFields.quietStart, quietStart),
       quietEnd: t(PrefFields.quietEnd, quietEnd),
       discreet: b(PrefFields.discreet, discreet),
+      gestures: b(PrefFields.gestures, gestures),
+      lanternHour: b(PrefFields.lanternHour, lanternHour),
+      windDownEnabled: b(PrefFields.windDownEnabled, windDownEnabled),
+      windDownTime: patch.containsKey(PrefFields.windDownTime)
+          ? DayTime.tryParse(patch[PrefFields.windDownTime])
+          : windDownTime,
+      windDownInQuietHours: b(
+        PrefFields.windDownInQuietHours,
+        windDownInQuietHours,
+      ),
+      welcomeBack: b(PrefFields.welcomeBack, welcomeBack),
+      habitNudges: patch[PrefFields.habitNudges] is Map
+          ? habitNudgesFrom(patch[PrefFields.habitNudges])
+          : habitNudges,
     );
   }
 
@@ -169,10 +262,11 @@ class NotificationPrefs {
 
   @override
   bool operator ==(Object other) =>
-      other is NotificationPrefs && mapEquals(other.toJson(), toJson());
+      other is NotificationPrefs &&
+      jsonEncode(other.toJson()) == jsonEncode(toJson());
 
   @override
-  int get hashCode => Object.hashAll(toJson().values);
+  int get hashCode => jsonEncode(toJson()).hashCode;
 }
 
 /// The account's server row (`public.notification_prefs`, select-own).

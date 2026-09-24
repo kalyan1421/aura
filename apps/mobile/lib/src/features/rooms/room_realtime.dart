@@ -83,6 +83,9 @@ class RoomStateEvent extends RoomEvent {
     this.joinsCloseAt,
     this.memoryAt,
     this.purgeAt,
+    this.carriesTotals = false,
+    this.lantern,
+    this.intention,
   });
 
   final String state;
@@ -90,6 +93,12 @@ class RoomStateEvent extends RoomEvent {
   final DateTime? joinsCloseAt;
   final DateTime? memoryAt;
   final DateTime? purgeAt;
+
+  /// The payload has the Milestone B room totals (`lantern`, `intention`,
+  /// either may be null). Room totals only: no member id, ever.
+  final bool carriesTotals;
+  final RoomLantern? lantern;
+  final RoomIntention? intention;
 }
 
 class LanternHourEvent extends RoomEvent {
@@ -144,12 +153,23 @@ RoomEvent? parseRoomEvent(String event, Map<String, dynamic> payload) {
       case 'room_state':
         final state = payload['state'];
         if (state is! String) return null;
+        final lantern = payload['lantern'];
+        final intention = payload['intention'];
         return RoomStateEvent(
           state: state,
           readOnly: payload['readOnly'] == true,
           joinsCloseAt: time('joinsCloseAt'),
           memoryAt: time('memoryAt'),
           purgeAt: time('purgeAt'),
+          carriesTotals:
+              payload.containsKey('lantern') ||
+              payload.containsKey('intention'),
+          lantern: lantern is Map<String, dynamic>
+              ? RoomLantern.fromJson(lantern)
+              : null,
+          intention: intention is Map<String, dynamic>
+              ? RoomIntention.fromJson(intention)
+              : null,
         );
       case 'lantern_hour':
         final lantern = payload['lanternHour'];

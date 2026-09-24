@@ -1,4 +1,5 @@
 import type { Quadrant } from '../rules';
+import { DEFAULT_LANTERN_CONFIG, intentionView, lanternView, type IntentionView, type LanternView } from './lantern-rules';
 import type { MatchingConfig } from './matching-config';
 import { lanternWindow } from './regions';
 import { deriveRoomState } from './room-state';
@@ -44,9 +45,17 @@ export interface RoomInfo {
   memoryAt: string;
   purgeAt: string;
   lanternHour: LanternHourView;
+  /** Room lantern (Milestone B): a room total, never per member. Null before the room's first Lantern Hour. */
+  lantern: LanternView | null;
+  /** Tonight's intention (Milestone B): the preset and the hold count only. */
+  intention: IntentionView | null;
 }
 
-export type RoomStateView = Pick<RoomInfo, 'state' | 'readOnly' | 'joinsCloseAt' | 'memoryAt' | 'purgeAt'>;
+/**
+ * The `room_state` broadcast (contracts §3). From Milestone B it also carries the lantern level and the intention's
+ * hold count — both room totals: no member id, pseudonym or per-member value can be in here (DS-10, REQ-ROOM-13).
+ */
+export type RoomStateView = Pick<RoomInfo, 'state' | 'readOnly' | 'joinsCloseAt' | 'memoryAt' | 'purgeAt' | 'lantern' | 'intention'>;
 
 export interface Counts {
   hereNow: number;
@@ -97,7 +106,16 @@ export interface RoomSummary {
 
 export interface RoomDetail {
   room: RoomInfo;
-  me: { memberId: string; pseudonym: string; moodChip: string; silhouette: Silhouette; joinedAt: string; surveyEligible: boolean };
+  me: {
+    memberId: string;
+    pseudonym: string;
+    moodChip: string;
+    silhouette: Silhouette;
+    joinedAt: string;
+    surveyEligible: boolean;
+    /** You hold tonight's intention (yours only; nobody else ever learns who holds it). */
+    holdingIntention: boolean;
+  };
   counts: Counts;
   members: Member[];
   gestures: { received: ReceivedGesture[]; sent: SentGesture[]; recent: RoomGesture[] };
@@ -106,7 +124,7 @@ export interface RoomDetail {
 
 const iso = (d: Date): string => d.toISOString();
 
-export function lanternView(room: Pick<RoomRow, 'tz_region'>, now: Date, cfg: MatchingConfig): LanternHourView {
+export function lanternHourView(room: Pick<RoomRow, 'tz_region'>, now: Date, cfg: MatchingConfig): LanternHourView {
   const w = lanternWindow(room.tz_region, now, cfg.lanternStart, cfg.lanternEnd);
   return { timezone: w.timezone, active: w.active, startsAt: iso(w.startsAt), endsAt: iso(w.endsAt) };
 }
@@ -134,12 +152,23 @@ export function roomInfo(room: RoomRow, now: Date, cfg: MatchingConfig): RoomInf
     joinsCloseAt: iso(room.joins_close_at),
     memoryAt: iso(room.memory_at),
     purgeAt: iso(room.purge_at),
-    lanternHour: lanternView(room, now, cfg),
+    lanternHour: lanternHourView(room, now, cfg),
+    lantern: lanternView(room, state, cfg.lanterns ?? DEFAULT_LANTERN_CONFIG),
+    intention: intentionView(room, state, cfg.lanterns ?? DEFAULT_LANTERN_CONFIG),
   };
 }
 
+/** Built field by field from room totals only (a unit test pins the exact keys). */
 export function roomStateView(info: RoomInfo): RoomStateView {
-  return { state: info.state, readOnly: info.readOnly, joinsCloseAt: info.joinsCloseAt, memoryAt: info.memoryAt, purgeAt: info.purgeAt };
+  return {
+    state: info.state,
+    readOnly: info.readOnly,
+    joinsCloseAt: info.joinsCloseAt,
+    memoryAt: info.memoryAt,
+    purgeAt: info.purgeAt,
+    lantern: info.lantern ? { level: info.lantern.level, maxLevel: info.lantern.maxLevel, active: info.lantern.active } : null,
+    intention: info.intention ? { key: info.intention.key, holds: info.intention.holds, open: info.intention.open } : null,
+  };
 }
 
 export const countsView = (c: CountsRow): Counts => ({ hereNow: c.here_now, today: c.today });

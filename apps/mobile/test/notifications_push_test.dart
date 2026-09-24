@@ -222,7 +222,8 @@ void main() {
       await w.inbox.onForeground(
         const PushEnvelope(type: PushTypes.capsuleUnlocked),
       );
-      await w.inbox.onForeground(const PushEnvelope(type: 'lantern_hour'));
+      // A type this build doesn't know shows nothing.
+      await w.inbox.onForeground(const PushEnvelope(type: 'future_type'));
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.byType(SnackBar), findsNothing);
     });

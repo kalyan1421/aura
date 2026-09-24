@@ -159,6 +159,68 @@ abstract class LanternHour with _$LanternHour {
       _$LanternHourFromJson(json);
 }
 
+/// The room's lantern (Milestone B, contracts §1.9): a room total, never
+/// anyone's share. It only ever brightens: 0–[maxLevel], lit by gestures
+/// and room Breath Ripples cycles during Lantern Hour.
+@freezed
+abstract class RoomLantern with _$RoomLantern {
+  const factory RoomLantern({
+    @Default(0) int level,
+    @Default(5) int maxLevel,
+
+    /// Taking light now (the room is in Lantern Hour). Afterwards it is
+    /// "Tonight's lantern", kept at the level it reached.
+    @Default(false) bool active,
+  }) = _RoomLantern;
+
+  const RoomLantern._();
+
+  factory RoomLantern.fromJson(Map<String, dynamic> json) =>
+      _$RoomLanternFromJson(json);
+
+  bool get isFull => maxLevel > 0 && level >= maxLevel;
+
+  /// 0–1 for painting.
+  double get fraction =>
+      maxLevel <= 0 ? 0 : (level / maxLevel).clamp(0.0, 1.0).toDouble();
+}
+
+/// Tonight's intention (Milestone B, contracts §1.9): a preset key the app
+/// localises and how many hold it — never who.
+@freezed
+abstract class RoomIntention with _$RoomIntention {
+  const factory RoomIntention({
+    required String key,
+    @Default(0) int holds,
+
+    /// Holding is possible now (Lantern Hour); afterwards read-only.
+    @Default(false) bool open,
+  }) = _RoomIntention;
+
+  factory RoomIntention.fromJson(Map<String, dynamic> json) =>
+      _$RoomIntentionFromJson(json);
+}
+
+/// The lantern never dims on screen either: of two views of the same
+/// room's lantern (a late event, a stale poll) the brighter level wins.
+/// `null` [incoming] means the server hides it (kill switch): hidden.
+RoomLantern? brighterLantern(RoomLantern? shown, RoomLantern? incoming) {
+  if (incoming == null || shown == null) return incoming;
+  return incoming.level >= shown.level
+      ? incoming
+      : incoming.copyWith(level: shown.level);
+}
+
+/// Hold counts only ever rise, so a late event never lowers the total.
+RoomIntention? higherIntention(RoomIntention? shown, RoomIntention? incoming) {
+  if (incoming == null || shown == null || shown.key != incoming.key) {
+    return incoming;
+  }
+  return incoming.holds >= shown.holds
+      ? incoming
+      : incoming.copyWith(holds: shown.holds);
+}
+
 @freezed
 abstract class RoomInfo with _$RoomInfo {
   const factory RoomInfo({
@@ -176,6 +238,11 @@ abstract class RoomInfo with _$RoomInfo {
     required DateTime memoryAt,
     required DateTime purgeAt,
     required LanternHour lanternHour,
+
+    /// Milestone B: null before the room's first Lantern Hour (or when the
+    /// server hides it).
+    RoomLantern? lantern,
+    RoomIntention? intention,
   }) = _RoomInfo;
 
   const RoomInfo._();
@@ -315,6 +382,9 @@ abstract class RoomMe with _$RoomMe {
     /// Show "Did you feel less alone?" on exit (≥ 30 s here, not asked in
     /// the last 24 h).
     @Default(false) bool surveyEligible,
+
+    /// You hold tonight's intention (only you ever see this).
+    @Default(false) bool holdingIntention,
   }) = _RoomMe;
 
   factory RoomMe.fromJson(Map<String, dynamic> json) => _$RoomMeFromJson(json);
@@ -428,6 +498,22 @@ abstract class GestureAck with _$GestureAck {
 
   factory GestureAck.fromJson(Map<String, dynamic> json) =>
       _$GestureAckFromJson(json);
+}
+
+/// `POST /v1/rooms/:roomId/intention/hold` → the room's new total.
+@immutable
+class IntentionHoldResult {
+  const IntentionHoldResult({required this.intention});
+
+  factory IntentionHoldResult.fromJson(Map<String, dynamic> json) =>
+      IntentionHoldResult(
+        intention: RoomIntention.fromJson(
+          (json['intention'] as Map?)?.cast<String, dynamic>() ??
+              const {'key': ''},
+        ),
+      );
+
+  final RoomIntention intention;
 }
 
 @freezed

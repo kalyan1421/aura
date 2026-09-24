@@ -79,7 +79,7 @@ final class RoomReflectionsProvider
   }
 }
 
-String _$roomReflectionsHash() => r'9dafc9ec4a25364963fc9d09ea4efb9e60102bf5';
+String _$roomReflectionsHash() => r'5604a26769d121b779759823cc93bf5e046ff90b';
 
 /// A room's reflections (F6, contracts/api/v1-reflections.md): the list and
 /// the composer state, kept fresh by the room's realtime hints

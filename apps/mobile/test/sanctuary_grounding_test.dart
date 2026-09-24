@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/features/sanctuary/breath_haptics.dart';
 import 'package:aura/src/features/sanctuary/breath_pacer.dart';
@@ -72,8 +74,19 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
   }
 
+  /// REQ-SAN-05: no content anywhere — only the finished activity's
+  /// content-free session record (F15) may wait in the outbox.
   Future<void> expectNothingStored(WidgetTester tester, AppDatabase db) async {
-    expect(await io(tester, () => db.select(db.outbox).get()), isEmpty);
+    final outbox = await io(tester, () => db.select(db.outbox).get());
+    for (final r in outbox) {
+      expect(r.entity, 'sanctuary_session');
+      expect((jsonDecode(r.payload) as Map<String, dynamic>).keys.toSet(), {
+        'id',
+        'activity',
+        'variant',
+        'durationS',
+      });
+    }
     expect(await io(tester, () => db.select(db.habitLogs).get()), isEmpty);
     expect(await io(tester, () => db.select(db.checkIns).get()), isEmpty);
   }

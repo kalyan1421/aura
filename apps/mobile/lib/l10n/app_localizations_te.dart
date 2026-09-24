@@ -1321,7 +1321,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get notif_channelRoomsDescription =>
-      'మీరు అడిగిన రూమ్‌లు మొదలైనప్పుడు.';
+      'Lantern Hour, మీ రూమ్ నుండి ఆత్మీయత, మీరు అడిగిన రూమ్‌లు.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -1762,6 +1762,95 @@ class AppLocalizationsTe extends AppLocalizations {
   }
 
   @override
+  String get rooms_lanternTitle => 'ఈ రాత్రి లాంతరు';
+
+  @override
+  String get rooms_lanternStart =>
+      'ఇక్కడ ప్రతి సంజ్ఞ కొంచెం వెలుగు కలుపుతుంది.';
+
+  @override
+  String get rooms_lanternGlowing =>
+      'ఇక్కడి ప్రతి సంజ్ఞతో ఇది ఇంకా ప్రకాశిస్తుంది.';
+
+  @override
+  String get rooms_lanternFull => 'అందరం కలిసి పూర్తిగా వెలిగించాం.';
+
+  @override
+  String get rooms_lanternKept => 'ఈ రాత్రి లాంతరు ఇంత ప్రకాశంగా వెలిగింది.';
+
+  @override
+  String rooms_lanternSemantic(int level, int max) {
+    return 'ఈ రాత్రి లాంతరు, $maxలో $level వెలుగులు';
+  }
+
+  @override
+  String get rooms_lanternRise =>
+      'లాంతరు పూర్తిగా వెలిగింది. లాంతర్లు కలిసి పైకి ఎగురుతున్నాయి.';
+
+  @override
+  String get rooms_intentionTitle => 'ఈ రాత్రి సంకల్పం';
+
+  @override
+  String get rooms_intentionHold => 'ఈ రాత్రి దీన్ని పట్టుకుంటాను';
+
+  @override
+  String get rooms_intentionHolding => 'ఈ రాత్రి మీరు దీన్ని పట్టుకున్నారు';
+
+  @override
+  String rooms_intentionHolds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఈ రాత్రి $count మంది దీన్ని పట్టుకున్నారు',
+      one: 'ఈ రాత్రి 1 దీన్ని పట్టుకున్నారు',
+      zero: 'ఒక్క ట్యాప్‌తో పట్టుకోండి',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_intentionHeld(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఈ రాత్రి $count మంది దీన్ని పట్టుకున్నారు',
+      one: 'ఈ రాత్రి 1 దీన్ని పట్టుకున్నారు',
+      zero: 'తర్వాతి Lantern Hour వరకు విశ్రాంతి',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rooms_intentionPrivate =>
+      'ఎవరు పట్టుకున్నారో ఎవరికీ కనిపించదు, రేపు దీని గురించి ఎవరూ అడగరు.';
+
+  @override
+  String get rooms_intentionFailed =>
+      'అది జరగలేదు. దయచేసి మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get rooms_intention_sleep_before_midnight =>
+      'అర్ధరాత్రి లోపు నిద్రపోవాలి';
+
+  @override
+  String get rooms_intention_gentle_with_myself =>
+      'ఈ రాత్రి నా పట్ల మృదువుగా ఉంటాను';
+
+  @override
+  String get rooms_intention_phone_down_10 => '10 నిమిషాలు ఫోన్ పక్కన పెడతాను';
+
+  @override
+  String get rooms_intention_water_before_bed =>
+      'పడుకునే ముందు ఒక గ్లాసు నీళ్ళు';
+
+  @override
+  String get rooms_intention_one_kind_thought => 'ఈ రోజు గురించి ఒక మంచి ఆలోచన';
+
+  @override
+  String get rooms_intention_slow_breaths =>
+      'నిద్రకు ముందు మూడు నెమ్మదైన శ్వాసలు';
+
+  @override
   String get notif_reminderBanner =>
       'మీ కోసం ఒక నిమిషం. ఈ రోజు ఎలా అనిపిస్తోంది?';
 
@@ -1779,7 +1868,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get notif_channelRemindersDescription =>
-      'మీ రోజువారీ చెక్-ఇన్ రిమైండర్.';
+      'మీ చెక్-ఇన్, నిద్రకు ముందు, అలవాట్ల రిమైండర్లు.';
 
   @override
   String get set_notifications => 'నోటిఫికేషన్లు';
@@ -1867,6 +1956,111 @@ class AppLocalizationsTe extends AppLocalizations {
   String get push_discreet => 'గోప్యంగా ఉంచండి';
 
   @override
+  String get notif_gesturesBanner => 'మీ రూమ్‌లో కొందరు మీకు ఆత్మీయత పంపారు.';
+
+  @override
+  String get notif_gesturesAction => 'రూమ్ తెరవండి';
+
+  @override
+  String get notif_lanternBanner =>
+      'Lantern Hour మొదలైంది. ఈ రాత్రి ఇంకా కొందరు ఇక్కడే ఉన్నారు.';
+
+  @override
+  String get notif_lanternAction => 'రూమ్‌లు చూడండి';
+
+  @override
+  String get notif_windDownBanner =>
+      'పడుకునే ముందు కొంచెం నిశ్శబ్ద సమయం? Aura ఇక్కడే ఉంది.';
+
+  @override
+  String get notif_windDownAction => 'శబ్దాలు తెరవండి';
+
+  @override
+  String get notif_habitBanner => 'ఒక చిన్న అలవాటు, మీకు వీలైనప్పుడు.';
+
+  @override
+  String get notif_habitAction => 'అలవాట్లు చూడండి';
+
+  @override
+  String get notif_crisisFollowUp =>
+      'ఊరికే అడుగుతున్నాం, ఈ రోజు ఎలా ఉంది? సహాయం ఒక్క ట్యాప్ దూరంలో ఉంది.';
+
+  @override
+  String get notif_crisisFollowUpDismiss => 'మూసివేయండి';
+
+  @override
+  String get set_notifGestures => 'మీ రూమ్ నుండి ఆత్మీయత';
+
+  @override
+  String get set_notifGesturesNote =>
+      'మీ రూమ్‌లో ఎవరైనా మీకు గెస్చర్ పంపినప్పుడు. రోజుకు ఒక్కటి మించదు.';
+
+  @override
+  String get set_notifLantern => 'Lantern Hour';
+
+  @override
+  String get set_notifLanternNote =>
+      'మీ సాయంత్రం Lantern Hour మొదలైనప్పుడు. ఆ రోజు మీరు ఇప్పటికే రూమ్‌లో ఉంటే రాదు.';
+
+  @override
+  String get set_notifWindDown => 'నిద్రకు ముందు రిమైండర్';
+
+  @override
+  String set_notifWindDownNote(String time) {
+    return '$timeకి కొంచెం నిశ్శబ్ద సమయం. ఆ సాయంత్రం మీరు Sanctuary వాడితే రాదు.';
+  }
+
+  @override
+  String get set_notifWindDownOffNote =>
+      'ఆఫ్‌లో ఉంది. నిద్రకు ముందు ఒక నిశ్శబ్ద గుర్తు కోసం సమయం ఎంచుకోండి.';
+
+  @override
+  String get set_notifWindDownTime => 'నిద్రకు ముందు సమయం';
+
+  @override
+  String get set_notifWelcomeBack => 'కొంత కాలం తర్వాత';
+
+  @override
+  String get set_notifWelcomeBackNote =>
+      'మీరు వారం లేదా అంతకంటే ఎక్కువ దూరంగా ఉంటే, ఒక మృదువైన పలకరింపు. రెండు సార్లు మించదు.';
+
+  @override
+  String get set_notifHabits => 'అలవాటు గుర్తులు';
+
+  @override
+  String get set_notifHabitsNote =>
+      'Home లోని ఏ అలవాటుకైనా, మీరు ఎంచుకున్న సమయంలో ఒక చిన్న గుర్తు. రోజుకు ఒక్కటి మించదు.';
+
+  @override
+  String get set_notifHabitsNone => 'గుర్తు కోసం Home లో ఒక అలవాటు జోడించండి.';
+
+  @override
+  String get set_notifHabitOff => 'ఆఫ్';
+
+  @override
+  String get set_notifHabitQuiet =>
+      'ఇది మీ నిశ్శబ్ద సమయంలో ఉంది, కాబట్టి రాదు.';
+
+  @override
+  String get set_notifHabitChange => 'సమయం మార్చండి';
+
+  @override
+  String get set_notifHabitTurnOff => 'ఆఫ్ చేయండి';
+
+  @override
+  String sounds_windDownRemind(String time) {
+    return '$timeకి గుర్తు చేయండి';
+  }
+
+  @override
+  String sounds_windDownReminderOn(String time) {
+    return '$timeకి ఒక మృదువైన గుర్తు వస్తుంది.';
+  }
+
+  @override
+  String get sounds_windDownReminderOff => 'ఆఫ్ చేయండి';
+
+  @override
   String get onb_trustTitle => 'మొదలుపెట్టే ముందు';
 
   @override
@@ -1914,6 +2108,421 @@ class AppLocalizationsTe extends AppLocalizations {
   String onb_blockedMailFailed(String email) {
     return 'ఈమెయిల్ యాప్ తెరవలేకపోయాం. $emailకి మాకు రాయవచ్చు.';
   }
+
+  @override
+  String get plus_title => 'Aura Plus';
+
+  @override
+  String get plus_intro =>
+      'మీ దగ్గర ఇప్పటికే ఉన్నదానికి ఇంకొంచెం. మీకు మంచిగా అనిపించడానికి సహాయపడేదంతా ఉచితంగానే ఉంటుంది.';
+
+  @override
+  String get plus_addsTitle => 'Plus తో అదనంగా';
+
+  @override
+  String get plus_addCapsules => 'అపరిమిత మూడ్-ట్రిగ్గర్ క్యాప్సూల్స్';
+
+  @override
+  String get plus_addVoice => 'క్యాప్సూల్‌లో 10 నిమిషాల వరకు వాయిస్';
+
+  @override
+  String get plus_addInsights =>
+      'లోతైన Insights: ఏ కాలమైనా, అలవాటు × మూడ్, నెల నక్షత్రాల లోతైన చూపు';
+
+  @override
+  String get plus_addSounds => 'అదనపు శబ్దాలు, రెండు Plus ఆకాశాలు';
+
+  @override
+  String get plus_freeTitle => 'ఎప్పుడూ ఉచితం';
+
+  @override
+  String get plus_freeBody =>
+      'చెక్-ఇన్‌లు, అలవాట్లు, విశ్రాంతి రోజులు, రూమ్‌లు, Breath Ripples, తేదీ క్యాప్సూల్స్, సంక్షోభ సహాయం, Breathe, grounding, ఈ రోజు నిమిషం, ప్రతి బేస్ శబ్దం, రాత్రి ప్రశాంత శబ్దాలు.';
+
+  @override
+  String get plus_planMonthly => 'నెలవారీ';
+
+  @override
+  String get plus_planAnnual => 'సంవత్సరానికి';
+
+  @override
+  String plus_trialLineMonthly(String price) {
+    return '1 నెల ఉచితం, తర్వాత నెలకు $price';
+  }
+
+  @override
+  String plus_trialLineAnnual(String price) {
+    return '1 నెల ఉచితం, తర్వాత సంవత్సరానికి $price';
+  }
+
+  @override
+  String plus_priceMonthly(String price) {
+    return 'నెలకు $price';
+  }
+
+  @override
+  String plus_priceAnnual(String price) {
+    return 'సంవత్సరానికి $price';
+  }
+
+  @override
+  String plus_trialEnds(String date) {
+    return 'మీ ఉచిత నెల $dateతో ముగుస్తుంది. అంతకు ముందే రద్దు చేయకపోతే మొదటి చెల్లింపు $dateన.';
+  }
+
+  @override
+  String plus_renews(String store) {
+    return 'మీరు రద్దు చేసే వరకు ఆటోమేటిక్‌గా రెన్యూ అవుతుంది. మీ $store ఖాతా ద్వారా చెల్లింపు.';
+  }
+
+  @override
+  String get plus_cancelApple =>
+      'రద్దు చేయడానికి: iPhone Settings › మీ పేరు › Subscriptions › Aura. చెల్లింపుకు కనీసం ఒక రోజు ముందు రద్దు చేయండి.';
+
+  @override
+  String get plus_cancelGoogle =>
+      'రద్దు చేయడానికి: Play Store › మీ ప్రొఫైల్ › Payments & subscriptions › Subscriptions › Aura.';
+
+  @override
+  String get plus_storeApple => 'App Store';
+
+  @override
+  String get plus_storeGoogle => 'Google Play';
+
+  @override
+  String get plus_startTrial => 'ఉచిత నెల మొదలుపెట్టండి';
+
+  @override
+  String get plus_subscribe => 'సబ్‌స్క్రైబ్ చేయండి';
+
+  @override
+  String get plus_restore => 'కొనుగోళ్లను తిరిగి పొందండి';
+
+  @override
+  String get plus_manage => 'స్టోర్‌లో నిర్వహించండి';
+
+  @override
+  String get plus_loadingPrices => 'స్టోర్ నుంచి ధరలు వస్తున్నాయి';
+
+  @override
+  String get plus_storeUnavailable =>
+      'స్టోర్ ఇప్పుడు అందుబాటులో లేదు. ఏమీ చెల్లించబడలేదు.';
+
+  @override
+  String get plus_retry => 'మళ్ళీ ప్రయత్నించండి';
+
+  @override
+  String get plus_confirming => 'స్టోర్‌తో నిర్ధారిస్తున్నాం…';
+
+  @override
+  String get plus_confirmingLater =>
+      'స్టోర్‌కు మీ అభ్యర్థన అందింది. నిర్ధారణ అయిన వెంటనే Plus మొదలవుతుంది. మీరు దీన్ని మూసేయవచ్చు.';
+
+  @override
+  String get plus_validationFailed =>
+      'దీన్ని ఇంకా నిర్ధారించలేకపోయాం. మీకు చెల్లింపు జరిగి ఉంటే అది సురక్షితం. మేము చూస్తూనే ఉంటాం.';
+
+  @override
+  String get plus_pendingApproval =>
+      'ఆమోదం కోసం ఎదురుచూస్తున్నాం. అది పూర్తయ్యే వరకు మీకు చెల్లింపు ఉండదు.';
+
+  @override
+  String get plus_declined => 'చెల్లింపు జరగలేదు. మీకు ఛార్జ్ కాలేదు.';
+
+  @override
+  String get plus_welcome => 'Aura Plus మొదలైంది. ధన్యవాదాలు.';
+
+  @override
+  String get plus_ownedElsewhere =>
+      'ఈ కొనుగోలు ఈ స్టోర్ ఖాతాలోని మరో Aura ఖాతాకు చెందింది, అందుకే అది అక్కడే ఉంటుంది.';
+
+  @override
+  String plus_restored(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count కొనుగోళ్లు తిరిగి వచ్చాయి.',
+      one: '1 కొనుగోలు తిరిగి వచ్చింది.',
+      zero: 'ఈ స్టోర్ ఖాతాలో తిరిగి పొందాల్సినది ఏమీ లేదు.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plus_lockedOnly => 'Aura Plus లో భాగం';
+
+  @override
+  String get plus_about => 'Aura Plus గురించి';
+
+  @override
+  String get plus_seePlus => 'Aura Plus చూడండి';
+
+  @override
+  String get plus_freePath => 'ఉచిత మార్గం ఇక్కడే ఉంది.';
+
+  @override
+  String get plus_explainerCapsules =>
+      'ఉచిత ఖాతాలో 3 మూడ్ క్యాప్సూల్స్ వేచి ఉంటాయి. Aura Plus లో మీకు ఎన్ని కావాలంటే అన్ని. తేదీ క్యాప్సూల్స్ ఎప్పుడూ అపరిమితం.';
+
+  @override
+  String get plus_explainerVoice =>
+      'ఉచిత Aura లో క్యాప్సూల్ వాయిస్ 2 నిమిషాలు, Aura Plus తో 10 నిమిషాలు.';
+
+  @override
+  String get plus_explainerSounds =>
+      'ఈ శబ్దం Aura Plus తో వస్తుంది. ప్రతి బేస్ శబ్దం, రాత్రి ప్రశాంత శబ్దాలు ఉచితంగానే ఉంటాయి.';
+
+  @override
+  String get plus_explainerInsights =>
+      'Aura Plus తో ఏ కాలమైనా, అలవాటు × మూడ్, లోతైన నెల. మీ ఆకాశం, చరిత్ర ఉచితంగానే ఉంటాయి.';
+
+  @override
+  String get plus_explainerSky => 'ఈ ఆకాశం Aura Plus తో వస్తుంది.';
+
+  @override
+  String get plus_statusFree => 'మీరు ఉచిత Aura లో ఉన్నారు.';
+
+  @override
+  String plus_statusTrial(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days రోజులు మిగిలాయి',
+      one: '1 రోజు మిగిలింది',
+      zero: 'ఈ రోజే ముగుస్తుంది',
+    );
+    return 'ఉచిత నెల: $_temp0. మొదటి చెల్లింపు $dateన.';
+  }
+
+  @override
+  String plus_statusTrialCancelled(String date) {
+    return 'మీ ఉచిత నెల $date వరకు ఉంటుంది. తర్వాత మీరు ఉచిత Aura లో ఉంటారు, మీరు చేసినవన్నీ మీవే.';
+  }
+
+  @override
+  String plus_statusActive(String date) {
+    return 'Aura Plus $dateన రెన్యూ అవుతుంది.';
+  }
+
+  @override
+  String plus_statusCancelled(String date) {
+    return 'Aura Plus $date వరకు ఉంటుంది. మళ్ళీ చెల్లింపు ఉండదు.';
+  }
+
+  @override
+  String get plus_statusGrace =>
+      'స్టోర్ Aura Plus ని రెన్యూ చేయలేకపోయింది. మళ్ళీ ప్రయత్నిస్తున్నప్పుడు Plus ఉంటుంది.';
+
+  @override
+  String get plus_statusBillingRetry =>
+      'స్టోర్ రెన్యూ చేసే వరకు Aura Plus ఆగింది. మీరు చేసినవన్నీ మీవే.';
+
+  @override
+  String get plus_statusExpired => 'Aura Plus ముగిసింది. మీరు చేసినవన్నీ మీవే.';
+
+  @override
+  String get plus_statusRefunded =>
+      'మీ రీఫండ్ పూర్తయింది, అందుకే Aura Plus ముగిసింది. మీరు చేసినవన్నీ మీవే.';
+
+  @override
+  String get plus_statusPending =>
+      'స్టోర్ నిర్ధారణ కోసం ఎదురుచూస్తున్నాం. అది పూర్తయ్యే వరకు చెల్లింపు ఉండదు.';
+
+  @override
+  String get plus_updatePayment => 'స్టోర్‌లో చెల్లింపు వివరాలు మార్చండి';
+
+  @override
+  String get plus_turnBackOn => 'Plus మళ్ళీ ఆన్ చేయండి';
+
+  @override
+  String plus_managedElsewhere(String store) {
+    return '$storeలో కొన్నారు. అక్కడే నిర్వహించండి.';
+  }
+
+  @override
+  String get plus_notYet =>
+      'Aura Plus మీరు చేరిన ఒక రోజు తర్వాత అందుబాటులోకి వస్తుంది. మీకు కావలసినవన్నీ ఇప్పటికే ఉచితం.';
+
+  @override
+  String plus_cardTrialEnding(String date, String price) {
+    return 'మీ ఉచిత నెల $dateతో ముగుస్తుంది. స్టోర్‌లో రద్దు చేయకపోతే Plus నెలకు $priceతో కొనసాగుతుంది.';
+  }
+
+  @override
+  String plus_cardTrialEndingYear(String date, String price) {
+    return 'మీ ఉచిత నెల $dateతో ముగుస్తుంది. స్టోర్‌లో రద్దు చేయకపోతే Plus సంవత్సరానికి $priceతో కొనసాగుతుంది.';
+  }
+
+  @override
+  String plus_cardTrialEndingNoPrice(String date) {
+    return 'మీ ఉచిత నెల $dateతో ముగుస్తుంది. స్టోర్‌లో రద్దు చేయకపోతే Plus కొనసాగుతుంది.';
+  }
+
+  @override
+  String get plus_cardKeep => 'Plus ఉంచండి';
+
+  @override
+  String plus_cardTrialCancelled(String date) {
+    return 'Plus $date వరకు ఉంటుంది. మీకు చెల్లింపు ఉండదు.';
+  }
+
+  @override
+  String get plus_cardBillingIssue =>
+      'Aura Plus చెల్లింపు జరగలేదు. మీరు చేసినవన్నీ సురక్షితంగా ఉన్నాయి.';
+
+  @override
+  String get plus_cardContinues => 'Aura Plus కొనసాగుతోంది. ధన్యవాదాలు.';
+
+  @override
+  String get plus_dismiss => 'మూసివేయండి';
+
+  @override
+  String get plus_giftWarmTea => 'Warm Tea';
+
+  @override
+  String get plus_giftComfortLantern => 'Comfort Lantern';
+
+  @override
+  String get plus_giftBouquet => 'Encouragement Bouquet';
+
+  @override
+  String plus_giftReceived(String gift) {
+    return 'ఇక్కడ ఎవరో మీకు $gift పంపారు.';
+  }
+
+  @override
+  String plus_giftStardust(int count) {
+    return '+$count Stardust';
+  }
+
+  @override
+  String get plus_giftTitle => 'బహుమతి పంపండి';
+
+  @override
+  String get plus_giftBody =>
+      'వారికి “ఇక్కడ ఎవరో మీకు బహుమతి పంపారు” అని కనిపిస్తుంది, ఆకాశం కోసం Stardust వస్తుంది. సందేశం లేదు, పేరు లేదు.';
+
+  @override
+  String plus_giftSend(String price) {
+    return '$priceకి పంపండి';
+  }
+
+  @override
+  String get plus_giftSent =>
+      'పంపించాం. వారు తర్వాత Aura తెరిచినప్పుడు చూస్తారు.';
+
+  @override
+  String get plus_giftUnavailable =>
+      'ఈ బహుమతిని ఇప్పుడు పంపలేము. ఏమీ చెల్లించబడలేదు.';
+
+  @override
+  String get plus_giftDailyLimit =>
+      'ఈ రోజు 5 బహుమతులు అయ్యాయి. రేపు మరిన్ని పంపవచ్చు.';
+
+  @override
+  String get plus_giftPaused => 'ఈ ఖాతాలో బహుమతులు ఇప్పుడు అందుబాటులో లేవు.';
+
+  @override
+  String get plus_giftsOff => 'బహుమతులు కొంతసేపు ఆగాయి. ఏమీ చెల్లించబడలేదు.';
+
+  @override
+  String plus_stardustBalance(int count) {
+    return '$count Stardust';
+  }
+
+  @override
+  String get plus_stardustNote =>
+      'Stardust మీకు ఇతరులు పంపే బహుమతుల నుంచి మాత్రమే వస్తుంది. దాన్ని కొనలేరు, నగదుగా మార్చలేరు, బదిలీ చేయలేరు.';
+
+  @override
+  String get plus_skiesTitle => 'మీ ఆకాశం';
+
+  @override
+  String get plus_skiesIntro =>
+      'మీ సొంత Home, Sanctuary, Insights కోసం ఒక ఆకాశం. మీకు మాత్రమే కనిపిస్తుంది.';
+
+  @override
+  String get plus_skyNight => 'రాత్రి ఆకాశం';
+
+  @override
+  String get plus_skyAurora => 'అరోరా';
+
+  @override
+  String get plus_skyMonsoonDusk => 'వర్షాకాల సంధ్య';
+
+  @override
+  String get plus_skyFirstLight => 'తొలి వెలుగు';
+
+  @override
+  String get plus_skyLanternFestival => 'దీపాల పండుగ';
+
+  @override
+  String get plus_skyDeepOcean => 'లోతైన సముద్రం';
+
+  @override
+  String get plus_skyMeteorShower => 'ఉల్కాపాతం';
+
+  @override
+  String get plus_skyFree => 'ఉచితం';
+
+  @override
+  String get plus_skyWithPlus => 'Aura Plus తో';
+
+  @override
+  String get plus_skyOwned => 'మీది';
+
+  @override
+  String get plus_skyInUse => 'వాడుతున్నారు';
+
+  @override
+  String get plus_skyUse => 'ఈ ఆకాశం వాడండి';
+
+  @override
+  String plus_skyBuy(String price) {
+    return '$priceకి కొనండి';
+  }
+
+  @override
+  String plus_skyStardust(int count) {
+    return '$count Stardust వాడండి';
+  }
+
+  @override
+  String get plus_skyNotEnough => 'ఈ ఆకాశానికి ఇంకా సరిపడా Stardust లేదు.';
+
+  @override
+  String get plus_soundscapeTitle => 'ఒక సౌండ్‌స్కేప్ జత చేయండి';
+
+  @override
+  String get plus_soundscapeNone => 'శబ్దాలు వద్దు';
+
+  @override
+  String get plus_soundscapeNightAir => 'రాత్రి గాలి';
+
+  @override
+  String get plus_soundscapeHighWind => 'ఎత్తైన గాలి';
+
+  @override
+  String get plus_soundscapeMonsoon => 'వర్షాకాలం';
+
+  @override
+  String get plus_soundscapeBells => 'గంటలు';
+
+  @override
+  String get plus_soundscapeShore => 'తీరం';
+
+  @override
+  String get plus_soundscapePlay => 'ఈ శబ్దాలు వినండి';
+
+  @override
+  String get plus_settingsSky => 'మీ ఆకాశం, Stardust';
+
+  @override
+  String get plus_channelAccount => 'ఖాతా';
+
+  @override
+  String get plus_channelAccountDescription =>
+      'Aura Plus గుర్తుచేతలు, ఉదాహరణకు మీ ఉచిత నెల ముగియడం.';
 
   @override
   String polish_legalOpenFailed(String url) {
@@ -2156,6 +2765,234 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get rooms_pausedJoin =>
       'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. మీ చెక్-ఇన్ సేవ్ అయింది.';
+
+  @override
+  String get ripples_title => 'Breath Ripples';
+
+  @override
+  String get ripples_homeCard => 'కలిసి శ్వాస తీసుకుందాం';
+
+  @override
+  String get ripples_homeCardBody =>
+      'మరికొందరితో కలిసి మూడు ప్రశాంతమైన నిమిషాలు. మాటలు లేవు, స్కోర్ లేదు.';
+
+  @override
+  String get ripples_breatheTogether => 'కలిసి శ్వాస తీసుకుందాం';
+
+  @override
+  String ripples_invite(String name, int count, int capacity) {
+    return '$name కలిసి శ్వాస తీసుకోవాలనుకుంటున్నారు · $count/$capacity';
+  }
+
+  @override
+  String get ripples_inviteJoin => 'చేరండి';
+
+  @override
+  String ripples_inviteMine(int count, int capacity) {
+    return 'మీ ఆహ్వానం తెరిచి ఉంది · $count/$capacity';
+  }
+
+  @override
+  String get ripples_lobby =>
+      'కలిసి శ్వాస తీసుకోవడానికి ఇతరుల కోసం చూస్తున్నాం…';
+
+  @override
+  String get ripples_lobbyHint =>
+      'వేచి ఉన్నప్పుడు కూడా శ్వాసతో పాటు సాగండి. ఎప్పుడైనా వెళ్ళిపోవచ్చు.';
+
+  @override
+  String get ripples_holdHint =>
+      'లోపలికి శ్వాసకు పట్టుకోండి, బయటకు వదలడానికి వదిలేయండి';
+
+  @override
+  String get ripples_tapHint => 'లోపలికి, బయటకు మారడానికి ట్యాప్ చేయండి';
+
+  @override
+  String get ripples_breathArea => 'శ్వాస ప్రాంతం';
+
+  @override
+  String get ripples_offline =>
+      'కలిసి శ్వాస తీసుకోవడానికి కనెక్షన్ కావాలి. ఒంటరిగా శ్వాస తీసుకుంటారా?';
+
+  @override
+  String get ripples_paused =>
+      'Breath Ripples కాసేపు విశ్రాంతి తీసుకుంటోంది. ఒంటరిగా శ్వాస తీసుకుంటారా?';
+
+  @override
+  String get ripples_suspended =>
+      'ఈ ఖాతాకు కలిసి శ్వాస తీసుకోవడం ప్రస్తుతం ఆగింది. మీరు ఒంటరిగా శ్వాస తీసుకోవచ్చు.';
+
+  @override
+  String get ripples_closed =>
+      'ఈ ఖాతా ఇతరులతో కలిసి శ్వాస తీసుకోలేదు. మీరు ఒంటరిగా శ్వాస తీసుకోవచ్చు.';
+
+  @override
+  String get ripples_guidelines =>
+      'ముందుగా కమ్యూనిటీ మార్గదర్శకాలు. వాటిని చదవడానికి Rooms తెరవండి, లేదా ఇప్పటికి ఒంటరిగా శ్వాస తీసుకోండి.';
+
+  @override
+  String get ripples_breatheSolo => 'ఒంటరిగా శ్వాస';
+
+  @override
+  String get ripples_settle => 'స్థిరపడండి';
+
+  @override
+  String get ripples_fade => 'మెల్లగా ముగియనివ్వండి';
+
+  @override
+  String ripples_together(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count మంది కలిసి శ్వాస తీసుకుంటున్నారు',
+      one: 'మీరు, ఈ సముద్రం మాత్రమే',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_echoesJoined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count ప్రతిధ్వనులు చేరాయి. ఇంతకు ముందు ఇక్కడ శ్వాస తీసుకున్న నిజమైన వ్యక్తుల రికార్డింగ్‌లు ఇవి.',
+      one: '1 ప్రతిధ్వని చేరింది. ఇంతకు ముందు ఇక్కడ శ్వాస తీసుకున్న ఒక నిజమైన వ్యక్తి రికార్డింగ్ ఇది.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_guides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count గైడ్ వెలుగులు మీతో శ్వాస తీసుకుంటాయి.',
+      one: 'ఒక గైడ్ వెలుగు మీతో శ్వాస తీసుకుంటుంది.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_solo =>
+      'ఈసారి మీరు ఒంటరిగా శ్వాస తీసుకుంటున్నారు. సముద్రం ఇంకా వింటోంది.';
+
+  @override
+  String get ripples_linkLost => 'కాసేపు మీరు ఒంటరిగా శ్వాస తీసుకుంటున్నారు.';
+
+  @override
+  String get ripples_alone => 'శ్వాస కొనసాగించండి. సముద్రం ఇంకా ఇక్కడే ఉంది.';
+
+  @override
+  String get ripples_leave => 'వెళ్ళిపోండి';
+
+  @override
+  String get ripples_accessibleMode => 'సులభ మోడ్';
+
+  @override
+  String get ripples_accessibleModeHint =>
+      'లోపలికి, బయటకు మారడానికి ట్యాప్ చేయండి. మీరు ఇతరులతో కలిసి ఉన్నప్పుడు టోన్లు, గట్టి హ్యాప్టిక్స్ తెలియజేస్తాయి.';
+
+  @override
+  String ripples_oceanSemantic(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count వెలుగులతో ఒక రాత్రి సముద్రం',
+      one: 'మీ వెలుగుతో ఒక రాత్రి సముద్రం',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_lightMe => 'మీ వెలుగు';
+
+  @override
+  String ripples_lightHuman(String name) {
+    return '$name వెలుగు';
+  }
+
+  @override
+  String get ripples_lightEcho =>
+      'ఇంతకు ముందు ఇక్కడ శ్వాస తీసుకున్న ఒకరి ప్రతిధ్వని';
+
+  @override
+  String get ripples_lightGuide => 'పేసర్‌తో శ్వాస తీసుకునే గైడ్ వెలుగు';
+
+  @override
+  String get ripples_echo => 'ప్రతిధ్వని';
+
+  @override
+  String get ripples_guide => 'గైడ్';
+
+  @override
+  String get ripples_you => 'మీరు';
+
+  @override
+  String get ripples_pulse => 'పల్స్ పంపండి';
+
+  @override
+  String get ripples_gestureHug => 'హగ్';
+
+  @override
+  String get ripples_gestureDeepBreath => 'గాఢమైన శ్వాస';
+
+  @override
+  String get ripples_gestureNotAlone => 'మీరు ఒంటరి కాదు';
+
+  @override
+  String ripples_pulseFrom(String name) {
+    return '$name పల్స్ పంపారు';
+  }
+
+  @override
+  String ripples_gestureFrom(String name, String gesture) {
+    return '$name · $gesture';
+  }
+
+  @override
+  String get ripples_contactTray => 'ఏదైనా మంచిది పంపండి';
+
+  @override
+  String get ripples_mute => 'మ్యూట్';
+
+  @override
+  String get ripples_unmute => 'అన్‌మ్యూట్';
+
+  @override
+  String get ripples_block => 'బ్లాక్';
+
+  @override
+  String get ripples_report => 'రిపోర్ట్';
+
+  @override
+  String get ripples_blocked => 'బ్లాక్ చేశారు. మీరిద్దరూ మళ్ళీ కలవరు.';
+
+  @override
+  String get ripples_reported =>
+      'ధన్యవాదాలు. Aura నుండి ఎవరైనా దీన్ని చూస్తారు.';
+
+  @override
+  String get ripples_actionFailed => 'అది జరగలేదు. దయచేసి మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get ripples_endTitle => 'ఇది కలిసి గడిపిన కొన్ని నిమిషాలు.';
+
+  @override
+  String get ripples_again => 'మళ్ళీ శ్వాస తీసుకుందాం';
+
+  @override
+  String get ripples_backToRoom => 'రూమ్‌కి తిరిగి';
+
+  @override
+  String get ripples_feelNow => 'ఇప్పుడు ఎలా అనిపిస్తోంది?';
+
+  @override
+  String get ripples_echoToggle => 'నా శ్వాస ఒక ప్రతిధ్వనిగా మారనివ్వండి';
+
+  @override
+  String get ripples_echoToggleHint =>
+      'ప్రతిధ్వని మీ శ్వాస సమయాలను మాత్రమే ఉంచుతుంది, మీరు ఎవరో కాదు, కాబట్టి అది మీ వరకు చేరదు. దీన్ని ఆపితే ఇకపై ప్రతిధ్వనులు రికార్డ్ కావు.';
 
   @override
   String get rooms_title => 'రూమ్‌లు';
@@ -5037,7 +5874,7 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get notif_channelRoomsDescription =>
-      'Meeru adigina rooms modalainappudu.';
+      'Lantern Hour, mee room nundi warmth, meeru adigina rooms.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -5479,6 +6316,98 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   }
 
   @override
+  String get rooms_lanternTitle => 'Ee raatri lantern';
+
+  @override
+  String get rooms_lanternStart =>
+      'Ikkada prati gesture konchem velugu kaluputundi.';
+
+  @override
+  String get rooms_lanternGlowing =>
+      'Ikkadi prati gesture tho idi inka prakaashistundi.';
+
+  @override
+  String get rooms_lanternFull => 'Andaram kalisi poortiga veliginchaam.';
+
+  @override
+  String get rooms_lanternKept =>
+      'Ee raatri lantern intha prakaasham ga veligindi.';
+
+  @override
+  String rooms_lanternSemantic(int level, int max) {
+    return 'Ee raatri lantern, $max lo $level velugulu';
+  }
+
+  @override
+  String get rooms_lanternRise =>
+      'Lantern poortiga veligindi. Lanterns kalisi paiki egurutunnaayi.';
+
+  @override
+  String get rooms_intentionTitle => 'Ee raatri intention';
+
+  @override
+  String get rooms_intentionHold => 'Ee raatri idi pattukuntaanu';
+
+  @override
+  String get rooms_intentionHolding => 'Ee raatri meeru idi pattukunnaru';
+
+  @override
+  String rooms_intentionHolds(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ee raatri $count mandi idi pattukunnaru',
+      one: 'Ee raatri 1 idi pattukunnaru',
+      zero: 'Oka tap tho pattukondi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rooms_intentionHeld(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ee raatri $count mandi idi pattukunnaru',
+      one: 'Ee raatri 1 idi pattukunnaru',
+      zero: 'Tarvaathi Lantern Hour varaku vishraanti',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rooms_intentionPrivate =>
+      'Evaru pattukunnaro evariki kanipinchadu, repu deeni gurinchi evaru adagaru.';
+
+  @override
+  String get rooms_intentionFailed =>
+      'Adi jaragaledu. Dayachesi malli try cheyandi.';
+
+  @override
+  String get rooms_intention_sleep_before_midnight =>
+      'Ardharaatri lopu nidrapovaali';
+
+  @override
+  String get rooms_intention_gentle_with_myself =>
+      'Ee raatri naa patla gentle ga untaanu';
+
+  @override
+  String get rooms_intention_phone_down_10 =>
+      '10 nimishaalu phone pakkana pedataanu';
+
+  @override
+  String get rooms_intention_water_before_bed =>
+      'Padukune mundu oka glass neellu';
+
+  @override
+  String get rooms_intention_one_kind_thought =>
+      'Ee roju gurinchi oka manchi aalochana';
+
+  @override
+  String get rooms_intention_slow_breaths =>
+      'Nidraku mundu moodu nemmadaina swaasalu';
+
+  @override
   String get notif_reminderBanner =>
       'Mee kosam oka quiet minute. Ee roju ela anipistondi?';
 
@@ -5497,7 +6426,7 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get notif_channelRemindersDescription =>
-      'Mee daily check-in reminder.';
+      'Mee check-in, wind-down, habit reminders.';
 
   @override
   String get set_notifications => 'Notifications';
@@ -5585,6 +6514,113 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get push_discreet => 'Discreet ga unchandi';
 
   @override
+  String get notif_gesturesBanner =>
+      'Mee room lo kondaru meeku warmth pampaaru.';
+
+  @override
+  String get notif_gesturesAction => 'Room open cheyandi';
+
+  @override
+  String get notif_lanternBanner =>
+      'Lantern Hour modalaindi. Ee raatri inka kondaru ikkade unnaru.';
+
+  @override
+  String get notif_lanternAction => 'Rooms chudandi';
+
+  @override
+  String get notif_windDownBanner =>
+      'Padukune mundu konchem quiet time? Aura ikkade undi.';
+
+  @override
+  String get notif_windDownAction => 'Sounds open cheyandi';
+
+  @override
+  String get notif_habitBanner => 'Oka chinna habit, meeku veelainappudu.';
+
+  @override
+  String get notif_habitAction => 'Habits chudandi';
+
+  @override
+  String get notif_crisisFollowUp =>
+      'Oorike adugutunnam, ee roju ela undi? Help oka tap dooram lo undi.';
+
+  @override
+  String get notif_crisisFollowUpDismiss => 'Close cheyandi';
+
+  @override
+  String get set_notifGestures => 'Mee room nundi warmth';
+
+  @override
+  String get set_notifGesturesNote =>
+      'Mee room lo evaraina meeku gesture pampinappudu. Rojuki okkati minchadu.';
+
+  @override
+  String get set_notifLantern => 'Lantern Hour';
+
+  @override
+  String get set_notifLanternNote =>
+      'Mee saayantram Lantern Hour modalainappudu. Aa roju meeru ippatike room lo unte raadu.';
+
+  @override
+  String get set_notifWindDown => 'Wind-down reminder';
+
+  @override
+  String set_notifWindDownNote(String time) {
+    return '$time ki konchem quiet time. Aa saayantram meeru Sanctuary vaadite raadu.';
+  }
+
+  @override
+  String get set_notifWindDownOffNote =>
+      'Off lo undi. Padukune mundu oka quiet nudge kosam time select cheyandi.';
+
+  @override
+  String get set_notifWindDownTime => 'Wind-down time';
+
+  @override
+  String get set_notifWelcomeBack => 'Konta kaalam tarvaata';
+
+  @override
+  String get set_notifWelcomeBackNote =>
+      'Meeru vaaram leda antakante ekkuva dooram ga unte, oka gentle hello. Rendu saarlu minchadu.';
+
+  @override
+  String get set_notifHabits => 'Habit nudges';
+
+  @override
+  String get set_notifHabitsNote =>
+      'Home lo e habit ki aina, meeru select chesina time lo oka chinna nudge. Rojuki okkati minchadu.';
+
+  @override
+  String get set_notifHabitsNone =>
+      'Nudge kosam Home lo oka habit add cheyandi.';
+
+  @override
+  String get set_notifHabitOff => 'Off';
+
+  @override
+  String get set_notifHabitQuiet =>
+      'Idi mee quiet hours lo undi, kaabatti raadu.';
+
+  @override
+  String get set_notifHabitChange => 'Time maarchandi';
+
+  @override
+  String get set_notifHabitTurnOff => 'Off cheyandi';
+
+  @override
+  String sounds_windDownRemind(String time) {
+    return '$time ki gurthu cheyandi';
+  }
+
+  @override
+  String sounds_windDownReminderOn(String time) {
+    return '$time ki oka gentle reminder vastundi.';
+  }
+
+  @override
+  String get sounds_windDownReminderOff => 'Off cheyandi';
+
+  @override
   String get onb_trustTitle => 'Modalupette mundu';
 
   @override
@@ -5633,6 +6669,422 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String onb_blockedMailFailed(String email) {
     return 'Email app open cheyyalekapoyaam. $email ki maaku raayochu.';
   }
+
+  @override
+  String get plus_title => 'Aura Plus';
+
+  @override
+  String get plus_intro =>
+      'Meeku already unnadaaniki inkonchem. Meeku manchiga anipinchadaaniki help chesedanta free ga ne untundi.';
+
+  @override
+  String get plus_addsTitle => 'Plus tho extra';
+
+  @override
+  String get plus_addCapsules => 'Unlimited mood-trigger capsules';
+
+  @override
+  String get plus_addVoice => 'Capsule lo 10 nimishaala varaku voice';
+
+  @override
+  String get plus_addInsights =>
+      'Deeper Insights: e range aina, habit × mood, month in stars lo inka lothuga';
+
+  @override
+  String get plus_addSounds => 'Extra sounds, rendu Plus skies';
+
+  @override
+  String get plus_freeTitle => 'Eppudu free';
+
+  @override
+  String get plus_freeBody =>
+      'Check-ins, habits, rest days, rooms, Breath Ripples, date capsules, crisis support, Breathe, grounding, Today\'s minute, prati base sound, night wind-down.';
+
+  @override
+  String get plus_planMonthly => 'Monthly';
+
+  @override
+  String get plus_planAnnual => 'Yearly';
+
+  @override
+  String plus_trialLineMonthly(String price) {
+    return '1 month free, tarvatha nelaki $price';
+  }
+
+  @override
+  String plus_trialLineAnnual(String price) {
+    return '1 month free, tarvatha samvatsaraaniki $price';
+  }
+
+  @override
+  String plus_priceMonthly(String price) {
+    return 'Nelaki $price';
+  }
+
+  @override
+  String plus_priceAnnual(String price) {
+    return 'Samvatsaraaniki $price';
+  }
+
+  @override
+  String plus_trialEnds(String date) {
+    return 'Mee free month $date tho aipotundi. Mundu cancel cheyyakapote first charge $date na.';
+  }
+
+  @override
+  String plus_renews(String store) {
+    return 'Meeru cancel chese varaku automatic ga renew avutundi. Mee $store account dwara payment.';
+  }
+
+  @override
+  String get plus_cancelApple =>
+      'Cancel cheyyadaaniki: iPhone Settings › mee peru › Subscriptions › Aura. Charge ki kaneesam oka roju mundu cancel cheyandi.';
+
+  @override
+  String get plus_cancelGoogle =>
+      'Cancel cheyyadaaniki: Play Store › mee profile › Payments & subscriptions › Subscriptions › Aura.';
+
+  @override
+  String get plus_storeApple => 'App Store';
+
+  @override
+  String get plus_storeGoogle => 'Google Play';
+
+  @override
+  String get plus_startTrial => 'Free month start cheyandi';
+
+  @override
+  String get plus_subscribe => 'Subscribe cheyandi';
+
+  @override
+  String get plus_restore => 'Purchases restore cheyandi';
+
+  @override
+  String get plus_manage => 'Store lo manage cheyandi';
+
+  @override
+  String get plus_loadingPrices => 'Store nunchi prices vastunnaayi';
+
+  @override
+  String get plus_storeUnavailable =>
+      'Store ippudu reach avvadam ledu. Emi charge kaaledu.';
+
+  @override
+  String get plus_retry => 'Malli try cheyandi';
+
+  @override
+  String get plus_confirming => 'Store tho confirm chestunnam…';
+
+  @override
+  String get plus_confirmingLater =>
+      'Store ki mee request andindi. Confirm avvagaane Plus start avutundi. Meeru idi close cheyyochu.';
+
+  @override
+  String get plus_validationFailed =>
+      'Idi inka confirm cheyyalekapoyaam. Meeku charge ayyi unte adi safe. Memu check chestune untaam.';
+
+  @override
+  String get plus_pendingApproval =>
+      'Approval kosam wait chestunnam. Adi aiyye varaku meeku charge undadu.';
+
+  @override
+  String get plus_declined => 'Payment jaragaledu. Meeku charge kaaledu.';
+
+  @override
+  String get plus_welcome => 'Aura Plus on ayyindi. Thank you.';
+
+  @override
+  String get plus_ownedElsewhere =>
+      'Ee purchase ee store account lo inko Aura account di, andukani adi akkade untundi.';
+
+  @override
+  String plus_restored(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count purchases restore ayyaayi.',
+      one: '1 purchase restore ayyindi.',
+      zero: 'Ee store account lo restore cheyyadaaniki emi ledu.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plus_lockedOnly => 'Aura Plus lo bhaagam';
+
+  @override
+  String get plus_about => 'Aura Plus gurinchi';
+
+  @override
+  String get plus_seePlus => 'Aura Plus choodandi';
+
+  @override
+  String get plus_freePath => 'Free daari ikkade undi.';
+
+  @override
+  String get plus_explainerCapsules =>
+      'Free account lo 3 mood capsules wait chestaayi. Aura Plus lo meeku enni kaavaalante anni. Date capsules eppudu unlimited.';
+
+  @override
+  String get plus_explainerVoice =>
+      'Free Aura lo capsule voice 2 nimishaalu, Aura Plus tho 10 nimishaalu.';
+
+  @override
+  String get plus_explainerSounds =>
+      'Ee sound Aura Plus tho vastundi. Prati base sound, night wind-down free ga ne untaayi.';
+
+  @override
+  String get plus_explainerInsights =>
+      'Aura Plus tho e range aina, habit × mood, deeper month. Mee sky, history free ga ne untaayi.';
+
+  @override
+  String get plus_explainerSky => 'Ee sky Aura Plus tho vastundi.';
+
+  @override
+  String get plus_statusFree => 'Meeru free Aura lo unnaru.';
+
+  @override
+  String plus_statusTrial(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days rojulu migilaayi',
+      one: '1 roju migilindi',
+      zero: 'ee roje aipotundi',
+    );
+    return 'Free month: $_temp0. First charge $date na.';
+  }
+
+  @override
+  String plus_statusTrialCancelled(String date) {
+    return 'Mee free month $date varaku untundi. Tarvatha meeru free Aura lo untaaru, meeru chesinavanni meeve.';
+  }
+
+  @override
+  String plus_statusActive(String date) {
+    return 'Aura Plus $date na renew avutundi.';
+  }
+
+  @override
+  String plus_statusCancelled(String date) {
+    return 'Aura Plus $date varaku untundi. Malli charge undadu.';
+  }
+
+  @override
+  String get plus_statusGrace =>
+      'Store Aura Plus ni renew cheyyalekapoyindi. Malli try chestunnappudu Plus on lo untundi.';
+
+  @override
+  String get plus_statusBillingRetry =>
+      'Store renew chese varaku Aura Plus aagindi. Meeru chesinavanni meeve.';
+
+  @override
+  String get plus_statusExpired =>
+      'Aura Plus aipoyindi. Meeru chesinavanni meeve.';
+
+  @override
+  String get plus_statusRefunded =>
+      'Mee refund aipoyindi, andukani Aura Plus aipoyindi. Meeru chesinavanni meeve.';
+
+  @override
+  String get plus_statusPending =>
+      'Store confirm kosam wait chestunnam. Adi aiyye varaku charge undadu.';
+
+  @override
+  String get plus_updatePayment => 'Store lo payment update cheyandi';
+
+  @override
+  String get plus_turnBackOn => 'Plus malli on cheyandi';
+
+  @override
+  String plus_managedElsewhere(String store) {
+    return '$store lo konnaru. Akkade manage cheyandi.';
+  }
+
+  @override
+  String get plus_notYet =>
+      'Aura Plus meeru join ayina oka roju tarvatha vastundi. Meeku kaavalsinavanni already free.';
+
+  @override
+  String plus_cardTrialEnding(String date, String price) {
+    return 'Mee free month $date tho aipotundi. Store lo cancel cheyyakapote Plus nelaki $price tho continue avutundi.';
+  }
+
+  @override
+  String plus_cardTrialEndingYear(String date, String price) {
+    return 'Mee free month $date tho aipotundi. Store lo cancel cheyyakapote Plus samvatsaraaniki $price tho continue avutundi.';
+  }
+
+  @override
+  String plus_cardTrialEndingNoPrice(String date) {
+    return 'Mee free month $date tho aipotundi. Store lo cancel cheyyakapote Plus continue avutundi.';
+  }
+
+  @override
+  String get plus_cardKeep => 'Plus unchandi';
+
+  @override
+  String plus_cardTrialCancelled(String date) {
+    return 'Plus $date varaku untundi. Meeku charge undadu.';
+  }
+
+  @override
+  String get plus_cardBillingIssue =>
+      'Aura Plus payment jaragaledu. Meeru chesinavanni safe ga unnayi.';
+
+  @override
+  String get plus_cardContinues => 'Aura Plus continue avutondi. Thank you.';
+
+  @override
+  String get plus_dismiss => 'Close cheyandi';
+
+  @override
+  String get plus_giftWarmTea => 'Warm Tea';
+
+  @override
+  String get plus_giftComfortLantern => 'Comfort Lantern';
+
+  @override
+  String get plus_giftBouquet => 'Encouragement Bouquet';
+
+  @override
+  String plus_giftReceived(String gift) {
+    return 'Ikkada evaro meeku $gift pampaaru.';
+  }
+
+  @override
+  String plus_giftStardust(int count) {
+    return '+$count Stardust';
+  }
+
+  @override
+  String get plus_giftTitle => 'Gift pampandi';
+
+  @override
+  String get plus_giftBody =>
+      'Vaallaki “Ikkada evaro meeku gift pampaaru” ani kanipistundi, sky kosam Stardust vastundi. Message ledu, peru ledu.';
+
+  @override
+  String plus_giftSend(String price) {
+    return '$price ki pampandi';
+  }
+
+  @override
+  String get plus_giftSent =>
+      'Pampinchaam. Vaallu tarvatha Aura open chesinappudu chustaaru.';
+
+  @override
+  String get plus_giftUnavailable =>
+      'Ee gift ippudu pampalemu. Emi charge kaaledu.';
+
+  @override
+  String get plus_giftDailyLimit =>
+      'Ee roju 5 gifts ayyaayi. Repu inka pampochu.';
+
+  @override
+  String get plus_giftPaused => 'Ee account lo gifts ippudu available ga levu.';
+
+  @override
+  String get plus_giftsOff => 'Gifts konchem sepu aagaayi. Emi charge kaaledu.';
+
+  @override
+  String plus_stardustBalance(int count) {
+    return '$count Stardust';
+  }
+
+  @override
+  String get plus_stardustNote =>
+      'Stardust meeku itarulu pampe gifts nunchi maatrame vastundi. Adi konalemu, cash cheyyalemu, move cheyyalemu.';
+
+  @override
+  String get plus_skiesTitle => 'Mee sky';
+
+  @override
+  String get plus_skiesIntro =>
+      'Mee sonta Home, Sanctuary, Insights kosam oka sky. Meeke kanipistundi.';
+
+  @override
+  String get plus_skyNight => 'Night sky';
+
+  @override
+  String get plus_skyAurora => 'Aurora';
+
+  @override
+  String get plus_skyMonsoonDusk => 'Monsoon dusk';
+
+  @override
+  String get plus_skyFirstLight => 'First light';
+
+  @override
+  String get plus_skyLanternFestival => 'Lantern festival';
+
+  @override
+  String get plus_skyDeepOcean => 'Deep ocean';
+
+  @override
+  String get plus_skyMeteorShower => 'Meteor shower';
+
+  @override
+  String get plus_skyFree => 'Free';
+
+  @override
+  String get plus_skyWithPlus => 'Aura Plus tho';
+
+  @override
+  String get plus_skyOwned => 'Meedi';
+
+  @override
+  String get plus_skyInUse => 'Use lo undi';
+
+  @override
+  String get plus_skyUse => 'Ee sky vaadandi';
+
+  @override
+  String plus_skyBuy(String price) {
+    return '$price ki konandi';
+  }
+
+  @override
+  String plus_skyStardust(int count) {
+    return '$count Stardust vaadandi';
+  }
+
+  @override
+  String get plus_skyNotEnough => 'Ee sky ki inka saripadaa Stardust ledu.';
+
+  @override
+  String get plus_soundscapeTitle => 'Oka soundscape pair cheyandi';
+
+  @override
+  String get plus_soundscapeNone => 'Sounds vaddu';
+
+  @override
+  String get plus_soundscapeNightAir => 'Night air';
+
+  @override
+  String get plus_soundscapeHighWind => 'High wind';
+
+  @override
+  String get plus_soundscapeMonsoon => 'Monsoon';
+
+  @override
+  String get plus_soundscapeBells => 'Bells';
+
+  @override
+  String get plus_soundscapeShore => 'Shore';
+
+  @override
+  String get plus_soundscapePlay => 'Ee sounds vinandi';
+
+  @override
+  String get plus_settingsSky => 'Mee sky, Stardust';
+
+  @override
+  String get plus_channelAccount => 'Account';
+
+  @override
+  String get plus_channelAccountDescription =>
+      'Aura Plus reminders, udaaharanaki mee free month aipovadam.';
 
   @override
   String polish_legalOpenFailed(String url) {
@@ -5879,6 +7331,237 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   @override
   String get rooms_pausedJoin =>
       'Rooms konchem sepu rest teesukuntunnayi. Mee check-in save ayyindi.';
+
+  @override
+  String get ripples_title => 'Breath Ripples';
+
+  @override
+  String get ripples_homeCard => 'Kalisi breathe cheddaam';
+
+  @override
+  String get ripples_homeCardBody =>
+      'Marikondari tho kalisi moodu prashaanthamaina nimishaalu. Maatalu levu, score ledu.';
+
+  @override
+  String get ripples_breatheTogether => 'Kalisi breathe cheddaam';
+
+  @override
+  String ripples_invite(String name, int count, int capacity) {
+    return '$name kalisi breathe cheyyalanukuntunnaru · $count/$capacity';
+  }
+
+  @override
+  String get ripples_inviteJoin => 'Join avvandi';
+
+  @override
+  String ripples_inviteMine(int count, int capacity) {
+    return 'Mee invite open ga undi · $count/$capacity';
+  }
+
+  @override
+  String get ripples_lobby =>
+      'Kalisi breathe cheyadaaniki itharula kosam choostunnaam…';
+
+  @override
+  String get ripples_lobbyHint =>
+      'Wait chestunnappudu kooda breath tho paatu saagandi. Eppudaina vellipovachhu.';
+
+  @override
+  String get ripples_holdHint =>
+      'Lopaliki breathe ki pattukondi, bayataki vadalataaniki vadileyandi';
+
+  @override
+  String get ripples_tapHint => 'Lopaliki, bayataki maaradaaniki tap cheyandi';
+
+  @override
+  String get ripples_breathArea => 'Breathing area';
+
+  @override
+  String get ripples_offline =>
+      'Kalisi breathe cheyadaaniki connection kaavali. Solo ga breathe chestaara?';
+
+  @override
+  String get ripples_paused =>
+      'Breath Ripples kaasepu vishraanti teesukuntondi. Solo ga breathe chestaara?';
+
+  @override
+  String get ripples_suspended =>
+      'Ee account ki kalisi breathe cheyadam prasthutham aagindi. Meeru solo ga breathe cheyochhu.';
+
+  @override
+  String get ripples_closed =>
+      'Ee account itharula tho kalisi breathe cheyaledu. Meeru solo ga breathe cheyochhu.';
+
+  @override
+  String get ripples_guidelines =>
+      'Mundu community guidelines. Vaatini chadavadaaniki Rooms open cheyandi, leda ippatiki solo ga breathe cheyandi.';
+
+  @override
+  String get ripples_breatheSolo => 'Solo ga breathe';
+
+  @override
+  String get ripples_settle => 'Settle avvandi';
+
+  @override
+  String get ripples_fade => 'Mellaga mugiyanivvandi';
+
+  @override
+  String ripples_together(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mandi kalisi breathe chestunnaru',
+      one: 'Meeru, ee samudram maatrame',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_echoesJoined(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count echoes join ayyaayi. Ivi intaku mundu ikkada breathe chesina nijamaina vyaktula recordings.',
+      one: '1 echo join ayyindi. Idi intaku mundu ikkada breathe chesina oka nijamaina vyakti recording.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ripples_guides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count guide lights meetho breathe chestaayi.',
+      one: 'Oka guide light meetho breathe chestundi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_solo =>
+      'Ee saari meeru solo ga breathe chestunnaru. Samudram inka vintondi.';
+
+  @override
+  String get ripples_linkLost => 'Kaasepu meeru solo ga breathe chestunnaru.';
+
+  @override
+  String get ripples_alone =>
+      'Breathe continue cheyandi. Samudram inka ikkade undi.';
+
+  @override
+  String get ripples_leave => 'Vellipondi';
+
+  @override
+  String get ripples_accessibleMode => 'Accessible mode';
+
+  @override
+  String get ripples_accessibleModeHint =>
+      'Lopaliki, bayataki maaradaaniki tap cheyandi. Meeru itharula tho step lo unnappudu tones, konchem gattiga haptics cheptaayi.';
+
+  @override
+  String ripples_oceanSemantic(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lights tho oka raatri samudram',
+      one: 'Mee light tho oka raatri samudram',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ripples_lightMe => 'Mee light';
+
+  @override
+  String ripples_lightHuman(String name) {
+    return '$name light';
+  }
+
+  @override
+  String get ripples_lightEcho =>
+      'Intaku mundu ikkada breathe chesina okari echo';
+
+  @override
+  String get ripples_lightGuide => 'Pacer tho breathe chese guide light';
+
+  @override
+  String get ripples_echo => 'echo';
+
+  @override
+  String get ripples_guide => 'guide';
+
+  @override
+  String get ripples_you => 'meeru';
+
+  @override
+  String get ripples_pulse => 'Pulse pampandi';
+
+  @override
+  String get ripples_gestureHug => 'Hug';
+
+  @override
+  String get ripples_gestureDeepBreath => 'Deep breath';
+
+  @override
+  String get ripples_gestureNotAlone => 'Meeru ontari kaadu';
+
+  @override
+  String ripples_pulseFrom(String name) {
+    return '$name pulse pampaaru';
+  }
+
+  @override
+  String ripples_gestureFrom(String name, String gesture) {
+    return '$name · $gesture';
+  }
+
+  @override
+  String get ripples_contactTray => 'Edaina manchidi pampandi';
+
+  @override
+  String get ripples_mute => 'Mute';
+
+  @override
+  String get ripples_unmute => 'Unmute';
+
+  @override
+  String get ripples_block => 'Block';
+
+  @override
+  String get ripples_report => 'Report';
+
+  @override
+  String get ripples_blocked =>
+      'Block chesaaru. Meeriddaru malli match avvaru.';
+
+  @override
+  String get ripples_reported =>
+      'Thanks. Aura nundi evaraina deenni choostaaru.';
+
+  @override
+  String get ripples_actionFailed =>
+      'Adi jaragaledu. Dayachesi malli try cheyandi.';
+
+  @override
+  String get ripples_endTitle => 'Idi kalisi gadipina konni nimishaalu.';
+
+  @override
+  String get ripples_again => 'Malli breathe cheddaam';
+
+  @override
+  String get ripples_backToRoom => 'Room ki tirigi';
+
+  @override
+  String get ripples_feelNow => 'Ippudu ela anipistondi?';
+
+  @override
+  String get ripples_echoToggle => 'Naa breathing oka echo ga maaranivvandi';
+
+  @override
+  String get ripples_echoToggleHint =>
+      'Echo mee breaths timing maatrame unchutundi, meeru evaro kaadu, kaabatti adi mee varaku raadu. Idi off chesthe inka mundu echoes record kaavu.';
 
   @override
   String get rooms_title => 'Rooms';

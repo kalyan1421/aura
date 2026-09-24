@@ -19,7 +19,11 @@ mixin _$RoomViewState {
 /// suspended, …).
  RoomsFailure? get failure; RoomLink get link; List<PendingGesture> get pending;/// The tray rests for [gestureCooldown] after a send.
  bool get coolingDown; GestureMoment? get moment;/// You left: nothing more is sent or heard.
- bool get left;
+ bool get left;/// Bumped when the room's lantern becomes fully lit while you are here
+/// (not when you open a room that is already lit): the screen plays
+/// the one shared "lanterns rise" moment for each bump.
+ int get lanternRise;/// A hold of tonight's intention is on its way.
+ bool get holding;
 /// Create a copy of RoomViewState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -31,20 +35,20 @@ $RoomViewStateCopyWith<RoomViewState> get copyWith => _$RoomViewStateCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as RoomViewState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomViewState&&(identical(other.load, _this.load) || other.load == _this.load)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.link, _this.link) || other.link == _this.link)&&const DeepCollectionEquality().equals(other.pending, _this.pending)&&(identical(other.coolingDown, _this.coolingDown) || other.coolingDown == _this.coolingDown)&&(identical(other.moment, _this.moment) || other.moment == _this.moment)&&(identical(other.left, _this.left) || other.left == _this.left));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RoomViewState&&(identical(other.load, _this.load) || other.load == _this.load)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.failure, _this.failure) || other.failure == _this.failure)&&(identical(other.link, _this.link) || other.link == _this.link)&&const DeepCollectionEquality().equals(other.pending, _this.pending)&&(identical(other.coolingDown, _this.coolingDown) || other.coolingDown == _this.coolingDown)&&(identical(other.moment, _this.moment) || other.moment == _this.moment)&&(identical(other.left, _this.left) || other.left == _this.left)&&(identical(other.lanternRise, _this.lanternRise) || other.lanternRise == _this.lanternRise)&&(identical(other.holding, _this.holding) || other.holding == _this.holding));
 }
 
 
 @override
 int get hashCode {
   final _this = this as RoomViewState;
-  return Object.hash(runtimeType,_this.load,_this.detail,_this.failure,_this.link,const DeepCollectionEquality().hash(_this.pending),_this.coolingDown,_this.moment,_this.left);
+  return Object.hash(runtimeType,_this.load,_this.detail,_this.failure,_this.link,const DeepCollectionEquality().hash(_this.pending),_this.coolingDown,_this.moment,_this.left,_this.lanternRise,_this.holding);
 }
 
 @override
 String toString() {
   final _this = this as RoomViewState;
-  return 'RoomViewState(load: ${_this.load}, detail: ${_this.detail}, failure: ${_this.failure}, link: ${_this.link}, pending: ${_this.pending}, coolingDown: ${_this.coolingDown}, moment: ${_this.moment}, left: ${_this.left})';
+  return 'RoomViewState(load: ${_this.load}, detail: ${_this.detail}, failure: ${_this.failure}, link: ${_this.link}, pending: ${_this.pending}, coolingDown: ${_this.coolingDown}, moment: ${_this.moment}, left: ${_this.left}, lanternRise: ${_this.lanternRise}, holding: ${_this.holding})';
 }
 
 
@@ -55,7 +59,7 @@ abstract mixin class $RoomViewStateCopyWith<$Res>  {
   factory $RoomViewStateCopyWith(RoomViewState value, $Res Function(RoomViewState) _then) = _$RoomViewStateCopyWithImpl;
 @useResult
 $Res call({
- RoomLoad load, RoomDetail? detail, RoomsFailure? failure, RoomLink link, List<PendingGesture> pending, bool coolingDown, GestureMoment? moment, bool left
+ RoomLoad load, RoomDetail? detail, RoomsFailure? failure, RoomLink link, List<PendingGesture> pending, bool coolingDown, GestureMoment? moment, bool left, int lanternRise, bool holding
 });
 
 
@@ -72,7 +76,7 @@ class _$RoomViewStateCopyWithImpl<$Res>
 
 /// Create a copy of RoomViewState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? load = null,Object? detail = freezed,Object? failure = freezed,Object? link = null,Object? pending = null,Object? coolingDown = null,Object? moment = freezed,Object? left = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? load = null,Object? detail = freezed,Object? failure = freezed,Object? link = null,Object? pending = null,Object? coolingDown = null,Object? moment = freezed,Object? left = null,Object? lanternRise = null,Object? holding = null,}) {
   return _then(RoomViewState(
 load: null == load ? _self.load : load // ignore: cast_nullable_to_non_nullable
 as RoomLoad,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
@@ -82,6 +86,8 @@ as RoomLink,pending: null == pending ? _self.pending : pending // ignore: cast_n
 as List<PendingGesture>,coolingDown: null == coolingDown ? _self.coolingDown : coolingDown // ignore: cast_nullable_to_non_nullable
 as bool,moment: freezed == moment ? _self.moment : moment // ignore: cast_nullable_to_non_nullable
 as GestureMoment?,left: null == left ? _self.left : left // ignore: cast_nullable_to_non_nullable
+as bool,lanternRise: null == lanternRise ? _self.lanternRise : lanternRise // ignore: cast_nullable_to_non_nullable
+as int,holding: null == holding ? _self.holding : holding // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -179,10 +185,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left,  int lanternRise,  bool holding)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RoomViewState() when $default != null:
-return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left);case _:
+return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left,_that.lanternRise,_that.holding);case _:
   return orElse();
 
 }
@@ -200,10 +206,10 @@ return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left,  int lanternRise,  bool holding)  $default,) {final _that = this;
 switch (_that) {
 case _RoomViewState():
-return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left);case _:
+return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left,_that.lanternRise,_that.holding);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -220,10 +226,10 @@ return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RoomLoad load,  RoomDetail? detail,  RoomsFailure? failure,  RoomLink link,  List<PendingGesture> pending,  bool coolingDown,  GestureMoment? moment,  bool left,  int lanternRise,  bool holding)?  $default,) {final _that = this;
 switch (_that) {
 case _RoomViewState() when $default != null:
-return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left);case _:
+return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_that.coolingDown,_that.moment,_that.left,_that.lanternRise,_that.holding);case _:
   return null;
 
 }
@@ -235,7 +241,7 @@ return $default(_that.load,_that.detail,_that.failure,_that.link,_that.pending,_
 
 
 class _RoomViewState extends RoomViewState {
-  const _RoomViewState({this.load = RoomLoad.loading, this.detail, this.failure, this.link = RoomLink.off,  List<PendingGesture> pending = const <PendingGesture>[], this.coolingDown = false, this.moment, this.left = false}): _pending = pending,super._();
+  const _RoomViewState({this.load = RoomLoad.loading, this.detail, this.failure, this.link = RoomLink.off,  List<PendingGesture> pending = const <PendingGesture>[], this.coolingDown = false, this.moment, this.left = false, this.lanternRise = 0, this.holding = false}): _pending = pending,super._();
   
 
 @override@JsonKey() final  RoomLoad load;
@@ -256,6 +262,12 @@ class _RoomViewState extends RoomViewState {
 @override final  GestureMoment? moment;
 /// You left: nothing more is sent or heard.
 @override@JsonKey() final  bool left;
+/// Bumped when the room's lantern becomes fully lit while you are here
+/// (not when you open a room that is already lit): the screen plays
+/// the one shared "lanterns rise" moment for each bump.
+@override@JsonKey() final  int lanternRise;
+/// A hold of tonight's intention is on its way.
+@override@JsonKey() final  bool holding;
 
 /// Create a copy of RoomViewState
 /// with the given fields replaced by the non-null parameter values.
@@ -267,18 +279,18 @@ _$RoomViewStateCopyWith<_RoomViewState> get copyWith => __$RoomViewStateCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomViewState&&(identical(other.load, load) || other.load == load)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.link, link) || other.link == link)&&const DeepCollectionEquality().equals(other.pending, _pending)&&(identical(other.coolingDown, coolingDown) || other.coolingDown == coolingDown)&&(identical(other.moment, moment) || other.moment == moment)&&(identical(other.left, left) || other.left == left));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RoomViewState&&(identical(other.load, load) || other.load == load)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.failure, failure) || other.failure == failure)&&(identical(other.link, link) || other.link == link)&&const DeepCollectionEquality().equals(other.pending, _pending)&&(identical(other.coolingDown, coolingDown) || other.coolingDown == coolingDown)&&(identical(other.moment, moment) || other.moment == moment)&&(identical(other.left, left) || other.left == left)&&(identical(other.lanternRise, lanternRise) || other.lanternRise == lanternRise)&&(identical(other.holding, holding) || other.holding == holding));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,load,detail,failure,link,const DeepCollectionEquality().hash(_pending),coolingDown,moment,left);
+    return Object.hash(runtimeType,load,detail,failure,link,const DeepCollectionEquality().hash(_pending),coolingDown,moment,left,lanternRise,holding);
 }
 
 @override
 String toString() {
-    return 'RoomViewState(load: $load, detail: $detail, failure: $failure, link: $link, pending: $pending, coolingDown: $coolingDown, moment: $moment, left: $left)';
+    return 'RoomViewState(load: $load, detail: $detail, failure: $failure, link: $link, pending: $pending, coolingDown: $coolingDown, moment: $moment, left: $left, lanternRise: $lanternRise, holding: $holding)';
 }
 
 
@@ -289,7 +301,7 @@ abstract mixin class _$RoomViewStateCopyWith<$Res> implements $RoomViewStateCopy
   factory _$RoomViewStateCopyWith(_RoomViewState value, $Res Function(_RoomViewState) _then) = __$RoomViewStateCopyWithImpl;
 @override @useResult
 $Res call({
- RoomLoad load, RoomDetail? detail, RoomsFailure? failure, RoomLink link, List<PendingGesture> pending, bool coolingDown, GestureMoment? moment, bool left
+ RoomLoad load, RoomDetail? detail, RoomsFailure? failure, RoomLink link, List<PendingGesture> pending, bool coolingDown, GestureMoment? moment, bool left, int lanternRise, bool holding
 });
 
 
@@ -306,7 +318,7 @@ class __$RoomViewStateCopyWithImpl<$Res>
 
 /// Create a copy of RoomViewState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? load = null,Object? detail = freezed,Object? failure = freezed,Object? link = null,Object? pending = null,Object? coolingDown = null,Object? moment = freezed,Object? left = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? load = null,Object? detail = freezed,Object? failure = freezed,Object? link = null,Object? pending = null,Object? coolingDown = null,Object? moment = freezed,Object? left = null,Object? lanternRise = null,Object? holding = null,}) {
   return _then(_RoomViewState(
 load: null == load ? _self.load : load // ignore: cast_nullable_to_non_nullable
 as RoomLoad,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
@@ -316,6 +328,8 @@ as RoomLink,pending: null == pending ? _self._pending : pending // ignore: cast_
 as List<PendingGesture>,coolingDown: null == coolingDown ? _self.coolingDown : coolingDown // ignore: cast_nullable_to_non_nullable
 as bool,moment: freezed == moment ? _self.moment : moment // ignore: cast_nullable_to_non_nullable
 as GestureMoment?,left: null == left ? _self.left : left // ignore: cast_nullable_to_non_nullable
+as bool,lanternRise: null == lanternRise ? _self.lanternRise : lanternRise // ignore: cast_nullable_to_non_nullable
+as int,holding: null == holding ? _self.holding : holding // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

@@ -9,7 +9,7 @@
  * device bans: install recorded on profile, instant-ban service call, 403 device_banned on profile / devices / match,
  * account routes still open, console list / ban / lift (Owner only; Moderator 403 audited), a ban outliving the account.
  */
-import { createHmac, randomBytes } from 'node:crypto';
+import { createHmac, randomBytes, randomUUID } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import type { Pool } from 'pg';
 import request from 'supertest';
@@ -61,7 +61,8 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
   const reportIds: string[] = [];
   const installs: string[] = [];
   const savedEnv: Record<string, string | undefined> = {};
-  let savedFlags: Array<{ key: string; enabled: boolean }> = [];
+  // A throwaway flag only this run flips: flipping a real one (e.g. rooms_pool_hi) races other suites and a live worker.
+  const probeFlag = `e2e_probe_${randomUUID().slice(0, 8)}`;
   let savedCurrent: { version: number } | null = null;
   let createdVersions: number[] = [];
   let owner: TestUser;
@@ -121,7 +122,7 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
     app = await bootApp();
     db = dbPool();
     masterKey = app.get(AppConfig).masterKey;
-    savedFlags = (await db.query<{ key: string; enabled: boolean }>('select key, enabled from public.feature_flags')).rows;
+    await db.query(`insert into public.feature_flags (key, enabled, description) values ($1, false, 'e2e probe (remote-config suite)')`, [probeFlag]);
     savedCurrent = (await db.query<{ version: number }>(`select version from public.signed_bundle_current where kind = 'crisis_lexicon'`)).rows[0] ?? null;
     owner = await staff('rc-owner', 'owner');
     moderator = await staff('rc-mod', 'moderator');
@@ -129,7 +130,8 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
 
   afterAll(async () => {
     if (db) {
-      for (const f of savedFlags) await db.query('update public.feature_flags set enabled = $2 where key = $1', [f.key, f.enabled]);
+      await db.query('delete from public.feature_flags where key = $1', [probeFlag]);
+      await db.query(`update public.feature_flags set enabled = true where key = 'rooms_enabled'`);
       // Put the live lexicon back the way it was, then drop this run's versions (only non-live ones can go).
       if (savedCurrent) {
         const live = (await db.query<{ version: number }>(`select version from public.signed_bundle_current where kind = 'crisis_lexicon'`)).rows[0];
@@ -172,14 +174,14 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
     it('a flag flipped in the console reaches the document (new ETag) — no release needed', async () => {
       refresh();
       const before = await http().get('/v1/config').expect(200);
-      const next = !before.body.flags.rooms_pool_hi.enabled;
-      const flip = await as(owner, http().post('/admin/config/flags/rooms_pool_hi')).send({ enabled: next, reasonCode: 'e2e_flag_flip' });
+      expect(before.body.flags[probeFlag].enabled).toBe(false);
+      const flip = await as(owner, http().post(`/admin/config/flags/${probeFlag}`)).send({ enabled: true, reasonCode: 'e2e_flag_flip' });
       expect(flip.status).toBe(200);
       refresh();
       const after = await http().get('/v1/config').set('If-None-Match', before.headers.etag).expect(200);
-      expect(after.body.flags.rooms_pool_hi.enabled).toBe(next);
+      expect(after.body.flags[probeFlag].enabled).toBe(true);
       expect(after.headers.etag).not.toBe(before.headers.etag);
-      const touched = await db.query<{ updated_at: Date }>(`select updated_at from public.feature_flags where key = 'rooms_pool_hi'`);
+      const touched = await db.query<{ updated_at: Date }>('select updated_at from public.feature_flags where key = $1', [probeFlag]);
       expect(Date.now() - touched.rows[0].updated_at.getTime()).toBeLessThan(60_000);
     });
 

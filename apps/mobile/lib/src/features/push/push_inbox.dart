@@ -1,3 +1,4 @@
+import '../plus/plus_format.dart' show openManageSubscriptions;
 import 'dart:async';
 
 import 'package:drift/drift.dart' show BooleanExpressionOperators;
@@ -16,6 +17,10 @@ import '../../core/router/router.dart';
 import '../capsules/capsule_providers.dart';
 import '../capsules/capsules_list_screen.dart';
 import '../onboarding/gate_controller.dart';
+import '../rooms/room_navigation.dart' show openRoom;
+import '../sanctuary/sanctuary_session_log.dart'
+    show sanctuaryOpenedThisEvening;
+import '../sanctuary/sounds/sounds_entry.dart' show openSounds;
 import 'push_messaging.dart';
 
 /// What a push needs from the capsules feature (F4). The capsules feature
@@ -54,7 +59,9 @@ final capsulePushBridgeProvider = Provider<CapsulePushBridge>(
 /// Opens the right place for a tapped push, respecting the gate (the
 /// under-13 lock and onboarding win, as for `aura://` links): the daily
 /// reminder → the check-in (above whatever shows); a capsule → the capsules;
-/// "rooms are open" → Rooms.
+/// "rooms are open" and Lantern Hour → Rooms; gestures → that room; the
+/// wind-down reminder → Sanctuary › Sounds (nothing plays until a tap); a
+/// habit nudge or welcome back → Home.
 class PushRouter {
   PushRouter({
     required this._router,
@@ -79,8 +86,26 @@ class PushRouter {
         if (context != null && context.mounted) {
           await _capsules().open(context, push.id);
         }
-      case PushTypes.roomsPoolOpen:
+      case PushTypes.roomsPoolOpen || PushTypes.lanternHour:
         openDeepLink(router, gate, Routes.rooms);
+      case PushTypes.gesturesReceived:
+        final id = push.id;
+        final context = router.routerDelegate.navigatorKey.currentContext;
+        if (id == null || context == null || !context.mounted) {
+          openDeepLink(router, gate, Routes.rooms);
+        } else {
+          openRoom(context, id);
+        }
+      case PushTypes.windDownReminder:
+        openDeepLink(router, gate, Routes.sanctuary);
+        await WidgetsBinding.instance.endOfFrame;
+        final context = router.routerDelegate.navigatorKey.currentContext;
+        if (context != null && context.mounted) await openSounds(context);
+      case PushTypes.habitNudge || PushTypes.welcomeBack:
+        openDeepLink(router, gate, Routes.home);
+      case PushTypes.trialEnding:
+        // F12: straight to the store's own page, no screen in between.
+        await openManageSubscriptions();
     }
   }
 
@@ -121,6 +146,7 @@ class PushInbox {
     required this._checkedInToday,
     required this._present,
     this._channels,
+    this._sanctuaryUsedThisEvening,
   });
 
   final PushInboxSource? _source;
@@ -129,6 +155,10 @@ class PushInbox {
   final Future<bool> Function() _checkedInToday;
   final PushNoticePresenter _present;
   final ChannelSetup? _channels;
+
+  /// Sanctuary was opened on this phone this evening (the wind-down notice
+  /// then stays quiet, PRD 12). Null: never.
+  final Future<bool> Function()? _sanctuaryUsedThisEvening;
 
   final List<StreamSubscription<PushEnvelope>> _subs = [];
   final Set<String> _announced = {};
@@ -180,6 +210,17 @@ class PushInbox {
         case PushTypes.roomsPoolOpen:
           // Sent once per request; shown once per session all the same.
           if (!_announced.add(PushTypes.roomsPoolOpen)) return;
+        case PushTypes.gesturesReceived:
+          // One per room (the server sends at most one a day per room).
+          if (!_announced.add('${push.type}:${push.id}')) return;
+        case PushTypes.lanternHour || PushTypes.habitNudge:
+          if (!_announced.add(push.type)) return;
+        case PushTypes.windDownReminder:
+          final used = _sanctuaryUsedThisEvening;
+          if (used != null && await used()) return;
+          if (!_announced.add(push.type)) return;
+        case PushTypes.welcomeBack:
+          return; // the person is here: nothing to say
         default:
           return; // a type this build doesn't know: nothing to show
       }
@@ -242,6 +283,16 @@ void showPushNotice(GoRouter router, PushEnvelope push, VoidCallback open) {
       l.notif_roomsPoolBanner,
       l.notif_roomsPoolAction,
     ),
+    PushTypes.gesturesReceived => (
+      l.notif_gesturesBanner,
+      l.notif_gesturesAction,
+    ),
+    PushTypes.lanternHour => (l.notif_lanternBanner, l.notif_lanternAction),
+    PushTypes.windDownReminder => (
+      l.notif_windDownBanner,
+      l.notif_windDownAction,
+    ),
+    PushTypes.habitNudge => (l.notif_habitBanner, l.notif_habitAction),
     _ => (null, null),
   };
   if (text == null || action == null) return;
@@ -262,8 +313,13 @@ abstract final class PushChannels {
   static const String reminders = 'reminders';
   static const String capsules = 'capsules';
 
-  /// "Rooms & Lantern Hour" (PRD 15-permissions): the pool-open push now.
+  /// "Rooms & Lantern Hour" (PRD 15-permissions): the pool-open push,
+  /// Lantern Hour and gestures received. Reminders also carry the wind-down
+  /// reminder, habit nudges and welcome back.
   static const String rooms = 'rooms';
+
+  /// "Account" (PRD 15-permissions): the F12 trial-ending reminder.
+  static const String account = 'account';
 }
 
 /// Creates the Reminders, Capsules and Rooms & Lantern Hour channels in
@@ -298,6 +354,13 @@ Future<void> ensureAndroidChannels(String localeTag) async {
       description: l.notif_channelRoomsDescription,
     ),
   );
+  await android.createNotificationChannel(
+    AndroidNotificationChannel(
+      PushChannels.account,
+      l.plus_channelAccount,
+      description: l.plus_channelAccountDescription,
+    ),
+  );
 }
 
 final pushRouterProvider = Provider<PushRouter>(
@@ -322,6 +385,10 @@ final pushInboxProvider = Provider<PushInbox>((ref) {
     present: (push, open) =>
         showPushNotice(ref.read(routerProvider), push, open),
     channels: () => ensureAndroidChannels(ref.read(localeControllerProvider)),
+    sanctuaryUsedThisEvening: () => sanctuaryOpenedThisEvening(
+      ref.read(kvStoreProvider),
+      ref.read(timeContextProvider).now(),
+    ),
   )..start();
   ref.listen(
     localeControllerProvider,
