@@ -150,7 +150,7 @@ This takes the good part of Habitica's party quests and Tandem's accountability 
 - **Held:** only the author sees "Waiting for a quick check" (overnight: "This may take until morning"); expires unpublished if the room becomes a memory first.
 - **Rejected:** gentle copy by category ("Reflections can't include contact details. Want to try without it?"); text returns to the composer. Only harassment, hate, sexual and spam are strikes (F9).
 - **Crisis-diverted:** never published; the F9 support sheet opens at once; item enters the crisis lane; no strike.
-- **Fail closed:** omni-moderation error or > 5 s → held; nothing is released by timeout. Offline sends queue and run the pipeline on reconnect.
+- **Fail closed:** omni-moderation error or > 5 s → held; nothing is released by timeout. Offline, Send is disabled and the draft is kept on the phone (BD-7); nothing is queued.
 
 #### State machine
 

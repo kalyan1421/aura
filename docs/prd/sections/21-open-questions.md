@@ -62,6 +62,19 @@ On the same day AK approved `docs/competitor-integration-plan.md`, accepting eve
 | CI-13 | What else joins Milestone A? | App shell + Safety Center route, F15 Sanctuary v1, companion response, "A minute for you", guided prompts, native Sign in with Apple (iOS) and Google Sign-In (ID token into Supabase), platform age signals as specified, F1 7-day backfill, Journal auto-complete, F14 subset (daily reminder, date-capsule push) | Rec. |
 | CI-14 | If a milestone slips | Cut after the existing levers: Quiet Together → Look back → Keepsakes → extra Sounds stems → room lanterns. Never-cut list unchanged | Rec. |
 
+### Build-time decisions (24 Sep 2026, PRD v1.3)
+While Milestones A and B were built, AK delegated these calls to the build lead, and they are recorded here as decided.
+
+| # | Question | Decision | |
+|---|---|---|---|
+| BD-1 | A crisis report outside Lantern Hour that no one has acknowledged in 5 minutes: page the Owner at any hour? (19 and 06c F9 differed) | **Yes, at any hour.** Lantern Hour crisis reports page at once; any other crisis report still unacknowledged after 5 minutes pages too, repeating every 5 minutes until acknowledged, with no content in the page | Decided |
+| BD-2 | Should the automatic ban at the 4th active strike also ban the person's devices? | **No.** The 4th-strike ban is a social ban on the account; device bans stay an Owner decision (shared and family phones make an automatic device ban too blunt). The Owner can still ban devices from the report page | Decided |
+| BD-3 | Weekly insight card timing | Available from the first Aura day of the week (Monday 04:00) and **stays for the whole week** until hidden, describing the week that just ended ("From your past week") | Decided |
+| BD-4 | "Your month in stars" for a month with no check-ins | **Skipped**: the recap card shows only when last month had at least 1 check-in (no empty recap) | Decided |
+| BD-5 | Room lanterns and Tonight's intention details | A hold can't be undone and leaving doesn't lower the count (a falling count would reveal who left). One Breath Ripples breath cycle = 0.25 of a gesture toward the lantern, tunable in `matching_config`. Only rooms in the Lantern Hour state take light; the intention card is hidden in the memory view | Decided |
+| BD-6 | Paywall exclusion "straight after a Storm or Rain check-in" | **Within 3 hours** of a Storm or Rain check-in. "Unprompted" = the inline explainer at a limit screen, at most once a day; Settings never counts | Decided |
+| BD-7 | Reflections written offline | **Kept as a draft, not queued.** Send is disabled offline and the draft stays on the phone (the reflection id is reused on retry). This supersedes "offline sends queue" in F6: a queued post could publish hours later into a room whose moment has passed | Decided |
+
 ### Still waiting on someone else (not decisions: actions)
 | # | Action | Owner | By |
 |---|---|---|---|

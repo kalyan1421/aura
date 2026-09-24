@@ -6,7 +6,7 @@
 |---|---|
 | **Product** | Aura: social and gamified mood check-in app (iOS + Android) |
 | **Owner / publisher** | **AKVega** (company App Store + Play accounts; data fiduciary / controller) |
-| **Document** | PRD v1.2: v1.1 plus AK's competitor-integration and screen-plan decisions (F15 Sanctuary, F16 Quiet Together, companion response; see Decision Record CI-1…CI-14). v1.1: all open questions answered by AK |
+| **Document** | PRD v1.3: v1.2 plus the build-time decisions BD-1…BD-7 (24 Sep 2026). v1.2: AK's competitor-integration and screen-plan decisions (F15 Sanctuary, F16 Quiet Together, companion response; see Decision Record CI-1…CI-14). v1.1: all open questions answered by AK |
 | **Date** | 23 Sep 2026 |
 | **Status** | Decisions locked; ready for build planning |
 | **Sources** | Market research, competitor analysis and 1M-download blueprint (Google Docs); store and regulatory fact-check of 23 Sep 2026 (`docs/research/`); AK's two competitor documents and `docs/competitor-integration-plan.md` (23 Sep 2026) |
