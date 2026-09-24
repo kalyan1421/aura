@@ -70,11 +70,12 @@ describe('rooms_pool_open under the global rules', () => {
     expect(TYPE_RULES.rooms_pool_open.channel).toBe('rooms');
   });
 
-  it('copy: generic, in the app language (Hindi / Hinglish fall back to English until beta), discreet wins', () => {
+  it('copy: generic, in the app language (Hindi and Hinglish readers get their own words), discreet wins', () => {
     expect(renderPushBody('rooms_pool_open', 'en', false)).toBe('Hindi and Hinglish rooms are open now.');
     expect(renderPushBody('rooms_pool_open', 'te-Latn', false)).toBe('Hindi, Hinglish rooms ippudu modalayyaayi.');
     expect(renderPushBody('rooms_pool_open', 'te', false)).toMatch(/రూమ్‌లు/);
-    expect(renderPushBody('rooms_pool_open', 'hi-Latn', false)).toBe('Hindi and Hinglish rooms are open now.');
+    expect(renderPushBody('rooms_pool_open', 'hi-Latn', false)).toBe('Hindi aur Hinglish rooms ab khul gaye hain.');
+    expect(renderPushBody('rooms_pool_open', 'hi', false)).toBe('हिंदी और हिंग्लिश रूम अब खुल गए हैं।');
     expect(renderPushBody('rooms_pool_open', 'en', true)).toBe('You have a gentle update');
   });
 });

@@ -2,7 +2,8 @@
 // banned words in Insights copy. Patterns are descriptive only ("more
 // often", never "because"); no numbers, percentages, scores, labels or
 // diagnoses; and every quadrant uses the same template. Reads the generated
-// ARB files, so it checks exactly what ships, in every alpha locale.
+// ARB files, so it checks exactly what ships, in all five locales (Hindi and
+// Hinglish from Milestone B).
 import 'dart:convert';
 import 'dart:io';
 
@@ -52,10 +53,55 @@ const List<String> _banned = [
   'positive',
   'anduke', // Tenglish "because of that"
   'kaaranam', // Tenglish "reason / because"
+  'kyunki', // Hinglish "because"
+  'kyonki',
+  'wajah', // Hinglish "reason / because of"
+  'vajah',
+  'kaaran', // Hinglish "reason"
+  'isliye', // Hinglish "that's why"
+  'behtar', // Hinglish "better"
+  'badtar', // Hinglish "worse"
 ];
 
-/// Telugu-script causal words ("because", "reason").
-const List<String> _bannedTelugu = ['ఎందుకంటే', 'కారణం', 'వల్ల'];
+/// Telugu- and Devanagari-script words matched anywhere (no reliable word
+/// boundaries around combining marks): "because", "reason", "that's why",
+/// "better / worse", clinical labels.
+const List<String> _bannedScript = [
+  'ఎందుకంటే',
+  'కారణం',
+  'వల్ల',
+  'क्योंकि',
+  'वजह',
+  'कारण',
+  'इसलिए',
+  'बेहतर',
+  'बदतर',
+  'स्कोर',
+  'रेटिंग',
+  'प्रतिशत',
+  'डिप्रेशन',
+  'बीमारी',
+  'लक्षण',
+];
+
+/// Quadrant names as each script writes them (a template names the quadrant
+/// only through `{quadrant}`).
+const List<String> _quadrantNames = [
+  'Storm',
+  'Rain',
+  'Moonlight',
+  'Sunrise',
+  'తుఫాను',
+  'వాన',
+  'వెన్నెల',
+  'సూర్యోదయ',
+  'तूफ़ान',
+  'तूफान',
+  'बारिश',
+  'चाँदनी',
+  'चांदनी',
+  'सूर्योदय',
+];
 
 Map<String, dynamic> _arb(String locale) =>
     jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
@@ -65,7 +111,7 @@ Map<String, dynamic> _arb(String locale) =>
 String _text(String template) => template.replaceAll(RegExp(r'\{[^{}]*\}'), '');
 
 void main() {
-  for (final locale in ['en', 'te', 'te_Latn']) {
+  for (final locale in ['en', 'te', 'te_Latn', 'hi', 'hi_Latn']) {
     group('Insights copy ($locale)', () {
       final arb = _arb(locale);
       final keys = arb.keys.where((k) => !k.startsWith('@')).toList();
@@ -73,6 +119,17 @@ void main() {
       test('pattern templates exist', () {
         expect(keys.where(_isPatternCopy), isNotEmpty);
       });
+
+      if (locale != 'en') {
+        test('every pattern template is translated (the linter would pass '
+            'English trivially)', () {
+          final en = _arb('en');
+          for (final key in en.keys.where(_isPatternCopy)) {
+            expect(arb[key], isA<String>(), reason: key);
+            expect(arb[key], isNot(en[key]), reason: key);
+          }
+        });
+      }
 
       for (final key in keys.where(_isInsightsCopy)) {
         final value = arb[key] as String;
@@ -85,7 +142,7 @@ void main() {
               reason: '"$word" in $key: $value',
             );
           }
-          for (final word in _bannedTelugu) {
+          for (final word in _bannedScript) {
             expect(value.contains(word), isFalse, reason: '"$word" in $key');
           }
         });
@@ -94,7 +151,7 @@ void main() {
       for (final key in keys.where(_isPatternCopy)) {
         final value = arb[key] as String;
         test('$key: words only (no number, percentage or score)', () {
-          expect(RegExp(r'[0-9%٪]').hasMatch(_text(value)), isFalse);
+          expect(RegExp(r'[0-9%٪०-९౦-౯]').hasMatch(_text(value)), isFalse);
           expect(value, isNot(contains('{count')));
         });
       }
@@ -103,7 +160,7 @@ void main() {
           'template for every quadrant)', () {
         for (final key in keys.where(_isPatternTemplate)) {
           expect(arb[key], contains('{quadrant}'), reason: key);
-          for (final name in ['Storm', 'Rain', 'Moonlight', 'Sunrise']) {
+          for (final name in _quadrantNames) {
             expect(
               _text(arb[key] as String),
               isNot(contains(name)),

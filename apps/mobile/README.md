@@ -25,7 +25,7 @@ Local defaults (debug/profile builds only; release must pass real values):
 | `AURA_SOCIAL_SIGNIN` | `true` | master switch; each provider still needs the values below |
 | `AURA_GOOGLE_WEB_CLIENT_ID` / `AURA_GOOGLE_IOS_CLIENT_ID` | — | Google OAuth client ids (docs/setup/social-sign-in.md) |
 | `AURA_APPLE_SIGNIN` / `AURA_APPLE_SIGNIN_ANDROID` | `false` | Sign in with Apple set up (iOS native / Android browser flow) |
-| `AURA_BETA_LOCALES` | `false` | shows Hindi / Hinglish in pickers |
+| `AURA_BETA_LOCALES` | `false` | `true` shows Hindi / Hinglish in pickers (review builds). Stays off for testers until the crisis lexicon has reviewed hi / hi-Latn terms |
 | `AURA_DEBUG_TOOLS` | `true` in debug | Settings → Avatar lab (`/debug/avatar`) |
 
 Sign-in uses the email OTP; locally the code lands in Mailpit at
@@ -104,8 +104,12 @@ Dart-side options only Crashlytics / Performance need it.
 
 ## Localization — NEEDS NATIVE REVIEW
 
-`en`, `te`, `te-Latn` (Tenglish) ship in alpha; `hi` / `hi-Latn` files exist and
-fall back to English (TODO, beta). Flutter names romanized ARB files by script
+`en`, `te`, `te-Latn` (Tenglish) ship in alpha; `hi` / `hi-Latn` (Hinglish) are
+translated for Milestone B (beta) and must be complete: `tool/l10n_source.py`
+stops the build when any key lacks one of the five languages, and
+`test/l10n_hindi_test.dart` checks the generated files. Each fragment line
+carries `hi=` (Devanagari) and `hl=` (Hinglish) after the Tenglish. Hindi and
+Hinglish are drafts too — review list: `docs/l10n/hindi-review.md`. Flutter names romanized ARB files by script
 code: `app_te_Latn.arb` with `"@@locale": "te_Latn"` →
 `Locale.fromSubtags(languageCode: 'te', scriptCode: 'Latn')`.
 

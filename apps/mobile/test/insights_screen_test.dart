@@ -748,5 +748,35 @@ void main() {
       );
       expect(find.text('Mee last week nundi'), findsOneWidget);
     });
+
+    _testWidgets('Hindi and Hinglish render the sky', (tester) async {
+      await _pump(
+        tester,
+        locale: const Locale('hi'),
+        seed: (db) => _seedLastWeek(tester, db),
+      );
+      expect(find.text('Aura Sky'), findsOneWidget);
+      expect(find.text('आपके पिछले हफ़्ते से'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      await _pump(
+        tester,
+        locale: localeFromTag('hi-Latn'),
+        seed: (db) => _seedLastWeek(tester, db),
+      );
+      expect(find.text('Aapke pichhle hafte se'), findsOneWidget);
+    });
+
+    _testWidgets('200% text in Hindi (Devanagari): no overflow on the sky and '
+        'cards', (tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _pump(
+        tester,
+        locale: const Locale('hi'),
+        seed: (db) => _seedLastWeek(tester, db),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(WeeklyInsightCard.cardKey), findsOneWidget);
+    });
   });
 }

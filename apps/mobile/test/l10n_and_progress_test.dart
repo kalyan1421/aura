@@ -21,8 +21,9 @@ void main() {
       );
     });
 
-    testWidgets('Tenglish UI copy; system strings fall back to English',
-        (tester) async {
+    testWidgets('Tenglish UI copy; system strings fall back to English', (
+      tester,
+    ) async {
       late AppLocalizations l;
       late MaterialLocalizations m;
       await tester.pumpWidget(
@@ -58,22 +59,36 @@ void main() {
       expect(l.help_button, 'నాకు ఇప్పుడే సహాయం కావాలి');
     });
 
-    testWidgets('Hindi (beta) falls back to English, never a raw key',
-        (tester) async {
-      late AppLocalizations l;
-      await tester.pumpWidget(
-        localized(
-          Builder(
-            builder: (context) {
-              l = AppLocalizations.of(context);
-              return const SizedBox();
-            },
+    for (final (tag, title, help) in const [
+      ('hi', 'अभी कैसा लग रहा है?', 'मुझे अभी मदद चाहिए'),
+      ('hi-Latn', 'Abhi kaisa lag raha hai?', 'Mujhe abhi madad chahiye'),
+    ]) {
+      testWidgets('$tag UI copy (Milestone B), no English fallback; system '
+          'strings: Devanagari for hi, English for Hinglish', (tester) async {
+        late AppLocalizations l;
+        late MaterialLocalizations m;
+        await tester.pumpWidget(
+          localized(
+            Builder(
+              builder: (context) {
+                l = AppLocalizations.of(context);
+                m = MaterialLocalizations.of(context);
+                return const SizedBox();
+              },
+            ),
+            locale: localeFromTag(tag),
           ),
-          locale: localeFromTag('hi-Latn'),
-        ),
-      );
-      expect(l.checkin_title, 'How are you feeling?');
-    });
+        );
+        expect(l.checkin_title, title);
+        expect(l.help_button, help);
+        expect(l.localeName, tag.replaceAll('-', '_'));
+        if (tag == 'hi-Latn') {
+          expect(m.okButtonLabel, 'OK');
+        } else {
+          expect(m.okButtonLabel, isNot('OK'));
+        }
+      });
+    }
   });
 
   group('computeProgressView', () {

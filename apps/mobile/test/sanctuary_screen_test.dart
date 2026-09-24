@@ -209,9 +209,14 @@ void main() {
         'assets/fonts/NotoSansTelugu-Medium.ttf',
         'assets/fonts/NotoSansTelugu-SemiBold.ttf',
       ]);
+      await _load('NotoSansDevanagari', const [
+        'assets/fonts/NotoSansDevanagari-Regular.ttf',
+        'assets/fonts/NotoSansDevanagari-Medium.ttf',
+        'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+      ]);
     });
 
-    for (final tag in ['te', 'te-Latn', 'en']) {
+    for (final tag in ['te', 'te-Latn', 'en', 'hi', 'hi-Latn']) {
       testWidgets('$tag at 200% text: every activity lays out (setup, '
           'running, the end), nothing overflows', (tester) async {
         await pump(tester, locale: tag, textScale: 2);

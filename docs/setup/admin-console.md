@@ -31,7 +31,7 @@ The internal console for moderation, grievances, legal orders and 24×7 paging (
    | `ADMIN_SESSION_MAX_HOURS` | `12` (keep equal to the API's) |
    | `ADMIN_CONSOLE_URL` | `http://localhost:3320` (the SSO callback is `<this>/login/callback`) |
    | `ADMIN_SSO_PROVIDER`, `ADMIN_SSO_DOMAIN` | empty locally (no Google button); §2 for production |
-   | `ADMIN_ALLOW_EMAIL_LOGIN` | empty (the development email code is on outside production) |
+   | `ADMIN_ALLOW_EMAIL_LOGIN` | empty (the development email code is on with `NODE_ENV=development`; never in production) |
 
    Then `pnpm install && pnpm dev` → <http://localhost:3320>. Production: `pnpm build && pnpm start`.
 5. **Mail**: every email (sign-in codes, grievance acknowledgements and replies, email pages) lands in Mailpit at
@@ -42,8 +42,10 @@ The internal console for moderation, grievances, legal orders and 24×7 paging (
 Staff accounts are **separate Supabase Auth users**, never app accounts: the guard refuses any account that has an app
 profile, on every request. There is no sign-up in the console. The first factor is **Google Workspace SSO** (Supabase's
 Google provider, PKCE, restricted to AKVega's Workspace domain); the second is **TOTP**, always. The email code is a
-**development-only** first factor: allowed by default outside production, **refused by default in production**
-(`403 sso_required`, audited) unless `ADMIN_ALLOW_EMAIL_LOGIN=true` is set on the API (it then logs a warning at boot).
+**development-only** first factor: on by default only when `NODE_ENV` is `development` / `test` (unset or unknown
+`NODE_ENV` fails closed: `403 sso_required`, audited) and **refused in production** — the API refuses to boot with
+`ADMIN_ALLOW_EMAIL_LOGIN=true` and `NODE_ENV=production`, and the console never offers the form in production
+(docs/security/milestone-b-review.md SR-1). A staging stack without SSO runs with `NODE_ENV=development`.
 
 ### What AK configures once (production)
 
@@ -295,7 +297,8 @@ account survive until their `hold_until`. Every step is audited with the ticket 
   `ADMIN_SSO_PROVIDER` + `ADMIN_SSO_ALLOWED_DOMAINS` (§2), `ADMIN_AUDIT_EXPORT_DIR` and/or `_EMAIL`, optionally
   `ADMIN_ALLOWED_EMAILS`. Run the worker (paging, drill, audit export).
 - If the API's database user is not `postgres`: `grant aura_admin to <that role> with inherit false, set true;`.
-- Behind a load balancer, configure Express `trust proxy` so the grievance rate limit sees client addresses.
+- Behind a load balancer, set `TRUST_PROXY` on the API (the hop count, e.g. `1`, or the balancer's addresses/CIDRs) so
+  the grievance, deletion-link and legal-intake rate limits see client addresses (SR-2 in docs/security/milestone-b-review.md).
 - Console: its own subdomain over TLS, `ADMIN_COOKIE_SECRET` from a secret store, `NODE_ENV=production` (secure
   cookies); consider an IP allowlist at the edge.
 - Enable TOTP MFA on the hosted project (free), create the Owner staff account, run the drill, and keep the weekly drill on.

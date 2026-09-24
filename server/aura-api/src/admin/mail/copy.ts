@@ -2,15 +2,16 @@ import type { GrievanceCategory } from '../clocks';
 
 /**
  * Every localized line of the emails Aura sends to people (not staff): the grievance acknowledgement and the
- * deletion-case confirmation link — in one place so a reviewer reads all three languages side by side
- * (docs/l10n/helplines-and-emails.md). English is the reviewed original; **te and te-Latn are drafts that NEED NATIVE
- * REVIEW** before alpha, like every non-English string (Telugu uses the respectful *meeru* form).
+ * deletion-case confirmation link — in one place so a reviewer reads all five languages side by side
+ * (docs/l10n/helplines-and-emails.md, docs/l10n/hindi-review.md). English is the reviewed original; **te, te-Latn, hi
+ * and hi-Latn are drafts that NEED NATIVE REVIEW**, like every non-English string (Telugu uses the respectful *meeru*
+ * form, Hindi and Hinglish *aap* with no verb that agrees with the reader's gender).
  *
  * Content rules (the same in every language): never quote the complaint back, never a date of birth, a mood or any
- * account detail; the only link is the random-token deletion link (no personal data in a URL). Hindi and Hinglish
- * ship from beta: until then those accounts get English (`mailLocale`). The decision reply and staff mail stay English.
+ * account detail; the only link is the random-token deletion link (no personal data in a URL). Other languages get
+ * English (`mailLocale`). The decision reply and staff mail stay English.
  */
-export const MAIL_LOCALES = ['en', 'te', 'te-Latn'] as const;
+export const MAIL_LOCALES = ['en', 'te', 'te-Latn', 'hi', 'hi-Latn'] as const;
 export type MailLocale = (typeof MAIL_LOCALES)[number];
 
 /** An app locale (`profiles.ui_locale`, a grievance's `locale`) → the email language; anything else → English. */
@@ -166,6 +167,86 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
         'Idi meeru adagakapothe, meeru emi cheyyanakkarledu: mee confirmation lekunda edi delete avvadu. Link open chesi "This wasn\'t me" kooda nokkavachu.',
       next: (graceDays) =>
         `Tarvatha emi jarugutundi: meeru confirm cheyagaane, app lo unna delete option laage Aura deletion start chestundi. Account ventane off avutundi, 30 rojullo purtiga delete avutundi (maamulugaa ${graceDays} rojula tarvatha; aa lopu app lo sign in chesthe account ni unchukovachu). Chattam prakaaram memu unchaalsina records (udaharanaki report chesina content gurinchi) avasaram ainanta kaalam maatrame unchutaam.`,
+    },
+  },
+
+  // DRAFT — NEEDS NATIVE REVIEW (Milestone B). Hindi in Devanagari; brand and button names stay English.
+  hi: {
+    dateLocale: 'hi-IN',
+    hello: 'नमस्ते,',
+    helloNamed: (name) => `नमस्ते ${name} जी,`,
+    withinDays: (n) => `${n} दिनों के भीतर`,
+    withinHours: (n) => `${n} घंटों के भीतर`,
+    officer: (contact) => `शिकायत अधिकारी (Grievance Officer): ${contact}`,
+    publisher: 'Aura को AKVega प्रकाशित करता है।',
+    safety: 'अगर कोई तुरंत ख़तरे में है, तो अपने स्थानीय इमरजेंसी नंबर पर कॉल करें (भारत: 112)।',
+    categories: {
+      general: 'कंटेंट या व्यवहार के बारे में शिकायत',
+      unlawful_content: 'ग़ैर-क़ानूनी कंटेंट',
+      nudity_csam: 'नग्नता, यौन कंटेंट या बच्चों के यौन शोषण से जुड़ी सामग्री',
+      ncii: 'बिना सहमति के शेयर की गई निजी तस्वीरें',
+      data_request: 'मेरा डेटा या मेरा अकाउंट',
+      moderation_appeal: 'मॉडरेशन के फ़ैसले के ख़िलाफ़ अपील',
+    },
+    ack: {
+      subject: (ticket) => `Aura: आपकी शिकायत ${ticket} हमें मिल गई है`,
+      intro: 'Aura के शिकायत अधिकारी को लिखने के लिए धन्यवाद। यह ईमेल इस बात की पुष्टि है कि आपकी शिकायत हमें मिल गई है।',
+      ticket: 'टिकट',
+      received: 'मिलने का समय',
+      category: 'श्रेणी',
+      resolveBy: (when, window) => `समाधान की समय-सीमा: ${when} (मिलने के ${window})`,
+      quoteTicket: 'हमें दोबारा लिखते समय कृपया अपना टिकट नंबर बताएँ। इस ईमेल का जवाब भी दिया जा सकता है।',
+    },
+    deletion: {
+      subject: (ticket) => `Aura: अपना अकाउंट डिलीट करने के अनुरोध की पुष्टि करें (${ticket})`,
+      intro: (ticket) =>
+        `इस ईमेल पते से साइन इन होने वाले Aura अकाउंट को डिलीट करने का एक अनुरोध Aura के शिकायत अधिकारी को मिला है (अनुरोध ${ticket})।`,
+      ifYou: 'अगर यह अनुरोध आपने किया है, तो नीचे दिया गया लिंक खोलें और "Delete my account" दबाएँ:',
+      linkWorks: (until) => `यह लिंक सिर्फ़ एक बार, ${until} तक काम करेगा।`,
+      ifNot:
+        'अगर यह अनुरोध आपका नहीं है, तो कुछ भी करने की ज़रूरत नहीं: आपकी पुष्टि के बिना कुछ भी डिलीट नहीं होगा। चाहें तो लिंक खोलकर "This wasn\'t me" भी दबाया जा सकता है।',
+      next: (graceDays) =>
+        `आगे क्या होगा: आपकी पुष्टि होते ही Aura वही डिलीट प्रक्रिया शुरू करेगा जो ऐप के अंदर वाले विकल्प से होती है। अकाउंट तुरंत बंद हो जाएगा और 30 दिनों के भीतर हमेशा के लिए डिलीट हो जाएगा (आम तौर पर ${graceDays} दिनों के बाद; इस बीच ऐप में साइन इन करने पर अकाउंट बना रहेगा)। जिन रिकॉर्ड को क़ानूनन रखना ज़रूरी है (जैसे रिपोर्ट किए गए कंटेंट के बारे में), उन्हें सिर्फ़ ज़रूरी समय तक रखा जाता है।`,
+    },
+  },
+
+  // DRAFT — NEEDS NATIVE REVIEW (Hinglish: Hindi in Latin letters, English words kept where people use them).
+  'hi-Latn': {
+    dateLocale: 'en-IN',
+    hello: 'Namaste,',
+    helloNamed: (name) => `Namaste ${name} ji,`,
+    withinDays: (n) => `${n} dinon ke andar`,
+    withinHours: (n) => `${n} ghanton ke andar`,
+    officer: (contact) => `Grievance Officer: ${contact}`,
+    publisher: 'Aura ko AKVega publish karta hai.',
+    safety: 'Agar koi turant khatre mein hai, to apne local emergency number par call karein (India: 112).',
+    categories: {
+      general: 'Content ya vyavhaar ke baare mein complaint',
+      unlawful_content: 'Gair-kaanooni content',
+      nudity_csam: 'Nudity, sexual content ya bachchon ke yaun shoshan se juda content',
+      ncii: 'Bina consent ke share ki gayi private photos',
+      data_request: 'Mera data ya mera account',
+      moderation_appeal: 'Moderation ke faisle ke khilaaf appeal',
+    },
+    ack: {
+      subject: (ticket) => `Aura: aapki grievance ${ticket} humein mil gayi hai`,
+      intro: 'Aura ke Grievance Officer ko likhne ke liye shukriya. Yeh email confirm karta hai ki aapki grievance humein mil gayi hai.',
+      ticket: 'Ticket',
+      received: 'Milne ka samay',
+      category: 'Category',
+      resolveBy: (when, window) => `Samadhan ki deadline: ${when} (milne ke ${window})`,
+      quoteTicket: 'Humein dobara likhte waqt please apna ticket number batayein. Is email ka reply bhi kiya ja sakta hai.',
+    },
+    deletion: {
+      subject: (ticket) => `Aura: apna account delete karne ki request confirm karein (${ticket})`,
+      intro: (ticket) =>
+        `Is email address se sign in hone wale Aura account ko delete karne ki ek request Aura ke Grievance Officer ko mili hai (request ${ticket}).`,
+      ifYou: 'Agar yeh request aapne ki hai, to neeche diya gaya link kholein aur "Delete my account" dabayein:',
+      linkWorks: (until) => `Yeh link sirf ek baar, ${until} tak kaam karega.`,
+      ifNot:
+        'Agar yeh request aapki nahi hai, to kuch bhi karne ki zaroorat nahi: aapke confirmation ke bina kuch bhi delete nahi hoga. Chahein to link kholkar "This wasn\'t me" bhi dabaya ja sakta hai.',
+      next: (graceDays) =>
+        `Aage kya hoga: aapka confirmation milte hi Aura wahi deletion shuru karega jo app ke andar wale option se hota hai. Account turant band ho jayega aur 30 dinon ke andar hamesha ke liye delete ho jayega (aam taur par ${graceDays} dinon ke baad; is beech app mein sign in karne par account bana rahega). Jin records ko kaanoonan rakhna zaroori hai (jaise report kiye gaye content ke baare mein), unhein sirf zaroori samay tak rakha jata hai.`,
     },
   },
 };

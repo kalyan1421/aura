@@ -49,7 +49,11 @@ abstract final class Env {
     'AURA_APPLE_SIGNIN_ANDROID',
   );
 
-  /// Hindi and Hinglish are beta languages; hidden from pickers in alpha.
+  /// Hindi and Hinglish (Milestone B): fully translated, but hidden from the
+  /// pickers (and never chosen from a Hindi device language) until the crisis
+  /// lexicon has reviewed hi / hi-Latn terms — without them, text written in
+  /// Hindi never opens the crisis sheet (docs/l10n/hindi-review.md). Turn on
+  /// with `--dart-define=AURA_BETA_LOCALES=true` for review builds.
   static const bool betaLocales = bool.fromEnvironment('AURA_BETA_LOCALES');
 
   /// Debug tools (the /debug/avatar lab) — on in debug builds by default.

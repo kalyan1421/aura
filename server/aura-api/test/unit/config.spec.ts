@@ -19,6 +19,17 @@ describe('config (zod)', () => {
     expect(c.masterKey).toHaveLength(32);
   });
 
+  it('SR-2 TRUST_PROXY: off by default; a hop count or a proxy list; `true` and junk are refused', () => {
+    expect(parseConfig(base).trustProxy).toBeUndefined();
+    expect(parseConfig({ ...base, TRUST_PROXY: '' }).trustProxy).toBeUndefined();
+    expect(parseConfig({ ...base, TRUST_PROXY: 'false' }).trustProxy).toBeUndefined();
+    expect(parseConfig({ ...base, TRUST_PROXY: '1' }).trustProxy).toBe(1);
+    expect(parseConfig({ ...base, TRUST_PROXY: 'loopback, 10.0.0.0/8 ,fd00::/8' }).trustProxy).toEqual(['loopback', '10.0.0.0/8', 'fd00::/8']);
+    for (const bad of ['true', 'TRUE', '11', 'everything', '10.0.0.0/8; drop']) {
+      expect(() => parseConfig({ ...base, TRUST_PROXY: bad })).toThrow(/TRUST_PROXY/);
+    }
+  });
+
   it('treats empty optional vars as unset and honours overrides', () => {
     const c = parseConfig({ ...base, SUPABASE_JWT_SECRET: '', SUPABASE_JWKS_URL: 'https://x.test/jwks', PORT: '4000' });
     expect(c.jwtSecret).toBeUndefined();

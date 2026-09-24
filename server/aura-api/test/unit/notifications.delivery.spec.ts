@@ -155,13 +155,13 @@ describe('NotificationDelivery', () => {
     expect(h.transport.sent[0].message.body).toBe('Mee kosam oka quiet minute. Ee roju ela anipistondi?');
 
     const d = harness();
-    d.db.profile = { timezone: IST, ui_locale: 'hi' }; // Hindi: English until beta
+    d.db.profile = { timezone: IST, ui_locale: 'hi' }; // Hindi (Milestone B): its own discreet line
     d.db.prefs = { ...d.db.prefs!, discreet: true };
     await d.delivery.deliver(capsule, at(10));
     expect(d.transport.sent[0].message).toMatchObject({
       type: 'capsule_unlocked',
       id: CAPSULE,
-      body: 'You have a gentle update',
+      body: 'आपके लिए एक हल्का-सा अपडेट है',
       channelId: 'capsules',
       collapseKey: String(capsuleNoticeId('2027-10-08')),
     });

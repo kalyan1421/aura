@@ -69,7 +69,8 @@ Future<_Harness> _pump(
   Map<String, dynamic>? softAsk,
   Locale locale = const Locale('en'),
 }) async {
-  tester.view.physicalSize = const Size(390 * 3, 9000);
+  // Tall enough for every section (five languages in the picker).
+  tester.view.physicalSize = const Size(390 * 3, 12000);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
 

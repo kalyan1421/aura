@@ -4,7 +4,7 @@ import { MAIL_COPY, type MailLocale } from './copy';
 
 /**
  * Email copy for grievances and deletion cases. The acknowledgement and the deletion link go out in the person's
- * language (en / te / te-Latn, from copy.ts — the one place their wording lives); the decision reply and staff mail
+ * language (en / te / te-Latn / hi / hi-Latn, from copy.ts — the one place their wording lives); the decision reply and staff mail
  * are English. Acknowledgements and replies never quote the complaint back; officer notifications carry no complaint
  * text and no complainant address (the console shows them to the Owner).
  */

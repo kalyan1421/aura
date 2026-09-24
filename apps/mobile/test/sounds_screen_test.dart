@@ -434,27 +434,34 @@ void main() {
     await end(tester);
   });
 
-  testWidgets('large text (200%, Telugu): no overflow while playing', (
-    tester,
-  ) async {
-    await pump(tester, textScale: 2, locale: 'te', size: const Size(360, 780));
-    final list = find.descendant(
-      of: find.byKey(const ValueKey('sounds-list')),
-      matching: find.byType(Scrollable),
-    );
-    await tester.scrollUntilVisible(toggle('rain'), 200, scrollable: list);
-    await tester.tap(toggle('rain'));
-    await tester.pump(const Duration(seconds: 3));
-    expect(tester.takeException(), isNull);
-    await tester.scrollUntilVisible(
-      toggle('brown_noise'),
-      200,
-      scrollable: list,
-    );
-    await tester.pump();
-    expect(tester.takeException(), isNull);
-    await end(tester);
-  });
+  for (final locale in ['te', 'hi', 'hi-Latn']) {
+    testWidgets('large text (200%, $locale): no overflow while playing', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        textScale: 2,
+        locale: locale,
+        size: const Size(360, 780),
+      );
+      final list = find.descendant(
+        of: find.byKey(const ValueKey('sounds-list')),
+        matching: find.byType(Scrollable),
+      );
+      await tester.scrollUntilVisible(toggle('rain'), 200, scrollable: list);
+      await tester.tap(toggle('rain'));
+      await tester.pump(const Duration(seconds: 3));
+      expect(tester.takeException(), isNull);
+      await tester.scrollUntilVisible(
+        toggle('brown_noise'),
+        200,
+        scrollable: list,
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      await end(tester);
+    });
+  }
 
   testWidgets('haptics obey Settings › Comfort', (tester) async {
     final calls = <String>[];
@@ -488,13 +495,15 @@ void main() {
   });
 
   test('copy lint: no health, sleep or "binaural" claims (REQ-SAN-12), '
-      'and every string is in Telugu and Tenglish', () {
+      'and every string is in Telugu, Tenglish, Hindi and Hinglish', () {
     Map<String, dynamic> arb(String name) =>
         jsonDecode(File('lib/l10n/$name').readAsStringSync())
             as Map<String, dynamic>;
     final en = arb('app_en.arb');
     final te = arb('app_te.arb');
     final tl = arb('app_te_Latn.arb');
+    final hi = arb('app_hi.arb');
+    final hl = arb('app_hi_Latn.arb');
     final keys = [
       for (final k in en.keys)
         if (k.startsWith('sounds_')) k,
@@ -505,12 +514,30 @@ void main() {
       r'stress|relax|hz\b|frequenc|brainwave|unlock|hurry|last chance',
       caseSensitive: false,
     );
+    // The same claims in Hindi (Devanagari) and Hinglish: sleep, insomnia,
+    // stress, worry, treatment, therapy, cure, frequency.
+    final bannedHi = RegExp(
+      r'नींद|अनिद्रा|तनाव|चिंता|इलाज|थेरेपी|चिकित्सा|बाइनॉरल|फ़्रीक्वेंसी|'
+      r'फ्रीक्वेंसी|जल्दी',
+    );
+    final bannedHl = RegExp(
+      r'\b(neend|nind|tanaav|tanav|chinta|ilaaj|ilaj|jaldi)\b',
+      caseSensitive: false,
+    );
     for (final k in keys) {
       final text = en[k] as String;
       expect(banned.hasMatch(text), isFalse, reason: '$k: $text');
       expect(te[k], isA<String>(), reason: 'te $k');
       expect(tl[k], isA<String>(), reason: 'te_Latn $k');
       expect(text.contains('!'), isFalse, reason: '$k: $text');
+      for (final (name, t) in [('hi', hi[k]), ('hi_Latn', hl[k])]) {
+        expect(t, isA<String>(), reason: '$name $k');
+        final s = t as String;
+        expect(banned.hasMatch(s), isFalse, reason: '$name $k: $s');
+        expect(bannedHi.hasMatch(s), isFalse, reason: '$name $k: $s');
+        expect(bannedHl.hasMatch(s), isFalse, reason: '$name $k: $s');
+        expect(s.contains('!'), isFalse, reason: '$name $k: $s');
+      }
     }
   });
 

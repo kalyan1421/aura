@@ -381,9 +381,14 @@ void main() {
           'assets/fonts/NotoSansTelugu-Medium.ttf',
           'assets/fonts/NotoSansTelugu-SemiBold.ttf',
         ]);
+        await _load('NotoSansDevanagari', const [
+          'assets/fonts/NotoSansDevanagari-Regular.ttf',
+          'assets/fonts/NotoSansDevanagari-Medium.ttf',
+          'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+        ]);
       });
 
-      for (final tag in ['te', 'te-Latn']) {
+      for (final tag in ['te', 'te-Latn', 'hi', 'hi-Latn']) {
         testWidgets('$tag at 200%: the saved moment scrolls, Done stays '
             'pinned and nothing overflows', (tester) async {
           tester.view.physicalSize = const Size(390 * 3, 844 * 3);
@@ -419,7 +424,7 @@ void main() {
         }, skip: roboto == null);
       }
 
-      for (final tag in ['en', 'te', 'te-Latn']) {
+      for (final tag in ['en', 'te', 'te-Latn', 'hi', 'hi-Latn']) {
         for (final scale in [1.0, 2.0]) {
           testWidgets('$tag at ${scale}x: the same size for every quadrant '
               '(REQ-CMP-05), nothing overflows', (tester) async {

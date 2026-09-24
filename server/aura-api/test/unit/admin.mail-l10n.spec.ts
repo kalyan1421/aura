@@ -26,11 +26,10 @@ const DEL = { ticket: 'DEL-7K3F9Q2M', link: LINK, expiresAt: new Date('2026-10-1
 const URL_RE = /https?:\/\/\S+/g;
 
 describe('mail locale', () => {
-  it('en / te / te-Latn as they are; Hindi, Hinglish (beta), unknown and none → English', () => {
-    expect(MAIL_LOCALES).toEqual(['en', 'te', 'te-Latn']);
-    expect(mailLocale('te')).toBe('te');
-    expect(mailLocale('te-Latn')).toBe('te-Latn');
-    for (const l of ['hi', 'hi-Latn', 'fr', '', null, undefined]) expect(mailLocale(l)).toBe('en');
+  it('the five app languages as they are (Hindi and Hinglish too, Milestone B); unknown and none → English', () => {
+    expect(MAIL_LOCALES).toEqual(['en', 'te', 'te-Latn', 'hi', 'hi-Latn']);
+    for (const l of ['te', 'te-Latn', 'hi', 'hi-Latn']) expect(mailLocale(l)).toBe(l);
+    for (const l of ['fr', 'hi-IN', '', null, undefined]) expect(mailLocale(l)).toBe('en');
   });
 
   it('the English category names are the console’s (clocks.ts), so nothing drifts', () => {
@@ -41,6 +40,8 @@ describe('mail locale', () => {
     expect(istTime(DEL.expiresAt)).toMatch(/Oct 2026.*IST$/);
     expect(istTime(DEL.expiresAt, 'te-Latn')).toBe(istTime(DEL.expiresAt, 'en'));
     expect(istTime(DEL.expiresAt, 'te')).toMatch(/అక్టో.*IST$/);
+    expect(istTime(DEL.expiresAt, 'hi')).toMatch(/अक्टू.*IST$/);
+    expect(istTime(DEL.expiresAt, 'hi-Latn')).toBe(istTime(DEL.expiresAt, 'en'));
   });
 });
 
@@ -73,6 +74,15 @@ describe('grievance acknowledgement', () => {
     expect(grievanceAckMail(ACK, OFFICER, 'te').text).toContain('నమస్కారం Asha గారు,');
     expect(grievanceAckMail(ACK, OFFICER, 'te-Latn').subject).toBe('Aura: mee grievance GRV-7K3F9Q2M maaku andindi');
     expect(grievanceAckMail(ACK, OFFICER, 'te-Latn').text).toContain('7 rojullo');
+  });
+
+  it('Hindi and Hinglish really are in those languages (no English fallback)', () => {
+    expect(grievanceAckMail(ACK, OFFICER, 'hi').subject).toBe('Aura: आपकी शिकायत GRV-7K3F9Q2M हमें मिल गई है');
+    expect(grievanceAckMail(ACK, OFFICER, 'hi').text).toContain('नमस्ते Asha जी,');
+    expect(grievanceAckMail(ACK, OFFICER, 'hi-Latn').subject).toBe('Aura: aapki grievance GRV-7K3F9Q2M humein mil gayi hai');
+    expect(grievanceAckMail(ACK, OFFICER, 'hi-Latn').text).toContain('7 dinon ke andar');
+    expect(deletionVerificationMail(DEL, OFFICER, 'hi').subject).toMatch(/[\u0900-\u097F]/);
+    expect(deletionVerificationMail(DEL, OFFICER, 'hi-Latn').subject).toContain('request confirm karein');
   });
 });
 
@@ -138,6 +148,7 @@ describe('GrievanceMail picks the account’s app language', () => {
   it('no account: the language the grievance came in; then English', async () => {
     expect((await run(null, 'te-Latn')).subject).toContain('maaku andindi');
     expect((await run(null, null)).subject).toContain('we received your grievance');
-    expect((await run('hi-Latn', 'te')).subject).toContain('we received your grievance');
+    expect((await run('hi-Latn', 'te')).subject).toContain('humein mil gayi hai');
+    expect((await run('fr', 'te')).subject).toContain('we received your grievance');
   });
 });

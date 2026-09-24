@@ -103,7 +103,7 @@ Every implementation does exactly this:
 
 ## Helpline directory (F9 support sheet; PRD 18 "Helplines by country")
 
-> **Numbers: re-verify every one quarterly and before EU/UK/AU open — a wrong number is a P0 bug.** te / te-Latn names need a native reviewer (docs/l10n/helplines-and-emails.md).
+> **Numbers: re-verify every one quarterly and before EU/UK/AU open — a wrong number is a P0 bug.** te / te-Latn / hi / hi-Latn names need a native reviewer (docs/l10n/helplines-and-emails.md, docs/l10n/hindi-review.md).
 
 ```json
 { "id": "in.tele_manas", "number": "14416", "dial": "14416", "audience": "everyone",

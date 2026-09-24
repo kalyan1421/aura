@@ -49,8 +49,15 @@ export const BANNED_WORDS: Readonly<Record<LintLocale, readonly string[]>> = {
     'kolpo*', 'pogott*', 'streak*', 'virigi*', 'tegipo*', 'masakabaa*', 'vaadipo*', 'chivari avakaasham', 'chivari chance',
     'tvarapad*', 'twarapad*', 'tondara*',
   ],
-  hi: ['मिस', 'खो दे', 'खो दो', 'खोना', 'खो जा', 'स्ट्रीक', 'टूट', 'फीका', 'आखिरी मौका', 'आख़िरी मौका', 'जल्दी'],
-  'hi-Latn': ['kho do', 'kho doge', 'kho denge', 'khona', 'kho ja*', 'toot*', 'tut gaya', 'pheeka', 'feeka', 'aakhri mauka', 'akhri mauka', 'jaldi'],
+  hi: [
+    'मिस', 'खो दे', 'खो दो', 'खोना', 'खो जा', 'स्ट्रीक', 'टूट', 'फीका', 'आखिरी मौका', 'आख़िरी मौका', 'जल्दी',
+    // Milestone B (drafts): "missed" (छूट गया), "lose / waste" (गँवा), "hurry" (फटाफट).
+    'छूट ग', 'गँवा', 'गंवा', 'फटाफट',
+  ],
+  'hi-Latn': [
+    'kho do', 'kho doge', 'kho denge', 'khona', 'kho ja*', 'toot*', 'tut gaya', 'pheeka', 'feeka', 'aakhri mauka',
+    'akhri mauka', 'jaldi', 'chhoot ga*', 'chhut ga*', 'choot ga*', 'ganwa*', 'gawa do', 'phataphat', 'fatafat',
+  ],
 };
 
 /**
@@ -75,6 +82,8 @@ export const QUADRANT_NAMES: readonly string[] = [
 export const THEME_NAMES: readonly string[] = [
   'lighthouse', 'rain sanctuary', 'rain_sanctuary', 'midnight observatory', 'midnight_observatory', 'observatory',
   'sunrise deck', 'sunrise_deck', 'లైట్‌హౌస్', 'లైట్ హౌస్', 'అబ్జర్వేటరీ',
+  // The Hindi theme names (app `rooms_theme_*`, drafts); Hinglish keeps the English ones above.
+  'प्रकाश स्तंभ', 'वेधशाला', 'लाइटहाउस',
 ];
 
 /** One mood's names by locale (contracts/moods.json `moods[].names`). */

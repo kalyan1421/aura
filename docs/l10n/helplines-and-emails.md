@@ -1,6 +1,6 @@
 # Helpline names, the "rooms are open" notice and people-facing emails — Telugu and Tenglish for native review
 
-**Status: DRAFTS, NEED NATIVE REVIEW before alpha.** Written by the dev team from the English originals, in the respectful *meeru* form. Nothing here changes meaning on review without the owner's sign-off; the English is the reviewed original. Hindi and Hinglish ship from beta: until then these surfaces fall back to English.
+**Status: DRAFTS, NEED NATIVE REVIEW before alpha.** Written by the dev team from the English originals, in the respectful *meeru* form. Nothing here changes meaning on review without the owner's sign-off; the English is the reviewed original. Hindi and Hinglish (Milestone B) are drafts too and are listed for review in `docs/l10n/hindi-review.md`: helpline names, the push, the in-app notice and both emails no longer fall back to English.
 
 Where each string lives (edit there, not here — this page is the review copy):
 
@@ -36,7 +36,7 @@ Open: Childline 1098 is `[ASSUMPTION: confirm operational]` in PRD 06c F9. Every
 | `notif_channelRooms` (Android settings) | Rooms & Lantern Hour | రూమ్‌లు & Lantern Hour | Rooms & Lantern Hour |
 | `notif_channelRoomsDescription` | When rooms you asked about open. | మీరు అడిగిన రూమ్‌లు మొదలైనప్పుడు. | Meeru adigina rooms modalainappudu. |
 
-The people who get this push are mostly Hindi / Hinglish readers, who see English until the beta translations land. Proposed Hinglish for the beta pass (not shipped): "Hindi aur Hinglish rooms ab khul gaye hain." — needs a Hindi reviewer.
+The people who get this push are mostly Hindi / Hinglish readers. From Milestone B they get it in their own language: "हिंदी और हिंग्लिश रूम अब खुल गए हैं।" / "Hindi aur Hinglish rooms ab khul gaye hain." (drafts, needs a Hindi reviewer: `docs/l10n/hindi-review.md`).
 
 ## 3. Grievance acknowledgement email
 

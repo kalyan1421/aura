@@ -113,6 +113,9 @@ describe('the linter', () => {
     expect(lint('Tondaraga open cheyandi', 'te-Latn')).toContain('banned_word:tondara*');
     expect(lint('आखिरी मौका! जल्दी करें', 'hi')).toEqual(expect.arrayContaining(['banned_word:आखिरी मौका', 'banned_word:जल्दी']));
     expect(lint('Aakhri mauka, jaldi karo', 'hi-Latn')).toEqual(expect.arrayContaining(['banned_word:aakhri mauka', 'banned_word:jaldi']));
+    expect(lint('आज का चेक-इन छूट गया', 'hi')).toContain('banned_word:छूट ग');
+    expect(lint('Aaj ka check-in chhoot gaya', 'hi-Latn')).toContain('banned_word:chhoot ga*');
+    expect(lint('Aaj raat वेधशाला mein', 'hi')).toContain('theme_name:वेधशाला');
     for (const locale of Object.keys(BANNED_WORDS) as LintLocale[]) expect(BANNED_WORDS[locale].length).toBeGreaterThan(5);
   });
 

@@ -144,11 +144,34 @@ void main() {
         helplinesFor('IN', tl, isMinor: true)[2].name,
         'Childline · 18 ella lopu vaallaki',
       );
+      final hl = lookupAppLocalizations(
+        const Locale.fromSubtags(languageCode: 'hi', scriptCode: 'Latn'),
+      );
+      // Hindi and Hinglish names (Milestone B drafts).
       expect(
         helplinesFor('US', hi, isMinor: false).single.name,
-        'Suicide & Crisis Lifeline · call or text',
+        'Suicide & Crisis Lifeline · कॉल या टेक्स्ट करें',
+      );
+      expect(helplinesFor('IN', hi, isMinor: false).last.name, 'इमरजेंसी');
+      expect(
+        helplinesFor('IN', hl, isMinor: true)[2].name,
+        'Childline · 18 se kam umar walon ke liye',
       );
       expect(helplinesFor('IN', te, isMinor: false).first.id, 'in.tele_manas');
+      // A locale a line has no name in shows the English one.
+      final us988 = HelplineDirectory.bundled.countries['US']!.single;
+      expect(us988.nameFor('fr'), 'Suicide & Crisis Lifeline · call or text');
+    });
+
+    test('every bundled line has a name in all five app languages', () {
+      for (final lines in HelplineDirectory.bundled.countries.values) {
+        for (final line in lines) {
+          for (final tag in ['en', 'te', 'te-Latn', 'hi', 'hi-Latn']) {
+            expect(line.names[tag], isNotNull, reason: '${line.id} $tag');
+          }
+          expect(line.nameFor('hi'), matches(RegExp('[\u0900-\u097F]')));
+        }
+      }
     });
   });
 

@@ -5,11 +5,16 @@ import { test } from 'node:test';
 import { authorizeUrl, challengeFor, newVerifier } from '../src/lib/pkce.ts';
 import { signInModes } from '../src/lib/sign-in-modes.ts';
 
-test('the email code is development only: on by default outside production, off by default in production', () => {
-  assert.deepEqual(signInModes({}), { sso: null, emailCode: true, production: false });
+test('the email code is development only: on for NODE_ENV development / test, never in production, closed when unset', () => {
+  assert.deepEqual(signInModes({ NODE_ENV: 'development' }), { sso: null, emailCode: true, production: false });
+  assert.equal(signInModes({ NODE_ENV: 'test' }).emailCode, true);
   assert.deepEqual(signInModes({ NODE_ENV: 'production' }), { sso: null, emailCode: false, production: true });
-  assert.equal(signInModes({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).emailCode, true);
-  assert.equal(signInModes({ ADMIN_ALLOW_EMAIL_LOGIN: 'false' }).emailCode, false);
+  // SR-1 (docs/security/milestone-b-review.md): no override in production; unset / unknown NODE_ENV fails closed.
+  assert.equal(signInModes({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).emailCode, false);
+  assert.equal(signInModes({}).emailCode, false);
+  assert.equal(signInModes({ NODE_ENV: 'staging' }).emailCode, false);
+  assert.equal(signInModes({ NODE_ENV: 'staging', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).emailCode, true);
+  assert.equal(signInModes({ NODE_ENV: 'development', ADMIN_ALLOW_EMAIL_LOGIN: 'false' }).emailCode, false);
 });
 
 test('Google Workspace SSO with the hd hint; a malformed domain is dropped (the API enforces the domain anyway)', () => {

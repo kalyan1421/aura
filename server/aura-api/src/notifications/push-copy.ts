@@ -8,7 +8,8 @@ import type { NotificationType } from './notification-types';
  *
  * English and Tenglish reminder/capsule lines are the PRD's own; Telugu-script lines where the PRD gives none, and
  * the discreet line in te / te-Latn, are drafts for native review (like every non-English string). Hindi and Hinglish
- * are beta: until translated they fall back to English (`null` below).
+ * (Milestone B) are drafts too, NEEDING NATIVE REVIEW (docs/l10n/hindi-review.md): respectful *aap*, no gendered verb
+ * forms. A `null` table would fall back to English; every locale has its own table now.
  */
 export const PUSH_LOCALES = ['en', 'te', 'te-Latn', 'hi', 'hi-Latn'] as const;
 export type PushLocale = (typeof PUSH_LOCALES)[number];
@@ -118,9 +119,52 @@ export const PUSH_COPY: Readonly<Record<PushLocale, CopyTable | null>> = {
     trial_ending_no_price: 'Mee Aura Plus free month {date} tho aipotundi. Continue cheyyochu, leda eppudaina cancel cheyyochu.', // draft
     discreet: 'Meeku oka gentle update undi', // draft
   },
-  // TODO(l10n-hi): Hindi and Hinglish ship from beta; English until then.
-  hi: null,
-  'hi-Latn': null,
+  // DRAFT — NEEDS NATIVE REVIEW (Milestone B; docs/l10n/hindi-review.md). Gender-neutral: imperatives and nouns,
+  // never a verb that agrees with the reader's gender. The copy lint's Devanagari stems match inside words (so no
+  // शांति: it contains the mood name शांत).
+  hi: {
+    daily_reminder: 'आपके लिए सुकून का एक मिनट। आज कैसा लग रहा है?', // = the app's banner (notif_reminderBanner)
+    capsule_unlocked: 'आपने जो सील किया था, वह अब खुल सकता है।', // = the app's local notice (capsules_readyTitle)
+    rooms_pool_open: 'हिंदी और हिंग्लिश रूम अब खुल गए हैं।',
+    gestures_received: 'आपके रूम में {count} लोगों ने आपको अपनापन भेजा।',
+    gestures_received_one: 'आपके रूम में किसी ने आपको अपनापन भेजा।',
+    lantern_hour: 'Lantern Hour शुरू हो गया है। आज रात और लोग भी यहाँ हैं।',
+    wind_down_reminder: 'सोने से पहले सुकून के कुछ पल, जब भी मन हो।',
+    habit_nudge: 'एक-दो छोटी आदतें, जब भी आप तैयार हों।',
+    habit_nudge_hydrate: 'छोटी-सी बात: एक गिलास पानी?',
+    habit_nudge_breathe: 'छोटी-सी बात: कुछ धीमी साँसें?',
+    habit_nudge_move: 'छोटी-सी बात: थोड़ा-सा स्ट्रेच?',
+    habit_nudge_journal: 'छोटी-सी बात: अपने लिए एक-दो लाइनें?',
+    habit_nudge_go_outside: 'छोटी-सी बात: एक मिनट ताज़ी हवा?',
+    habit_nudge_sleep_on_time: 'छोटी-सी बात: सोने की तैयारी शुरू करें?',
+    welcome_back: 'पिछला कुछ भी पूरा करने की ज़रूरत नहीं। जब भी सुकून का एक मिनट चाहिए, Aura यहीं है।',
+    trial_ending: 'Aura Plus का आपका मुफ़्त महीना {date} को पूरा होगा। उसके बाद {price}/महीना। इसे जारी रखें या कभी भी रद्द करें।',
+    trial_ending_year: 'Aura Plus का आपका मुफ़्त महीना {date} को पूरा होगा। उसके बाद {price}/साल। इसे जारी रखें या कभी भी रद्द करें।',
+    trial_ending_no_price: 'Aura Plus का आपका मुफ़्त महीना {date} को पूरा होगा। इसे जारी रखें या स्टोर में कभी भी रद्द करें।',
+    discreet: 'आपके लिए एक हल्का-सा अपडेट है',
+  },
+  // DRAFT — NEEDS NATIVE REVIEW (Hinglish: Hindi in Latin letters, English words kept where people use them).
+  'hi-Latn': {
+    daily_reminder: 'Aapke liye sukoon ka ek minute. Aaj kaisa lag raha hai?',
+    capsule_unlocked: 'Aapne jo seal kiya tha, woh ab khul sakta hai.',
+    rooms_pool_open: 'Hindi aur Hinglish rooms ab khul gaye hain.',
+    gestures_received: 'Aapke room mein {count} logon ne aapko warmth bheji.',
+    gestures_received_one: 'Aapke room mein kisi ne aapko warmth bheji.',
+    lantern_hour: 'Lantern Hour shuru ho gaya hai. Aaj raat aur log bhi yahan hain.',
+    wind_down_reminder: 'Sone se pehle sukoon ke kuch pal, jab bhi mann ho.',
+    habit_nudge: 'Ek-do chhoti habits, jab bhi aap taiyaar hon.',
+    habit_nudge_hydrate: 'Chhoti si baat: ek glass paani?',
+    habit_nudge_breathe: 'Chhoti si baat: kuch dheemi saansein?',
+    habit_nudge_move: 'Chhoti si baat: thoda sa stretch?',
+    habit_nudge_journal: 'Chhoti si baat: apne liye ek-do lines?',
+    habit_nudge_go_outside: 'Chhoti si baat: ek minute taazi hawa?',
+    habit_nudge_sleep_on_time: 'Chhoti si baat: sone ki taiyaari shuru karein?',
+    welcome_back: 'Kuch bhi catch-up karne ki zaroorat nahi. Jab bhi sukoon ka ek minute chahiye, Aura yahin hai.',
+    trial_ending: 'Aapka Aura Plus free month {date} ko poora hoga. Uske baad {price}/month. Ise continue karein ya kabhi bhi cancel karein.',
+    trial_ending_year: 'Aapka Aura Plus free month {date} ko poora hoga. Uske baad {price}/year. Ise continue karein ya kabhi bhi cancel karein.',
+    trial_ending_no_price: 'Aapka Aura Plus free month {date} ko poora hoga. Ise continue karein ya store mein kabhi bhi cancel karein.',
+    discreet: 'Aapke liye ek gentle update hai',
+  },
 };
 
 /** `profiles.ui_locale` → a catalogue locale (unknown → English). */

@@ -485,7 +485,7 @@ void main() {
     setUpAll(loadRealFonts);
 
     for (final width in const [390.0, 320.0]) {
-      for (final tag in const ['en', 'te', 'te-Latn']) {
+      for (final tag in const ['en', 'te', 'te-Latn', 'hi', 'hi-Latn']) {
         testWidgets('${width.toInt()} dp, $tag', (tester) async {
           _phone(tester, Size(width, 844));
           tester.platformDispatcher.textScaleFactorTestValue = 2;

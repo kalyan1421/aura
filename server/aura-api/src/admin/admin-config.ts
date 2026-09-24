@@ -39,8 +39,9 @@ export class AdminConfig {
   /** SSO first factor (Google Workspace via Supabase). Null = not configured (local development). */
   readonly sso: SsoConfig | null;
   /**
-   * The development first factor (an email code — or, in tests, any non-SSO Supabase sign-in). Off by default in
-   * production (`ADMIN_ALLOW_EMAIL_LOGIN`); TOTP is required either way.
+   * The development first factor (an email code — or, in tests, any non-SSO Supabase sign-in). On by default only when
+   * NODE_ENV is `development` / `test`; refused at boot in production (`ADMIN_ALLOW_EMAIL_LOGIN`); TOTP is required
+   * either way.
    */
   readonly allowEmailLogin: boolean;
   /** PRD 19 "Queue sessions capped at 2 h": continuous review time, then a break before non-urgent items open again. */
@@ -109,11 +110,8 @@ export class AdminConfig {
   /** Configuration problems worth a loud warning at boot (never secrets). */
   warnings(): string[] {
     const out: string[] = [];
-    if (this.production && !this.sso && !this.allowEmailLogin) {
+    if (this.production && !this.sso) {
       out.push('no console sign-in is configured: set ADMIN_SSO_PROVIDER=google and ADMIN_SSO_ALLOWED_DOMAINS (docs/setup/admin-console.md)');
-    }
-    if (this.production && this.allowEmailLogin) {
-      out.push('ADMIN_ALLOW_EMAIL_LOGIN is on in production: the email-code sign-in is meant for development only');
     }
     return out;
   }
@@ -216,14 +214,25 @@ export function parseAdminConfig(env: Record<string, string | undefined>): Admin
     );
   }
   const production = e.NODE_ENV === 'production';
+  // SR-1 (docs/security/milestone-b-review.md): the email-code first factor is development-only (REQ-ADM-01: staff sign in
+  // with SSO + TOTP). It is refused outright in production — not just warned about — and it fails CLOSED when NODE_ENV
+  // is unset or unknown (a production deploy that forgot NODE_ENV must not quietly accept email codes): on by default
+  // only for an explicit `development` / `test`.
+  const emailLoginFlag = truthy(e.ADMIN_ALLOW_EMAIL_LOGIN);
+  if (production && emailLoginFlag === true) {
+    throw new AdminConfigError(
+      'Invalid admin console environment:\n  - ADMIN_ALLOW_EMAIL_LOGIN: the email-code sign-in is refused in production (staff sign in with SSO + TOTP)',
+    );
+  }
+  const knownDevelopment = e.NODE_ENV === 'development' || e.NODE_ENV === 'test';
   return new AdminConfig({
     consoleUrl: e.ADMIN_CONSOLE_URL.replace(/\/+$/, ''),
     allowedEmails: e.ADMIN_ALLOWED_EMAILS.length ? new Set(e.ADMIN_ALLOWED_EMAILS.map((x) => x.toLowerCase())) : null,
     sessionMaxHours: e.ADMIN_SESSION_MAX_HOURS,
     production,
     sso: e.ADMIN_SSO_PROVIDER ? { provider: e.ADMIN_SSO_PROVIDER, domains: new Set(e.ADMIN_SSO_ALLOWED_DOMAINS) } : null,
-    // Development sign-in: on by default outside production, off by default in production.
-    allowEmailLogin: truthy(e.ADMIN_ALLOW_EMAIL_LOGIN) ?? !production,
+    // Development sign-in: on by default only for NODE_ENV development / test; never in production (above).
+    allowEmailLogin: emailLoginFlag ?? knownDevelopment,
     queueSession: { maxMinutes: e.ADMIN_QUEUE_SESSION_MINUTES, breakMinutes: e.ADMIN_QUEUE_BREAK_MINUTES },
     publicApiUrl: e.PUBLIC_API_URL.replace(/\/+$/, ''),
     deletionLinkTtlHours: e.DELETION_LINK_TTL_HOURS,

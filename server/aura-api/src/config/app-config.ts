@@ -18,6 +18,8 @@ export class AppConfig {
   /** Expected `iss`: SUPABASE_JWT_ISSUER, else `${SUPABASE_URL}/auth/v1` (what GoTrue stamps). */
   readonly jwtIssuer: string;
   readonly masterKey: Buffer;
+  /** Express `trust proxy` (SR-2); undefined = trust nothing. See config.schema.ts `trustProxySchema`. */
+  readonly trustProxy: number | readonly string[] | undefined;
 
   constructor(e: Env) {
     this.env = e.NODE_ENV;
@@ -31,6 +33,7 @@ export class AppConfig {
     this.jwksUrl = e.SUPABASE_JWKS_URL ?? `${this.supabaseUrl}/auth/v1/.well-known/jwks.json`;
     this.jwtIssuer = e.SUPABASE_JWT_ISSUER ?? `${this.supabaseUrl}/auth/v1`;
     this.masterKey = Buffer.from(e.AURA_MASTER_KEY, 'base64');
+    this.trustProxy = Array.isArray(e.TRUST_PROXY) ? Object.freeze([...e.TRUST_PROXY]) : e.TRUST_PROXY;
     Object.freeze(this);
   }
 }

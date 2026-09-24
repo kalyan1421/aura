@@ -40,6 +40,11 @@ void main() {
     'assets/fonts/NotoSansTelugu-Medium.ttf',
     'assets/fonts/NotoSansTelugu-SemiBold.ttf',
   ];
+  const devanagari = [
+    'assets/fonts/NotoSansDevanagari-Regular.ttf',
+    'assets/fonts/NotoSansDevanagari-Medium.ttf',
+    'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+  ];
   final hasRoboto = roboto.every((p) => File(p).existsSync());
   final hasSf = sf.every((p) => File(p).existsSync());
 
@@ -57,6 +62,7 @@ void main() {
     if (hasRoboto) await load('Roboto', roboto);
     if (hasSf) await load('SFPro', sf);
     await load('NotoSansTelugu', telugu);
+    await load('NotoSansDevanagari', devanagari);
   });
 
   /// The grid's label style for [tag], drawn in [font].
@@ -157,12 +163,46 @@ void main() {
     'ఉక్కిరిబిక్కిరి', 'సతమతంగా', // overwhelmed
   ];
 
-  test('every proposed spelling fits the 4×4 at 360 dp (Android / Telugu)', () {
+  // Milestone B (docs/l10n/hinglish-mood-names.md): the one Hinglish name
+  // that blocks (iOS, 360 dp) and the PRD 18 table's alternatives.
+  const hiLatnProposals = [
+    'Chidh', 'Khij', 'Frustrated', // frustrated (Jhunjhlahat)
+    'Bahut bojh', 'Ghabrahat', 'Proud', // PRD 18 table
+  ];
+  const hiProposals = ['चिढ़', 'खीज', 'भारीपन', 'घबराहट'];
+
+  test('every proposed spelling fits the 4×4 at 360 dp (Android / Telugu / '
+      'Devanagari)', () {
     for (final name in teLatnProposals) {
       expect(fitsAt('te-Latn', 'Roboto', name), contains(360), reason: name);
     }
     for (final name in teProposals) {
       expect(fitsAt('te', 'NotoSansTelugu', name), contains(360), reason: name);
+    }
+    for (final name in hiLatnProposals) {
+      expect(fitsAt('hi-Latn', 'Roboto', name), contains(360), reason: name);
+    }
+    for (final name in hiProposals) {
+      expect(
+        fitsAt('hi', 'NotoSansDevanagari', name),
+        contains(360),
+        reason: name,
+      );
+    }
+  }, skip: hasRoboto ? false : 'Roboto not found in the Flutter SDK');
+
+  test('Hindi and Hinglish mood names keep the 4×4 on Android and in '
+      'Devanagari at 360 dp', () {
+    for (final (tag, font) in const [
+      ('hi-Latn', 'Roboto'),
+      ('hi', 'NotoSansDevanagari'),
+    ]) {
+      final names = [for (final m in moodCatalog) m.nameFor(tag)];
+      expect(
+        fitFor(tag, font, names, 360).layout,
+        MoodGridLayout.grid,
+        reason: tag,
+      );
     }
   }, skip: hasRoboto ? false : 'Roboto not found in the Flutter SDK');
 
@@ -177,6 +217,9 @@ void main() {
         ('en', ['Roboto', if (hasSf) 'SFPro']),
         ('te-Latn', ['Roboto', if (hasSf) 'SFPro']),
         ('te', ['NotoSansTelugu']),
+        // Milestone B: Hinglish and Hindi (docs/l10n/hinglish-mood-names.md).
+        ('hi-Latn', ['Roboto', if (hasSf) 'SFPro']),
+        ('hi', ['NotoSansDevanagari']),
       ]) {
         for (final font in fonts) {
           out.writeln('=== $tag / $font');
@@ -192,11 +235,13 @@ void main() {
               '@${all.fontSize.toStringAsFixed(2)}  blockers: $blockers',
             );
           }
-          final proposals = tag == 'te'
-              ? teProposals
-              : tag == 'te-Latn'
-              ? teLatnProposals
-              : const <String>[];
+          final proposals = switch (tag) {
+            'te' => teProposals,
+            'te-Latn' => teLatnProposals,
+            'hi' => hiProposals,
+            'hi-Latn' => hiLatnProposals,
+            _ => const <String>[],
+          };
           for (final n in [...names, ...proposals]) {
             final need = needs(tag, font, n);
             // Screen width at which the label width equals the need.

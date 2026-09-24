@@ -7,7 +7,7 @@ import { Controller, Get, INestApplication, Module, UseGuards } from '@nestjs/co
 import { Test } from '@nestjs/testing';
 import { SignJWT, type JWTPayload } from 'jose';
 import request from 'supertest';
-import { AdminConfig, parseAdminConfig } from '../../src/admin/admin-config';
+import { AdminConfig, AdminConfigError, parseAdminConfig } from '../../src/admin/admin-config';
 import { AdminGuard, AdminRoles, AllowBeforeMfa, CurrentStaff, firstFactor } from '../../src/admin/admin.guard';
 import type { StaffUser } from '../../src/admin/admin-types';
 import { RateLimiter } from '../../src/admin/rate-limit';
@@ -145,7 +145,7 @@ async function boot(env: Record<string, string> = {}): Promise<{ app: INestAppli
       AdminGuard,
       { provide: JwtVerifier, useValue: new JwtVerifier({ secret: SECRET, issuer: ISS }) },
       { provide: DbService, useValue: db },
-      { provide: AdminConfig, useValue: parseAdminConfig(env) },
+      { provide: AdminConfig, useValue: parseAdminConfig({ NODE_ENV: 'test', ...env }) }, // SR-1: unset NODE_ENV fails closed
       { provide: AppConfig, useValue: { masterKey: Buffer.alloc(32, 7) } },
       { provide: RateLimiter, useValue: new FakeLimiter() },
     ],
@@ -362,14 +362,20 @@ describe('firstFactor (pure)', () => {
 });
 
 describe('admin config: sign-in defaults', () => {
-  it('email sign-in is on outside production and off by default in production; SSO needs its domains', () => {
-    expect(parseAdminConfig({}).allowEmailLogin).toBe(true);
+  it('email sign-in is on only for NODE_ENV development / test and never in production; SSO needs its domains', () => {
+    expect(parseAdminConfig({ NODE_ENV: 'development' }).allowEmailLogin).toBe(true);
+    expect(parseAdminConfig({ NODE_ENV: 'test' }).allowEmailLogin).toBe(true);
+    expect(parseAdminConfig({ NODE_ENV: 'development', ADMIN_ALLOW_EMAIL_LOGIN: 'false' }).allowEmailLogin).toBe(false);
     const prod = parseAdminConfig({ NODE_ENV: 'production' });
     expect(prod.allowEmailLogin).toBe(false);
     expect(prod.warnings()).toEqual([expect.stringContaining('no console sign-in is configured')]);
-    expect(parseAdminConfig({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).warnings()).toEqual([
-      expect.stringContaining('development only'),
-    ]);
+    // SR-1 (docs/security/milestone-b-review.md): refused at boot in production, not merely warned about …
+    expect(() => parseAdminConfig({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'true' })).toThrow(/ADMIN_ALLOW_EMAIL_LOGIN.*refused in production/);
+    expect(() => parseAdminConfig({ NODE_ENV: 'production', ADMIN_ALLOW_EMAIL_LOGIN: 'yes' })).toThrow(AdminConfigError);
+    // … and fails closed when NODE_ENV is unset or unknown (a production deploy that forgot NODE_ENV).
+    expect(parseAdminConfig({}).allowEmailLogin).toBe(false);
+    expect(parseAdminConfig({ NODE_ENV: 'staging' }).allowEmailLogin).toBe(false);
+    expect(parseAdminConfig({ NODE_ENV: 'staging', ADMIN_ALLOW_EMAIL_LOGIN: 'true' }).allowEmailLogin).toBe(true); // explicit, non-production
     expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'google' })).toThrow(/ADMIN_SSO_ALLOWED_DOMAINS/);
     expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'okta', ADMIN_SSO_ALLOWED_DOMAINS: 'akvega.test' })).toThrow(/ADMIN_SSO_PROVIDER/);
     const c = parseAdminConfig({ NODE_ENV: 'production', ADMIN_SSO_PROVIDER: 'google', ADMIN_SSO_ALLOWED_DOMAINS: 'AKVega.com, akvega.in' });

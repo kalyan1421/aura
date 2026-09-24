@@ -497,7 +497,7 @@ void main() {
   group('200% text (real fonts): nothing overflows or clips', () {
     setUpAll(loadRealFonts);
 
-    for (final tag in const ['en', 'te', 'te-Latn']) {
+    for (final tag in const ['en', 'te', 'te-Latn', 'hi', 'hi-Latn']) {
       testWidgets(tag, (tester) async {
         tester.platformDispatcher.textScaleFactorTestValue = 2;
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);

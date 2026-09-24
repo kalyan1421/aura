@@ -1,113 +1,113 @@
 # Sanctuary v1 (breathing, grounding, Today's minute), the companion response
 # and "A minute for you" after a check-in, guided prompts, Journal
 # auto-complete and the F1 backfill. Loaded by tool/l10n_source.py.
-# s(key, en, desc, te, te_Latn, ph=None) · edit(key, en=, te=, tl=, desc=)
-# te / te_Latn are first drafts: NEEDS NATIVE REVIEW before alpha.
+# s(key, en, desc, te, te_Latn, ph=None, hi=, hl=) · edit(key, en=, te=, tl=, desc=, hi=, hl=)
+# te / te_Latn / hi / hi_Latn (hl) are first drafts: NEEDS NATIVE REVIEW before alpha / beta.
 #
 # Voice: warm, never clinical. No advice, diagnosis, "why" questions, scores
 # or toxic positivity. Every quadrant gets the same warmth and the same
 # number of lines.
 
 # ---- Sanctuary tab -------------------------------------------------------------
-s("sanctuary_title", "Sanctuary", "Title of the Sanctuary tab: a private, calm space (breathing, grounding).", "ప్రశాంత నిలయం", "Sanctuary")
-s("sanctuary_intro", "A quiet place, just for you. Go at your own pace. Nothing here is scored.", "Intro line at the top of the Sanctuary. Calm; nothing is timed against you or scored.", "మీ కోసమే ఒక ప్రశాంతమైన చోటు. మీ వేగంతోనే వెళ్ళండి. ఇక్కడ దేనికీ స్కోర్ లేదు.", "Mee kosame oka prashaanthamaina chotu. Mee speed lone vellandi. Ikkada deeniki score ledu.")
-s("sanctuary_todayTitle", "Today's minute", "Section header: one gentle suggestion for today (changes each day).", "ఈరోజు ఒక నిమిషం", "Ee roju oka nimisham")
-s("sanctuary_breatheSection", "Breathe", "Section header and title of the breathing session.", "శ్వాస", "Shwaasa")
-s("sanctuary_breatheCard", "Breathe with your Aura", "Card that opens the breathing session.", "మీ Auraతో కలిసి శ్వాస తీసుకోండి", "Mee Aura tho kalisi breathe cheyandi")
-s("sanctuary_breatheCardBody", "Calm, box or 4-7-8 breathing, for as long as you like.", "Under the breathing card: the three rhythms, any length.", "ప్రశాంతమైన, బాక్స్ లేదా 4-7-8 శ్వాస. మీకు ఎంతసేపు కావాలంటే అంతసేపు.", "Calm, box leda 4-7-8 breathing. Meeku entasepu kaavaalante antasepu.")
-s("sanctuary_groundingSection", "Grounding", "Section header: short grounding activities (five senses, hand on heart, three small things).", "మనసు నిలకడకు", "Grounding")
-s("sanctuary_begin", "Begin", "Button that opens an optional activity (Today's minute, A minute for you).", "మొదలుపెట్టండి", "Modalupettandi")
-s("sanctuary_start", "Start", "Starts a timed activity (breathing, hand on heart).", "మొదలుపెట్టండి", "Start cheyandi")
-s("sanctuary_pause", "Pause", "Pauses an activity. Nothing is lost.", "ఆపండి", "Aapandi")
-s("sanctuary_resume", "Resume", "Resumes a paused activity.", "మళ్ళీ కొనసాగించండి", "Malli continue cheyandi")
-s("sanctuary_finish", "Finish", "Ends an activity early, gently (no penalty).", "ముగించండి", "Muginchandi")
-s("sanctuary_next", "Next", "Next step of a step-by-step activity.", "తర్వాత", "Next")
-s("sanctuary_progress", "Progress through this session", "Screen-reader label of the quiet progress ring (no numbers, no countdown).", "ఈ సెషన్‌లో ఎంతవరకు వచ్చారు", "Ee session lo entavaraku vachaaru")
-s("sanctuary_progressBegun", "Just begun", "Progress ring value: first third.", "ఇప్పుడే మొదలైంది", "Ippude modalaindi")
-s("sanctuary_progressHalf", "About halfway", "Progress ring value: middle third.", "దాదాపు సగం", "Daadaapu sagam")
-s("sanctuary_progressNearly", "Nearly through", "Progress ring value: last third. Never pressure.", "దాదాపు పూర్తయింది", "Daadaapu purtayindi")
-s("sanctuary_progressDone", "Complete", "Progress ring value: finished.", "పూర్తయింది", "Purtayindi")
-s("habits_autoLogged", "{habit} is marked done for today.", "After a breathing session or a long note ticks off a habit automatically (F2). habit = the habit's name (Breathe, Journal).", "ఈరోజు {habit} అయినట్టు గుర్తించాం.", "Ee roju {habit} ayyindani mark chesaam.", STR("habit"))
+s("sanctuary_title", "Sanctuary", "Title of the Sanctuary tab: a private, calm space (breathing, grounding).", "ప్రశాంత నిలయం", "Sanctuary", hi="सुकून", hl="Sanctuary")
+s("sanctuary_intro", "A quiet place, just for you. Go at your own pace. Nothing here is scored.", "Intro line at the top of the Sanctuary. Calm; nothing is timed against you or scored.", "మీ కోసమే ఒక ప్రశాంతమైన చోటు. మీ వేగంతోనే వెళ్ళండి. ఇక్కడ దేనికీ స్కోర్ లేదు.", "Mee kosame oka prashaanthamaina chotu. Mee speed lone vellandi. Ikkada deeniki score ledu.", hi="सिर्फ़ आपके लिए एक शांत जगह। अपनी रफ़्तार से चलें। यहाँ किसी चीज़ का स्कोर नहीं होता।", hl="Sirf aapke liye ek shaant jagah. Apni raftaar se chalein. Yahan kisi cheez ka score nahi hota.")
+s("sanctuary_todayTitle", "Today's minute", "Section header: one gentle suggestion for today (changes each day).", "ఈరోజు ఒక నిమిషం", "Ee roju oka nimisham", hi="आज का एक मिनट", hl="Aaj ka ek minute")
+s("sanctuary_breatheSection", "Breathe", "Section header and title of the breathing session.", "శ్వాస", "Shwaasa", hi="साँस लें", hl="Saans lein")
+s("sanctuary_breatheCard", "Breathe with your Aura", "Card that opens the breathing session.", "మీ Auraతో కలిసి శ్వాస తీసుకోండి", "Mee Aura tho kalisi breathe cheyandi", hi="अपने Aura के साथ साँस लें", hl="Apne Aura ke saath saans lein")
+s("sanctuary_breatheCardBody", "Calm, box or 4-7-8 breathing, for as long as you like.", "Under the breathing card: the three rhythms, any length.", "ప్రశాంతమైన, బాక్స్ లేదా 4-7-8 శ్వాస. మీకు ఎంతసేపు కావాలంటే అంతసేపు.", "Calm, box leda 4-7-8 breathing. Meeku entasepu kaavaalante antasepu.", hi="शांत, बॉक्स या 4-7-8 ब्रीदिंग, जितनी देर मन हो।", hl="Calm, box ya 4-7-8 breathing, jitni der mann ho.")
+s("sanctuary_groundingSection", "Grounding", "Section header: short grounding activities (five senses, hand on heart, three small things).", "మనసు నిలకడకు", "Grounding", hi="ग्राउंडिंग", hl="Grounding")
+s("sanctuary_begin", "Begin", "Button that opens an optional activity (Today's minute, A minute for you).", "మొదలుపెట్టండి", "Modalupettandi", hi="शुरू करें", hl="Shuru karein")
+s("sanctuary_start", "Start", "Starts a timed activity (breathing, hand on heart).", "మొదలుపెట్టండి", "Start cheyandi", hi="शुरू करें", hl="Start karein")
+s("sanctuary_pause", "Pause", "Pauses an activity. Nothing is lost.", "ఆపండి", "Aapandi", hi="रोकें", hl="Pause karein")
+s("sanctuary_resume", "Resume", "Resumes a paused activity.", "మళ్ళీ కొనసాగించండి", "Malli continue cheyandi", hi="फिर से शुरू करें", hl="Phir se shuru karein")
+s("sanctuary_finish", "Finish", "Ends an activity early, gently (no penalty).", "ముగించండి", "Muginchandi", hi="ख़त्म करें", hl="Khatam karein")
+s("sanctuary_next", "Next", "Next step of a step-by-step activity.", "తర్వాత", "Next", hi="आगे", hl="Aage")
+s("sanctuary_progress", "Progress through this session", "Screen-reader label of the quiet progress ring (no numbers, no countdown).", "ఈ సెషన్‌లో ఎంతవరకు వచ్చారు", "Ee session lo entavaraku vachaaru", hi="इस सेशन की प्रगति", hl="Is session ki progress")
+s("sanctuary_progressBegun", "Just begun", "Progress ring value: first third.", "ఇప్పుడే మొదలైంది", "Ippude modalaindi", hi="अभी शुरू हुआ", hl="Abhi shuru hua")
+s("sanctuary_progressHalf", "About halfway", "Progress ring value: middle third.", "దాదాపు సగం", "Daadaapu sagam", hi="लगभग आधा", hl="Lagbhag aadha")
+s("sanctuary_progressNearly", "Nearly through", "Progress ring value: last third. Never pressure.", "దాదాపు పూర్తయింది", "Daadaapu purtayindi", hi="लगभग पूरा", hl="Lagbhag poora")
+s("sanctuary_progressDone", "Complete", "Progress ring value: finished.", "పూర్తయింది", "Purtayindi", hi="पूरा हुआ", hl="Poora hua")
+s("habits_autoLogged", "{habit} is marked done for today.", "After a breathing session or a long note ticks off a habit automatically (F2). habit = the habit's name (Breathe, Journal).", "ఈరోజు {habit} అయినట్టు గుర్తించాం.", "Ee roju {habit} ayyindani mark chesaam.", STR("habit"), hi="आज के लिए {habit} को पूरा मार्क किया गया।", hl="Aaj ke liye {habit} ko done mark kiya gaya.")
 
 # ---- Breathe session -------------------------------------------------------------
-s("breathe_rhythm", "Rhythm", "Header above the three breathing patterns.", "లయ", "Rhythm")
-s("breathe_calm", "Calm", "Breathing pattern: in 4, out 6 (the default).", "ప్రశాంతం", "Calm")
-s("breathe_calmBody", "In for 4, out for 6. Gentle and steady.", "Describes the calm pattern.", "4 లెక్కలు లోపలికి, 6 బయటకు. మెల్లగా, స్థిరంగా.", "4 counts lopaliki, 6 bayataki. Mellaga, sthiranga.")
-s("breathe_box", "Box", "Breathing pattern: in 4, hold 4, out 4, hold 4.", "బాక్స్", "Box")
-s("breathe_boxBody", "In, hold, out, hold. Four counts each.", "Describes box breathing.", "లోపలికి, ఆపి, బయటకు, ఆపి. ఒక్కోటి నాలుగు లెక్కలు.", "Lopaliki, aapi, bayataki, aapi. Okkokati naalugu counts.")
-s("breathe_478", "4-7-8", "Breathing pattern: in 4, hold 7, out 8 (digits stay as they are).", "4-7-8", "4-7-8")
-s("breathe_478Body", "In for 4, hold for 7, out for 8.", "Describes 4-7-8 breathing.", "4 లెక్కలు లోపలికి, 7 ఆపి, 8 బయటకు.", "4 counts lopaliki, 7 aapi, 8 bayataki.")
-s("breathe_lightHeaded", "If you feel light-headed, stop and breathe normally.", "Gentle safety note with 4-7-8 breathing (long holds). Calm, not alarming.", "తల తిరుగుతున్నట్టు అనిపిస్తే, ఆపేసి మామూలుగా శ్వాస తీసుకోండి.", "Tala tirugutunnattu anipiste, aapesi maamooluga breathe cheyandi.")
-s("breathe_length", "Length", "Header above the session lengths.", "ఎంతసేపు", "Entasepu")
-s("breathe_minutes", "{count, plural, =1{1 minute} other{{count} minutes}}", "A session length choice.", "{count, plural, =1{1 నిమిషం} other{{count} నిమిషాలు}}", "{count, plural, =1{1 nimisham} other{{count} nimishaalu}}", INT("count"))
-s("breathe_openEnded", "Until I stop", "Session length choice with no set end.", "నేను ఆపేవరకు", "Nenu aapevaraku")
-s("breathe_in", "Breathe in", "Breathing cue: inhale. Also announced to screen readers when it begins.", "శ్వాస లోపలికి", "Lopaliki breathe cheyandi")
-s("breathe_hold", "Hold", "Breathing cue: hold the breath (box, 4-7-8).", "ఆపి ఉంచండి", "Aapi unchandi")
-s("breathe_out", "Breathe out", "Breathing cue: exhale.", "శ్వాస బయటకు", "Bayataki vadalandi")
-s("breathe_paused", "Paused. Take your time.", "Shown (and announced) while a breathing session is paused.", "ఆగింది. మీకు కావలసినంత సమయం తీసుకోండి.", "Aagindi. Meeku kaavalsinanta time teesukondi.")
-s("breathe_done", "That was time just for you.", "End of a breathing session. Acknowledged, never scored; leaving early is never mentioned.", "ఇది మీ కోసమే తీసుకున్న సమయం.", "Idi mee kosame teesukunna samayam.")
-s("breathe_again", "Again", "Starts the same breathing session again.", "మళ్ళీ", "Malli")
-s("breathe_land1", "Feel your feet on the ground.", "30-second grounding breath (after a Storm check-in), cue 1.", "మీ పాదాలు నేలను తాకుతున్నట్టు గమనించండి.", "Mee paadaalu nelani taakutunnattu gamaninchandi.")
-s("breathe_land2", "Notice three sounds around you.", "30-second grounding breath, cue 2.", "మీ చుట్టూ వినిపిస్తున్న మూడు శబ్దాలను గమనించండి.", "Mee chuttu vinipistunna moodu sounds gamaninchandi.")
-s("breathe_keepGoing", "Keep going", "After the 30-second grounding breath: opens the full breathing session.", "కొనసాగిద్దాం", "Continue cheddaam")
-s("breathe_land3", "Let your shoulders drop.", "30-second grounding breath, cue 3.", "భుజాలను వదులుగా వదిలేయండి.", "Bhujaalu loose ga vadileyandi.")
+s("breathe_rhythm", "Rhythm", "Header above the three breathing patterns.", "లయ", "Rhythm", hi="लय", hl="Rhythm")
+s("breathe_calm", "Calm", "Breathing pattern: in 4, out 6 (the default).", "ప్రశాంతం", "Calm", hi="शांत", hl="Calm")
+s("breathe_calmBody", "In for 4, out for 6. Gentle and steady.", "Describes the calm pattern.", "4 లెక్కలు లోపలికి, 6 బయటకు. మెల్లగా, స్థిరంగా.", "4 counts lopaliki, 6 bayataki. Mellaga, sthiranga.", hi="4 तक साँस अंदर, 6 तक बाहर। हल्की और एक-सी।", hl="4 tak saans andar, 6 tak baahar. Halki aur ek-si.")
+s("breathe_box", "Box", "Breathing pattern: in 4, hold 4, out 4, hold 4.", "బాక్స్", "Box", hi="बॉक्स", hl="Box")
+s("breathe_boxBody", "In, hold, out, hold. Four counts each.", "Describes box breathing.", "లోపలికి, ఆపి, బయటకు, ఆపి. ఒక్కోటి నాలుగు లెక్కలు.", "Lopaliki, aapi, bayataki, aapi. Okkokati naalugu counts.", hi="अंदर, रोकें, बाहर, रोकें। हर बार चार गिनती।", hl="Andar, rokein, baahar, rokein. Har baar chaar ginti.")
+s("breathe_478", "4-7-8", "Breathing pattern: in 4, hold 7, out 8 (digits stay as they are).", "4-7-8", "4-7-8", hi="4-7-8", hl="4-7-8")
+s("breathe_478Body", "In for 4, hold for 7, out for 8.", "Describes 4-7-8 breathing.", "4 లెక్కలు లోపలికి, 7 ఆపి, 8 బయటకు.", "4 counts lopaliki, 7 aapi, 8 bayataki.", hi="4 तक अंदर, 7 तक रोकें, 8 तक बाहर।", hl="4 tak andar, 7 tak rokein, 8 tak baahar.")
+s("breathe_lightHeaded", "If you feel light-headed, stop and breathe normally.", "Gentle safety note with 4-7-8 breathing (long holds). Calm, not alarming.", "తల తిరుగుతున్నట్టు అనిపిస్తే, ఆపేసి మామూలుగా శ్వాస తీసుకోండి.", "Tala tirugutunnattu anipiste, aapesi maamooluga breathe cheyandi.", hi="अगर चक्कर-सा लगे, तो रुकें और आम तरह से साँस लें।", hl="Agar chakkar-sa lage, to rukein aur normal tarah se saans lein.")
+s("breathe_length", "Length", "Header above the session lengths.", "ఎంతసేపు", "Entasepu", hi="कितनी देर", hl="Kitni der")
+s("breathe_minutes", "{count, plural, =1{1 minute} other{{count} minutes}}", "A session length choice.", "{count, plural, =1{1 నిమిషం} other{{count} నిమిషాలు}}", "{count, plural, =1{1 nimisham} other{{count} nimishaalu}}", INT("count"), hi="{count, plural, =1{1 मिनट} other{{count} मिनट}}", hl="{count, plural, =1{1 minute} other{{count} minute}}")
+s("breathe_openEnded", "Until I stop", "Session length choice with no set end.", "నేను ఆపేవరకు", "Nenu aapevaraku", hi="जब तक मैं न रोकूँ", hl="Jab tak main na rokun")
+s("breathe_in", "Breathe in", "Breathing cue: inhale. Also announced to screen readers when it begins.", "శ్వాస లోపలికి", "Lopaliki breathe cheyandi", hi="साँस अंदर लें", hl="Saans andar lein")
+s("breathe_hold", "Hold", "Breathing cue: hold the breath (box, 4-7-8).", "ఆపి ఉంచండి", "Aapi unchandi", hi="रोकें", hl="Rokein")
+s("breathe_out", "Breathe out", "Breathing cue: exhale.", "శ్వాస బయటకు", "Bayataki vadalandi", hi="साँस बाहर छोड़ें", hl="Saans baahar chhodein")
+s("breathe_paused", "Paused. Take your time.", "Shown (and announced) while a breathing session is paused.", "ఆగింది. మీకు కావలసినంత సమయం తీసుకోండి.", "Aagindi. Meeku kaavalsinanta time teesukondi.", hi="रुका हुआ है। आराम से।", hl="Ruka hua hai. Aaram se.")
+s("breathe_done", "That was time just for you.", "End of a breathing session. Acknowledged, never scored; leaving early is never mentioned.", "ఇది మీ కోసమే తీసుకున్న సమయం.", "Idi mee kosame teesukunna samayam.", hi="यह वक़्त सिर्फ़ आपके लिए था।", hl="Yeh waqt sirf aapke liye tha.")
+s("breathe_again", "Again", "Starts the same breathing session again.", "మళ్ళీ", "Malli", hi="फिर से", hl="Phir se")
+s("breathe_land1", "Feel your feet on the ground.", "30-second grounding breath (after a Storm check-in), cue 1.", "మీ పాదాలు నేలను తాకుతున్నట్టు గమనించండి.", "Mee paadaalu nelani taakutunnattu gamaninchandi.", hi="अपने पैरों को ज़मीन पर महसूस करें।", hl="Apne pairon ko zameen par mehsoos karein.")
+s("breathe_land2", "Notice three sounds around you.", "30-second grounding breath, cue 2.", "మీ చుట్టూ వినిపిస్తున్న మూడు శబ్దాలను గమనించండి.", "Mee chuttu vinipistunna moodu sounds gamaninchandi.", hi="आसपास की तीन आवाज़ों पर ध्यान दें।", hl="Aas-paas ki teen aawazon par dhyaan dein.")
+s("breathe_keepGoing", "Keep going", "After the 30-second grounding breath: opens the full breathing session.", "కొనసాగిద్దాం", "Continue cheddaam", hi="जारी रखें", hl="Jaari rakhein")
+s("breathe_land3", "Let your shoulders drop.", "30-second grounding breath, cue 3.", "భుజాలను వదులుగా వదిలేయండి.", "Bhujaalu loose ga vadileyandi.", hi="कंधों को ढीला छोड़ दें।", hl="Kandhon ko dheela chhod dein.")
 
 # ---- Grounding activities -------------------------------------------------------
-s("senses_title", "Five senses", "5-4-3-2-1 grounding: notice things with each sense, step by step.", "ఐదు ఇంద్రియాలు", "Aidu indriyaalu")
-s("senses_card", "Notice what's around you, one sense at a time.", "Under the five-senses card.", "మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనించండి.", "Mee chuttu unnavaatini okko indriyam tho gamaninchandi.")
-s("senses_intro", "Let's notice what's around you, one sense at a time. Go at your own pace.", "Five senses: intro before the first step.", "మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనిద్దాం. మీ వేగంతోనే వెళ్ళండి.", "Mee chuttu unnavaatini okko indriyam tho gamaniddaam. Mee speed lone vellandi.")
-s("senses_see", "Five things you can see", "Five senses, step 1.", "మీకు కనిపిస్తున్న ఐదు వస్తువులు", "Meeku kanipistunna aidu vastuvulu")
-s("senses_seeBody", "Look around slowly. Name them in your head or out loud.", "Five senses, step 1 hint.", "నెమ్మదిగా చుట్టూ చూడండి. మనసులో గానీ, పైకి గానీ వాటి పేర్లు చెప్పండి.", "Nemmadiga chuttu choodandi. Manasulo gaani, paiki gaani vaati perlu cheppandi.")
-s("senses_touch", "Four things you can touch", "Five senses, step 2 (touch).", "మీరు తాకగలిగే నాలుగు విషయాలు", "Meeru taakagalige naalugu vishayaalu")
-s("senses_touchBody", "The chair under you, your clothes, the air on your skin.", "Five senses, step 2 hint.", "మీ కింద కుర్చీ, మీ బట్టలు, మీ చర్మాన్ని తాకే గాలి.", "Mee kinda kurchi, mee battalu, mee charmaanni taake gaali.")
-s("senses_hear", "Three things you can hear", "Five senses, step 3.", "మీకు వినిపిస్తున్న మూడు శబ్దాలు", "Meeku vinipistunna moodu sounds")
-s("senses_hearBody", "Near or far, loud or soft.", "Five senses, step 3 hint.", "దగ్గరివైనా, దూరానివైనా, పెద్దవైనా, మెల్లనివైనా.", "Daggarivainaa, dooraanivainaa, peddavainaa, mellanivainaa.")
-s("senses_smell", "Two things you can smell", "Five senses, step 4.", "మీకు వాసన తెలుస్తున్న రెండు విషయాలు", "Meeku vaasana telustunna rendu vishayaalu")
-s("senses_smellBody", "Or two scents you like, if nothing is near.", "Five senses, step 4 hint.", "దగ్గర ఏమీ లేకపోతే, మీకు నచ్చిన రెండు వాసనలు గుర్తు చేసుకోండి.", "Daggara emi lekapote, meeku nachina rendu vaasanalu gurtu chesukondi.")
-s("senses_taste", "One thing you can taste", "Five senses, step 5.", "మీకు రుచి తెలుస్తున్న ఒక్క విషయం", "Meeku ruchi telustunna okka vishayam")
-s("senses_tasteBody", "Or take a sip of water and notice it.", "Five senses, step 5 hint.", "లేదా కొంచెం నీళ్ళు తాగి ఆ రుచిని గమనించండి.", "Leda konchem neellu taagi aa ruchini gamaninchandi.")
-s("senses_step", "Step {step} of {total}", "Screen-reader text for the quiet step dots. Not a score.", "{total}లో {step}వ అడుగు", "{total} lo {step} va step", INT("step", "total"))
-s("senses_done", "You're here, in this moment. Nicely done.", "After the fifth sense.", "మీరు ఇక్కడే, ఈ క్షణంలోనే ఉన్నారు. బాగా చేశారు.", "Meeru ikkade, ee kshanam lone unnaru. Baaga chesaaru.")
+s("senses_title", "Five senses", "5-4-3-2-1 grounding: notice things with each sense, step by step.", "ఐదు ఇంద్రియాలు", "Aidu indriyaalu", hi="पाँच इंद्रियाँ", hl="Paanch senses")
+s("senses_card", "Notice what's around you, one sense at a time.", "Under the five-senses card.", "మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనించండి.", "Mee chuttu unnavaatini okko indriyam tho gamaninchandi.", hi="आसपास जो है, उसे एक-एक इंद्रिय से महसूस करें।", hl="Aas-paas jo hai, use ek-ek sense se mehsoos karein.")
+s("senses_intro", "Let's notice what's around you, one sense at a time. Go at your own pace.", "Five senses: intro before the first step.", "మీ చుట్టూ ఉన్నవాటిని ఒక్కో ఇంద్రియంతో గమనిద్దాం. మీ వేగంతోనే వెళ్ళండి.", "Mee chuttu unnavaatini okko indriyam tho gamaniddaam. Mee speed lone vellandi.", hi="चलिए, आसपास जो है उसे एक-एक इंद्रिय से महसूस करें। अपनी रफ़्तार से चलें।", hl="Chaliye, aas-paas jo hai use ek-ek sense se mehsoos karein. Apni raftaar se chalein.")
+s("senses_see", "Five things you can see", "Five senses, step 1.", "మీకు కనిపిస్తున్న ఐదు వస్తువులు", "Meeku kanipistunna aidu vastuvulu", hi="पाँच चीज़ें जो आपको दिख रही हैं", hl="Paanch cheezein jo aapko dikh rahi hain")
+s("senses_seeBody", "Look around slowly. Name them in your head or out loud.", "Five senses, step 1 hint.", "నెమ్మదిగా చుట్టూ చూడండి. మనసులో గానీ, పైకి గానీ వాటి పేర్లు చెప్పండి.", "Nemmadiga chuttu choodandi. Manasulo gaani, paiki gaani vaati perlu cheppandi.", hi="धीरे-धीरे आसपास देखें। मन में या बोलकर उनके नाम लें।", hl="Dheere-dheere aas-paas dekhein. Mann mein ya bolkar unke naam lein.")
+s("senses_touch", "Four things you can touch", "Five senses, step 2 (touch).", "మీరు తాకగలిగే నాలుగు విషయాలు", "Meeru taakagalige naalugu vishayaalu", hi="चार चीज़ें जिन्हें आप छू सकें", hl="Chaar cheezein jinhein aap chhoo sakein")
+s("senses_touchBody", "The chair under you, your clothes, the air on your skin.", "Five senses, step 2 hint.", "మీ కింద కుర్చీ, మీ బట్టలు, మీ చర్మాన్ని తాకే గాలి.", "Mee kinda kurchi, mee battalu, mee charmaanni taake gaali.", hi="नीचे की कुर्सी, आपके कपड़े, त्वचा को छूती हवा।", hl="Neeche ki kursi, aapke kapde, skin ko chhooti hawa.")
+s("senses_hear", "Three things you can hear", "Five senses, step 3.", "మీకు వినిపిస్తున్న మూడు శబ్దాలు", "Meeku vinipistunna moodu sounds", hi="तीन आवाज़ें जो आपको सुनाई दे रही हैं", hl="Teen aawazein jo aapko sunai de rahi hain")
+s("senses_hearBody", "Near or far, loud or soft.", "Five senses, step 3 hint.", "దగ్గరివైనా, దూరానివైనా, పెద్దవైనా, మెల్లనివైనా.", "Daggarivainaa, dooraanivainaa, peddavainaa, mellanivainaa.", hi="पास की या दूर की, तेज़ या धीमी।", hl="Paas ki ya door ki, tez ya dheemi.")
+s("senses_smell", "Two things you can smell", "Five senses, step 4.", "మీకు వాసన తెలుస్తున్న రెండు విషయాలు", "Meeku vaasana telustunna rendu vishayaalu", hi="दो चीज़ें जिनकी महक आ रही हो", hl="Do cheezein jinki mehak aa rahi ho")
+s("senses_smellBody", "Or two scents you like, if nothing is near.", "Five senses, step 4 hint.", "దగ్గర ఏమీ లేకపోతే, మీకు నచ్చిన రెండు వాసనలు గుర్తు చేసుకోండి.", "Daggara emi lekapote, meeku nachina rendu vaasanalu gurtu chesukondi.", hi="या अगर पास कुछ न हो, तो दो पसंदीदा ख़ुशबुएँ।", hl="Ya agar paas kuch na ho, to do pasandeeda khushbuein.")
+s("senses_taste", "One thing you can taste", "Five senses, step 5.", "మీకు రుచి తెలుస్తున్న ఒక్క విషయం", "Meeku ruchi telustunna okka vishayam", hi="एक चीज़ जिसका स्वाद महसूस हो", hl="Ek cheez jiska swaad mehsoos ho")
+s("senses_tasteBody", "Or take a sip of water and notice it.", "Five senses, step 5 hint.", "లేదా కొంచెం నీళ్ళు తాగి ఆ రుచిని గమనించండి.", "Leda konchem neellu taagi aa ruchini gamaninchandi.", hi="या पानी का एक घूँट लें और उसे महसूस करें।", hl="Ya paani ka ek ghoont lein aur use mehsoos karein.")
+s("senses_step", "Step {step} of {total}", "Screen-reader text for the quiet step dots. Not a score.", "{total}లో {step}వ అడుగు", "{total} lo {step} va step", INT("step", "total"), hi="{total} में से स्टेप {step}", hl="{total} mein se step {step}")
+s("senses_done", "You're here, in this moment. Nicely done.", "After the fifth sense.", "మీరు ఇక్కడే, ఈ క్షణంలోనే ఉన్నారు. బాగా చేశారు.", "Meeru ikkade, ee kshanam lone unnaru. Baaga chesaaru.", hi="आप यहाँ हैं, इसी पल में। बहुत अच्छा।", hl="Aap yahan hain, isi pal mein. Bahut achha.")
 
-s("heart_title", "Hand on heart", "Self-compassion touch: a hand on the heart for a minute.", "గుండెపై చేయి", "Gunde meeda cheyyi")
-s("heart_card", "A minute of warmth, just for you.", "Under the hand-on-heart card.", "మీ కోసమే ఒక నిమిషం వెచ్చదనం.", "Mee kosame oka nimisham vecchadanam.")
-s("heart_intro", "Place a hand on your heart, or anywhere that feels comforting.", "Hand on heart: first cue, shown with the first slow breath. Gentle.", "మీ చేతిని గుండెపై, లేదా మీకు హాయిగా అనిపించే చోట ఉంచండి.", "Mee cheyyini gunde meeda, leda meeku haayiga anipinche chota unchandi.")
-s("heart_1", "Feel the warmth of your hand.", "Hand on heart, phrase 1.", "మీ చేతి వెచ్చదనాన్ని గమనించండి.", "Mee cheti vecchadanaanni gamaninchandi.")
-s("heart_2", "Breathe gently. There's no rush.", "Hand on heart, phrase 2.", "మెల్లగా శ్వాస తీసుకోండి. తొందర ఏమీ లేదు.", "Mellaga breathe cheyandi. Tondara emi ledu.")
-s("heart_3", "Whatever you're feeling is allowed here.", "Hand on heart, phrase 3.", "మీకు ఏం అనిపిస్తున్నా, ఇక్కడ దానికి చోటు ఉంది.", "Meeku em anipistunnaa, ikkada daaniki chotu undi.")
-s("heart_4", "Be as kind to yourself as you would be to a friend.", "Hand on heart, phrase 4. Gender-neutral 'friend'.", "స్నేహితుల పట్ల ఎంత దయగా ఉంటారో, మీ పట్ల కూడా అంతే దయగా ఉండండి.", "Friends patla entha dayaga untaaro, mee patla kooda ante dayaga undandi.")
-s("heart_done", "Thank you for being gentle with yourself.", "After the hand-on-heart minute.", "మీ పట్ల మీరు మృదువుగా ఉన్నందుకు ధన్యవాదాలు.", "Mee patla meeru mruduvuga unnanduku thanks.")
+s("heart_title", "Hand on heart", "Self-compassion touch: a hand on the heart for a minute.", "గుండెపై చేయి", "Gunde meeda cheyyi", hi="दिल पर हाथ", hl="Dil par haath")
+s("heart_card", "A minute of warmth, just for you.", "Under the hand-on-heart card.", "మీ కోసమే ఒక నిమిషం వెచ్చదనం.", "Mee kosame oka nimisham vecchadanam.", hi="सिर्फ़ आपके लिए, एक मिनट की गर्माहट।", hl="Sirf aapke liye, ek minute ki garmahat.")
+s("heart_intro", "Place a hand on your heart, or anywhere that feels comforting.", "Hand on heart: first cue, shown with the first slow breath. Gentle.", "మీ చేతిని గుండెపై, లేదా మీకు హాయిగా అనిపించే చోట ఉంచండి.", "Mee cheyyini gunde meeda, leda meeku haayiga anipinche chota unchandi.", hi="एक हाथ अपने दिल पर रखें, या जहाँ भी सुकून लगे।", hl="Ek haath apne dil par rakhein, ya jahan bhi sukoon lage.")
+s("heart_1", "Feel the warmth of your hand.", "Hand on heart, phrase 1.", "మీ చేతి వెచ్చదనాన్ని గమనించండి.", "Mee cheti vecchadanaanni gamaninchandi.", hi="अपने हाथ की गर्माहट महसूस करें।", hl="Apne haath ki garmahat mehsoos karein.")
+s("heart_2", "Breathe gently. There's no rush.", "Hand on heart, phrase 2.", "మెల్లగా శ్వాస తీసుకోండి. తొందర ఏమీ లేదు.", "Mellaga breathe cheyandi. Tondara emi ledu.", hi="धीरे से साँस लें। कोई जल्दी नहीं है।", hl="Dheere se saans lein. Koi jaldi nahi hai.")
+s("heart_3", "Whatever you're feeling is allowed here.", "Hand on heart, phrase 3.", "మీకు ఏం అనిపిస్తున్నా, ఇక్కడ దానికి చోటు ఉంది.", "Meeku em anipistunnaa, ikkada daaniki chotu undi.", hi="यहाँ जो भी महसूस हो, उसकी जगह है।", hl="Yahan jo bhi mehsoos ho, uski jagah hai.")
+s("heart_4", "Be as kind to yourself as you would be to a friend.", "Hand on heart, phrase 4. Gender-neutral 'friend'.", "స్నేహితుల పట్ల ఎంత దయగా ఉంటారో, మీ పట్ల కూడా అంతే దయగా ఉండండి.", "Friends patla entha dayaga untaaro, mee patla kooda ante dayaga undandi.", hi="ख़ुद के साथ उतनी ही नरमी रखें, जितनी किसी दोस्त के साथ।", hl="Khud ke saath utni hi narmi rakhein, jitni kisi dost ke saath.")
+s("heart_done", "Thank you for being gentle with yourself.", "After the hand-on-heart minute.", "మీ పట్ల మీరు మృదువుగా ఉన్నందుకు ధన్యవాదాలు.", "Mee patla meeru mruduvuga unnanduku thanks.", hi="ख़ुद के साथ नरमी रखने के लिए शुक्रिया।", hl="Khud ke saath narmi rakhne ke liye shukriya.")
 
-s("gratitude_title", "Three small things", "Gratitude: think of (or type) three small things that went okay. Nothing is stored.", "మూడు చిన్న విషయాలు", "Moodu chinna vishayaalu")
-s("gratitude_card", "Three small things that went okay today.", "Under the three-small-things card.", "ఈరోజు బాగానే జరిగిన మూడు చిన్న విషయాలు.", "Ee roju baagaane jarigina moodu chinna vishayaalu.")
-s("gratitude_intro", "Bring three small things from today to mind, one at a time. There's nothing to write.", "Three small things: intro. Prompts only, no typing; nothing is stored.", "ఈరోజు జరిగిన మూడు చిన్న విషయాలను ఒక్కొక్కటిగా గుర్తు తెచ్చుకోండి. ఏమీ రాయనక్కర్లేదు.", "Ee roju jarigina moodu chinna vishayaalanu okkokkatiga gurtu techukondi. Emi raayanakkarledu.")
-s("gratitude_1", "One small thing that went okay", "Three small things, step 1.", "బాగానే జరిగిన ఒక చిన్న విషయం", "Baagaane jarigina oka chinna vishayam")
-s("gratitude_1Body", "It can be tiny, like a warm drink or a kind word.", "Three small things, step 1 hint.", "అది చాలా చిన్నదైనా పర్వాలేదు, ఒక వేడి పానీయం లేదా ఒక మంచి మాట లాంటిది.", "Adi chaala chinnadainaa parvaaledu, oka vedi drink leda oka manchi maata laantidi.")
-s("gratitude_2", "Another small thing", "Three small things, step 2.", "ఇంకొక చిన్న విషయం", "Inkoka chinna vishayam")
-s("gratitude_2Body", "Something you saw, heard or did.", "Three small things, step 2 hint.", "మీరు చూసినది, విన్నది లేదా చేసినది ఏదైనా.", "Meeru choosinadi, vinnadi leda chesinadi edainaa.")
-s("gratitude_3", "One more small thing", "Three small things, step 3.", "మరొక్క చిన్న విషయం", "Marokka chinna vishayam")
-s("gratitude_3Body", "Maybe something about yourself.", "Three small things, step 3 hint.", "బహుశా మీ గురించే ఏదైనా.", "Bahusha mee gurinche edainaa.")
-s("gratitude_done", "Hold onto those for a moment. They're yours.", "After the third small thing.", "వాటిని ఒక క్షణం పట్టుకుని ఉండండి. అవి మీవే.", "Vaatini oka kshanam pattukuni undandi. Avi meeve.")
+s("gratitude_title", "Three small things", "Gratitude: think of (or type) three small things that went okay. Nothing is stored.", "మూడు చిన్న విషయాలు", "Moodu chinna vishayaalu", hi="तीन छोटी बातें", hl="Teen chhoti baatein")
+s("gratitude_card", "Three small things that went okay today.", "Under the three-small-things card.", "ఈరోజు బాగానే జరిగిన మూడు చిన్న విషయాలు.", "Ee roju baagaane jarigina moodu chinna vishayaalu.", hi="आज की तीन छोटी बातें जो ठीक-ठाक रहीं।", hl="Aaj ki teen chhoti baatein jo theek-thaak rahin.")
+s("gratitude_intro", "Bring three small things from today to mind, one at a time. There's nothing to write.", "Three small things: intro. Prompts only, no typing; nothing is stored.", "ఈరోజు జరిగిన మూడు చిన్న విషయాలను ఒక్కొక్కటిగా గుర్తు తెచ్చుకోండి. ఏమీ రాయనక్కర్లేదు.", "Ee roju jarigina moodu chinna vishayaalanu okkokkatiga gurtu techukondi. Emi raayanakkarledu.", hi="आज की तीन छोटी बातें, एक-एक करके याद करें। कुछ लिखना नहीं है।", hl="Aaj ki teen chhoti baatein, ek-ek karke yaad karein. Kuch likhna nahi hai.")
+s("gratitude_1", "One small thing that went okay", "Three small things, step 1.", "బాగానే జరిగిన ఒక చిన్న విషయం", "Baagaane jarigina oka chinna vishayam", hi="एक छोटी बात जो ठीक रही", hl="Ek chhoti baat jo theek rahi")
+s("gratitude_1Body", "It can be tiny, like a warm drink or a kind word.", "Three small things, step 1 hint.", "అది చాలా చిన్నదైనా పర్వాలేదు, ఒక వేడి పానీయం లేదా ఒక మంచి మాట లాంటిది.", "Adi chaala chinnadainaa parvaaledu, oka vedi drink leda oka manchi maata laantidi.", hi="बहुत छोटी बात भी चलेगी, जैसे कुछ गरम पीना या किसी के मीठे बोल।", hl="Bahut chhoti baat bhi chalegi, jaise kuch garam peena ya kisi ke meethe bol.")
+s("gratitude_2", "Another small thing", "Three small things, step 2.", "ఇంకొక చిన్న విషయం", "Inkoka chinna vishayam", hi="एक और छोटी बात", hl="Ek aur chhoti baat")
+s("gratitude_2Body", "Something you saw, heard or did.", "Three small things, step 2 hint.", "మీరు చూసినది, విన్నది లేదా చేసినది ఏదైనా.", "Meeru choosinadi, vinnadi leda chesinadi edainaa.", hi="कुछ जो आपने देखा, सुना या किया।", hl="Kuch jo aapne dekha, suna ya kiya.")
+s("gratitude_3", "One more small thing", "Three small things, step 3.", "మరొక్క చిన్న విషయం", "Marokka chinna vishayam", hi="बस एक और छोटी बात", hl="Bas ek aur chhoti baat")
+s("gratitude_3Body", "Maybe something about yourself.", "Three small things, step 3 hint.", "బహుశా మీ గురించే ఏదైనా.", "Bahusha mee gurinche edainaa.", hi="शायद आपके अपने बारे में कुछ।", hl="Shayad aapke apne baare mein kuch.")
+s("gratitude_done", "Hold onto those for a moment. They're yours.", "After the third small thing.", "వాటిని ఒక క్షణం పట్టుకుని ఉండండి. అవి మీవే.", "Vaatini oka kshanam pattukuni undandi. Avi meeve.", hi="इन्हें एक पल के लिए अपने पास रखें। ये आपकी हैं।", hl="Inhein ek pal ke liye apne paas rakhein. Ye aapki hain.")
 
-s("savour_intro", "Let's replay one good moment from today, slowly.", "Savour (Sunrise's minute; also in the library): intro. Prompts only.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మెల్లగా మళ్ళీ గుర్తు చేసుకుందాం.", "Ee roju jarigina oka manchi kshanaanni mellaga malli gurtu chesukundaam.")
-s("savour_1", "Bring one good moment from today to mind, however small.", "Savour, step 1.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని గుర్తు తెచ్చుకోండి, ఎంత చిన్నదైనా.", "Ee roju jarigina oka manchi kshanaanni gurtu techukondi, entha chinnadainaa.")
-s("savour_2", "Where were you? What could you see and hear?", "Savour, step 2.", "అప్పుడు మీరు ఎక్కడ ఉన్నారు? ఏం కనిపించింది, ఏం వినిపించింది?", "Appudu meeru ekkada unnaru? Em kanipinchindi, em vinipinchindi?")
-s("savour_3", "Notice how it feels to remember it now.", "Savour, step 3.", "ఇప్పుడు దాన్ని గుర్తు చేసుకుంటే ఎలా అనిపిస్తోందో గమనించండి.", "Ippudu daanni gurtu chesukunte ela anipistondo gamaninchandi.")
-s("savour_done", "Let it stay with you a little longer.", "After the savour steps.", "అది మీతో ఇంకొంచెం సేపు ఉండనివ్వండి.", "Adi meetho inkonchem sepu undanivvandi.")
+s("savour_intro", "Let's replay one good moment from today, slowly.", "Savour (Sunrise's minute; also in the library): intro. Prompts only.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మెల్లగా మళ్ళీ గుర్తు చేసుకుందాం.", "Ee roju jarigina oka manchi kshanaanni mellaga malli gurtu chesukundaam.", hi="चलिए, आज के एक अच्छे पल को धीरे-धीरे फिर से जिएँ।", hl="Chaliye, aaj ke ek achhe pal ko dheere-dheere phir se jiyein.")
+s("savour_1", "Bring one good moment from today to mind, however small.", "Savour, step 1.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని గుర్తు తెచ్చుకోండి, ఎంత చిన్నదైనా.", "Ee roju jarigina oka manchi kshanaanni gurtu techukondi, entha chinnadainaa.", hi="आज का एक अच्छा पल याद करें, चाहे कितना भी छोटा हो।", hl="Aaj ka ek achha pal yaad karein, chahe kitna bhi chhota ho.")
+s("savour_2", "Where were you? What could you see and hear?", "Savour, step 2.", "అప్పుడు మీరు ఎక్కడ ఉన్నారు? ఏం కనిపించింది, ఏం వినిపించింది?", "Appudu meeru ekkada unnaru? Em kanipinchindi, em vinipinchindi?", hi="वह पल कहाँ का था? आसपास क्या दिख और सुनाई दे रहा था?", hl="Woh pal kahan ka tha? Aas-paas kya dikh aur sunai de raha tha?")
+s("savour_3", "Notice how it feels to remember it now.", "Savour, step 3.", "ఇప్పుడు దాన్ని గుర్తు చేసుకుంటే ఎలా అనిపిస్తోందో గమనించండి.", "Ippudu daanni gurtu chesukunte ela anipistondo gamaninchandi.", hi="अब उसे याद करके कैसा लग रहा है, इस पर ध्यान दें।", hl="Ab use yaad karke kaisa lag raha hai, is par dhyaan dein.")
+s("savour_done", "Let it stay with you a little longer.", "After the savour steps.", "అది మీతో ఇంకొంచెం సేపు ఉండనివ్వండి.", "Adi meetho inkonchem sepu undanivvandi.", hi="उसे थोड़ी देर और अपने साथ रहने दें।", hl="Use thodi der aur apne saath rehne dein.")
 
 # ---- One-minute activities (Today's minute, A minute for you) -------------------
-s("minute_forYou", "A minute for you", "Optional card in the check-in saved moment, for every quadrant. Never shown right after the crisis sheet.", "మీ కోసం ఒక నిమిషం", "Mee kosam oka nimisham")
-s("minute_calmTitle", "One calm minute", "Today's minute: one minute of calm breathing.", "ఒక ప్రశాంత నిమిషం", "Oka prashaanta nimisham")
-s("minute_boxTitle", "Box breathing", "Today's minute: one minute of box breathing.", "బాక్స్ శ్వాస", "Box breathing")
-s("minute_478Title", "4-7-8 breathing", "Today's minute: 4-7-8 breathing.", "4-7-8 శ్వాస", "4-7-8 breathing")
-s("minute_stillnessTitle", "A minute of stillness", "One minute of slow breathing (Moonlight's minute; also in Today's minute).", "ఒక నిమిషం నిశ్చలత", "Oka nimisham nishchalata")
-s("minute_stillnessBody", "One quiet minute with the orb.", "Under 'A minute of stillness'.", "గోళంతో కలిసి ఒక నిశ్శబ్ద నిమిషం.", "Orb tho kalisi oka nishabda nimisham.")
-s("minute_landTitle", "Thirty seconds to land", "30-second grounding breath (Storm's minute).", "నిలదొక్కుకోవడానికి ముప్పై సెకన్లు", "Niladokkukovadaaniki muppai seconds")
-s("minute_landBody", "Three slow breaths with the orb.", "Under 'Thirty seconds to land' (Storm's minute).", "గోళంతో కలిసి మూడు నెమ్మది శ్వాసలు.", "Orb tho kalisi moodu nemmadi shwaasalu.")
-s("minute_comfortTitle", "A little comfort", "Hand on heart, offered as Rain's minute.", "కొంచెం ఊరట", "Konchem oorata")
-s("minute_comfortBody", "A hand on your heart, and a minute of warmth.", "Under 'A little comfort'.", "గుండెపై ఒక చేయి, ఒక నిమిషం వెచ్చదనం.", "Gunde meeda oka cheyyi, oka nimisham vecchadanam.")
-s("minute_savourTitle", "Savour this", "Savouring what feels good (Sunrise's minute).", "దీన్ని ఆస్వాదించండి", "Deenni aaswaadinchandi")
-s("minute_savourBody", "Replay one good moment from today.", "Under 'Savour this'.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మళ్ళీ గుర్తు చేసుకోండి.", "Ee roju jarigina oka manchi kshanaanni malli gurtu chesukondi.")
+s("minute_forYou", "A minute for you", "Optional card in the check-in saved moment, for every quadrant. Never shown right after the crisis sheet.", "మీ కోసం ఒక నిమిషం", "Mee kosam oka nimisham", hi="आपके लिए एक मिनट", hl="Aapke liye ek minute")
+s("minute_calmTitle", "One calm minute", "Today's minute: one minute of calm breathing.", "ఒక ప్రశాంత నిమిషం", "Oka prashaanta nimisham", hi="एक शांत मिनट", hl="Ek shaant minute")
+s("minute_boxTitle", "Box breathing", "Today's minute: one minute of box breathing.", "బాక్స్ శ్వాస", "Box breathing", hi="बॉक्स ब्रीदिंग", hl="Box breathing")
+s("minute_478Title", "4-7-8 breathing", "Today's minute: 4-7-8 breathing.", "4-7-8 శ్వాస", "4-7-8 breathing", hi="4-7-8 ब्रीदिंग", hl="4-7-8 breathing")
+s("minute_stillnessTitle", "A minute of stillness", "One minute of slow breathing (Moonlight's minute; also in Today's minute).", "ఒక నిమిషం నిశ్చలత", "Oka nimisham nishchalata", hi="एक मिनट का ठहराव", hl="Ek minute ka thehraav")
+s("minute_stillnessBody", "One quiet minute with the orb.", "Under 'A minute of stillness'.", "గోళంతో కలిసి ఒక నిశ్శబ్ద నిమిషం.", "Orb tho kalisi oka nishabda nimisham.", hi="ऑर्ब के साथ एक शांत मिनट।", hl="Orb ke saath ek shaant minute.")
+s("minute_landTitle", "Thirty seconds to land", "30-second grounding breath (Storm's minute).", "నిలదొక్కుకోవడానికి ముప్పై సెకన్లు", "Niladokkukovadaaniki muppai seconds", hi="ठहरने के लिए तीस सेकंड", hl="Thehrne ke liye tees second")
+s("minute_landBody", "Three slow breaths with the orb.", "Under 'Thirty seconds to land' (Storm's minute).", "గోళంతో కలిసి మూడు నెమ్మది శ్వాసలు.", "Orb tho kalisi moodu nemmadi shwaasalu.", hi="ऑर्ब के साथ तीन धीमी साँसें।", hl="Orb ke saath teen dheemi saansein.")
+s("minute_comfortTitle", "A little comfort", "Hand on heart, offered as Rain's minute.", "కొంచెం ఊరట", "Konchem oorata", hi="थोड़ा सुकून", hl="Thoda sukoon")
+s("minute_comfortBody", "A hand on your heart, and a minute of warmth.", "Under 'A little comfort'.", "గుండెపై ఒక చేయి, ఒక నిమిషం వెచ్చదనం.", "Gunde meeda oka cheyyi, oka nimisham vecchadanam.", hi="दिल पर एक हाथ, और एक मिनट की गर्माहट।", hl="Dil par ek haath, aur ek minute ki garmahat.")
+s("minute_savourTitle", "Savour this", "Savouring what feels good (Sunrise's minute).", "దీన్ని ఆస్వాదించండి", "Deenni aaswaadinchandi", hi="इस पल को जिएँ", hl="Is pal ko jiyein")
+s("minute_savourBody", "Replay one good moment from today.", "Under 'Savour this'.", "ఈరోజు జరిగిన ఒక మంచి క్షణాన్ని మళ్ళీ గుర్తు చేసుకోండి.", "Ee roju jarigina oka manchi kshanaanni malli gurtu chesukondi.", hi="आज का एक अच्छा पल फिर से जिएँ।", hl="Aaj ka ek achha pal phir se jiyein.")
 
 # ---- Companion response (saved moment) ------------------------------------------
 # One line per live check-in, from its quadrant's pool (8 each, same shape and
@@ -115,94 +115,94 @@ s("minute_savourBody", "Replay one good moment from today.", "Under 'Savour this
 # person; the avatar *is* the person, so no line speaks as a separate friend.
 # Never advice, diagnosis, cheerleading, "why" or promises (REQ-CMP-03).
 _companion_desc = "Companion response after a check-in: one warm line, announced once. Second person, plain words. Never advice ('should', 'try'), diagnosis, cheerleading, a 'why' or a promise. Every quadrant's pool has the same size and warmth."
-for key, en, te, tl in [
-    ("storm1", "That's a lot at once. Your light is still here.", "ఒకేసారి చాలా అనిపిస్తోంది. మీ వెలుగు ఇంకా ఇక్కడే ఉంది.", "Okesaari chaala anipistondi. Mee velugu inka ikkade undi."),
-    ("storm2", "Naming a storm takes courage. You showed up for yourself.", "తుఫానుకు పేరు పెట్టడానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.", "Storm ki peru pettadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru."),
-    ("storm3", "Big, loud feelings are welcome here. So are you.", "పెద్ద, గట్టి భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Pedda, gatti feelings ki ikkada chotu undi. Meeku kooda."),
-    ("storm4", "Stormy days matter too. Thank you for checking in.", "తుఫాను రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Storm rojulu kooda mukhyamainave. Check-in chesinanduku thanks."),
-    ("storm5", "You named this honestly. That matters.", "మీరు దీన్ని నిజాయితీగా చెప్పారు. అది ముఖ్యం.", "Meeru deenni nijaayiteega cheppaaru. Adi mukhyam."),
-    ("storm6", "Storms are part of your sky too.", "తుఫానులు కూడా మీ ఆకాశంలో భాగమే.", "Storms kooda mee aakaasham lo bhaagame."),
-    ("storm7", "Whatever is swirling, you noticed it. That counts.", "లోపల ఏం సుడులు తిరుగుతున్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Lopala em sudulu tirugutunnaa, meeru daanni gamaninchaaru. Adi viluvainadi."),
-    ("storm8", "Even in a storm, your glow is yours.", "తుఫానులో కూడా, మీ వెలుగు మీదే.", "Storm lo kooda, mee velugu meede."),
-    ("rain1", "That feels heavy. Your light is still with you.", "ఇది భారంగా అనిపిస్తోంది. మీ వెలుగు ఇంకా మీతోనే ఉంది.", "Idi bhaaranga anipistondi. Mee velugu inka meethone undi."),
-    ("rain2", "Being honest about a low day takes courage. You showed up for yourself.", "నిరుత్సాహమైన రోజు గురించి నిజాయితీగా ఉండటానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.", "Low day gurinchi nijaayiteega undadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru."),
-    ("rain3", "Slow, heavy feelings are welcome here. So are you.", "నెమ్మదైన, బరువైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Nemmadaina, baruvaina feelings ki ikkada chotu undi. Meeku kooda."),
-    ("rain4", "Rainy days matter too. Thank you for checking in.", "వాన రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Vaana rojulu kooda mukhyamainave. Check-in chesinanduku thanks."),
-    ("rain5", "You were honest with yourself today. That matters.", "ఈరోజు మీతో మీరు నిజాయితీగా ఉన్నారు. అది ముఖ్యం.", "Ee roju meetho meeru nijaayiteega unnaru. Adi mukhyam."),
-    ("rain6", "Rain is part of your sky too.", "వాన కూడా మీ ఆకాశంలో భాగమే.", "Vaana kooda mee aakaasham lo bhaagame."),
-    ("rain7", "However heavy it is, you noticed it. That counts.", "ఎంత భారంగా ఉన్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Entha bhaaranga unnaa, meeru daanni gamaninchaaru. Adi viluvainadi."),
-    ("rain8", "Even on grey days, your glow is yours.", "మబ్బు పట్టిన రోజుల్లో కూడా, మీ వెలుగు మీదే.", "Mabbu pattina rojullo kooda, mee velugu meede."),
-    ("moonlight1", "A quiet, settled moment. Your light is resting easy.", "నిశ్శబ్దమైన, స్థిరమైన క్షణం. మీ వెలుగు హాయిగా విశ్రాంతి తీసుకుంటోంది.", "Nishabdamaina, sthiramaina kshanam. Mee velugu haayiga rest teesukuntondi."),
-    ("moonlight2", "Noticing a quiet moment is worth something. You showed up for yourself.", "ఒక ప్రశాంత క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.", "Oka prashaanta kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru."),
-    ("moonlight3", "Soft, easy feelings are welcome here. So are you.", "మెత్తని, హాయైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Mettani, haayaina feelings ki ikkada chotu undi. Meeku kooda."),
-    ("moonlight4", "Gentle days matter too. Thank you for checking in.", "మెల్లని రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Mellani rojulu kooda mukhyamainave. Check-in chesinanduku thanks."),
-    ("moonlight5", "You took a moment to notice this. That matters.", "దీన్ని గమనించడానికి మీరు ఒక క్షణం తీసుకున్నారు. అది ముఖ్యం.", "Deenni gamaninchadaaniki meeru oka kshanam teesukunnaru. Adi mukhyam."),
-    ("moonlight6", "Moonlight is part of your sky too.", "వెన్నెల కూడా మీ ఆకాశంలో భాగమే.", "Vennela kooda mee aakaasham lo bhaagame."),
-    ("moonlight7", "However small this calm is, you noticed it. That counts.", "ఈ ప్రశాంతత ఎంత చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Ee prashaanthata entha chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi."),
-    ("moonlight8", "In the quiet, your glow is yours.", "ఈ నిశ్శబ్దంలో, మీ వెలుగు మీదే.", "Ee nishabdam lo, mee velugu meede."),
-    ("sunrise1", "A bright moment. Your light is shining.", "వెలుగుతో నిండిన క్షణం. మీ వెలుగు ప్రకాశిస్తోంది.", "Velugu tho nindina kshanam. Mee velugu prakaashistondi."),
-    ("sunrise2", "Noticing a good moment is worth something. You showed up for yourself.", "ఒక మంచి క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.", "Oka manchi kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru."),
-    ("sunrise3", "Big, bright feelings are welcome here. So are you.", "పెద్ద, ప్రకాశవంతమైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Pedda, prakaashavantamaina feelings ki ikkada chotu undi. Meeku kooda."),
-    ("sunrise4", "Bright days matter too. Thank you for checking in.", "వెలుగు రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Velugu rojulu kooda mukhyamainave. Check-in chesinanduku thanks."),
-    ("sunrise5", "You let yourself notice this. That matters.", "దీన్ని గమనించడానికి మీకు మీరు అవకాశం ఇచ్చారు. అది ముఖ్యం.", "Deenni gamaninchadaaniki meeku meeru chance ichaaru. Adi mukhyam."),
-    ("sunrise6", "Sunrise is part of your sky too.", "సూర్యోదయం కూడా మీ ఆకాశంలో భాగమే.", "Sunrise kooda mee aakaasham lo bhaagame."),
-    ("sunrise7", "However big or small this is, you noticed it. That counts.", "ఇది పెద్దదైనా, చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Idi peddadainaa, chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi."),
-    ("sunrise8", "In this brightness, your glow is yours.", "ఈ సంతోషంలో, మీ వెలుగు మీదే.", "Ee santosham lo, mee velugu meede."),
+for key, en, te, tl, hi, hl in [
+    ("storm1", "That's a lot at once. Your light is still here.", "ఒకేసారి చాలా అనిపిస్తోంది. మీ వెలుగు ఇంకా ఇక్కడే ఉంది.", "Okesaari chaala anipistondi. Mee velugu inka ikkade undi.", "एक साथ बहुत कुछ है। आपकी रोशनी अब भी यहीं है।", "Ek saath bahut kuch hai. Aapki roshni ab bhi yahin hai."),
+    ("storm2", "Naming a storm takes courage. You showed up for yourself.", "తుఫానుకు పేరు పెట్టడానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.", "Storm ki peru pettadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru.", "तूफ़ान को नाम देना हिम्मत की बात है। आपने अपना साथ दिया।", "Storm ko naam dena himmat ki baat hai. Aapne apna saath diya."),
+    ("storm3", "Big, loud feelings are welcome here. So are you.", "పెద్ద, గట్టి భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Pedda, gatti feelings ki ikkada chotu undi. Meeku kooda.", "बड़ी, तेज़ भावनाओं के लिए यहाँ जगह है। आपके लिए भी।", "Badi, tez feelings ke liye yahan jagah hai. Aapke liye bhi."),
+    ("storm4", "Stormy days matter too. Thank you for checking in.", "తుఫాను రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Storm rojulu kooda mukhyamainave. Check-in chesinanduku thanks.", "तूफ़ानी दिन भी मायने रखते हैं। चेक-इन करने के लिए शुक्रिया।", "Storm wale din bhi maayne rakhte hain. Check-in karne ke liye shukriya."),
+    ("storm5", "You named this honestly. That matters.", "మీరు దీన్ని నిజాయితీగా చెప్పారు. అది ముఖ్యం.", "Meeru deenni nijaayiteega cheppaaru. Adi mukhyam.", "आपने इसे ईमानदारी से नाम दिया। यह मायने रखता है।", "Aapne ise imaandaari se naam diya. Yeh maayne rakhta hai."),
+    ("storm6", "Storms are part of your sky too.", "తుఫానులు కూడా మీ ఆకాశంలో భాగమే.", "Storms kooda mee aakaasham lo bhaagame.", "तूफ़ान भी आपके आसमान का हिस्सा है।", "Storm bhi aapke aasmaan ka hissa hai."),
+    ("storm7", "Whatever is swirling, you noticed it. That counts.", "లోపల ఏం సుడులు తిరుగుతున్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Lopala em sudulu tirugutunnaa, meeru daanni gamaninchaaru. Adi viluvainadi.", "अंदर जो भी उमड़ रहा हो, आपने उसे पहचाना। इसकी अहमियत है।", "Andar jo bhi umad raha ho, aapne use pehchaana. Iski ahmiyat hai."),
+    ("storm8", "Even in a storm, your glow is yours.", "తుఫానులో కూడా, మీ వెలుగు మీదే.", "Storm lo kooda, mee velugu meede.", "तूफ़ान में भी, आपकी चमक आपकी अपनी है।", "Storm mein bhi, aapki chamak aapki apni hai."),
+    ("rain1", "That feels heavy. Your light is still with you.", "ఇది భారంగా అనిపిస్తోంది. మీ వెలుగు ఇంకా మీతోనే ఉంది.", "Idi bhaaranga anipistondi. Mee velugu inka meethone undi.", "यह भारी लग रहा है। आपकी रोशनी अब भी आपके साथ है।", "Yeh bhaari lag raha hai. Aapki roshni ab bhi aapke saath hai."),
+    ("rain2", "Being honest about a low day takes courage. You showed up for yourself.", "నిరుత్సాహమైన రోజు గురించి నిజాయితీగా ఉండటానికి ధైర్యం కావాలి. మీరు మీ కోసం వచ్చారు.", "Low day gurinchi nijaayiteega undadaaniki dhairyam kaavaali. Meeru mee kosam vachaaru.", "बुझे-से दिन के बारे में सच कहना हिम्मत की बात है। आपने अपना साथ दिया।", "Low din ke baare mein sach kehna himmat ki baat hai. Aapne apna saath diya."),
+    ("rain3", "Slow, heavy feelings are welcome here. So are you.", "నెమ్మదైన, బరువైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Nemmadaina, baruvaina feelings ki ikkada chotu undi. Meeku kooda.", "धीमी, भारी भावनाओं के लिए यहाँ जगह है। आपके लिए भी।", "Dheemi, bhaari feelings ke liye yahan jagah hai. Aapke liye bhi."),
+    ("rain4", "Rainy days matter too. Thank you for checking in.", "వాన రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Vaana rojulu kooda mukhyamainave. Check-in chesinanduku thanks.", "बारिश वाले दिन भी मायने रखते हैं। चेक-इन करने के लिए शुक्रिया।", "Rain wale din bhi maayne rakhte hain. Check-in karne ke liye shukriya."),
+    ("rain5", "You were honest with yourself today. That matters.", "ఈరోజు మీతో మీరు నిజాయితీగా ఉన్నారు. అది ముఖ్యం.", "Ee roju meetho meeru nijaayiteega unnaru. Adi mukhyam.", "आज आपने ख़ुद से सच कहा। यह मायने रखता है।", "Aaj aapne khud se sach kaha. Yeh maayne rakhta hai."),
+    ("rain6", "Rain is part of your sky too.", "వాన కూడా మీ ఆకాశంలో భాగమే.", "Vaana kooda mee aakaasham lo bhaagame.", "बारिश भी आपके आसमान का हिस्सा है।", "Rain bhi aapke aasmaan ka hissa hai."),
+    ("rain7", "However heavy it is, you noticed it. That counts.", "ఎంత భారంగా ఉన్నా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Entha bhaaranga unnaa, meeru daanni gamaninchaaru. Adi viluvainadi.", "यह जितना भी भारी हो, आपने इसे पहचाना। इसकी अहमियत है।", "Yeh jitna bhi bhaari ho, aapne ise pehchaana. Iski ahmiyat hai."),
+    ("rain8", "Even on grey days, your glow is yours.", "మబ్బు పట్టిన రోజుల్లో కూడా, మీ వెలుగు మీదే.", "Mabbu pattina rojullo kooda, mee velugu meede.", "बादलों वाले दिनों में भी, आपकी चमक आपकी अपनी है।", "Baadal wale dinon mein bhi, aapki chamak aapki apni hai."),
+    ("moonlight1", "A quiet, settled moment. Your light is resting easy.", "నిశ్శబ్దమైన, స్థిరమైన క్షణం. మీ వెలుగు హాయిగా విశ్రాంతి తీసుకుంటోంది.", "Nishabdamaina, sthiramaina kshanam. Mee velugu haayiga rest teesukuntondi.", "एक शांत, ठहरा हुआ पल। आपकी रोशनी आराम से है।", "Ek shaant, thehra hua pal. Aapki roshni aaraam se hai."),
+    ("moonlight2", "Noticing a quiet moment is worth something. You showed up for yourself.", "ఒక ప్రశాంత క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.", "Oka prashaanta kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru.", "एक शांत पल को पहचानना भी मायने रखता है। आपने अपना साथ दिया।", "Ek shaant pal ko pehchaanna bhi maayne rakhta hai. Aapne apna saath diya."),
+    ("moonlight3", "Soft, easy feelings are welcome here. So are you.", "మెత్తని, హాయైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Mettani, haayaina feelings ki ikkada chotu undi. Meeku kooda.", "नरम, हल्की भावनाओं के लिए यहाँ जगह है। आपके लिए भी।", "Naram, halki feelings ke liye yahan jagah hai. Aapke liye bhi."),
+    ("moonlight4", "Gentle days matter too. Thank you for checking in.", "మెల్లని రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Mellani rojulu kooda mukhyamainave. Check-in chesinanduku thanks.", "सुकून भरे दिन भी मायने रखते हैं। चेक-इन करने के लिए शुक्रिया।", "Sukoon bhare din bhi maayne rakhte hain. Check-in karne ke liye shukriya."),
+    ("moonlight5", "You took a moment to notice this. That matters.", "దీన్ని గమనించడానికి మీరు ఒక క్షణం తీసుకున్నారు. అది ముఖ్యం.", "Deenni gamaninchadaaniki meeru oka kshanam teesukunnaru. Adi mukhyam.", "आपने इसे महसूस करने के लिए एक पल लिया। यह मायने रखता है।", "Aapne ise mehsoos karne ke liye ek pal liya. Yeh maayne rakhta hai."),
+    ("moonlight6", "Moonlight is part of your sky too.", "వెన్నెల కూడా మీ ఆకాశంలో భాగమే.", "Vennela kooda mee aakaasham lo bhaagame.", "चाँदनी भी आपके आसमान का हिस्सा है।", "Moonlight bhi aapke aasmaan ka hissa hai."),
+    ("moonlight7", "However small this calm is, you noticed it. That counts.", "ఈ ప్రశాంతత ఎంత చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Ee prashaanthata entha chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi.", "यह सुकून जितना भी छोटा हो, आपने इसे पहचाना। इसकी अहमियत है।", "Yeh sukoon jitna bhi chhota ho, aapne ise pehchaana. Iski ahmiyat hai."),
+    ("moonlight8", "In the quiet, your glow is yours.", "ఈ నిశ్శబ్దంలో, మీ వెలుగు మీదే.", "Ee nishabdam lo, mee velugu meede.", "इस ख़ामोशी में, आपकी चमक आपकी अपनी है।", "Is khamoshi mein, aapki chamak aapki apni hai."),
+    ("sunrise1", "A bright moment. Your light is shining.", "వెలుగుతో నిండిన క్షణం. మీ వెలుగు ప్రకాశిస్తోంది.", "Velugu tho nindina kshanam. Mee velugu prakaashistondi.", "एक रोशन पल। आपकी रोशनी चमक रही है।", "Ek roshan pal. Aapki roshni chamak rahi hai."),
+    ("sunrise2", "Noticing a good moment is worth something. You showed up for yourself.", "ఒక మంచి క్షణాన్ని గమనించడం విలువైనది. మీరు మీ కోసం వచ్చారు.", "Oka manchi kshanaanni gamaninchadam viluvainadi. Meeru mee kosam vachaaru.", "एक अच्छे पल को पहचानना भी मायने रखता है। आपने अपना साथ दिया।", "Ek achhe pal ko pehchaanna bhi maayne rakhta hai. Aapne apna saath diya."),
+    ("sunrise3", "Big, bright feelings are welcome here. So are you.", "పెద్ద, ప్రకాశవంతమైన భావాలకు ఇక్కడ చోటు ఉంది. మీకు కూడా.", "Pedda, prakaashavantamaina feelings ki ikkada chotu undi. Meeku kooda.", "बड़ी, चमकती भावनाओं के लिए यहाँ जगह है। आपके लिए भी।", "Badi, chamakti feelings ke liye yahan jagah hai. Aapke liye bhi."),
+    ("sunrise4", "Bright days matter too. Thank you for checking in.", "వెలుగు రోజులు కూడా ముఖ్యమైనవే. చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Velugu rojulu kooda mukhyamainave. Check-in chesinanduku thanks.", "रोशन दिन भी मायने रखते हैं। चेक-इन करने के लिए शुक्रिया।", "Roshan din bhi maayne rakhte hain. Check-in karne ke liye shukriya."),
+    ("sunrise5", "You let yourself notice this. That matters.", "దీన్ని గమనించడానికి మీకు మీరు అవకాశం ఇచ్చారు. అది ముఖ్యం.", "Deenni gamaninchadaaniki meeku meeru chance ichaaru. Adi mukhyam.", "आपने ख़ुद को यह महसूस करने दिया। यह मायने रखता है।", "Aapne khud ko yeh mehsoos karne diya. Yeh maayne rakhta hai."),
+    ("sunrise6", "Sunrise is part of your sky too.", "సూర్యోదయం కూడా మీ ఆకాశంలో భాగమే.", "Sunrise kooda mee aakaasham lo bhaagame.", "सूर्योदय भी आपके आसमान का हिस्सा है।", "Sunrise bhi aapke aasmaan ka hissa hai."),
+    ("sunrise7", "However big or small this is, you noticed it. That counts.", "ఇది పెద్దదైనా, చిన్నదైనా, మీరు దాన్ని గమనించారు. అది విలువైనది.", "Idi peddadainaa, chinnadainaa, meeru daanni gamaninchaaru. Adi viluvainadi.", "यह बड़ा हो या छोटा, आपने इसे पहचाना। इसकी अहमियत है।", "Yeh bada ho ya chhota, aapne ise pehchaana. Iski ahmiyat hai."),
+    ("sunrise8", "In this brightness, your glow is yours.", "ఈ సంతోషంలో, మీ వెలుగు మీదే.", "Ee santosham lo, mee velugu meede.", "इस उजाले में, आपकी चमक आपकी अपनी है।", "Is ujaale mein, aapki chamak aapki apni hai."),
 ]:
-    s(f"companion_{key}", en, _companion_desc, te, tl)
+    s(f"companion_{key}", en, _companion_desc, te, tl, hi=hi, hl=hl)
 
 # After a crisis sheet: a small neutral pool, the same for every quadrant
 # (REQ-CMP-04). Quiet and steady; no mood words.
-for key, en, te, tl in [
-    ("neutral1", "Thank you for checking in.", "చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Check-in chesinanduku thanks."),
-    ("neutral2", "You showed up for yourself.", "మీరు మీ కోసం వచ్చారు.", "Meeru mee kosam vachaaru."),
-    ("neutral3", "Your light is still here.", "మీ వెలుగు ఇంకా ఇక్కడే ఉంది.", "Mee velugu inka ikkade undi."),
-    ("neutral4", "There's no rush here.", "ఇక్కడ తొందర ఏమీ లేదు.", "Ikkada tondara emi ledu."),
+for key, en, te, tl, hi, hl in [
+    ("neutral1", "Thank you for checking in.", "చెక్-ఇన్ చేసినందుకు ధన్యవాదాలు.", "Check-in chesinanduku thanks.", "चेक-इन करने के लिए शुक्रिया।", "Check-in karne ke liye shukriya."),
+    ("neutral2", "You showed up for yourself.", "మీరు మీ కోసం వచ్చారు.", "Meeru mee kosam vachaaru.", "आपने अपना साथ दिया।", "Aapne apna saath diya."),
+    ("neutral3", "Your light is still here.", "మీ వెలుగు ఇంకా ఇక్కడే ఉంది.", "Mee velugu inka ikkade undi.", "आपकी रोशनी अब भी यहीं है।", "Aapki roshni ab bhi yahin hai."),
+    ("neutral4", "There's no rush here.", "ఇక్కడ తొందర ఏమీ లేదు.", "Ikkada tondara emi ledu.", "यहाँ कोई जल्दी नहीं है।", "Yahan koi jaldi nahi hai."),
 ]:
-    s(f"companion_{key}", en, "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.", te, tl)
+    s(f"companion_{key}", en, "Companion line after a check-in that showed the support sheet: neutral, the same for every quadrant. Never advice or a promise.", te, tl, hi=hi, hl=hl)
 
 # ---- Guided prompts (check-in note, capsule composer) ---------------------------
 # Shown as the empty field's hint only: optional, skippable, never required.
-for key, en, te, tl in [
-    ("note1", "What's one small thing that helped today?", "ఈరోజు కొంచెం సహాయపడిన ఒక చిన్న విషయం ఏది?", "Ee roju konchem help chesina oka chinna vishayam edi?"),
-    ("note2", "What's on your mind right now?", "ఇప్పుడు మీ మనసులో ఏముంది?", "Ippudu mee manasulo emundi?"),
-    ("note3", "What would you like to remember about today?", "ఈరోజు గురించి మీరు ఏం గుర్తుంచుకోవాలనుకుంటున్నారు?", "Ee roju gurinchi meeru em gurtunchukovaalanukuntunnaru?"),
-    ("storm1", "What's taking up the most room right now?", "ఇప్పుడు మీ మనసులో ఎక్కువ చోటు తీసుకుంటున్నది ఏది?", "Ippudu mee manasulo ekkuva chotu teesukuntunnadi edi?"),
-    ("storm2", "If this feeling could speak, what would it say?", "ఈ భావన మాట్లాడగలిగితే, అది ఏం చెబుతుంది?", "Ee feeling maatlaadagaligite, adi em chebutundi?"),
-    ("storm3", "What's one thing you could set down, even for a minute?", "ఒక్క నిమిషమైనా పక్కన పెట్టగలిగే ఒక విషయం ఏది?", "Okka nimishamainaa pakkana pettagalige oka vishayam edi?"),
-    ("rain1", "What would feel gentle right now?", "ఇప్పుడు మీకు ఏది హాయిగా అనిపిస్తుంది?", "Ippudu meeku edi haayiga anipistundi?"),
-    ("rain2", "What's weighing on you today?", "ఈరోజు మీ మనసుపై బరువుగా ఉన్నది ఏది?", "Ee roju mee manasu meeda baruvuga unnadi edi?"),
-    ("rain3", "Who or what has felt kind to you lately?", "ఈ మధ్య మీ పట్ల దయగా అనిపించింది ఎవరు, లేదా ఏది?", "Ee madhya mee patla dayaga anipinchindi evaru, leda edi?"),
-    ("moonlight1", "What's helping you feel settled?", "మీరు స్థిరంగా ఉండటానికి ఏది సహాయపడుతోంది?", "Meeru sthiranga undadaaniki edi help chestondi?"),
-    ("moonlight2", "What made today feel softer?", "ఈరోజు ఏది హాయిగా అనిపించేలా చేసింది?", "Ee roju edi haayiga anipinchela chesindi?"),
-    ("moonlight3", "What would you like to keep from this moment?", "ఈ క్షణం నుంచి మీరు ఏం దాచుకోవాలనుకుంటున్నారు?", "Ee kshanam nunchi meeru em daachukovaalanukuntunnaru?"),
-    ("sunrise1", "What's lighting you up today?", "ఈరోజు మీలో ఉత్సాహం నింపుతున్నది ఏది?", "Ee roju meelo utsaaham nimputunnadi edi?"),
-    ("sunrise2", "What went well that you'd like to remember?", "బాగా జరిగిన ఏ విషయాన్ని మీరు గుర్తుంచుకోవాలనుకుంటున్నారు?", "Baaga jarigina e vishayaanni meeru gurtunchukovaalanukuntunnaru?"),
-    ("sunrise3", "Who would you like to share this with?", "దీన్ని మీరు ఎవరితో పంచుకోవాలనుకుంటున్నారు?", "Deenni meeru evaritho panchukovaalanukuntunnaru?"),
-    ("capsule1", "What do you want future you to know?", "భవిష్యత్తులోని మీకు మీరు ఏం తెలియజేయాలనుకుంటున్నారు?", "Future lo unna meeku meeru em teliyajeyaalanukuntunnaru?"),
-    ("capsule2", "What's helping you right now that you might forget?", "ఇప్పుడు మీకు సహాయపడుతున్న, తర్వాత మర్చిపోయే అవకాశం ఉన్న విషయం ఏది?", "Ippudu meeku help chestunna, tarvaata marchipoye avakaasham unna vishayam edi?"),
-    ("capsule3", "What would you say to yourself on a hard day?", "కష్టమైన రోజున మీకు మీరు ఏం చెప్పుకుంటారు?", "Kashtamaina roju na meeku meeru em cheppukuntaaru?"),
-    ("capsuleStorm", "What helps when everything feels like too much?", "అంతా ఎక్కువైపోయినట్టు అనిపించినప్పుడు ఏది సహాయపడుతుంది?", "Antaa ekkuvaipoyinattu anipinchinappudu edi help chestundi?"),
-    ("capsuleRain", "What would you want to hear on a heavy day?", "భారమైన రోజున మీరు ఏం వినాలనుకుంటారు?", "Bhaaramaina roju na meeru em vinaalanukuntaaru?"),
-    ("capsuleMoonlight", "What helps you find this calm again?", "ఈ ప్రశాంతతను మళ్ళీ పొందడానికి ఏది సహాయపడుతుంది?", "Ee prashaanthatanu malli pondadaaniki edi help chestundi?"),
-    ("capsuleSunrise", "What would you like to celebrate with future you?", "భవిష్యత్తులోని మీతో మీరు ఏ సంతోషాన్ని పంచుకోవాలనుకుంటున్నారు?", "Future lo unna meetho meeru e santoshaanni panchukovaalanukuntunnaru?"),
+for key, en, te, tl, hi, hl in [
+    ("note1", "What's one small thing that helped today?", "ఈరోజు కొంచెం సహాయపడిన ఒక చిన్న విషయం ఏది?", "Ee roju konchem help chesina oka chinna vishayam edi?", "आज किस छोटी चीज़ से थोड़ी मदद मिली?", "Aaj kis chhoti cheez se thodi madad mili?"),
+    ("note2", "What's on your mind right now?", "ఇప్పుడు మీ మనసులో ఏముంది?", "Ippudu mee manasulo emundi?", "अभी मन में क्या चल रहा है?", "Abhi mann mein kya chal raha hai?"),
+    ("note3", "What would you like to remember about today?", "ఈరోజు గురించి మీరు ఏం గుర్తుంచుకోవాలనుకుంటున్నారు?", "Ee roju gurinchi meeru em gurtunchukovaalanukuntunnaru?", "आज की कौन-सी बात याद रखने का मन है?", "Aaj ki kaun-si baat yaad rakhne ka mann hai?"),
+    ("storm1", "What's taking up the most room right now?", "ఇప్పుడు మీ మనసులో ఎక్కువ చోటు తీసుకుంటున్నది ఏది?", "Ippudu mee manasulo ekkuva chotu teesukuntunnadi edi?", "अभी मन में सबसे ज़्यादा जगह किस चीज़ ने घेरी है?", "Abhi mann mein sabse zyada jagah kis cheez ne gheri hai?"),
+    ("storm2", "If this feeling could speak, what would it say?", "ఈ భావన మాట్లాడగలిగితే, అది ఏం చెబుతుంది?", "Ee feeling maatlaadagaligite, adi em chebutundi?", "अगर यह एहसास बोल पाता, तो क्या कहता?", "Agar yeh ehsaas bol paata, to kya kehta?"),
+    ("storm3", "What's one thing you could set down, even for a minute?", "ఒక్క నిమిషమైనా పక్కన పెట్టగలిగే ఒక విషయం ఏది?", "Okka nimishamainaa pakkana pettagalige oka vishayam edi?", "ऐसी कौन-सी एक चीज़ है जिसे एक मिनट के लिए ही सही, किनारे रखा जा सके?", "Aisi kaun-si ek cheez hai jise ek minute ke liye hi sahi, kinaare rakha ja sake?"),
+    ("rain1", "What would feel gentle right now?", "ఇప్పుడు మీకు ఏది హాయిగా అనిపిస్తుంది?", "Ippudu meeku edi haayiga anipistundi?", "अभी क्या सुकून भरा लगेगा?", "Abhi kya sukoon bhara lagega?"),
+    ("rain2", "What's weighing on you today?", "ఈరోజు మీ మనసుపై బరువుగా ఉన్నది ఏది?", "Ee roju mee manasu meeda baruvuga unnadi edi?", "आज मन पर क्या भारी है?", "Aaj mann par kya bhaari hai?"),
+    ("rain3", "Who or what has felt kind to you lately?", "ఈ మధ్య మీ పట్ల దయగా అనిపించింది ఎవరు, లేదా ఏది?", "Ee madhya mee patla dayaga anipinchindi evaru, leda edi?", "हाल में किसकी या किस चीज़ की नरमी महसूस हुई?", "Haal mein kiski ya kis cheez ki narmi mehsoos hui?"),
+    ("moonlight1", "What's helping you feel settled?", "మీరు స్థిరంగా ఉండటానికి ఏది సహాయపడుతోంది?", "Meeru sthiranga undadaaniki edi help chestondi?", "किस चीज़ से मन ठहरा हुआ लग रहा है?", "Kis cheez se mann thehra hua lag raha hai?"),
+    ("moonlight2", "What made today feel softer?", "ఈరోజు ఏది హాయిగా అనిపించేలా చేసింది?", "Ee roju edi haayiga anipinchela chesindi?", "आज किस चीज़ ने दिन को थोड़ा नरम बनाया?", "Aaj kis cheez ne din ko thoda naram banaya?"),
+    ("moonlight3", "What would you like to keep from this moment?", "ఈ క్షణం నుంచి మీరు ఏం దాచుకోవాలనుకుంటున్నారు?", "Ee kshanam nunchi meeru em daachukovaalanukuntunnaru?", "इस पल से क्या अपने साथ रखने का मन है?", "Is pal se kya apne saath rakhne ka mann hai?"),
+    ("sunrise1", "What's lighting you up today?", "ఈరోజు మీలో ఉత్సాహం నింపుతున్నది ఏది?", "Ee roju meelo utsaaham nimputunnadi edi?", "आज किस चीज़ से मन खिल रहा है?", "Aaj kis cheez se mann khil raha hai?"),
+    ("sunrise2", "What went well that you'd like to remember?", "బాగా జరిగిన ఏ విషయాన్ని మీరు గుర్తుంచుకోవాలనుకుంటున్నారు?", "Baaga jarigina e vishayaanni meeru gurtunchukovaalanukuntunnaru?", "क्या अच्छा रहा, जिसे याद रखने का मन है?", "Kya achha raha, jise yaad rakhne ka mann hai?"),
+    ("sunrise3", "Who would you like to share this with?", "దీన్ని మీరు ఎవరితో పంచుకోవాలనుకుంటున్నారు?", "Deenni meeru evaritho panchukovaalanukuntunnaru?", "यह किसके साथ बाँटने का मन है?", "Yeh kiske saath baantne ka mann hai?"),
+    ("capsule1", "What do you want future you to know?", "భవిష్యత్తులోని మీకు మీరు ఏం తెలియజేయాలనుకుంటున్నారు?", "Future lo unna meeku meeru em teliyajeyaalanukuntunnaru?", "भविष्य के आप तक कौन-सी बात पहुँचानी है?", "Future you tak kaun-si baat pahunchaani hai?"),
+    ("capsule2", "What's helping you right now that you might forget?", "ఇప్పుడు మీకు సహాయపడుతున్న, తర్వాత మర్చిపోయే అవకాశం ఉన్న విషయం ఏది?", "Ippudu meeku help chestunna, tarvaata marchipoye avakaasham unna vishayam edi?", "अभी किस चीज़ से मदद मिल रही है, जो शायद बाद में याद न रहे?", "Abhi kis cheez se madad mil rahi hai, jo shayad baad mein yaad na rahe?"),
+    ("capsule3", "What would you say to yourself on a hard day?", "కష్టమైన రోజున మీకు మీరు ఏం చెప్పుకుంటారు?", "Kashtamaina roju na meeku meeru em cheppukuntaaru?", "मुश्किल दिन पर ख़ुद से क्या कहना है?", "Mushkil din par khud se kya kehna hai?"),
+    ("capsuleStorm", "What helps when everything feels like too much?", "అంతా ఎక్కువైపోయినట్టు అనిపించినప్పుడు ఏది సహాయపడుతుంది?", "Antaa ekkuvaipoyinattu anipinchinappudu edi help chestundi?", "जब सब कुछ बहुत ज़्यादा लगे, तब किस चीज़ से मदद मिलती है?", "Jab sab kuch bahut zyada lage, tab kis cheez se madad milti hai?"),
+    ("capsuleRain", "What would you want to hear on a heavy day?", "భారమైన రోజున మీరు ఏం వినాలనుకుంటారు?", "Bhaaramaina roju na meeru em vinaalanukuntaaru?", "भारी दिन पर क्या सुनने का मन होगा?", "Bhaari din par kya sunne ka mann hoga?"),
+    ("capsuleMoonlight", "What helps you find this calm again?", "ఈ ప్రశాంతతను మళ్ళీ పొందడానికి ఏది సహాయపడుతుంది?", "Ee prashaanthatanu malli pondadaaniki edi help chestundi?", "यह सुकून फिर से पाने में किस चीज़ से मदद मिलती है?", "Yeh sukoon phir se paane mein kis cheez se madad milti hai?"),
+    ("capsuleSunrise", "What would you like to celebrate with future you?", "భవిష్యత్తులోని మీతో మీరు ఏ సంతోషాన్ని పంచుకోవాలనుకుంటున్నారు?", "Future lo unna meetho meeru e santoshaanni panchukovaalanukuntunnaru?", "भविष्य के आप के साथ किस बात का जश्न मनाने का मन है?", "Future you ke saath kis baat ka jashn manaane ka mann hai?"),
 ]:
-    s(f"prompt_{key}", en, "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.", te, tl)
+    s(f"prompt_{key}", en, "Guided writing prompt, shown only as the empty field's hint (optional, skippable). Warm, open, never a 'why'.", te, tl, hi=hi, hl=hl)
 
-s("prompt_another", "Another prompt", "Shows a different guided prompt in the empty note (the prompt is only a hint, never saved).", "ఇంకో ప్రశ్న", "Inko prashna")
-s("prompt_settingsTitle", "Writing prompts", "Settings switch: show a gentle guided prompt in the empty note field.", "రాయడానికి సూచనలు", "Raayadaaniki prompts")
-s("prompt_settingsBody", "A gentle question in the empty note. Never saved.", "Under the Settings switch for guided prompts.", "ఖాళీ నోట్‌లో ఒక మృదువైన ప్రశ్న. ఇది ఎప్పుడూ సేవ్ అవ్వదు.", "Khaali note lo oka gentle prashna. Idi eppudu save avvadu.")
+s("prompt_another", "Another prompt", "Shows a different guided prompt in the empty note (the prompt is only a hint, never saved).", "ఇంకో ప్రశ్న", "Inko prashna", hi="कोई और सवाल", hl="Koi aur sawaal")
+s("prompt_settingsTitle", "Writing prompts", "Settings switch: show a gentle guided prompt in the empty note field.", "రాయడానికి సూచనలు", "Raayadaaniki prompts", hi="लिखने के लिए सवाल", hl="Writing prompts")
+s("prompt_settingsBody", "A gentle question in the empty note. Never saved.", "Under the Settings switch for guided prompts.", "ఖాళీ నోట్‌లో ఒక మృదువైన ప్రశ్న. ఇది ఎప్పుడూ సేవ్ అవ్వదు.", "Khaali note lo oka gentle prashna. Idi eppudu save avvadu.", hi="खाली नोट में एक हल्का-सा सवाल। कभी सेव नहीं होता।", hl="Khaali note mein ek halka-sa sawaal. Kabhi save nahi hota.")
 
 # ---- Backfill (F1: up to 7 days back; earns nothing) -----------------------------
-s("backfill_add", "Add a past check-in", "History button: add a check-in for one of the last 7 days.", "గత చెక్-ఇన్ జోడించండి", "Past check-in add cheyandi")
-s("backfill_pickTitle", "Which day?", "Title of the day picker for a past check-in.", "ఏ రోజు?", "Ye roju?")
-s("backfill_pickBody", "{count, plural, =1{You can add a check-in for yesterday.} other{You can add a check-in for any of the last {count} days.}}", "Under the day picker title.", "{count, plural, =1{నిన్నటి కోసం చెక్-ఇన్ జోడించవచ్చు.} other{గత {count} రోజుల్లో ఏ రోజుకైనా చెక్-ఇన్ జోడించవచ్చు.}}", "{count, plural, =1{Ninnati kosam check-in add cheyochu.} other{Gata {count} rojullo ye roju kainaa check-in add cheyochu.}}", INT("count"))
-s("backfill_title", "How were you feeling?", "Title of the check-in picker for a past day.", "అప్పుడు మీకు ఎలా అనిపించింది?", "Appudu meeku ela anipinchindi?")
-s("backfill_forDay", "Check-in for {day}", "Screen-reader label of the day chip on a past check-in, e.g. 'Check-in for Tuesday, October 6'. Tapping it changes the day.", "{day} కోసం చెక్-ఇన్", "{day} kosam check-in", STR("day"))
-s("backfill_changeDay", "Change day", "Screen-reader hint on the day of a past check-in.", "రోజు మార్చండి", "Roju maarchandi")
-s("backfill_outOfRange", "Past check-ins can go up to a week back. Could you pick another day?", "When the picked day has moved out of the 7-day window (e.g. past 04:00). The selection is kept.", "గత చెక్-ఇన్‌లు ఒక వారం వెనక్కి వరకే జోడించగలం. వేరే రోజు ఎంచుకుంటారా?", "Past check-ins oka vaaram venakki varake add cheyagalam. Vere roju select chesukuntaara?")
-s("backfill_savedTitle", "Added to your sky", "After saving a check-in for a past day (PRD 06d edge case).", "మీ ఆకాశంలో చేరింది", "Mee aakaasham lo cherindi")
-s("backfill_savedDay", "Saved for {day}.", "Under 'Added to your sky': the day it was saved for, e.g. 'Saved for Tuesday, October 6.'", "{day} కోసం సేవ్ అయింది.", "{day} kosam save ayyindi.", STR("day"))
-s("backfill_savedBody", "Starlight comes from check-ins made on the day itself.", "After saving a past check-in: why no Starlight shows (PRD F1: backfills earn nothing). Calm, no loss words.", "Starlight ఆ రోజే చేసిన చెక్-ఇన్‌ల నుంచి వస్తుంది.", "Starlight aa roje chesina check-ins nunchi vastundi.")
-s("history_addedLater", "Added later", "Shown instead of the time on a check-in that was added for a past day.", "తర్వాత జోడించింది", "Tarvaata add chesindi")
-s("history_whenAddedLater", "{day} · added later", "When a past-day check-in is for, on its page, e.g. 'Yesterday · added later'.", "{day} · తర్వాత జోడించింది", "{day} · tarvaata add chesindi", STR("day"))
+s("backfill_add", "Add a past check-in", "History button: add a check-in for one of the last 7 days.", "గత చెక్-ఇన్ జోడించండి", "Past check-in add cheyandi", hi="पिछला चेक-इन जोड़ें", hl="Pichhla check-in add karein")
+s("backfill_pickTitle", "Which day?", "Title of the day picker for a past check-in.", "ఏ రోజు?", "Ye roju?", hi="कौन-सा दिन?", hl="Kaun-sa din?")
+s("backfill_pickBody", "{count, plural, =1{You can add a check-in for yesterday.} other{You can add a check-in for any of the last {count} days.}}", "Under the day picker title.", "{count, plural, =1{నిన్నటి కోసం చెక్-ఇన్ జోడించవచ్చు.} other{గత {count} రోజుల్లో ఏ రోజుకైనా చెక్-ఇన్ జోడించవచ్చు.}}", "{count, plural, =1{Ninnati kosam check-in add cheyochu.} other{Gata {count} rojullo ye roju kainaa check-in add cheyochu.}}", INT("count"), hi="{count, plural, =1{कल के लिए चेक-इन जोड़ा जा सकता है।} other{पिछले {count} दिनों में से किसी भी दिन का चेक-इन जोड़ा जा सकता है।}}", hl="{count, plural, =1{Kal ke liye check-in add kiya ja sakta hai.} other{Pichhle {count} dinon mein se kisi bhi din ka check-in add kiya ja sakta hai.}}")
+s("backfill_title", "How were you feeling?", "Title of the check-in picker for a past day.", "అప్పుడు మీకు ఎలా అనిపించింది?", "Appudu meeku ela anipinchindi?", hi="उस दिन कैसा लग रहा था?", hl="Us din kaisa lag raha tha?")
+s("backfill_forDay", "Check-in for {day}", "Screen-reader label of the day chip on a past check-in, e.g. 'Check-in for Tuesday, October 6'. Tapping it changes the day.", "{day} కోసం చెక్-ఇన్", "{day} kosam check-in", STR("day"), hi="{day} का चेक-इन", hl="{day} ka check-in")
+s("backfill_changeDay", "Change day", "Screen-reader hint on the day of a past check-in.", "రోజు మార్చండి", "Roju maarchandi", hi="दिन बदलें", hl="Din badlein")
+s("backfill_outOfRange", "Past check-ins can go up to a week back. Could you pick another day?", "When the picked day has moved out of the 7-day window (e.g. past 04:00). The selection is kept.", "గత చెక్-ఇన్‌లు ఒక వారం వెనక్కి వరకే జోడించగలం. వేరే రోజు ఎంచుకుంటారా?", "Past check-ins oka vaaram venakki varake add cheyagalam. Vere roju select chesukuntaara?", hi="पिछले चेक-इन सिर्फ़ एक हफ़्ते पीछे तक जोड़े जा सकते हैं। कोई और दिन चुनें?", hl="Pichhle check-in sirf ek hafte peeche tak add kiye ja sakte hain. Koi aur din chunein?")
+s("backfill_savedTitle", "Added to your sky", "After saving a check-in for a past day (PRD 06d edge case).", "మీ ఆకాశంలో చేరింది", "Mee aakaasham lo cherindi", hi="आपके आसमान में जुड़ गया", hl="Aapke aasmaan mein jud gaya")
+s("backfill_savedDay", "Saved for {day}.", "Under 'Added to your sky': the day it was saved for, e.g. 'Saved for Tuesday, October 6.'", "{day} కోసం సేవ్ అయింది.", "{day} kosam save ayyindi.", STR("day"), hi="{day} के लिए सेव हो गया।", hl="{day} ke liye save ho gaya.")
+s("backfill_savedBody", "Starlight comes from check-ins made on the day itself.", "After saving a past check-in: why no Starlight shows (PRD F1: backfills earn nothing). Calm, no loss words.", "Starlight ఆ రోజే చేసిన చెక్-ఇన్‌ల నుంచి వస్తుంది.", "Starlight aa roje chesina check-ins nunchi vastundi.", hi="Starlight उसी दिन किए गए चेक-इन से मिलता है।", hl="Starlight usi din kiye gaye check-in se milta hai.")
+s("history_addedLater", "Added later", "Shown instead of the time on a check-in that was added for a past day.", "తర్వాత జోడించింది", "Tarvaata add chesindi", hi="बाद में जोड़ा गया", hl="Baad mein joda gaya")
+s("history_whenAddedLater", "{day} · added later", "When a past-day check-in is for, on its page, e.g. 'Yesterday · added later'.", "{day} · తర్వాత జోడించింది", "{day} · tarvaata add chesindi", STR("day"), hi="{day} · बाद में जोड़ा गया", hl="{day} · baad mein joda gaya")

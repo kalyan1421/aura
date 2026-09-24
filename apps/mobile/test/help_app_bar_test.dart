@@ -339,6 +339,11 @@ void main() {
       'assets/fonts/NotoSansTelugu-Medium.ttf',
       'assets/fonts/NotoSansTelugu-SemiBold.ttf',
     ]);
+    await _loadFont(AuraFonts.devanagari, const [
+      'assets/fonts/NotoSansDevanagari-Regular.ttf',
+      'assets/fonts/NotoSansDevanagari-Medium.ttf',
+      'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+    ]);
   });
 
   const phone = Size(390, 844);
@@ -351,6 +356,8 @@ void main() {
       ('en', 2.0),
       ('te-Latn', 2.0),
       ('te', 2.0),
+      ('hi', 2.0),
+      ('hi-Latn', 2.0),
     ]) {
       testWidgets('${screen.name}, 390 dp, $tag, ${scale}x: help fits where '
           'it sits, whole, first three focus stops', (tester) async {

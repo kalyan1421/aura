@@ -47,9 +47,8 @@ void main() {
 
   group('the bundled manifest', () {
     test('is the contract file, unchanged', () {
-      final contract = File(
-        '../../contracts/sounds/stems.v1.json',
-      ).readAsStringSync();
+      final contract = File('../../contracts/sounds/stems.v1.json')
+          .readAsStringSync();
       expect(jsonDecode(bundledStemManifestJson), jsonDecode(contract));
     });
 
@@ -91,18 +90,29 @@ void main() {
       expect(brown.generatedSource, StemGenerator.brownNoise);
     });
 
-    test('every title key is translated (en, te, te-Latn)', () {
+    test('every title key is translated (en, te, te-Latn, hi, hi-Latn)', () {
       final en = lookupAppLocalizations(const Locale('en'));
       final te = lookupAppLocalizations(const Locale('te'));
       final tl = lookupAppLocalizations(localeFromTag('te-Latn'));
+      final hi = lookupAppLocalizations(const Locale('hi'));
+      final hl = lookupAppLocalizations(localeFromTag('hi-Latn'));
       for (final s in StemManifest.bundled.stems) {
-        expect(stemTitleForKey(en, s.titleKey), isNotNull, reason: s.id);
-        expect(stemTitleForKey(te, s.titleKey), isNotNull, reason: s.id);
-        expect(stemTitleForKey(tl, s.titleKey), isNotNull, reason: s.id);
+        for (final l in [en, te, tl, hi, hl]) {
+          expect(
+            stemTitleForKey(l, s.titleKey),
+            isNotNull,
+            reason: '${s.id} ${l.localeName}',
+          );
+        }
         expect(
           stemTitleForKey(te, s.titleKey),
           isNot(stemTitleForKey(en, s.titleKey)),
           reason: '${s.id} has no Telugu name',
+        );
+        expect(
+          stemTitleForKey(hi, s.titleKey),
+          isNot(stemTitleForKey(en, s.titleKey)),
+          reason: '${s.id} has no Hindi name',
         );
       }
     });
@@ -160,10 +170,7 @@ void main() {
         throwsFormatException,
       );
       expect(() => StemManifest.parse('[]'), throwsFormatException);
-      expect(
-        () => StemManifest.parse('{"version": 1}'),
-        throwsFormatException,
-      );
+      expect(() => StemManifest.parse('{"version": 1}'), throwsFormatException);
       expect(() => StemManifest.parse('not json'), throwsFormatException);
     });
 

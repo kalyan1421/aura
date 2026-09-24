@@ -60,6 +60,11 @@ void main() {
       'assets/fonts/NotoSansTelugu-Medium.ttf',
       'assets/fonts/NotoSansTelugu-SemiBold.ttf',
     ]);
+    await load('NotoSansDevanagari', const [
+      'assets/fonts/NotoSansDevanagari-Regular.ttf',
+      'assets/fonts/NotoSansDevanagari-Medium.ttf',
+      'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+    ]);
   });
 
   const phones = [
@@ -68,7 +73,7 @@ void main() {
     // iPhone 16 Pro (Dynamic Island).
     (name: '402×874', size: Size(402, 874), top: 62.0),
   ];
-  const tags = ['te-Latn', 'te', 'en'];
+  const tags = ['te-Latn', 'te', 'en', 'hi', 'hi-Latn'];
 
   Future<void> pumpPicker(
     WidgetTester tester, {

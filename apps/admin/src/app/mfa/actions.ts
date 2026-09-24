@@ -2,9 +2,10 @@
 
 import { redirect } from 'next/navigation';
 import { field, type ActionResult } from '@/lib/actions';
-import { apiPost } from '@/lib/api';
+import { apiGet, apiPost } from '@/lib/api';
 import { enrollTotp, listFactors, verifyTotp } from '@/lib/gotrue';
 import { readSession, writeSession } from '@/lib/session';
+import type { SessionInfo } from '@/lib/types';
 
 export type EnrollState = { ok: boolean; message: string; qr?: string; secret?: string } | null;
 
@@ -12,6 +13,12 @@ export type EnrollState = { ok: boolean; message: string; qr?: string; secret?: 
 export async function startEnroll(_prev: EnrollState, _fd: FormData): Promise<EnrollState> {
   const s = await readSession();
   if (!s?.at || s.stage !== 'aal1') redirect('/login');
+  // SR-6 (docs/security/milestone-b-review.md): a server action is callable directly, whatever the page shows. Only an
+  // account with no verified TOTP factor may enroll one; otherwise someone holding just the first factor could add
+  // their own authenticator and reach AAL2. GoTrue refuses that too (`insufficient_aal`); this keeps it true here.
+  const info = await apiGet<SessionInfo>('/admin/session', s.at).catch(() => null);
+  if (!info) redirect('/login?reason=session_expired');
+  if (info.mfa !== 'enroll') return { ok: false, message: 'Your authenticator is already set up. Enter a code from it instead.' };
   const f = await enrollTotp(s.at).catch(() => null);
   if (!f) return { ok: false, message: 'Could not start the set-up. Try again, or sign in again.' };
   await writeSession({ ...s, factorId: f.factorId });

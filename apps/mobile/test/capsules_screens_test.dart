@@ -725,88 +725,100 @@ void main() {
     );
   });
 
-  group('200% text in Telugu', () {
-    Future<void> check(WidgetTester tester, Widget screen) async {
-      await pump(tester, screen, locale: 'te', textScale: 2);
-      await settleIo(tester);
-      await tester.pump(const Duration(milliseconds: 350));
-      expect(tester.takeException(), isNull);
-    }
+  for (final locale in ['te', 'hi']) {
+    group(
+      '200% text in ${locale == 'te' ? 'Telugu' : 'Hindi (Devanagari)'}',
+      () {
+        Future<void> check(WidgetTester tester, Widget screen) async {
+          await pump(tester, screen, locale: locale, textScale: 2);
+          await settleIo(tester);
+          await tester.pump(const Duration(milliseconds: 350));
+          expect(tester.takeException(), isNull);
+        }
 
-    capsuleWidgets('the list', (tester) async {
-      await sealDate(tester);
-      await sealDate(
-        tester,
-        id: 'due',
-        date: '2026-10-08',
-        at: DateTime.utc(2026, 9, 1),
-      );
-      await io(
-        tester,
-        () => seeder().seal(
-          id: 'm1',
-          content: const CapsuleContent(text: 'x'),
-          unlock: const MoodUnlock.quadrant(Quadrant.rain),
-        ),
-      );
-      await check(tester, const CapsulesListScreen());
-    });
+        capsuleWidgets('the list', (tester) async {
+          await sealDate(tester);
+          await sealDate(
+            tester,
+            id: 'due',
+            date: '2026-10-08',
+            at: DateTime.utc(2026, 9, 1),
+          );
+          await io(
+            tester,
+            () => seeder().seal(
+              id: 'm1',
+              content: const CapsuleContent(text: 'x'),
+              unlock: const MoodUnlock.quadrant(Quadrant.rain),
+            ),
+          );
+          await check(tester, const CapsulesListScreen());
+        });
 
-    capsuleWidgets('the empty list', (tester) async {
-      await check(tester, const CapsulesListScreen());
-    });
+        capsuleWidgets('the empty list', (tester) async {
+          await check(tester, const CapsulesListScreen());
+        });
 
-    capsuleWidgets('the composer, with the feeling picker open', (
-      tester,
-    ) async {
-      await check(tester, const CapsuleComposerScreen());
-      await show(tester, 'capsule-unlock-feeling');
-      await tester.tap(find.byKey(const ValueKey('capsule-unlock-feeling')));
-      await settleIo(tester, rounds: 3);
-      await tester.drag(find.byType(ListView).first, const Offset(0, -2000));
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-    });
+        capsuleWidgets('the composer, with the feeling picker open', (
+          tester,
+        ) async {
+          await check(tester, const CapsuleComposerScreen());
+          await show(tester, 'capsule-unlock-feeling');
+          await tester.tap(
+            find.byKey(const ValueKey('capsule-unlock-feeling')),
+          );
+          await settleIo(tester, rounds: 3);
+          await tester.drag(
+            find.byType(ListView).first,
+            const Offset(0, -2000),
+          );
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+        });
 
-    capsuleWidgets('a sealed capsule\'s page', (tester) async {
-      await sealDate(tester);
-      await check(tester, const CapsuleDetailScreen(id: 'd1'));
-    });
+        capsuleWidgets('a sealed capsule\'s page', (tester) async {
+          await sealDate(tester);
+          await check(tester, const CapsuleDetailScreen(id: 'd1'));
+        });
 
-    capsuleWidgets('an opened capsule', (tester) async {
-      await sealDate(
-        tester,
-        id: 'due',
-        date: '2026-10-08',
-        at: DateTime.utc(2026, 9, 1),
-      );
-      await check(tester, const CapsuleOpeningScreen(id: 'due'));
-      expect(find.text('secret words'), findsOneWidget);
-    });
+        capsuleWidgets('an opened capsule', (tester) async {
+          await sealDate(
+            tester,
+            id: 'due',
+            date: '2026-10-08',
+            at: DateTime.utc(2026, 9, 1),
+          );
+          await check(tester, const CapsuleOpeningScreen(id: 'due'));
+          expect(find.text('secret words'), findsOneWidget);
+        });
 
-    capsuleWidgets('Home card and Sanctuary entry', (tester) async {
-      await sealDate(
-        tester,
-        id: 'due',
-        date: '2026-10-08',
-        at: DateTime.utc(2026, 9, 1),
-      );
-      await sealDate(
-        tester,
-        id: 'due2',
-        date: '2026-10-08',
-        at: DateTime.utc(2026, 9, 1),
-      );
-      await check(
-        tester,
-        const Scaffold(
-          body: SingleChildScrollView(
-            child: Column(children: [CapsuleReadyCard(), CapsulesEntryTile()]),
-          ),
-        ),
-      );
-    });
-  });
+        capsuleWidgets('Home card and Sanctuary entry', (tester) async {
+          await sealDate(
+            tester,
+            id: 'due',
+            date: '2026-10-08',
+            at: DateTime.utc(2026, 9, 1),
+          );
+          await sealDate(
+            tester,
+            id: 'due2',
+            date: '2026-10-08',
+            at: DateTime.utc(2026, 9, 1),
+          );
+          await check(
+            tester,
+            const Scaffold(
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [CapsuleReadyCard(), CapsulesEntryTile()],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
 }
 
 /// A small JPEG with EXIF and GPS, like the picker's output.

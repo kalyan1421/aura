@@ -27,6 +27,7 @@ class ProbeController {
 class FakeVerifier {
   async verify(token: string): Promise<AuthUser> {
     if (token === 'good') return USER;
+    if (token === 'guest') return { ...USER, isAnonymous: true };
     throw new InvalidTokenError('nope');
   }
 }
@@ -59,6 +60,11 @@ describe('AuthGuard (global) + error shape', () => {
     await request(app.getHttpServer()).get('/me').set('Authorization', 'Basic good').expect(401);
     const r = await request(app.getHttpServer()).get('/me').set('Authorization', 'Bearer bad').expect(401);
     expect(r.body.code).toBe('unauthorized');
+  });
+
+  it('SR-5: refuses a valid but anonymous Supabase session (401 anonymous_session), even on a normal route', async () => {
+    const r = await request(app.getHttpServer()).get('/me').set('Authorization', 'Bearer guest').expect(401);
+    expect(r.body).toEqual({ code: 'anonymous_session', message: expect.any(String) });
   });
 
   it('exposes the verified user via @CurrentUser()', () =>

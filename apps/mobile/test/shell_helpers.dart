@@ -35,6 +35,11 @@ Future<void> loadRealFonts() async {
     'assets/fonts/NotoSansTelugu-Medium.ttf',
     'assets/fonts/NotoSansTelugu-SemiBold.ttf',
   ]);
+  await load(AuraFonts.devanagari, const [
+    'assets/fonts/NotoSansDevanagari-Regular.ttf',
+    'assets/fonts/NotoSansDevanagari-Medium.ttf',
+    'assets/fonts/NotoSansDevanagari-SemiBold.ttf',
+  ]);
 }
 
 List<String> _robotoFiles() {
