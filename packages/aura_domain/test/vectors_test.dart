@@ -179,6 +179,13 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
       });
     }
   },
+  // RULES.md §10 (F10 Insights). One file, several pure rules by `kind`.
+  'insights.json': (json) {
+    for (final c in _cases(json)) {
+      final kind = c['kind'] as String;
+      test('$kind: ${c['name']}', () => _runInsightsCase(kind, c));
+    }
+  },
 };
 
 DateTime? _tsOrNull(Object? s) => s == null ? null : _ts(s);
@@ -205,6 +212,152 @@ TriggerCheckIn _triggerCheckIn(Map<String, dynamic> j) => TriggerCheckIn(
   live: j['live'] as bool,
   crisis: j['crisis'] as bool,
 );
+
+// ---- insights.json (RULES.md §10) --------------------------------------------
+
+InsightCheckIn _insightCheckIn(Map<String, dynamic> j) => InsightCheckIn(
+  localDay: LocalDay.parse(j['localDay'] as String),
+  quadrant: quadrantByName(j['quadrant'] as String)!,
+  tags: ((j['tags'] as List<dynamic>?) ?? const []).cast<String>(),
+  deviceTs: _tsOrNull(j['deviceTs']),
+  tzOffsetMinutes: j['tzOffsetMinutes'] as int?,
+);
+
+List<InsightCheckIn> _insightCheckIns(Object? list) =>
+    (list as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .map(_insightCheckIn)
+        .toList();
+
+List<InsightHabitLog> _insightHabitLogs(Object? list) =>
+    (list as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .map(
+          (j) => InsightHabitLog(
+            habitId: j['habitId'] as String,
+            localDay: LocalDay.parse(j['localDay'] as String),
+          ),
+        )
+        .toList();
+
+const Map<PatternKind, String> _patternKindWire = {
+  PatternKind.tagQuadrant: 'tag_quadrant',
+  PatternKind.habitQuadrant: 'habit_quadrant',
+  PatternKind.timeOfDay: 'time_of_day',
+  PatternKind.quadrantMix: 'quadrant_mix',
+};
+
+Map<String, Object?>? _patternWire(InsightPattern? p) => p == null
+    ? null
+    : {
+        'kind': _patternKindWire[p.kind],
+        'quadrant': p.quadrant.name,
+        'key': p.key,
+      };
+
+const Map<PatternGateStatus, String> _gateWire = {
+  PatternGateStatus.ok: 'ok',
+  PatternGateStatus.needCheckIns: 'need_checkins',
+  PatternGateStatus.needDays: 'need_days',
+};
+
+LocalDay _todayOf(Map<String, dynamic> c) =>
+    auraDay(_ts(c['now']), c['tz'] as String);
+
+void _runInsightsCase(String kind, Map<String, dynamic> c) {
+  final want = c['expect'];
+  switch (kind) {
+    case 'part':
+      final ci = _insightCheckIn(c['checkIn'] as Map<String, dynamic>);
+      expect({'live': ci.isLive, 'part': ci.part?.name}, want);
+    case 'day_star':
+      final star = dayStar(
+        (c['quadrants'] as List<dynamic>).map(
+          (q) => quadrantByName(q as String)!,
+        ),
+        rest: c['rest'] as bool,
+      );
+      expect({
+        'star': star.kind.name,
+        'quadrants': [for (final q in star.quadrants) q.name],
+      }, want);
+    case 'rest_days':
+      expect(
+        restDays(
+          (c['days'] as List<dynamic>).map((d) => LocalDay.parse(d as String)),
+        ).map((d) => d.toIso()).toList(),
+        want,
+      );
+    case 'week':
+      final w = weeklyWindow(
+        _todayOf(c),
+        weekStartsOn: c['weekStartsOn'] as int? ?? DateTime.monday,
+      );
+      expect({
+        'today': w.today.toIso(),
+        'weekStart': w.weekStart.toIso(),
+        'from': w.range.from.toIso(),
+        'to': w.range.to.toIso(),
+      }, want);
+    case 'month':
+      final m = monthWindow(_todayOf(c));
+      expect({
+        'today': m.today.toIso(),
+        'monthStart': m.monthStart.toIso(),
+        'from': m.range.from.toIso(),
+        'to': m.range.to.toIso(),
+      }, want);
+    case 'gate':
+      final g = patternGate(
+        _insightCheckIns(c['checkIns']),
+        DayRange(
+          LocalDay.parse(c['from'] as String),
+          LocalDay.parse(c['to'] as String),
+        ),
+      );
+      expect({
+        'status': _gateWire[g.status],
+        'checkIns': g.checkIns,
+        'days': g.days,
+      }, want);
+    case 'patterns':
+      final ps = findPatterns(
+        checkIns: _insightCheckIns(c['checkIns']),
+        habitLogs: _insightHabitLogs(c['habitLogs']),
+        range: DayRange(
+          LocalDay.parse(c['from'] as String),
+          LocalDay.parse(c['to'] as String),
+        ),
+        includeHabits: c['includeHabits'] as bool,
+      );
+      expect(ps.map(_patternWire).toList(), want);
+    case 'weekly':
+      final p = weeklyInsight(
+        checkIns: _insightCheckIns(c['checkIns']),
+        habitLogs: _insightHabitLogs(c['habitLogs']),
+        today: _todayOf(c),
+        weekStartsOn: c['weekStartsOn'] as int? ?? DateTime.monday,
+        includeHabits: c['includeHabits'] as bool,
+      );
+      expect(_patternWire(p), want);
+    case 'month_recap':
+      final r = monthRecap(_insightCheckIns(c['checkIns']), _todayOf(c));
+      expect({
+        'month': r.month,
+        'from': r.range.from.toIso(),
+        'to': r.range.to.toIso(),
+        'checkIns': r.checkIns,
+        'daysCheckedIn': r.daysCheckedIn,
+        'quadrantCounts': {
+          for (final e in r.quadrantCounts.entries) e.key.name: e.value,
+        },
+      }, want);
+    case 'care':
+      expect(showCareCard(_insightCheckIns(c['checkIns']), _todayOf(c)), want);
+    default:
+      fail('Unknown insights.json case kind "$kind"');
+  }
+}
 
 void main() {
   final files =

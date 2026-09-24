@@ -386,6 +386,47 @@ export interface LexiconDiff {
 
 export type LexiconVerdict = 'none' | 'soft' | 'crisis';
 
+/** Crisis helpline directory versions (contracts/api/v1.md "Helpline directory versions"; src/remote-config). */
+export interface HelplinesOverview {
+  kind: string;
+  live: { version: number; seq: number; keyId: string; publishedAt: string; publishedBy: string } | null;
+  bundledVersion: number;
+  /** Regions every version must keep (the ones app builds bundle). */
+  requiredCountries: string[];
+  signing: { available: boolean; keyId: string | null; devKey: boolean; offReason: string | null };
+  /** `entries` = lines, summed over regions. */
+  versions: LexiconVersionSummary[];
+  history: Array<{ id: number; createdAt: string; actor: string; action: string; reasonCode: string | null; detail: Record<string, unknown> }>;
+}
+
+export interface HelplineLine {
+  id: string;
+  number: string;
+  dial: string;
+  audience: 'everyone' | 'minors';
+  names: Record<string, string>;
+}
+
+export interface HelplinesVersion {
+  version: number;
+  contentSha256: string;
+  helplines: { name: string; version: number; verifiedOn?: string; countries: Record<string, HelplineLine[]>; [key: string]: unknown };
+  /** What the app lists per region (adult / minor), plus an unlisted region (nothing: the generic card). */
+  vectors: Array<{ country: string; minor: boolean; dials: string[] }>;
+  note: string | null;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface HelplinesDiff {
+  from: number | null;
+  added: string[];
+  removed: string[];
+  changed: string[];
+  countriesRemoved: string[];
+  numbersRemoved: number;
+}
+
 /** Device bans (contracts/api/v1.md "Device bans"; src/devices). A device id is the install HMAC, never a raw id. */
 export interface ReportDevices {
   reportId: string;

@@ -15,6 +15,7 @@ import type { Tx } from '../db/db';
 import { DbService } from '../db/db.service';
 import { voiceObjectPath } from '../media/media-paths';
 import { NotificationPrefsSyncHandler } from '../notifications/notification-prefs';
+import { PoolWaitlistSyncHandler } from '../notifications/pool-waitlist';
 import { ProfileService } from '../profile/profile.service';
 import type { Snapshot } from '../progression/snapshot';
 import { ProgressionService } from '../progression/progression.service';
@@ -108,6 +109,8 @@ export class SyncService {
      * rule as `capsules`: without it (hand-built unit tests) the entity is `unknown_entity`.
      */
     @Inject(NotificationPrefsSyncHandler) private readonly notificationPrefs?: NotificationPrefsSyncHandler,
+    /** F5 entity `room_pool_waitlist` ("Tell me when they open"), from NotificationsModule. Same injection rule. */
+    @Inject(PoolWaitlistSyncHandler) private readonly poolWaitlist?: PoolWaitlistSyncHandler,
   ) {}
 
   async push(userId: string, body: unknown, now = new Date()): Promise<PushResponse> {
@@ -238,6 +241,10 @@ export class SyncService {
       case 'notification_prefs:upsert':
         if (!this.notificationPrefs) return reject('unknown_entity');
         return this.notificationPrefs.apply(ctx, m);
+      case 'room_pool_waitlist:upsert':
+      case 'room_pool_waitlist:delete':
+        if (!this.poolWaitlist) return reject('unknown_entity');
+        return this.poolWaitlist.apply(ctx, m);
       default:
         return reject('unknown_op'); // a valid op the entity doesn't support (e.g. capsule:upsert, check_in:seal)
     }

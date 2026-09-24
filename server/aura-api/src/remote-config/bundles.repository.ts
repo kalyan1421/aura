@@ -2,10 +2,10 @@ import type { Queryable } from '../db/db';
 
 /**
  * `public.signed_bundle_versions` (immutable, one row per kind and version) and `public.signed_bundle_current` (the
- * live, signed envelope per kind) — migration 20261005000017. Plain SQL helpers that take any Queryable: the public
+ * live, signed envelope per kind) — migration 20261005000017; kind `helplines` from 20261005000019. Plain SQL helpers that take any Queryable: the public
  * reads run as the service role, the console writes under `aura_admin` (src/admin/admin-db.ts).
  */
-export const BUNDLE_KINDS = ['crisis_lexicon'] as const;
+export const BUNDLE_KINDS = ['crisis_lexicon', 'helplines'] as const;
 export type BundleKind = (typeof BUNDLE_KINDS)[number];
 
 export interface StoredVersion {
@@ -99,7 +99,13 @@ export interface VersionSummary {
 
 export async function listVersions(q: Queryable, kind: BundleKind): Promise<VersionSummary[]> {
   const r = await q.query<{ version: number; content_sha256: string; entries: number; note: string | null; created_at: Date; created_by: string }>(
-    `select version, content_sha256, coalesce(jsonb_array_length(content -> 'entries'), 0)::int as entries, note, created_at, created_by
+    // `entries`: lexicon entries, or helpline lines (summed over the regions).
+    `select version, content_sha256,
+            case when jsonb_typeof(content -> 'countries') = 'object'
+                 then (select coalesce(sum(jsonb_array_length(v)), 0) from jsonb_each(content -> 'countries') as c(k, v)
+                        where jsonb_typeof(v) = 'array')
+                 else coalesce(jsonb_array_length(content -> 'entries'), 0) end::int as entries,
+            note, created_at, created_by
        from public.signed_bundle_versions where kind = $1 order by version desc limit 200`,
     [kind],
   );

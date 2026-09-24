@@ -13,6 +13,7 @@ import '../../core/widgets/inline_notice.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../checkin/quadrant_glyph.dart';
+import '../reflections/reflections_section.dart';
 import '../support/support_sheet.dart';
 import 'member_sheet.dart';
 import 'report_sheet.dart';
@@ -183,6 +184,7 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
                 MemberReportTarget() => l.rooms_reportHidden,
                 GestureReportTarget() => l.rooms_reportGestureHidden,
                 RoomReportTarget() => l.rooms_reportThanks,
+                ReflectionReportTarget() => l.reflections_reportHidden,
               },
       ),
     );
@@ -472,6 +474,9 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
             _report(GestureReportTarget(widget.roomId, g.gestureId)),
           ),
         ),
+        // Reflections (F6): nothing at all in a build without the API.
+        const SizedBox(height: AuraSpace.xl),
+        ReflectionsSection(roomId: widget.roomId, detail: d),
       ],
     );
   }

@@ -15,8 +15,9 @@ import '../support/helplines.dart';
 
 /// Verified tap-to-call helplines for the device region (never IP or GPS),
 /// or, where none is listed, the "call your local emergency number" card:
-/// never an empty list (PRD States: Crisis support sheet). Bundled data only,
-/// so it works offline, signed out and with no spinner (F9).
+/// never an empty list (PRD States: Crisis support sheet). The bundled
+/// directory, or a signed newer one the phone already verified, so it works
+/// offline, signed out and with no spinner (F9).
 ///
 /// Shared by the Safety Center and the support sheet. The first helpline
 /// takes focus when the screen opens (REQ-A11Y-11). A device that can't
@@ -89,7 +90,12 @@ class _HelplineListState extends ConsumerState<HelplineList> {
     final blocked = ref.watch(
       gateControllerProvider.select((g) => g.isBlocked),
     );
-    final lines = helplinesFor(region, l, isMinor: _isMinor || blocked);
+    final lines = helplinesFor(
+      region,
+      l,
+      isMinor: _isMinor || blocked,
+      directory: ref.watch(helplineDirectoryProvider),
+    );
 
     if (lines.isEmpty) {
       return Container(

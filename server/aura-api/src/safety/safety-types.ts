@@ -41,7 +41,8 @@ export type Lane = (typeof LANES)[number];
 /** Queue order (L0 → L3): crisis > minors & grooming > harassment > spam/other. */
 export const LANE_PRIORITY: Readonly<Record<Lane, number>> = { crisis: 0, minors_grooming: 1, harassment: 2, spam: 3 };
 
-export const REPORT_TARGET_KINDS = ['member', 'gesture', 'room'] as const;
+/** `reflection` (F6): a published reflection, or the pipeline's automatic items (contracts/api/v1-reflections.md). */
+export const REPORT_TARGET_KINDS = ['member', 'gesture', 'room', 'reflection'] as const;
 export type ReportTargetKind = (typeof REPORT_TARGET_KINDS)[number];
 
 export const SANCTION_KINDS = [

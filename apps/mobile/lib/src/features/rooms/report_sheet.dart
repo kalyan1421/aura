@@ -114,6 +114,7 @@ class _ReportSheetState extends ConsumerState<ReportSheet> {
     MemberReportTarget() => l.rooms_reportMember(widget.pseudonym ?? ''),
     GestureReportTarget() => l.rooms_reportGesture,
     RoomReportTarget() => l.rooms_reportRoom,
+    ReflectionReportTarget() => l.reflections_reportTitle,
   };
 
   @override

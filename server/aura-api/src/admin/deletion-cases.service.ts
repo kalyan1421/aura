@@ -15,6 +15,7 @@ import { deletionCaseSchema, deletionCloseSchema, deletionListSchema, deletionSc
 import type { StaffUser } from './admin-types';
 import { newTicket } from './grievances.service';
 import { MAILER, mailErrorCode, type Mailer } from './mail/mailer';
+import { mailLocale } from './mail/copy';
 import { deletionVerificationMail } from './mail/templates';
 
 /**
@@ -247,7 +248,9 @@ export class DeletionCasesService {
       throw consoleRefusal(e);
     }
     let linkEmailed: boolean | null = null;
-    if (opened.send_to) linkEmailed = await this.sendLink(staff, opened.case_id, opened.ticket, opened.send_to, token, expiresAt);
+    if (opened.send_to) {
+      linkEmailed = await this.sendLink(staff, opened.case_id, opened.ticket, opened.send_to, token, expiresAt, opened.account_id);
+    }
     return { ...(await this.get(opened.case_id)), linkEmailed };
   }
 
@@ -257,8 +260,9 @@ export class DeletionCasesService {
     const expiresAt = new Date(Date.now() + this.config.deletionLinkTtlHours * 3_600_000);
     let sendTo: string;
     let ticket: string;
+    let accountId: string;
     try {
-      ({ sendTo, ticket } = await this.adminDb.withTx(async (tx) => {
+      ({ sendTo, ticket, accountId } = await this.adminDb.withTx(async (tx) => {
         const r = (
           await tx.query<{ account_id: string; send_to: string }>('select * from public.admin_deletion_case_reissue($1, $2, $3)', [
             caseId,
@@ -272,23 +276,49 @@ export class DeletionCasesService {
           subjectHash: this.hash(r.account_id),
           detail: { caseId, ticket: t },
         });
-        return { sendTo: r.send_to, ticket: t };
+        return { sendTo: r.send_to, ticket: t, accountId: r.account_id };
       }));
     } catch (e) {
       throw consoleRefusal(e);
     }
-    const linkEmailed = await this.sendLink(staff, caseId, ticket, sendTo, token, expiresAt);
+    const linkEmailed = await this.sendLink(staff, caseId, ticket, sendTo, token, expiresAt, accountId);
     return { ...(await this.get(caseId)), linkEmailed };
   }
 
+  /**
+   * The account's app language (`profiles.ui_locale`), for the link email; English when there is none (never onboarded)
+   * or it can't be read. Service role: the console role has no grant on profiles.
+   */
+  private async accountLocale(accountId: string | null): Promise<string | null> {
+    if (!accountId) return null;
+    try {
+      const r = await this.db.query<{ ui_locale: string }>('select ui_locale from public.profiles where user_id = $1', [accountId]);
+      return r.rows[0]?.ui_locale ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   /** After commit: email the link; the case records the attempt either way (never fails the request). */
-  private async sendLink(staff: StaffUser, caseId: string, ticket: string, to: string, token: string, expiresAt: Date): Promise<boolean> {
+  private async sendLink(
+    staff: StaffUser,
+    caseId: string,
+    ticket: string,
+    to: string,
+    token: string,
+    expiresAt: Date,
+    accountId: string | null = null,
+  ): Promise<boolean> {
     let ok = false;
     let error: string | null = null;
     if (!this.mailer.enabled) {
       error = 'mail_not_configured';
     } else {
-      const mail = deletionVerificationMail({ ticket, link: this.link(token), expiresAt, graceDays: DELETION_GRACE_DAYS }, this.config.officer);
+      const mail = deletionVerificationMail(
+        { ticket, link: this.link(token), expiresAt, graceDays: DELETION_GRACE_DAYS },
+        this.config.officer,
+        mailLocale(await this.accountLocale(accountId)),
+      );
       try {
         await this.mailer.send({ to: [to], ...mail, replyTo: this.config.officer.email, autoSubmitted: true });
         ok = true;

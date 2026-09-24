@@ -57,6 +57,9 @@ abstract interface class PushMessaging {
 abstract final class PushTypes {
   static const String dailyReminder = 'daily_reminder';
   static const String capsuleUnlocked = 'capsule_unlocked';
+
+  /// "Tell me when they open": the Hindi + Hinglish pool opened (once).
+  static const String roomsPoolOpen = 'rooms_pool_open';
 }
 
 /// Payloads are content-free by design (`{type, id?}`, PRD Notifications

@@ -85,6 +85,16 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         <Badge>{r.status}</Badge>
       </PageHead>
 
+      {r.targetKind === 'reflection' ? (
+        <p className="callout" role="note">
+          This report is about a reflection — review the text and decide on the{' '}
+          <Link href={`/reflections/by-report/${r.reportId}`} prefetch={false}>
+            reflection page
+          </Link>
+          .
+        </p>
+      ) : null}
+
       <div className="grid">
         <section className="panel" aria-labelledby="h-report">
           <h2 id="h-report">Report</h2>

@@ -2,7 +2,9 @@ import type { AndroidChannelId, NotificationType } from './notification-types';
 
 /**
  * PRD 12-notifications global rule 2: when the daily cap binds, this order decides (highest first). Only the first two
- * ship at Milestone A; the rest are listed so the cap and precedence logic already treat them correctly.
+ * ship at Milestone A; the rest are listed so the cap and precedence logic already treat them correctly. A kind the
+ * PRD's list doesn't name (`rooms_pool_open`) ranks last; being a one-off the person asked for, it waits for the next
+ * day when capped instead of being dropped (TYPE_RULES `capped: 'defer'`).
  */
 export const PRECEDENCE = [
   'capsule_unlocked',
@@ -43,6 +45,11 @@ export interface TypeRules {
   channel: AndroidChannelId;
   /** FCM/APNs time to live: stale nudges are never delivered days later. */
   ttlSeconds: number;
+  /**
+   * When today's cap (rule 2) is already used: `skip` drops it (the default), `defer` waits for the next Aura day — for
+   * a one-off the person asked for, which is still true tomorrow ("Dropped items stay as in-app cards").
+   */
+  capped?: 'skip' | 'defer';
 }
 
 const H = 3600_000;
@@ -51,6 +58,9 @@ export const TYPE_RULES: Readonly<Record<NotificationType, TypeRules>> = {
   // The capsule job fires at 10:00 local and is dropped past 24 h late (v1-capsules.md §6); +2 h of deferral slack.
   capsule_unlocked: { perDay: 1, quiet: 'defer', maxAgeMs: 26 * H, channel: 'capsules', ttlSeconds: 24 * 3600 },
   daily_reminder: { perDay: 1, quiet: 'skip', maxAgeMs: 2 * H, channel: 'reminders', ttlSeconds: 2 * 3600 },
+  // "Tell me when they open": one push the person asked for, whenever the pool opens — waits out quiet hours and a
+  // full day, and is dropped after 3 days (the pool screen tells them too).
+  rooms_pool_open: { perDay: 1, quiet: 'defer', maxAgeMs: 72 * H, channel: 'rooms', ttlSeconds: 24 * 3600, capped: 'defer' },
 };
 
 /** Base of the capsule notice ids (apps/mobile features/capsules/capsule_notifications.dart `capsuleNoticeId`). */

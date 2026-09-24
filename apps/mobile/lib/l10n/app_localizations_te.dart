@@ -1310,6 +1310,20 @@ class AppLocalizationsTe extends AppLocalizations {
       'సైన్ అవుట్ చేస్తే ఈ ఫోన్ నుండి ఈ ఖాతా క్లియర్ అవుతుంది.';
 
   @override
+  String get notif_roomsPoolBanner =>
+      'హిందీ, హింగ్లిష్ రూమ్‌లు ఇప్పుడు మొదలయ్యాయి.';
+
+  @override
+  String get notif_roomsPoolAction => 'రూమ్‌లు చూడండి';
+
+  @override
+  String get notif_channelRooms => 'రూమ్‌లు & Lantern Hour';
+
+  @override
+  String get notif_channelRoomsDescription =>
+      'మీరు అడిగిన రూమ్‌లు మొదలైనప్పుడు.';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $next వైపు $targetలో $count Starlight';
   }
@@ -1461,6 +1475,290 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String help_breatheLogged(String habit) {
     return 'ఈరోజు $habit అయినట్టు గుర్తించాం.';
+  }
+
+  @override
+  String get insights_title => 'Aura Sky';
+
+  @override
+  String get insights_private =>
+      'మీ ఆకాశం మీకు మాత్రమే కనిపిస్తుంది. ఇదంతా ఈ ఫోన్‌లోనే లెక్కిస్తాం.';
+
+  @override
+  String get insights_empty =>
+      'మీరు చెక్-ఇన్ చేస్తున్న కొద్దీ మీ ఆకాశం నిండుతుంది.';
+
+  @override
+  String get insights_allCheckIns => 'అన్ని చెక్-ఇన్‌లు';
+
+  @override
+  String get insights_viewMonth => 'నెల';
+
+  @override
+  String get insights_viewYear => 'సంవత్సరం';
+
+  @override
+  String get insights_prevMonth => 'ముందు నెల';
+
+  @override
+  String get insights_nextMonth => 'తర్వాతి నెల';
+
+  @override
+  String get insights_prevYear => 'ముందు సంవత్సరం';
+
+  @override
+  String get insights_nextYear => 'తర్వాతి సంవత్సరం';
+
+  @override
+  String insights_dayEmpty(String date) {
+    return '$date, ప్రశాంత ఆకాశం';
+  }
+
+  @override
+  String insights_dayRest(String date) {
+    return '$date, విశ్రాంతి రోజు';
+  }
+
+  @override
+  String insights_daySingle(String date, String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count చెక్-ఇన్‌లు',
+      one: '1 చెక్-ఇన్',
+    );
+    return '$date, $quadrant, $_temp0';
+  }
+
+  @override
+  String insights_dayPair(String date, String first, String second, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count చెక్-ఇన్‌లు',
+      one: '1 చెక్-ఇన్',
+    );
+    return '$date, $first, $second సమానంగా, $_temp0';
+  }
+
+  @override
+  String insights_dayMixed(String date, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count చెక్-ఇన్‌లు',
+      one: '1 చెక్-ఇన్',
+    );
+    return '$date, సమానమైన మిశ్రమం, $_temp0';
+  }
+
+  @override
+  String get insights_dayHint => 'ఈ రోజు చెక్-ఇన్‌లు చూపిస్తుంది';
+
+  @override
+  String get insights_dayNone =>
+      'ఈ రోజు ఏమీ నమోదు కాలేదు. ఆకాశం ప్రశాంతంగా ఉంది.';
+
+  @override
+  String insights_monthSemantic(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count రోజులు చెక్-ఇన్',
+      one: '1 రోజు చెక్-ఇన్',
+      zero: 'ప్రశాంత ఆకాశం',
+    );
+    return '$month, $_temp0';
+  }
+
+  @override
+  String get insights_legendRest => 'విశ్రాంతి రోజు';
+
+  @override
+  String get insights_legendMixed => 'మిశ్రమ రోజు';
+
+  @override
+  String get insights_patternsTitle => 'ధోరణులు';
+
+  @override
+  String get insights_patternsLast30 => 'మీ గత 30 రోజుల నుండి';
+
+  @override
+  String insights_patternsNeedCheckIns(int count) {
+    return '7 చెక్-ఇన్‌ల తర్వాత ధోరణులు కనిపిస్తాయి ($count/7)';
+  }
+
+  @override
+  String insights_patternsNeedDays(int count) {
+    return '5 వేర్వేరు రోజుల్లో చెక్-ఇన్ చేశాక ధోరణులు కనిపిస్తాయి ($count/5)';
+  }
+
+  @override
+  String get insights_patternsNone =>
+      'ఇప్పుడు స్పష్టమైన ధోరణులు ఏవీ లేవు. మీ ఆకాశం ఇక్కడే ఉంది.';
+
+  @override
+  String insights_patternTag(String tag, String quadrant) {
+    return '$tag ఉన్న చెక్-ఇన్‌లలో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternHabit(String habit, String quadrant) {
+    return 'మీరు $habit చేసిన రోజుల్లో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternMorning(String quadrant) {
+    return 'ఉదయాల్లో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternAfternoon(String quadrant) {
+    return 'మధ్యాహ్నాల్లో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternEvening(String quadrant) {
+    return 'సాయంత్రాల్లో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternNight(String quadrant) {
+    return 'రాత్రుల్లో $quadrant ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String insights_patternMix(String quadrant) {
+    return 'మీ ఆకాశంలో $quadrant అన్నిటికంటే ఎక్కువగా కనిపించింది.';
+  }
+
+  @override
+  String get insights_plusBadge => 'Aura Plus';
+
+  @override
+  String get insights_rangeLocked =>
+      'ఏ కాల పరిధి అయినా, మూడ్‌లతో పాటు అలవాట్లు Aura Plus‌తో వస్తాయి. మీ ఆకాశం, 30 రోజుల ధోరణులు ఎప్పుడూ ఉచితమే.';
+
+  @override
+  String get insights_rangeLabel => 'ఈ కాలం నుండి ధోరణులు';
+
+  @override
+  String get insights_range7 => '7 రోజులు';
+
+  @override
+  String get insights_range30 => '30 రోజులు';
+
+  @override
+  String get insights_range90 => '90 రోజులు';
+
+  @override
+  String get insights_range365 => '1 సంవత్సరం';
+
+  @override
+  String get insights_rangeAll => 'మొత్తం';
+
+  @override
+  String get insights_weeklyTitle => 'మీ గత వారం నుండి';
+
+  @override
+  String get insights_weeklyHide => 'ఈ వారానికి దాచండి';
+
+  @override
+  String get insights_careTitle => 'గత రెండు వారాలు భారంగా గడిచాయి';
+
+  @override
+  String get insights_careBody =>
+      'దీన్ని మీరు ఒంటరిగా మోయాల్సిన అవసరం లేదు. మీకు ఎప్పుడు కావాలంటే అప్పుడు సహాయం, ఒక రూమ్ ఇక్కడే ఉన్నాయి.';
+
+  @override
+  String get insights_careSupport => 'సహాయం చూడండి';
+
+  @override
+  String get insights_careRoom => 'ఒక రూమ్ వెతకండి';
+
+  @override
+  String get insights_monthTitle => 'నక్షత్రాల్లో మీ నెల';
+
+  @override
+  String insights_monthCardBody(String month) {
+    return 'మీ ఆకాశంలో $month';
+  }
+
+  @override
+  String get insights_monthOpen => 'తెరవండి';
+
+  @override
+  String get insights_monthHide => 'దాచండి';
+
+  @override
+  String insights_monthDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count రోజులు చెక్-ఇన్ చేశారు',
+      one: '1 రోజు చెక్-ఇన్ చేశారు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insights_monthMixTitle => 'ఈ నెల మీ ఆకాశాలు';
+
+  @override
+  String insights_monthMixItem(String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count చెక్-ఇన్‌లు',
+      one: '1 చెక్-ఇన్',
+    );
+    return '$quadrant: $_temp0';
+  }
+
+  @override
+  String insights_monthSkySemantic(int count, String month) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count నక్షత్రాలు',
+      one: '1 నక్షత్రం',
+    );
+    return '$monthలో ఒక్కో చెక్-ఇన్‌కి ఒక్కో నక్షత్రం, మొత్తం $_temp0';
+  }
+
+  @override
+  String get insights_deeperTitle => 'లోతైన నెలవారీ సమీక్ష';
+
+  @override
+  String get insights_deeperLocked =>
+      'నెల మొత్తంలోని ధోరణులు, మూడ్‌లతో పాటు అలవాట్లు Aura Plus‌తో వస్తాయి.';
+
+  @override
+  String get insights_deeperNone => 'ఈ నెల స్పష్టమైన ధోరణులు ఏవీ లేవు.';
+
+  @override
+  String get insights_statsTitle => 'ఇప్పటివరకు';
+
+  @override
+  String insights_statsCheckIns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count చెక్-ఇన్‌లు',
+      one: '1 చెక్-ఇన్',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insights_statsDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'మీ ఆకాశంలో $count రోజులు',
+      one: 'మీ ఆకాశంలో 1 రోజు',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1638,6 +1936,226 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get polish_helpNumberCopied => 'నంబర్ కాపీ అయింది';
+
+  @override
+  String get reflections_title => 'మనసులో మాటలు';
+
+  @override
+  String get reflections_intro =>
+      'ఇక్కడ ఉన్నవాళ్ళ కొన్ని మాటలు. వీటికి సంజ్ఞలతో మాత్రమే స్పందించవచ్చు.';
+
+  @override
+  String get reflections_share => 'మీ మాట పంచుకోండి';
+
+  @override
+  String get reflections_empty =>
+      'ఇక్కడ ఇంకా ఏ మాటలూ లేవు. మీరు ఒకటి పంచుకోవచ్చు, లేదా చదివి సంజ్ఞలు పంపవచ్చు.';
+
+  @override
+  String get reflections_emptyMemory => 'ఈ రూమ్‌లో ఏ మాటలూ పంచుకోలేదు.';
+
+  @override
+  String get reflections_loadFailed => 'ఇప్పుడు మాటలు లోడ్ కాలేదు.';
+
+  @override
+  String get reflections_offline =>
+      'మాటలకు కనెక్షన్ కావాలి. మీరు రాసింది ఈ ఫోన్‌లోనే ఉంటుంది.';
+
+  @override
+  String get reflections_memory =>
+      'ఈ రూమ్ ఒక జ్ఞాపకం: ఇందులోని మాటలు చదవవచ్చు, కొత్తవి జోడించలేరు.';
+
+  @override
+  String get reflections_paused =>
+      'మాటలు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. సంజ్ఞలు పనిచేస్తూనే ఉంటాయి.';
+
+  @override
+  String reflections_limit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ఈ రోజుకు $count మాటలు అయిపోయాయి. సంజ్ఞలు ఎప్పుడూ తెరిచే ఉంటాయి.',
+      one: 'ఈ రోజుకు 1 మాట అయిపోయింది. సంజ్ఞలు ఎప్పుడూ తెరిచే ఉంటాయి.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_slow =>
+      'ప్రస్తుతం మాటలు కొంచెం నెమ్మదిగా వెళ్తున్నాయి';
+
+  @override
+  String reflections_left(int remaining, int total) {
+    return 'ఈ రోజు $totalలో $remaining మిగిలాయి';
+  }
+
+  @override
+  String reflections_cardLabel(String pseudonym) {
+    return '$pseudonym రాసిన మాట';
+  }
+
+  @override
+  String get reflections_mine => 'మీ మాట';
+
+  @override
+  String get reflections_onlyYou => 'ఇది మీకు మాత్రమే కనిపిస్తుంది';
+
+  @override
+  String get reflections_pending => 'ఇంకా చూస్తున్నాం. మీరు చదువుతూ ఉండొచ్చు.';
+
+  @override
+  String get reflections_heldSoon => 'ఒక చిన్న తనిఖీ కోసం ఎదురుచూస్తోంది';
+
+  @override
+  String get reflections_heldOvernight =>
+      'ఒక చిన్న తనిఖీ కోసం ఎదురుచూస్తోంది. ఉదయం వరకు పట్టొచ్చు.';
+
+  @override
+  String get reflections_rejectedCard => 'ఇది ఇక్కడ పెట్టలేకపోయాం.';
+
+  @override
+  String get reflections_removedCard => 'ఒక సమీక్ష తర్వాత దీన్ని తీసేశాం.';
+
+  @override
+  String reflections_gestureCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count సంజ్ఞలు',
+      one: '1 సంజ్ఞ',
+      zero: 'ఇంకా సంజ్ఞలు లేవు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_countPrivate => 'ఈ సంఖ్య మీకు మాత్రమే కనిపిస్తుంది';
+
+  @override
+  String get reflections_options => 'మాట ఆప్షన్లు';
+
+  @override
+  String reflections_gestureHint(String pseudonym) {
+    return 'ఈ మాట కోసం $pseudonymకి పంపుతుంది';
+  }
+
+  @override
+  String reflections_gestureSent(String gesture, String pseudonym) {
+    return '$pseudonymకి $gesture పంపారు';
+  }
+
+  @override
+  String get reflections_delete => 'తొలగించు';
+
+  @override
+  String get reflections_withdraw => 'వెనక్కి తీసుకో';
+
+  @override
+  String get reflections_deleteTitle => 'ఈ మాటను తొలగించాలా?';
+
+  @override
+  String get reflections_deleteBody =>
+      'ఇది ఇక్కడ అందరికీ కనిపించదు. మాటలను మార్చలేరు, కానీ కొత్తది పంచుకోవచ్చు.';
+
+  @override
+  String get reflections_withdrawTitle => 'ఈ మాటను వెనక్కి తీసుకోవాలా?';
+
+  @override
+  String get reflections_withdrawBody =>
+      'ఇది పెట్టబడదు. మీరు ఎప్పుడైనా కొత్తది పంచుకోవచ్చు.';
+
+  @override
+  String get reflections_deleted => 'మీ మాట తీసేశాం.';
+
+  @override
+  String get reflections_reportTitle => 'ఈ మాటను రిపోర్ట్ చేయండి';
+
+  @override
+  String get reflections_reportHidden =>
+      'చెప్పినందుకు ధన్యవాదాలు. ఆ మాట ఇప్పుడు మీకు కనిపించదు.';
+
+  @override
+  String get reflections_composeTitle => 'మీ మాట పంచుకోండి';
+
+  @override
+  String get reflections_composeLabel => 'మీ మనసులో ఏముంది?';
+
+  @override
+  String get reflections_composeNote =>
+      'ఈ రూమ్ కోసం కొన్ని మాటలు. ఇతరులు సంజ్ఞలతో మాత్రమే స్పందిస్తారు, జవాబులు ఉండవు.';
+
+  @override
+  String reflections_counter(int count, int max) {
+    return '$count/$max';
+  }
+
+  @override
+  String reflections_counterSemantic(int count, int max) {
+    return '$maxలో $count అక్షరాలు';
+  }
+
+  @override
+  String reflections_tooLong(int max) {
+    return 'కొంచెం చిన్నగా రాయండి: $max అక్షరాల వరకు.';
+  }
+
+  @override
+  String get reflections_send => 'పంపండి';
+
+  @override
+  String get reflections_sending => 'నెమ్మదిగా పంపుతున్నాం…';
+
+  @override
+  String get reflections_contactBlocked =>
+      'ఫోన్ నంబర్లు, లింక్‌లు, హ్యాండిల్స్ ఇక్కడ పంచుకోలేరు. ఇది అందరినీ సురక్షితంగా ఉంచుతుంది.';
+
+  @override
+  String get reflections_draftKept =>
+      'డ్రాఫ్ట్ భద్రంగా ఉంది. మళ్ళీ ఆన్‌లైన్‌కి వచ్చాక పంపవచ్చు.';
+
+  @override
+  String get reflections_sendFailed =>
+      'ఇప్పుడు పంపలేకపోయాం. మీ మాటలు ఇక్కడే ఉన్నాయి: కాసేపట్లో మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get reflections_rejectedContact =>
+      'మాటల్లో కాంటాక్ట్ వివరాలు ఉండకూడదు. అవి లేకుండా మళ్ళీ ప్రయత్నిస్తారా?';
+
+  @override
+  String get reflections_rejectedLink =>
+      'మాటల్లో లింక్‌లు ఉండకూడదు. అది లేకుండా మళ్ళీ ప్రయత్నిస్తారా?';
+
+  @override
+  String get reflections_rejectedPersonal =>
+      'ఎవరివైనా వ్యక్తిగత వివరాల గురించి ప్రశ్నలు ఇక్కడ పెట్టలేరు. అవి లేకుండా ప్రయత్నిస్తారా?';
+
+  @override
+  String get reflections_rejectedGeneral =>
+      'ఇది ఇక్కడ పెట్టలేం. ఇది ఎవరినైనా బాధపెట్టొచ్చు లేదా వ్యక్తిగత వివరాలు పంచుకోవచ్చు. మీ మాటలు మార్చుకోవడానికి ఇక్కడే ఉన్నాయి.';
+
+  @override
+  String get reflections_supportSubtitle =>
+      'మీరు దీన్ని ఒంటరిగా మోయాల్సిన అవసరం లేదు.';
+
+  @override
+  String get reflections_backToRoom => 'రూమ్‌కి తిరిగి వెళ్ళండి';
+
+  @override
+  String get device_bannedTitle => 'ఈ పరికరంలో Aura ఉపయోగించలేరు';
+
+  @override
+  String get device_bannedBody => 'ఈ ఫోన్‌లో Aura అందుబాటులో లేదు.';
+
+  @override
+  String get device_bannedReviewSubject => 'పరికరం పునఃపరిశీలన';
+
+  @override
+  String get rooms_paused =>
+      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. తర్వాత మళ్ళీ ప్రయత్నించండి.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. మీ చెక్-ఇన్ సేవ్ అయింది.';
 
   @override
   String get rooms_title => 'రూమ్‌లు';
@@ -2824,6 +3342,253 @@ class AppLocalizationsTe extends AppLocalizations {
       'సపోర్ట్ సంప్రదింపు, గ్రీవెన్స్ ఆఫీసర్, విధానాలు';
 
   @override
+  String get sounds_title => 'శబ్దాలు';
+
+  @override
+  String get sounds_cardBody =>
+      'వర్షం, సముద్రం, గాలి ఇంకా మరెన్నో. మీరు ఎంచుకునే వరకు ఏదీ వినిపించదు.';
+
+  @override
+  String get sounds_cardPlaying => 'ఇప్పుడు వినిపిస్తోంది';
+
+  @override
+  String get sounds_intro =>
+      'మొదలుపెట్టడానికి ఒక శబ్దం ఎంచుకోండి, లేదా నాలుగు వరకు కలపండి. మీరు నొక్కే వరకు ఏదీ వినిపించదు.';
+
+  @override
+  String get sounds_nothingPlaying => 'ఏదీ వినిపించడం లేదు';
+
+  @override
+  String get sounds_statePlaying => 'వినిపిస్తోంది';
+
+  @override
+  String get sounds_statePaused => 'ఆగింది';
+
+  @override
+  String get sounds_backgroundNote =>
+      'స్క్రీన్ ఆఫ్ అయినా శబ్దాలు వినిపిస్తూనే ఉంటాయి. హెడ్‌ఫోన్లు డిస్‌కనెక్ట్ అయినా, కాల్ వచ్చినా ఆగుతాయి.';
+
+  @override
+  String get sounds_notificationChannel => 'శబ్దాల ప్లేబ్యాక్';
+
+  @override
+  String get sounds_windDownTitle => 'రాత్రి ప్రశాంత శబ్దాలు';
+
+  @override
+  String get sounds_windDownBody =>
+      'సుమారు 20 నిమిషాల శబ్దాలు, మెల్లగా తగ్గుతూ నిశ్శబ్దంలోకి వెళ్తాయి. ప్రతి రాత్రి వాటి క్రమం మారుతుంది.';
+
+  @override
+  String get sounds_windDownBegin => 'మొదలుపెట్టండి';
+
+  @override
+  String sounds_windDownLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'సుమారు $minutes నిమిషాలు మిగిలాయి',
+      one: 'సుమారు 1 నిమిషం మిగిలింది',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_windDownBusy =>
+      'రాత్రి శబ్దాలు వినిపిస్తున్నాయి. మీ సొంత మిక్స్ కోసం ముందు వాటిని ఆపండి.';
+
+  @override
+  String get sounds_mixSection => 'మీకు నచ్చినట్టు కలపండి';
+
+  @override
+  String get sounds_mixHint =>
+      'ఒకేసారి నాలుగు వరకు, ఒక్కోదానికి వేరే వాల్యూమ్.';
+
+  @override
+  String get sounds_stemRain => 'వర్షం';
+
+  @override
+  String get sounds_stemOcean => 'సముద్రం';
+
+  @override
+  String get sounds_stemWind => 'గాలి';
+
+  @override
+  String get sounds_stemNightInsects => 'రాత్రి కీటకాలు';
+
+  @override
+  String get sounds_stemSingingBowl => 'సింగింగ్ బౌల్';
+
+  @override
+  String get sounds_stemChimes => 'గాలి గంటలు';
+
+  @override
+  String get sounds_stemBrownNoise => 'బ్రౌన్ నాయిస్';
+
+  @override
+  String get sounds_stemPinkNoise => 'పింక్ నాయిస్';
+
+  @override
+  String get sounds_stemDeepBell => 'దూరపు గంట';
+
+  @override
+  String get sounds_stemMonsoonRoof => 'పైకప్పు మీద వాన';
+
+  @override
+  String get sounds_stemStream => 'వాగు';
+
+  @override
+  String get sounds_stemFireplace => 'మంట చిటపటలు';
+
+  @override
+  String get sounds_stemDistantThunder => 'దూరపు ఉరుములు';
+
+  @override
+  String sounds_stemOn(String name, int percent) {
+    return '$name, వినిపిస్తోంది, వాల్యూమ్ $percent%';
+  }
+
+  @override
+  String sounds_stemPaused(String name, int percent) {
+    return '$name, ఆగింది, వాల్యూమ్ $percent%';
+  }
+
+  @override
+  String sounds_stemOff(String name) {
+    return '$name, ఆఫ్';
+  }
+
+  @override
+  String sounds_stemLocked(String name) {
+    return '$name, Aura Plusలో భాగం';
+  }
+
+  @override
+  String sounds_stemNeedsDownload(String name, String size) {
+    return '$name, ఒకసారి $size డౌన్‌లోడ్ చేయాలి';
+  }
+
+  @override
+  String sounds_stemDownloading(String name) {
+    return '$name, డౌన్‌లోడ్ అవుతోంది';
+  }
+
+  @override
+  String sounds_volume(String name) {
+    return '$name వాల్యూమ్';
+  }
+
+  @override
+  String get sounds_plusBadge => 'Aura Plus';
+
+  @override
+  String get sounds_plusNote => 'Aura Plusతో వస్తుంది.';
+
+  @override
+  String get sounds_full =>
+      'నాలుగు శబ్దాలు వినిపిస్తున్నాయి. ఇంకొకటి జోడించడానికి ఒకదాన్ని ఆపండి.';
+
+  @override
+  String get sounds_play => 'వినిపించండి';
+
+  @override
+  String get sounds_pause => 'ఆపండి';
+
+  @override
+  String get sounds_stop => 'ముగించండి';
+
+  @override
+  String get sounds_timer => 'టైమర్';
+
+  @override
+  String get sounds_timerTitle => 'ఇంత సమయం తర్వాత మెల్లగా ఆగుతుంది';
+
+  @override
+  String get sounds_timerOff => 'ఆఫ్';
+
+  @override
+  String sounds_timerValue(String value) {
+    return 'టైమర్ · $value';
+  }
+
+  @override
+  String sounds_timerLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'సుమారు $minutes నిమిషాల్లో మెల్లగా ఆగుతుంది',
+      one: 'సుమారు 1 నిమిషంలో మెల్లగా ఆగుతుంది',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_fadingOut => 'మెల్లగా ఆగుతోంది';
+
+  @override
+  String get sounds_saveMix => 'ఈ మిక్స్ సేవ్ చేయండి';
+
+  @override
+  String get sounds_savedMixes => 'సేవ్ చేసిన మిక్స్‌లు';
+
+  @override
+  String get sounds_mixSaved => 'ఈ ఫోన్‌లో సేవ్ అయింది.';
+
+  @override
+  String get sounds_mixAlreadySaved => 'ఈ మిక్స్ ఇప్పటికే సేవ్ అయి ఉంది.';
+
+  @override
+  String sounds_playMix(String mix) {
+    return '$mix వినిపించండి';
+  }
+
+  @override
+  String sounds_removeMix(String mix) {
+    return '$mix తీసేయండి';
+  }
+
+  @override
+  String get sounds_mixUnavailable => 'ఈ మిక్స్ ఇప్పుడు వినిపించదు.';
+
+  @override
+  String get sounds_downloadTitle => 'రికార్డ్ చేసిన శబ్దాలు';
+
+  @override
+  String sounds_downloadBody(String size) {
+    return 'ఒకసారి $size డౌన్‌లోడ్ చేయాలి. ఆ తర్వాత ఇంటర్నెట్ లేకుండానే వినిపిస్తాయి. అప్పటివరకు మీ ఫోన్‌లోనే తయారైన శబ్దాలు వినిపిస్తాయి.';
+  }
+
+  @override
+  String get sounds_download => 'డౌన్‌లోడ్ చేయండి';
+
+  @override
+  String get sounds_downloading => 'డౌన్‌లోడ్ అవుతోంది…';
+
+  @override
+  String get sounds_downloadOffline =>
+      'మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. బ్రౌన్ నాయిస్, మీ ఫోన్‌లో తయారైన శబ్దాలు ఇప్పుడే వినిపిస్తాయి; రికార్డింగ్‌లు తర్వాత డౌన్‌లోడ్ చేసుకోవచ్చు.';
+
+  @override
+  String get sounds_downloadFailed =>
+      'డౌన్‌లోడ్ పూర్తి కాలేదు. ఏదీ పోలేదు; తర్వాత మళ్ళీ డౌన్‌లోడ్ చేసుకోవచ్చు.';
+
+  @override
+  String sounds_noSpace(String size) {
+    return 'శబ్దాలకు సుమారు $size కావాలి. కొంత స్థలం ఖాళీ చేయండి, లేదా బ్రౌన్ నాయిస్ వినండి, దానికి ఏమీ అవసరం లేదు.';
+  }
+
+  @override
+  String sounds_megabytes(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String get sounds_removeDownloads => 'డౌన్‌లోడ్ చేసిన శబ్దాలు తీసేయండి';
+
+  @override
+  String get sounds_downloadsRemoved =>
+      'డౌన్‌లోడ్ చేసిన శబ్దాలు తీసేశాం. మీ ఫోన్‌లో తయారైన శబ్దాలు ఇంకా వినిపిస్తాయి.';
+
+  @override
   String get voice_record => 'వాయిస్ నోట్ రికార్డ్ చేయండి';
 
   @override
@@ -2940,23 +3705,6 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get voice_hasVoice => 'ఒక వాయిస్ నోట్ ఉంది';
-
-  @override
-  String get device_bannedTitle => 'ఈ పరికరంలో Aura ఉపయోగించలేరు';
-
-  @override
-  String get device_bannedBody => 'ఈ ఫోన్‌లో Aura అందుబాటులో లేదు.';
-
-  @override
-  String get device_bannedReviewSubject => 'పరికరం పునఃపరిశీలన';
-
-  @override
-  String get rooms_paused =>
-      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. తర్వాత మళ్ళీ ప్రయత్నించండి.';
-
-  @override
-  String get rooms_pausedJoin =>
-      'రూమ్‌లు కాసేపు విశ్రాంతి తీసుకుంటున్నాయి. మీ చెక్-ఇన్ సేవ్ అయింది.';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -4278,6 +5026,20 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
       'Sign out cheste ee phone nundi ee account clear avutundi.';
 
   @override
+  String get notif_roomsPoolBanner =>
+      'Hindi, Hinglish rooms ippudu modalayyaayi.';
+
+  @override
+  String get notif_roomsPoolAction => 'Rooms chudandi';
+
+  @override
+  String get notif_channelRooms => 'Rooms & Lantern Hour';
+
+  @override
+  String get notif_channelRoomsDescription =>
+      'Meeru adigina rooms modalainappudu.';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $next vaipu $target lo $count Starlight';
   }
@@ -4430,6 +5192,290 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   @override
   String help_breatheLogged(String habit) {
     return 'Ee roju $habit ayyindani mark chesaam.';
+  }
+
+  @override
+  String get insights_title => 'Aura Sky';
+
+  @override
+  String get insights_private =>
+      'Mee sky meeku maatrame kanipistundi. Idantaa ee phone lone lekkistaam.';
+
+  @override
+  String get insights_empty =>
+      'Meeru check-in chestunna koddi mee sky nindutundi.';
+
+  @override
+  String get insights_allCheckIns => 'Anni check-ins';
+
+  @override
+  String get insights_viewMonth => 'Nela';
+
+  @override
+  String get insights_viewYear => 'Samvatsaram';
+
+  @override
+  String get insights_prevMonth => 'Mundu nela';
+
+  @override
+  String get insights_nextMonth => 'Tarvaati nela';
+
+  @override
+  String get insights_prevYear => 'Mundu samvatsaram';
+
+  @override
+  String get insights_nextYear => 'Tarvaati samvatsaram';
+
+  @override
+  String insights_dayEmpty(String date) {
+    return '$date, quiet sky';
+  }
+
+  @override
+  String insights_dayRest(String date) {
+    return '$date, rest day';
+  }
+
+  @override
+  String insights_daySingle(String date, String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, $quadrant, $_temp0';
+  }
+
+  @override
+  String insights_dayPair(String date, String first, String second, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, $first and $second samaanamga, $_temp0';
+  }
+
+  @override
+  String insights_dayMixed(String date, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, samaanamaina mix, $_temp0';
+  }
+
+  @override
+  String get insights_dayHint => 'Ee roju check-ins chupistundi';
+
+  @override
+  String get insights_dayNone =>
+      'Ee roju emi note avvaledu. Sky prashaanthanga undi.';
+
+  @override
+  String insights_monthSemantic(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rojulu check-in',
+      one: '1 roju check-in',
+      zero: 'quiet sky',
+    );
+    return '$month, $_temp0';
+  }
+
+  @override
+  String get insights_legendRest => 'Rest day';
+
+  @override
+  String get insights_legendMixed => 'Mixed day';
+
+  @override
+  String get insights_patternsTitle => 'Patterns';
+
+  @override
+  String get insights_patternsLast30 => 'Mee last 30 rojula nundi';
+
+  @override
+  String insights_patternsNeedCheckIns(int count) {
+    return '7 check-ins tarvaata patterns kanipistaayi ($count/7)';
+  }
+
+  @override
+  String insights_patternsNeedDays(int count) {
+    return '5 veru veru rojullo check-in chesaaka patterns kanipistaayi ($count/5)';
+  }
+
+  @override
+  String get insights_patternsNone =>
+      'Ippudu clear patterns emi levu. Mee sky ikkade undi.';
+
+  @override
+  String insights_patternTag(String tag, String quadrant) {
+    return '$tag unna check-ins lo $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternHabit(String habit, String quadrant) {
+    return 'Meeru $habit chesina rojullo $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternMorning(String quadrant) {
+    return 'Morning lo $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternAfternoon(String quadrant) {
+    return 'Madhyaahnam lo $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternEvening(String quadrant) {
+    return 'Evening lo $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternNight(String quadrant) {
+    return 'Raatri $quadrant ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String insights_patternMix(String quadrant) {
+    return 'Mee sky lo $quadrant anni kante ekkuvaga kanipinchindi.';
+  }
+
+  @override
+  String get insights_plusBadge => 'Aura Plus';
+
+  @override
+  String get insights_rangeLocked =>
+      'Any range, moods tho paatu habits Aura Plus tho vastaayi. Mee sky, 30 rojula patterns eppudu free.';
+
+  @override
+  String get insights_rangeLabel => 'Ee kaalam nundi patterns';
+
+  @override
+  String get insights_range7 => '7 rojulu';
+
+  @override
+  String get insights_range30 => '30 rojulu';
+
+  @override
+  String get insights_range90 => '90 rojulu';
+
+  @override
+  String get insights_range365 => '1 samvatsaram';
+
+  @override
+  String get insights_rangeAll => 'Mottham';
+
+  @override
+  String get insights_weeklyTitle => 'Mee last week nundi';
+
+  @override
+  String get insights_weeklyHide => 'Ee vaaraaniki daachandi';
+
+  @override
+  String get insights_careTitle => 'Last rendu vaaraalu bhaaranga gadichaayi';
+
+  @override
+  String get insights_careBody =>
+      'Idi meeru okkare moyyalsina avasaram ledu. Meeku eppudu kaavaalante appudu support, oka room ikkade unnaayi.';
+
+  @override
+  String get insights_careSupport => 'Support chudandi';
+
+  @override
+  String get insights_careRoom => 'Oka room vetakandi';
+
+  @override
+  String get insights_monthTitle => 'Stars lo mee nela';
+
+  @override
+  String insights_monthCardBody(String month) {
+    return 'Mee sky lo $month';
+  }
+
+  @override
+  String get insights_monthOpen => 'Open cheyandi';
+
+  @override
+  String get insights_monthHide => 'Daachandi';
+
+  @override
+  String insights_monthDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rojulu check-in chesaaru',
+      one: '1 roju check-in chesaaru',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insights_monthMixTitle => 'Ee nela mee skies';
+
+  @override
+  String insights_monthMixItem(String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$quadrant: $_temp0';
+  }
+
+  @override
+  String insights_monthSkySemantic(int count, String month) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stars',
+      one: '1 star',
+    );
+    return '$month lo prati check-in ki oka star, mottham $_temp0';
+  }
+
+  @override
+  String get insights_deeperTitle => 'Deeper monthly review';
+
+  @override
+  String get insights_deeperLocked =>
+      'Nela mottham patterns, moods tho paatu habits Aura Plus tho vastaayi.';
+
+  @override
+  String get insights_deeperNone => 'Ee nela clear patterns emi levu.';
+
+  @override
+  String get insights_statsTitle => 'Ippativaraku';
+
+  @override
+  String insights_statsCheckIns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insights_statsDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Mee sky lo $count rojulu',
+      one: 'Mee sky lo 1 roju',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -4609,6 +5655,230 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get polish_helpNumberCopied => 'Number copy ayyindi';
+
+  @override
+  String get reflections_title => 'Reflections';
+
+  @override
+  String get reflections_intro =>
+      'Ikkada unnavaalla konni maatalu. Veetiki gestures tho maatrame respond avvochu.';
+
+  @override
+  String get reflections_share => 'Oka reflection share cheyandi';
+
+  @override
+  String get reflections_empty =>
+      'Ikkada inka e reflections levu. Meeru okati share cheyochu, leda chadivi gestures pampochu.';
+
+  @override
+  String get reflections_emptyMemory =>
+      'Ee room lo e reflections share cheyyaledu.';
+
+  @override
+  String get reflections_loadFailed => 'Ippudu reflections load kaaledu.';
+
+  @override
+  String get reflections_offline =>
+      'Reflections ki connection kaavaali. Meeru raasindi ee phone lone untundi.';
+
+  @override
+  String get reflections_memory =>
+      'Ee room oka memory: indulo reflections chadavochu, kothavi add cheyyaleru.';
+
+  @override
+  String get reflections_paused =>
+      'Reflections konchem sepu rest teesukuntunnaayi. Gestures pani chestune untaayi.';
+
+  @override
+  String reflections_limit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Ee roju ki $count reflections ayipoyaayi. Gestures eppudu open ae untaayi.',
+      one: 'Ee roju ki 1 reflection ayipoyindi. Gestures eppudu open ae untaayi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_slow =>
+      'Ippudu reflections konchem slow ga velthunnaayi';
+
+  @override
+  String reflections_left(int remaining, int total) {
+    return 'Ee roju $total lo $remaining migilaayi';
+  }
+
+  @override
+  String reflections_cardLabel(String pseudonym) {
+    return '$pseudonym raasina reflection';
+  }
+
+  @override
+  String get reflections_mine => 'Mee reflection';
+
+  @override
+  String get reflections_onlyYou => 'Idi meeku maatrame kanipistundi';
+
+  @override
+  String get reflections_pending =>
+      'Inka chustunnaam. Meeru chaduvutu undochu.';
+
+  @override
+  String get reflections_heldSoon => 'Oka chinna check kosam wait chestondi';
+
+  @override
+  String get reflections_heldOvernight =>
+      'Oka chinna check kosam wait chestondi. Podduna varaku pattochu.';
+
+  @override
+  String get reflections_rejectedCard => 'Idi ikkada pettalekapoyaam.';
+
+  @override
+  String get reflections_removedCard =>
+      'Oka review tarvaatha deenni teesesaam.';
+
+  @override
+  String reflections_gestureCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gestures',
+      one: '1 gesture',
+      zero: 'Inka gestures levu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_countPrivate => 'Ee count meeku maatrame kanipistundi';
+
+  @override
+  String get reflections_options => 'Reflection options';
+
+  @override
+  String reflections_gestureHint(String pseudonym) {
+    return 'Ee reflection kosam $pseudonym ki pamputundi';
+  }
+
+  @override
+  String reflections_gestureSent(String gesture, String pseudonym) {
+    return '$pseudonym ki $gesture pampaaru';
+  }
+
+  @override
+  String get reflections_delete => 'Delete';
+
+  @override
+  String get reflections_withdraw => 'Withdraw';
+
+  @override
+  String get reflections_deleteTitle => 'Ee reflection ni delete cheyaala?';
+
+  @override
+  String get reflections_deleteBody =>
+      'Idi ikkada andariki kanipinchadu. Reflections edit cheyyaleru, kaani kothadi share cheyochu.';
+
+  @override
+  String get reflections_withdrawTitle => 'Ee reflection ni withdraw cheyaala?';
+
+  @override
+  String get reflections_withdrawBody =>
+      'Idi pettabadadu. Meeru eppudaina kothadi share cheyochu.';
+
+  @override
+  String get reflections_deleted => 'Mee reflection teesesaam.';
+
+  @override
+  String get reflections_reportTitle => 'Ee reflection ni report cheyandi';
+
+  @override
+  String get reflections_reportHidden =>
+      'Cheppinanduku thanks. Aa reflection ippudu meeku kanipinchadu.';
+
+  @override
+  String get reflections_composeTitle => 'Oka reflection share cheyandi';
+
+  @override
+  String get reflections_composeLabel => 'Mee manasulo emundi?';
+
+  @override
+  String get reflections_composeNote =>
+      'Ee room kosam konni maatalu. Itarulu gestures tho maatrame respond avutaaru, replies undavu.';
+
+  @override
+  String reflections_counter(int count, int max) {
+    return '$count/$max';
+  }
+
+  @override
+  String reflections_counterSemantic(int count, int max) {
+    return '$max lo $count characters';
+  }
+
+  @override
+  String reflections_tooLong(int max) {
+    return 'Konchem chinnaga raayandi: $max characters varaku.';
+  }
+
+  @override
+  String get reflections_send => 'Pampandi';
+
+  @override
+  String get reflections_sending => 'Nemmadiga pamputunnaam…';
+
+  @override
+  String get reflections_contactBlocked =>
+      'Phone numbers, links, handles ikkada share cheyyaleru. Idi andarini safe ga unchutundi.';
+
+  @override
+  String get reflections_draftKept =>
+      'Draft safe ga undi. Malli online ki vachaaka pampochu.';
+
+  @override
+  String get reflections_sendFailed =>
+      'Ippudu pampalekapoyaam. Mee maatalu ikkade unnaayi: kaasepatlo malli try cheyandi.';
+
+  @override
+  String get reflections_rejectedContact =>
+      'Reflections lo contact details undakoodadu. Avi lekunda malli try chestaara?';
+
+  @override
+  String get reflections_rejectedLink =>
+      'Reflections lo links undakoodadu. Adi lekunda malli try chestaara?';
+
+  @override
+  String get reflections_rejectedPersonal =>
+      'Evarivaina personal details gurinchi questions ikkada pettaleru. Avi lekunda try chestaara?';
+
+  @override
+  String get reflections_rejectedGeneral =>
+      'Idi ikkada pettalemu. Idi evarinaina baadha pettochu leda personal details share cheyochu. Mee maatalu edit cheyyadaniki ikkade unnaayi.';
+
+  @override
+  String get reflections_supportSubtitle =>
+      'Meeru deenni okkare moyaalsina avasaram ledu.';
+
+  @override
+  String get reflections_backToRoom => 'Room ki tirigi vellandi';
+
+  @override
+  String get device_bannedTitle => 'Ee device lo Aura use cheyyalemu';
+
+  @override
+  String get device_bannedBody => 'Ee phone lo Aura available ledu.';
+
+  @override
+  String get device_bannedReviewSubject => 'Device review';
+
+  @override
+  String get rooms_paused =>
+      'Rooms konchem sepu rest teesukuntunnayi. Taruvaata malli try cheyandi.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'Rooms konchem sepu rest teesukuntunnayi. Mee check-in save ayyindi.';
 
   @override
   String get rooms_title => 'Rooms';
@@ -5813,6 +7083,253 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
       'Support contact, Grievance Officer, policies';
 
   @override
+  String get sounds_title => 'Sounds';
+
+  @override
+  String get sounds_cardBody =>
+      'Rain, ocean, wind inka marenno. Meeru select chese varaku edi vinipinchadu.';
+
+  @override
+  String get sounds_cardPlaying => 'Ippudu play avutondi';
+
+  @override
+  String get sounds_intro =>
+      'Modalupettadaaniki oka sound select cheyandi, leda naalugu varaku kalapandi. Meeru tap chese varaku edi vinipinchadu.';
+
+  @override
+  String get sounds_nothingPlaying => 'Edi play avvadam ledu';
+
+  @override
+  String get sounds_statePlaying => 'Play avutondi';
+
+  @override
+  String get sounds_statePaused => 'Aagindi';
+
+  @override
+  String get sounds_backgroundNote =>
+      'Screen off ayina sounds vinipistune untaayi. Headphones disconnect ayina, call vachina aagutaayi.';
+
+  @override
+  String get sounds_notificationChannel => 'Sounds playback';
+
+  @override
+  String get sounds_windDownTitle => 'Night wind-down';
+
+  @override
+  String get sounds_windDownBody =>
+      'Sumaaru 20 nimishaala sounds, mellaga taggutu nishabdam loki veltaayi. Prati raatri vaati order maarutundi.';
+
+  @override
+  String get sounds_windDownBegin => 'Wind-down modalupettandi';
+
+  @override
+  String sounds_windDownLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Sumaaru $minutes nimishaalu migilaayi',
+      one: 'Sumaaru 1 nimisham migilindi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_windDownBusy =>
+      'Wind-down play avutondi. Mee sonta mix kosam mundu daanni aapandi.';
+
+  @override
+  String get sounds_mixSection => 'Mee sonta mix';
+
+  @override
+  String get sounds_mixHint =>
+      'Okesaari naalugu varaku, okkodaaniki vere volume.';
+
+  @override
+  String get sounds_stemRain => 'Rain';
+
+  @override
+  String get sounds_stemOcean => 'Ocean';
+
+  @override
+  String get sounds_stemWind => 'Gaali';
+
+  @override
+  String get sounds_stemNightInsects => 'Night keetakaalu';
+
+  @override
+  String get sounds_stemSingingBowl => 'Singing bowl';
+
+  @override
+  String get sounds_stemChimes => 'Chimes';
+
+  @override
+  String get sounds_stemBrownNoise => 'Brown noise';
+
+  @override
+  String get sounds_stemPinkNoise => 'Pink noise';
+
+  @override
+  String get sounds_stemDeepBell => 'Doorapu ganta';
+
+  @override
+  String get sounds_stemMonsoonRoof => 'Paikappu meeda vaana';
+
+  @override
+  String get sounds_stemStream => 'Vaagu';
+
+  @override
+  String get sounds_stemFireplace => 'Manta chitapatalu';
+
+  @override
+  String get sounds_stemDistantThunder => 'Doorapu urumulu';
+
+  @override
+  String sounds_stemOn(String name, int percent) {
+    return '$name, play avutondi, volume $percent%';
+  }
+
+  @override
+  String sounds_stemPaused(String name, int percent) {
+    return '$name, aagindi, volume $percent%';
+  }
+
+  @override
+  String sounds_stemOff(String name) {
+    return '$name, off';
+  }
+
+  @override
+  String sounds_stemLocked(String name) {
+    return '$name, Aura Plus lo bhaagam';
+  }
+
+  @override
+  String sounds_stemNeedsDownload(String name, String size) {
+    return '$name, okasaari $size download cheyaali';
+  }
+
+  @override
+  String sounds_stemDownloading(String name) {
+    return '$name, download avutondi';
+  }
+
+  @override
+  String sounds_volume(String name) {
+    return '$name volume';
+  }
+
+  @override
+  String get sounds_plusBadge => 'Aura Plus';
+
+  @override
+  String get sounds_plusNote => 'Aura Plus tho vastundi.';
+
+  @override
+  String get sounds_full =>
+      'Naalugu sounds play avutunnaayi. Inkokati add cheyadaaniki okadaanni aapandi.';
+
+  @override
+  String get sounds_play => 'Play';
+
+  @override
+  String get sounds_pause => 'Pause';
+
+  @override
+  String get sounds_stop => 'Stop';
+
+  @override
+  String get sounds_timer => 'Timer';
+
+  @override
+  String get sounds_timerTitle => 'Inta time tarvaata mellaga aagutundi';
+
+  @override
+  String get sounds_timerOff => 'Off';
+
+  @override
+  String sounds_timerValue(String value) {
+    return 'Timer · $value';
+  }
+
+  @override
+  String sounds_timerLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Sumaaru $minutes nimishaallo mellaga aagutundi',
+      one: 'Sumaaru 1 nimisham lo mellaga aagutundi',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_fadingOut => 'Mellaga aagutondi';
+
+  @override
+  String get sounds_saveMix => 'Ee mix save cheyandi';
+
+  @override
+  String get sounds_savedMixes => 'Save chesina mixes';
+
+  @override
+  String get sounds_mixSaved => 'Ee phone lo save ayyindi.';
+
+  @override
+  String get sounds_mixAlreadySaved => 'Ee mix ippatike save ayyi undi.';
+
+  @override
+  String sounds_playMix(String mix) {
+    return '$mix play cheyandi';
+  }
+
+  @override
+  String sounds_removeMix(String mix) {
+    return '$mix teeseyandi';
+  }
+
+  @override
+  String get sounds_mixUnavailable => 'Ee mix ippudu play avvadu.';
+
+  @override
+  String get sounds_downloadTitle => 'Recorded sounds';
+
+  @override
+  String sounds_downloadBody(String size) {
+    return 'Okasaari $size download cheyaali. Aa tarvaata internet lekundaane vinipistaayi. Appativaraku mee phone lone tayaaraina sounds vinipistaayi.';
+  }
+
+  @override
+  String get sounds_download => 'Download cheyandi';
+
+  @override
+  String get sounds_downloading => 'Download avutondi…';
+
+  @override
+  String get sounds_downloadOffline =>
+      'Meeru offline lo unnaru. Brown noise, mee phone lo tayaaraina sounds ippude vinipistaayi; recordings tarvaata download chesukovachu.';
+
+  @override
+  String get sounds_downloadFailed =>
+      'Download purti kaaledu. Edi poledu; tarvaata malli download chesukovachu.';
+
+  @override
+  String sounds_noSpace(String size) {
+    return 'Sounds ki sumaaru $size kaavaali. Konta space khaali cheyandi, leda brown noise vinandi, daaniki emi avasaram ledu.';
+  }
+
+  @override
+  String sounds_megabytes(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String get sounds_removeDownloads => 'Download chesina sounds teeseyandi';
+
+  @override
+  String get sounds_downloadsRemoved =>
+      'Download chesina sounds teesesaam. Mee phone lo tayaaraina sounds inka vinipistaayi.';
+
+  @override
   String get voice_record => 'Voice note record cheyandi';
 
   @override
@@ -5929,21 +7446,4 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get voice_hasVoice => 'Oka voice note undi';
-
-  @override
-  String get device_bannedTitle => 'Ee device lo Aura use cheyyalemu';
-
-  @override
-  String get device_bannedBody => 'Ee phone lo Aura available ledu.';
-
-  @override
-  String get device_bannedReviewSubject => 'Device review';
-
-  @override
-  String get rooms_paused =>
-      'Rooms konchem sepu rest teesukuntunnayi. Taruvaata malli try cheyandi.';
-
-  @override
-  String get rooms_pausedJoin =>
-      'Rooms konchem sepu rest teesukuntunnayi. Mee check-in save ayyindi.';
 }

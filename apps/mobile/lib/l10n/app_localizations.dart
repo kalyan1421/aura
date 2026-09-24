@@ -2201,6 +2201,30 @@ abstract class AppLocalizations {
   /// **'Signing out clears this account from this phone.'**
   String get closed_signOutNote;
 
+  /// In-app notice when the 'rooms are open' push arrives while the app is open (the same line as the push; the person tapped 'Tell me when they open'). Never a mood or a room name.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi and Hinglish rooms are open now.'**
+  String get notif_roomsPoolBanner;
+
+  /// Action on the 'rooms are open' notice: opens Rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'See rooms'**
+  String get notif_roomsPoolAction;
+
+  /// Android notification channel name for room notices (phone Settings; PRD 15-permissions).
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms & Lantern Hour'**
+  String get notif_channelRooms;
+
+  /// Android notification channel description (phone Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'When rooms you asked about open.'**
+  String get notif_channelRoomsDescription;
+
   /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
   ///
   /// In en, this message translates to:
@@ -2446,6 +2470,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{habit} is marked done for today.'**
   String help_breatheLogged(String habit);
+
+  /// Title of the Insights tab: the person's check-in history drawn as a night sky. 'Aura Sky' is a brand name.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Sky'**
+  String get insights_title;
+
+  /// Privacy line under the sky: patterns are computed on the device and never uploaded (PRD F10).
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see your sky. It\'s worked out on this phone.'**
+  String get insights_private;
+
+  /// Empty Insights (no check-ins yet): a quiet sky and a Check in button (PRD F10 edge cases, 14-states).
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky fills in as you check in.'**
+  String get insights_empty;
+
+  /// Button that opens the full private list of check-ins (history), with edit and delete.
+  ///
+  /// In en, this message translates to:
+  /// **'All check-ins'**
+  String get insights_allCheckIns;
+
+  /// Sky view switch: one month of days.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get insights_viewMonth;
+
+  /// Sky view switch: a whole year of days.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get insights_viewYear;
+
+  /// Button (icon, screen-reader label) that shows the month before.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get insights_prevMonth;
+
+  /// Button (icon, screen-reader label) that shows the month after.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get insights_nextMonth;
+
+  /// Button (icon, screen-reader label) that shows the year before.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous year'**
+  String get insights_prevYear;
+
+  /// Button (icon, screen-reader label) that shows the year after.
+  ///
+  /// In en, this message translates to:
+  /// **'Next year'**
+  String get insights_nextYear;
+
+  /// Screen-reader label of a day with no check-in. Neutral: an inactive day is plain sky, never 'missed'.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, quiet sky'**
+  String insights_dayEmpty(String date);
+
+  /// Screen-reader label of a rest day (a faint ring in the sky).
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, a rest day'**
+  String insights_dayRest(String date);
+
+  /// Screen-reader label of a day whose most frequent quadrant is {quadrant} (Storm, Rain, Moonlight or Sunrise).
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, {quadrant}, {count, plural, =1{1 check-in} other{{count} check-ins}}'**
+  String insights_daySingle(String date, String quadrant, int count);
+
+  /// Screen-reader label of a mixed day: two quadrants tied (a split star).
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, {first} and {second} equally, {count, plural, =1{1 check-in} other{{count} check-ins}}'**
+  String insights_dayPair(String date, String first, String second, int count);
+
+  /// Screen-reader label of a mixed day: three or four quadrants tied (a split star).
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, an even mix, {count, plural, =1{1 check-in} other{{count} check-ins}}'**
+  String insights_dayMixed(String date, int count);
+
+  /// Screen-reader hint on a day with check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows this day\'s check-ins'**
+  String get insights_dayHint;
+
+  /// Day sheet for a day without check-ins. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was logged this day. The sky was just quiet.'**
+  String get insights_dayNone;
+
+  /// Screen-reader label of one month in the year view; tapping it opens that month.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}, {count, plural, =0{a quiet sky} =1{1 day checked in} other{{count} days checked in}}'**
+  String insights_monthSemantic(String month, int count);
+
+  /// Sky legend: the faint ring.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest day'**
+  String get insights_legendRest;
+
+  /// Sky legend: the split star (quadrants tied that day).
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed day'**
+  String get insights_legendMixed;
+
+  /// Section title: plain-language patterns from the person's own check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns'**
+  String get insights_patternsTitle;
+
+  /// Under the Patterns title on Free: the window the patterns come from.
+  ///
+  /// In en, this message translates to:
+  /// **'From your last 30 days'**
+  String get insights_patternsLast30;
+
+  /// Shown instead of patterns while there are fewer than 7 check-ins in the window (PRD F10, REQ-INS-01: '6/7').
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns appear after 7 check-ins ({count}/7)'**
+  String insights_patternsNeedCheckIns(int count);
+
+  /// Shown when there are 7+ check-ins but on fewer than 5 different days (REQ-INS-01 negative).
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns appear after check-ins on 5 different days ({count}/5)'**
+  String insights_patternsNeedDays(int count);
+
+  /// Enough check-ins, but nothing passes the thresholds (weak patterns are hidden, not caveated).
+  ///
+  /// In en, this message translates to:
+  /// **'No clear patterns right now. Your sky is still here.'**
+  String get insights_patternsNone;
+
+  /// A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'On check-ins with {tag}, {quadrant} showed up more often.'**
+  String insights_patternTag(String tag, String quadrant);
+
+  /// A pattern (Aura Plus): on days the habit was done, check-ins were {quadrant} more often. Descriptive only, never causal.
+  ///
+  /// In en, this message translates to:
+  /// **'On days you did {habit}, {quadrant} showed up more often.'**
+  String insights_patternHabit(String habit, String quadrant);
+
+  /// A pattern: morning check-ins (04:00–12:00) were {quadrant} more often than the rest of the day.
+  ///
+  /// In en, this message translates to:
+  /// **'In the mornings, {quadrant} showed up more often.'**
+  String insights_patternMorning(String quadrant);
+
+  /// A pattern: afternoon check-ins (12:00–17:00) were {quadrant} more often.
+  ///
+  /// In en, this message translates to:
+  /// **'In the afternoons, {quadrant} showed up more often.'**
+  String insights_patternAfternoon(String quadrant);
+
+  /// A pattern: evening check-ins (17:00–21:00) were {quadrant} more often.
+  ///
+  /// In en, this message translates to:
+  /// **'In the evenings, {quadrant} showed up more often.'**
+  String insights_patternEvening(String quadrant);
+
+  /// A pattern: late check-ins (21:00–04:00) were {quadrant} more often.
+  ///
+  /// In en, this message translates to:
+  /// **'At night, {quadrant} showed up more often.'**
+  String insights_patternNight(String quadrant);
+
+  /// A pattern: the most frequent quadrant in the window. Same warmth for every quadrant.
+  ///
+  /// In en, this message translates to:
+  /// **'{quadrant} showed up most often in your sky.'**
+  String insights_patternMix(String quadrant);
+
+  /// Small label on an Insights extra that comes with Aura Plus (brand name).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus'**
+  String get insights_plusBadge;
+
+  /// Locked note under the patterns on Free (PRD F10: Plus gates depth only; REQ-INS-05). Calm, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Any range and habits alongside moods come with Aura Plus. Your sky and 30-day patterns are always free.'**
+  String get insights_rangeLocked;
+
+  /// Screen-reader label of the range picker (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns from'**
+  String get insights_rangeLabel;
+
+  /// Range choice (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get insights_range7;
+
+  /// Range choice.
+  ///
+  /// In en, this message translates to:
+  /// **'30 days'**
+  String get insights_range30;
+
+  /// Range choice (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'90 days'**
+  String get insights_range90;
+
+  /// Range choice (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'1 year'**
+  String get insights_range365;
+
+  /// Range choice (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get insights_rangeAll;
+
+  /// Weekly insight card title, shown on the first Aura day of the week in Insights only (never pushed). The body is one pattern sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'From your past week'**
+  String get insights_weeklyTitle;
+
+  /// Hides the weekly card until next week.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide for this week'**
+  String get insights_weeklyHide;
+
+  /// Care card when most recent check-ins were Storm or Rain (PRD F10 literal). Shown in Insights only, never pushed. Warm, never diagnostic.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s been a heavy couple of weeks'**
+  String get insights_careTitle;
+
+  /// Care card body. No pressure, no labels.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have to carry it alone. Support and a room are here whenever you want them.'**
+  String get insights_careBody;
+
+  /// Care card button: opens the support sheet (helplines, grounding).
+  ///
+  /// In en, this message translates to:
+  /// **'See support'**
+  String get insights_careSupport;
+
+  /// Care card button: opens Rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a room'**
+  String get insights_careRoom;
+
+  /// Title of the monthly recap, shown from the first Aura day of each month (PRD F10).
+  ///
+  /// In en, this message translates to:
+  /// **'Your month in stars'**
+  String get insights_monthTitle;
+
+  /// Monthly recap card body; month = e.g. 'October 2026'.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} in your sky'**
+  String insights_monthCardBody(String month);
+
+  /// Opens the monthly recap.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get insights_monthOpen;
+
+  /// Hides the monthly recap card until next month.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get insights_monthHide;
+
+  /// Recap: distinct days with a check-in in that month.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day checked in} other{{count} days checked in}}'**
+  String insights_monthDays(int count);
+
+  /// Recap: heading of the quadrant mix drawn as a sky.
+  ///
+  /// In en, this message translates to:
+  /// **'Your skies this month'**
+  String get insights_monthMixTitle;
+
+  /// Recap legend row (glyph + name + count), also read by screen readers.
+  ///
+  /// In en, this message translates to:
+  /// **'{quadrant}: {count, plural, =1{1 check-in} other{{count} check-ins}}'**
+  String insights_monthMixItem(String quadrant, int count);
+
+  /// Screen-reader label of the recap's drawn sky.
+  ///
+  /// In en, this message translates to:
+  /// **'A sky of {count, plural, =1{1 star} other{{count} stars}}, one for each check-in in {month}'**
+  String insights_monthSkySemantic(int count, String month);
+
+  /// Section of the recap with patterns across the month and habit × mood (Aura Plus).
+  ///
+  /// In en, this message translates to:
+  /// **'Deeper monthly review'**
+  String get insights_deeperTitle;
+
+  /// Locked note on Free (PRD 14-states: blurred deeper chart, basic sky stays free).
+  ///
+  /// In en, this message translates to:
+  /// **'Patterns across the month, with habits alongside moods, come with Aura Plus.'**
+  String get insights_deeperLocked;
+
+  /// Plus recap: nothing passed the thresholds for that month.
+  ///
+  /// In en, this message translates to:
+  /// **'No clear patterns this month.'**
+  String get insights_deeperNone;
+
+  /// Section title: lifetime stats (free).
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get insights_statsTitle;
+
+  /// Lifetime stat: check-ins (not deleted).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 check-in} other{{count} check-ins}}'**
+  String insights_statsCheckIns(int count);
+
+  /// Lifetime stat: distinct days with a check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day in your sky} other{{count} days in your sky}}'**
+  String insights_statsDays(int count);
 
   /// In-app notice when the daily check-in reminder arrives while the app is open (same line as the push, PRD 12-notifications catalogue). Never guilt, never a streak.
   ///
@@ -2746,6 +3130,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number copied'**
   String get polish_helpNumberCopied;
+
+  /// Room screen: heading over the reflections (short moderated posts answered only with gestures).
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections'**
+  String get reflections_title;
+
+  /// Room screen: one line under the Reflections heading. No replies exist.
+  ///
+  /// In en, this message translates to:
+  /// **'A few words from people here. Answered only with gestures.'**
+  String get reflections_intro;
+
+  /// Button that opens the reflection composer.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a reflection'**
+  String get reflections_share;
+
+  /// Reflections list is empty. No pressure to write.
+  ///
+  /// In en, this message translates to:
+  /// **'No reflections here yet. You can share one, or just read and send gestures.'**
+  String get reflections_empty;
+
+  /// A memory room with no reflections.
+  ///
+  /// In en, this message translates to:
+  /// **'No reflections were shared in this room.'**
+  String get reflections_emptyMemory;
+
+  /// Loading reflections failed (server or network). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections couldn\'t load just now.'**
+  String get reflections_loadFailed;
+
+  /// Offline: the list can't load; drafts are kept.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections need a connection. Anything you write stays on this phone.'**
+  String get reflections_offline;
+
+  /// A memory room: read-only list, no composer.
+  ///
+  /// In en, this message translates to:
+  /// **'This room is a memory: its reflections can be read, not added to.'**
+  String get reflections_memory;
+
+  /// Composer paused (kill switch / reduced mode). Contract wording.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections are resting for a bit. Gestures still work.'**
+  String get reflections_paused;
+
+  /// Daily cap reached (3 per room, or 10 across rooms, rolling 24 h). Calm; not a punishment.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{That\'s 1 reflection for today. Gestures are always open.} other{That\'s {count} reflections for today. Gestures are always open.}}'**
+  String reflections_limit(int count);
+
+  /// The automatic check is degraded: sending may take longer.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections are slower right now'**
+  String get reflections_slow;
+
+  /// Composer / section: reflections left in this room today (rolling 24 h).
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} of {total} left today'**
+  String reflections_left(int remaining, int total);
+
+  /// Screen reader: a reflection card (the text follows).
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection by {pseudonym}'**
+  String reflections_cardLabel(String pseudonym);
+
+  /// Label on your own reflection card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reflection'**
+  String get reflections_mine;
+
+  /// Your own reflection that is not published (checking, held, not posted, taken down).
+  ///
+  /// In en, this message translates to:
+  /// **'Only you can see this'**
+  String get reflections_onlyYou;
+
+  /// Your reflection is still being checked (moderation took longer than 2 s).
+  ///
+  /// In en, this message translates to:
+  /// **'Still checking. You can keep reading.'**
+  String get reflections_pending;
+
+  /// Your reflection is held for a human review (only you see it).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a quick check'**
+  String get reflections_heldSoon;
+
+  /// Held overnight (the reviewer's night).
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a quick check. This may take until morning.'**
+  String get reflections_heldOvernight;
+
+  /// Your own rejected reflection in the list (a reason line follows).
+  ///
+  /// In en, this message translates to:
+  /// **'This one didn\'t go up here.'**
+  String get reflections_rejectedCard;
+
+  /// Your own reflection removed after a report was upheld. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'This one was taken down after a review.'**
+  String get reflections_removedCard;
+
+  /// Gestures on your own published reflection.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No gestures yet} =1{1 gesture} other{{count} gestures}}'**
+  String reflections_gestureCount(int count);
+
+  /// Under the gesture count on your own reflection: counts are never public.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you see this count'**
+  String get reflections_countPrivate;
+
+  /// Tooltip / screen reader: the ⋯ menu on a reflection card (report, block, mute, delete).
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection options'**
+  String get reflections_options;
+
+  /// Screen-reader hint on a gesture under someone's reflection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sends to {pseudonym} for this reflection'**
+  String reflections_gestureHint(String pseudonym);
+
+  /// After sending a gesture on a reflection (announced).
+  ///
+  /// In en, this message translates to:
+  /// **'{gesture} sent to {pseudonym}'**
+  String reflections_gestureSent(String gesture, String pseudonym);
+
+  /// Delete your own published reflection (no editing exists).
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get reflections_delete;
+
+  /// Withdraw your own reflection while it is checked or held.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get reflections_withdraw;
+
+  /// Delete confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this reflection?'**
+  String get reflections_deleteTitle;
+
+  /// Delete confirmation body.
+  ///
+  /// In en, this message translates to:
+  /// **'It goes away for everyone here. Reflections can\'t be edited, but you can share a new one.'**
+  String get reflections_deleteBody;
+
+  /// Withdraw confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw this reflection?'**
+  String get reflections_withdrawTitle;
+
+  /// Withdraw confirmation body.
+  ///
+  /// In en, this message translates to:
+  /// **'It won\'t go up. You can share a new one any time.'**
+  String get reflections_withdrawBody;
+
+  /// After deleting or withdrawing your reflection.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reflection is gone.'**
+  String get reflections_deleted;
+
+  /// Report sheet title for a reflection (F9).
+  ///
+  /// In en, this message translates to:
+  /// **'Report this reflection'**
+  String get reflections_reportTitle;
+
+  /// After reporting a reflection (it hides for the reporter at once).
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for telling us. That reflection is hidden for you now.'**
+  String get reflections_reportHidden;
+
+  /// Composer sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a reflection'**
+  String get reflections_composeTitle;
+
+  /// Composer text field label. Gentle; no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get reflections_composeLabel;
+
+  /// Composer helper line.
+  ///
+  /// In en, this message translates to:
+  /// **'A few words for this room. People can answer with gestures only, never replies.'**
+  String get reflections_composeNote;
+
+  /// Composer character counter (characters as a person sees them).
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/{max}'**
+  String reflections_counter(int count, int max);
+
+  /// Screen reader: the composer's character counter.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {max} characters'**
+  String reflections_counterSemantic(int count, int max);
+
+  /// Composer over the limit (Send is disabled).
+  ///
+  /// In en, this message translates to:
+  /// **'A little shorter, please: up to {max} characters.'**
+  String reflections_tooLong(int max);
+
+  /// Composer send button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get reflections_send;
+
+  /// Composer while the check takes longer than usual.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending gently…'**
+  String get reflections_sending;
+
+  /// On-device block: contact details or a link in the text. Nothing was sent (14-states wording).
+  ///
+  /// In en, this message translates to:
+  /// **'Phone numbers, links and handles can\'t be shared here. It keeps everyone safer.'**
+  String get reflections_contactBlocked;
+
+  /// Composer offline: Send is disabled, the text stays on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft kept. You can send it once you\'re back online.'**
+  String get reflections_draftKept;
+
+  /// A send failed (network / server). The draft and its id are kept.
+  ///
+  /// In en, this message translates to:
+  /// **'It didn\'t send just now. Your words are still here: try again in a moment.'**
+  String get reflections_sendFailed;
+
+  /// Rejected by the server: contact details (PRD F6 wording). The text stays to edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections can\'t include contact details. Want to try without it?'**
+  String get reflections_rejectedContact;
+
+  /// Rejected by the server: a link. The text stays to edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections can\'t include links. Want to try without it?'**
+  String get reflections_rejectedLink;
+
+  /// Rejected by the server: personal questions (age, school, where someone lives, photos, meeting). Never names the rule; never mentions anyone's age.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions about someone\'s personal details can\'t go up here. Want to try without them?'**
+  String get reflections_rejectedPersonal;
+
+  /// Rejected by the server (hurtful, sexual, other). 14-states wording; no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'This one can\'t go up here. It may hurt someone or share personal details. Your words are still here to edit.'**
+  String get reflections_rejectedGeneral;
+
+  /// Support sheet subtitle after a reflection was crisis-diverted (no rejection wording). Safe messaging.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have to carry it alone.'**
+  String get reflections_supportSubtitle;
+
+  /// Support sheet button after a crisis-diverted reflection.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the room'**
+  String get reflections_backToRoom;
+
+  /// Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off).
+  ///
+  /// In en, this message translates to:
+  /// **'This device can\'t use Aura'**
+  String get device_bannedTitle;
+
+  /// Body under device_bannedTitle. No reason, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura isn\'t available on this phone.'**
+  String get device_bannedBody;
+
+  /// Email subject when asking for a review of a device ban. Nothing about the person or the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Review of a device'**
+  String get device_bannedReviewSubject;
+
+  /// Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are resting for a bit. Try again later.'**
+  String get rooms_paused;
+
+  /// After a check-in, when the rooms kill switch is off.
+  ///
+  /// In en, this message translates to:
+  /// **'Rooms are resting for a bit. Your check-in is saved.'**
+  String get rooms_pausedJoin;
 
   /// Rooms tab title (mood rooms with preset gestures). Never 'chat'.
   ///
@@ -4673,6 +5393,396 @@ abstract class AppLocalizations {
   /// **'Support contact, Grievance Officer and policies'**
   String get safety_settingsHint;
 
+  /// Title of Sanctuary › Sounds: ambient sounds to mix (rain, ocean, wind…). Also the Sanctuary section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds'**
+  String get sounds_title;
+
+  /// Under the Sounds card on the Sanctuary tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain, ocean, wind and more. Nothing plays until you choose.'**
+  String get sounds_cardBody;
+
+  /// Under the Sounds card while sounds are playing.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing now'**
+  String get sounds_cardPlaying;
+
+  /// Intro at the top of Sounds. Promise: silent until chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a sound to begin, or mix up to four. Nothing plays until you tap.'**
+  String get sounds_intro;
+
+  /// Status line (also for screen readers) when no sound plays.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing playing'**
+  String get sounds_nothingPlaying;
+
+  /// Status line while sounds play.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get sounds_statePlaying;
+
+  /// Status line while sounds are paused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get sounds_statePaused;
+
+  /// Small note at the bottom of Sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds keep playing with the screen off. They pause if your headphones disconnect or a call comes in.'**
+  String get sounds_backgroundNote;
+
+  /// Android notification channel name for the Sounds media controls (Settings › Notifications).
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds playback'**
+  String get sounds_notificationChannel;
+
+  /// A ~20-minute sequence of sounds that slowly thins out to silence. No voice, no claims.
+  ///
+  /// In en, this message translates to:
+  /// **'Night wind-down'**
+  String get sounds_windDownTitle;
+
+  /// Under the wind-down title.
+  ///
+  /// In en, this message translates to:
+  /// **'About 20 minutes of sounds that slowly thin out to silence. The order changes each night.'**
+  String get sounds_windDownBody;
+
+  /// Starts the night wind-down.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin wind-down'**
+  String get sounds_windDownBegin;
+
+  /// While the wind-down plays: roughly how long until it has faded to silence.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{About 1 minute left} other{About {minutes} minutes left}}'**
+  String sounds_windDownLeft(int minutes);
+
+  /// Tapping a sound while the wind-down plays.
+  ///
+  /// In en, this message translates to:
+  /// **'The wind-down is playing. Stop it to make your own mix.'**
+  String get sounds_windDownBusy;
+
+  /// Section header above the list of sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Mix your own'**
+  String get sounds_mixSection;
+
+  /// Under the mixer header.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to four at once, each with its own volume.'**
+  String get sounds_mixHint;
+
+  /// Sound: steady rain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rain'**
+  String get sounds_stemRain;
+
+  /// Sound: ocean waves.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean'**
+  String get sounds_stemOcean;
+
+  /// Sound: wind.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind'**
+  String get sounds_stemWind;
+
+  /// Sound: crickets and insects at night.
+  ///
+  /// In en, this message translates to:
+  /// **'Night insects'**
+  String get sounds_stemNightInsects;
+
+  /// Sound: a singing bowl struck now and then.
+  ///
+  /// In en, this message translates to:
+  /// **'Singing bowl'**
+  String get sounds_stemSingingBowl;
+
+  /// Sound: wind chimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Chimes'**
+  String get sounds_stemChimes;
+
+  /// Sound: soft, deep steady noise (generated on the phone).
+  ///
+  /// In en, this message translates to:
+  /// **'Brown noise'**
+  String get sounds_stemBrownNoise;
+
+  /// Aura Plus sound: soft steady noise.
+  ///
+  /// In en, this message translates to:
+  /// **'Pink noise'**
+  String get sounds_stemPinkNoise;
+
+  /// Aura Plus sound: a low bell far away.
+  ///
+  /// In en, this message translates to:
+  /// **'Distant bell'**
+  String get sounds_stemDeepBell;
+
+  /// Aura Plus sound: heavy monsoon rain on a roof.
+  ///
+  /// In en, this message translates to:
+  /// **'Monsoon on a roof'**
+  String get sounds_stemMonsoonRoof;
+
+  /// Aura Plus sound: a flowing stream.
+  ///
+  /// In en, this message translates to:
+  /// **'Stream'**
+  String get sounds_stemStream;
+
+  /// Aura Plus sound: a crackling fire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fireplace'**
+  String get sounds_stemFireplace;
+
+  /// Aura Plus sound: soft thunder far away.
+  ///
+  /// In en, this message translates to:
+  /// **'Distant thunder'**
+  String get sounds_stemDistantThunder;
+
+  /// Screen-reader label of a sound that is on, e.g. 'Rain, playing, volume 60%'.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, playing, volume {percent}%'**
+  String sounds_stemOn(String name, int percent);
+
+  /// Screen-reader label of a sound in the mix while paused.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, paused, volume {percent}%'**
+  String sounds_stemPaused(String name, int percent);
+
+  /// Screen-reader label of a sound that is not playing. Tapping it adds it.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, off'**
+  String sounds_stemOff(String name);
+
+  /// Screen-reader label of an Aura Plus sound on Free. Calm, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, part of Aura Plus'**
+  String sounds_stemLocked(String name);
+
+  /// Screen-reader label (and line) of a sound that downloads when first picked.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {size} to download once'**
+  String sounds_stemNeedsDownload(String name, String size);
+
+  /// Screen-reader label while a sound downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, downloading'**
+  String sounds_stemDownloading(String name);
+
+  /// Screen-reader label of a sound's volume slider.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} volume'**
+  String sounds_volume(String name);
+
+  /// Small label on a sound that comes with Aura Plus (brand, not translated).
+  ///
+  /// In en, this message translates to:
+  /// **'Aura Plus'**
+  String get sounds_plusBadge;
+
+  /// Shown when a Free user taps an Aura Plus sound. Calm, no pressure, no countdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming with Aura Plus.'**
+  String get sounds_plusNote;
+
+  /// Tapping a fifth sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Four sounds are playing. Turn one off to add another.'**
+  String get sounds_full;
+
+  /// Resumes paused sounds (fades in).
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get sounds_play;
+
+  /// Pauses the sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get sounds_pause;
+
+  /// Stops all sounds and clears the mix.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get sounds_stop;
+
+  /// Opens the timer choices (15, 30, 60 min or off).
+  ///
+  /// In en, this message translates to:
+  /// **'Timer'**
+  String get sounds_timer;
+
+  /// Title of the timer sheet: the sound fades out and stops after the chosen time.
+  ///
+  /// In en, this message translates to:
+  /// **'Fade out after'**
+  String get sounds_timerTitle;
+
+  /// Timer choice: no timer.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get sounds_timerOff;
+
+  /// Timer button with its setting, e.g. 'Timer · 30 minutes' or 'Timer · Off'.
+  ///
+  /// In en, this message translates to:
+  /// **'Timer · {value}'**
+  String sounds_timerValue(String value);
+
+  /// While a timer runs.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{Fades out in about 1 minute} other{Fades out in about {minutes} minutes}}'**
+  String sounds_timerLeft(int minutes);
+
+  /// The timer's last 30 seconds: the sound is fading to silence.
+  ///
+  /// In en, this message translates to:
+  /// **'Fading out'**
+  String get sounds_fadingOut;
+
+  /// Saves the current sounds and volumes on this phone (no name to type).
+  ///
+  /// In en, this message translates to:
+  /// **'Save this mix'**
+  String get sounds_saveMix;
+
+  /// Section header for mixes saved on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved mixes'**
+  String get sounds_savedMixes;
+
+  /// After saving a mix.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone.'**
+  String get sounds_mixSaved;
+
+  /// Saving a mix that is already in the list.
+  ///
+  /// In en, this message translates to:
+  /// **'This mix is already saved.'**
+  String get sounds_mixAlreadySaved;
+
+  /// Screen-reader label of a saved mix, e.g. 'Play Rain · Chimes'.
+  ///
+  /// In en, this message translates to:
+  /// **'Play {mix}'**
+  String sounds_playMix(String mix);
+
+  /// Screen-reader label of the ✕ on a saved mix.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {mix}'**
+  String sounds_removeMix(String mix);
+
+  /// A saved mix whose sounds are all unavailable (e.g. Plus ended, download removed).
+  ///
+  /// In en, this message translates to:
+  /// **'This mix can\'t play right now.'**
+  String get sounds_mixUnavailable;
+
+  /// Card offering the one-time download of the recorded base sounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded sounds'**
+  String get sounds_downloadTitle;
+
+  /// Download card body. size = e.g. '8.1 MB' (shown before downloading).
+  ///
+  /// In en, this message translates to:
+  /// **'{size} to download once. After that they play offline. Until then, sounds made on your phone play instead.'**
+  String sounds_downloadBody(String size);
+
+  /// Starts the one-time download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get sounds_download;
+
+  /// While the download runs.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get sounds_downloading;
+
+  /// Download needs a connection. Calm: most sounds still play.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Brown noise and the sounds made on your phone play now; recordings can download later.'**
+  String get sounds_downloadOffline;
+
+  /// A download failed or didn't match its checksum (it was deleted).
+  ///
+  /// In en, this message translates to:
+  /// **'The download didn\'t finish. Nothing is lost; you can download again later.'**
+  String get sounds_downloadFailed;
+
+  /// Storage full (PRD 06d copy). size = e.g. '8 MB'.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds need about {size}. Free some space, or play brown noise, which needs none.'**
+  String sounds_noSpace(String size);
+
+  /// A download size in megabytes, e.g. '8.1 MB'.
+  ///
+  /// In en, this message translates to:
+  /// **'{size} MB'**
+  String sounds_megabytes(String size);
+
+  /// Deletes the downloaded recordings from this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove downloaded sounds'**
+  String get sounds_removeDownloads;
+
+  /// After removing downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded sounds removed. The sounds made on your phone still play.'**
+  String get sounds_downloadsRemoved;
+
   /// Button in the check-in details that starts recording a voice note (also its screen-reader label).
   ///
   /// In en, this message translates to:
@@ -4840,36 +5950,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Has a voice note'**
   String get voice_hasVoice;
-
-  /// Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off).
-  ///
-  /// In en, this message translates to:
-  /// **'This device can\'t use Aura'**
-  String get device_bannedTitle;
-
-  /// Body under device_bannedTitle. No reason, no blame.
-  ///
-  /// In en, this message translates to:
-  /// **'Aura isn\'t available on this phone.'**
-  String get device_bannedBody;
-
-  /// Email subject when asking for a review of a device ban. Nothing about the person or the phone.
-  ///
-  /// In en, this message translates to:
-  /// **'Review of a device'**
-  String get device_bannedReviewSubject;
-
-  /// Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame.
-  ///
-  /// In en, this message translates to:
-  /// **'Rooms are resting for a bit. Try again later.'**
-  String get rooms_paused;
-
-  /// After a check-in, when the rooms kill switch is off.
-  ///
-  /// In en, this message translates to:
-  /// **'Rooms are resting for a bit. Your check-in is saved.'**
-  String get rooms_pausedJoin;
 }
 
 class _AppLocalizationsDelegate

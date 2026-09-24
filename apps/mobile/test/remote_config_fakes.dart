@@ -111,10 +111,12 @@ Map<String, dynamic> tamper(
 class FakeRemoteConfigApi implements RemoteConfigApi {
   final List<String?> configEtags = [];
   final List<String?> lexiconEtags = [];
+  final List<String?> helplineEtags = [];
 
   /// The next answers, in order (the last one repeats).
   List<Fetched<Object?>> configAnswers = [const NotModified()];
   List<Fetched<Object?>> lexiconAnswers = [const NotPublished()];
+  List<Fetched<Object?>> helplineAnswers = [const NotPublished()];
   Object? configError;
 
   @override
@@ -134,6 +136,14 @@ class FakeRemoteConfigApi implements RemoteConfigApi {
         ? lexiconAnswers.removeAt(0)
         : lexiconAnswers.first;
   }
+
+  @override
+  Future<Fetched<Object?>> helplines({String? etag}) async {
+    helplineEtags.add(etag);
+    return helplineAnswers.length > 1
+        ? helplineAnswers.removeAt(0)
+        : helplineAnswers.first;
+  }
 }
 
 /// A `GET /v1/config` body.
@@ -145,6 +155,7 @@ Map<String, dynamic> configJson({
     'rooms_pool_hi': false,
   },
   ({int version, int seq})? lexicon,
+  ({int version, int seq})? helplines,
 }) => {
   'configVersion': version,
   'pollSeconds': pollSeconds,
@@ -154,5 +165,7 @@ Map<String, dynamic> configJson({
   'bundles': {
     if (lexicon != null)
       'crisis_lexicon': {'version': lexicon.version, 'seq': lexicon.seq},
+    if (helplines != null)
+      'helplines': {'version': helplines.version, 'seq': helplines.seq},
   },
 };

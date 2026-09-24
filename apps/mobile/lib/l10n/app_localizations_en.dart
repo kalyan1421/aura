@@ -1309,6 +1309,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Signing out clears this account from this phone.';
 
   @override
+  String get notif_roomsPoolBanner => 'Hindi and Hinglish rooms are open now.';
+
+  @override
+  String get notif_roomsPoolAction => 'See rooms';
+
+  @override
+  String get notif_channelRooms => 'Rooms & Lantern Hour';
+
+  @override
+  String get notif_channelRoomsDescription =>
+      'When rooms you asked about open.';
+
+  @override
   String home_stageProgress(String stage, String next, int count, int target) {
     return '$stage, $count of $target Starlight toward $next';
   }
@@ -1459,6 +1472,289 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String help_breatheLogged(String habit) {
     return '$habit is marked done for today.';
+  }
+
+  @override
+  String get insights_title => 'Aura Sky';
+
+  @override
+  String get insights_private =>
+      'Only you can see your sky. It\'s worked out on this phone.';
+
+  @override
+  String get insights_empty => 'Your sky fills in as you check in.';
+
+  @override
+  String get insights_allCheckIns => 'All check-ins';
+
+  @override
+  String get insights_viewMonth => 'Month';
+
+  @override
+  String get insights_viewYear => 'Year';
+
+  @override
+  String get insights_prevMonth => 'Previous month';
+
+  @override
+  String get insights_nextMonth => 'Next month';
+
+  @override
+  String get insights_prevYear => 'Previous year';
+
+  @override
+  String get insights_nextYear => 'Next year';
+
+  @override
+  String insights_dayEmpty(String date) {
+    return '$date, quiet sky';
+  }
+
+  @override
+  String insights_dayRest(String date) {
+    return '$date, a rest day';
+  }
+
+  @override
+  String insights_daySingle(String date, String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, $quadrant, $_temp0';
+  }
+
+  @override
+  String insights_dayPair(String date, String first, String second, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, $first and $second equally, $_temp0';
+  }
+
+  @override
+  String insights_dayMixed(String date, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$date, an even mix, $_temp0';
+  }
+
+  @override
+  String get insights_dayHint => 'Shows this day\'s check-ins';
+
+  @override
+  String get insights_dayNone =>
+      'Nothing was logged this day. The sky was just quiet.';
+
+  @override
+  String insights_monthSemantic(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days checked in',
+      one: '1 day checked in',
+      zero: 'a quiet sky',
+    );
+    return '$month, $_temp0';
+  }
+
+  @override
+  String get insights_legendRest => 'Rest day';
+
+  @override
+  String get insights_legendMixed => 'Mixed day';
+
+  @override
+  String get insights_patternsTitle => 'Patterns';
+
+  @override
+  String get insights_patternsLast30 => 'From your last 30 days';
+
+  @override
+  String insights_patternsNeedCheckIns(int count) {
+    return 'Patterns appear after 7 check-ins ($count/7)';
+  }
+
+  @override
+  String insights_patternsNeedDays(int count) {
+    return 'Patterns appear after check-ins on 5 different days ($count/5)';
+  }
+
+  @override
+  String get insights_patternsNone =>
+      'No clear patterns right now. Your sky is still here.';
+
+  @override
+  String insights_patternTag(String tag, String quadrant) {
+    return 'On check-ins with $tag, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternHabit(String habit, String quadrant) {
+    return 'On days you did $habit, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternMorning(String quadrant) {
+    return 'In the mornings, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternAfternoon(String quadrant) {
+    return 'In the afternoons, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternEvening(String quadrant) {
+    return 'In the evenings, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternNight(String quadrant) {
+    return 'At night, $quadrant showed up more often.';
+  }
+
+  @override
+  String insights_patternMix(String quadrant) {
+    return '$quadrant showed up most often in your sky.';
+  }
+
+  @override
+  String get insights_plusBadge => 'Aura Plus';
+
+  @override
+  String get insights_rangeLocked =>
+      'Any range and habits alongside moods come with Aura Plus. Your sky and 30-day patterns are always free.';
+
+  @override
+  String get insights_rangeLabel => 'Patterns from';
+
+  @override
+  String get insights_range7 => '7 days';
+
+  @override
+  String get insights_range30 => '30 days';
+
+  @override
+  String get insights_range90 => '90 days';
+
+  @override
+  String get insights_range365 => '1 year';
+
+  @override
+  String get insights_rangeAll => 'All time';
+
+  @override
+  String get insights_weeklyTitle => 'From your past week';
+
+  @override
+  String get insights_weeklyHide => 'Hide for this week';
+
+  @override
+  String get insights_careTitle => 'It\'s been a heavy couple of weeks';
+
+  @override
+  String get insights_careBody =>
+      'You don\'t have to carry it alone. Support and a room are here whenever you want them.';
+
+  @override
+  String get insights_careSupport => 'See support';
+
+  @override
+  String get insights_careRoom => 'Find a room';
+
+  @override
+  String get insights_monthTitle => 'Your month in stars';
+
+  @override
+  String insights_monthCardBody(String month) {
+    return '$month in your sky';
+  }
+
+  @override
+  String get insights_monthOpen => 'Open';
+
+  @override
+  String get insights_monthHide => 'Hide';
+
+  @override
+  String insights_monthDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days checked in',
+      one: '1 day checked in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get insights_monthMixTitle => 'Your skies this month';
+
+  @override
+  String insights_monthMixItem(String quadrant, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$quadrant: $_temp0';
+  }
+
+  @override
+  String insights_monthSkySemantic(int count, String month) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stars',
+      one: '1 star',
+    );
+    return 'A sky of $_temp0, one for each check-in in $month';
+  }
+
+  @override
+  String get insights_deeperTitle => 'Deeper monthly review';
+
+  @override
+  String get insights_deeperLocked =>
+      'Patterns across the month, with habits alongside moods, come with Aura Plus.';
+
+  @override
+  String get insights_deeperNone => 'No clear patterns this month.';
+
+  @override
+  String get insights_statsTitle => 'All time';
+
+  @override
+  String insights_statsCheckIns(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count check-ins',
+      one: '1 check-in',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String insights_statsDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days in your sky',
+      one: '1 day in your sky',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1638,6 +1934,226 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get polish_helpNumberCopied => 'Number copied';
+
+  @override
+  String get reflections_title => 'Reflections';
+
+  @override
+  String get reflections_intro =>
+      'A few words from people here. Answered only with gestures.';
+
+  @override
+  String get reflections_share => 'Share a reflection';
+
+  @override
+  String get reflections_empty =>
+      'No reflections here yet. You can share one, or just read and send gestures.';
+
+  @override
+  String get reflections_emptyMemory =>
+      'No reflections were shared in this room.';
+
+  @override
+  String get reflections_loadFailed => 'Reflections couldn\'t load just now.';
+
+  @override
+  String get reflections_offline =>
+      'Reflections need a connection. Anything you write stays on this phone.';
+
+  @override
+  String get reflections_memory =>
+      'This room is a memory: its reflections can be read, not added to.';
+
+  @override
+  String get reflections_paused =>
+      'Reflections are resting for a bit. Gestures still work.';
+
+  @override
+  String reflections_limit(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'That\'s $count reflections for today. Gestures are always open.',
+      one: 'That\'s 1 reflection for today. Gestures are always open.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_slow => 'Reflections are slower right now';
+
+  @override
+  String reflections_left(int remaining, int total) {
+    return '$remaining of $total left today';
+  }
+
+  @override
+  String reflections_cardLabel(String pseudonym) {
+    return 'Reflection by $pseudonym';
+  }
+
+  @override
+  String get reflections_mine => 'Your reflection';
+
+  @override
+  String get reflections_onlyYou => 'Only you can see this';
+
+  @override
+  String get reflections_pending => 'Still checking. You can keep reading.';
+
+  @override
+  String get reflections_heldSoon => 'Waiting for a quick check';
+
+  @override
+  String get reflections_heldOvernight =>
+      'Waiting for a quick check. This may take until morning.';
+
+  @override
+  String get reflections_rejectedCard => 'This one didn\'t go up here.';
+
+  @override
+  String get reflections_removedCard =>
+      'This one was taken down after a review.';
+
+  @override
+  String reflections_gestureCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count gestures',
+      one: '1 gesture',
+      zero: 'No gestures yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reflections_countPrivate => 'Only you see this count';
+
+  @override
+  String get reflections_options => 'Reflection options';
+
+  @override
+  String reflections_gestureHint(String pseudonym) {
+    return 'Sends to $pseudonym for this reflection';
+  }
+
+  @override
+  String reflections_gestureSent(String gesture, String pseudonym) {
+    return '$gesture sent to $pseudonym';
+  }
+
+  @override
+  String get reflections_delete => 'Delete';
+
+  @override
+  String get reflections_withdraw => 'Withdraw';
+
+  @override
+  String get reflections_deleteTitle => 'Delete this reflection?';
+
+  @override
+  String get reflections_deleteBody =>
+      'It goes away for everyone here. Reflections can\'t be edited, but you can share a new one.';
+
+  @override
+  String get reflections_withdrawTitle => 'Withdraw this reflection?';
+
+  @override
+  String get reflections_withdrawBody =>
+      'It won\'t go up. You can share a new one any time.';
+
+  @override
+  String get reflections_deleted => 'Your reflection is gone.';
+
+  @override
+  String get reflections_reportTitle => 'Report this reflection';
+
+  @override
+  String get reflections_reportHidden =>
+      'Thank you for telling us. That reflection is hidden for you now.';
+
+  @override
+  String get reflections_composeTitle => 'Share a reflection';
+
+  @override
+  String get reflections_composeLabel => 'What\'s on your mind?';
+
+  @override
+  String get reflections_composeNote =>
+      'A few words for this room. People can answer with gestures only, never replies.';
+
+  @override
+  String reflections_counter(int count, int max) {
+    return '$count/$max';
+  }
+
+  @override
+  String reflections_counterSemantic(int count, int max) {
+    return '$count of $max characters';
+  }
+
+  @override
+  String reflections_tooLong(int max) {
+    return 'A little shorter, please: up to $max characters.';
+  }
+
+  @override
+  String get reflections_send => 'Send';
+
+  @override
+  String get reflections_sending => 'Sending gently…';
+
+  @override
+  String get reflections_contactBlocked =>
+      'Phone numbers, links and handles can\'t be shared here. It keeps everyone safer.';
+
+  @override
+  String get reflections_draftKept =>
+      'Draft kept. You can send it once you\'re back online.';
+
+  @override
+  String get reflections_sendFailed =>
+      'It didn\'t send just now. Your words are still here: try again in a moment.';
+
+  @override
+  String get reflections_rejectedContact =>
+      'Reflections can\'t include contact details. Want to try without it?';
+
+  @override
+  String get reflections_rejectedLink =>
+      'Reflections can\'t include links. Want to try without it?';
+
+  @override
+  String get reflections_rejectedPersonal =>
+      'Questions about someone\'s personal details can\'t go up here. Want to try without them?';
+
+  @override
+  String get reflections_rejectedGeneral =>
+      'This one can\'t go up here. It may hurt someone or share personal details. Your words are still here to edit.';
+
+  @override
+  String get reflections_supportSubtitle =>
+      'You don\'t have to carry it alone.';
+
+  @override
+  String get reflections_backToRoom => 'Back to the room';
+
+  @override
+  String get device_bannedTitle => 'This device can\'t use Aura';
+
+  @override
+  String get device_bannedBody => 'Aura isn\'t available on this phone.';
+
+  @override
+  String get device_bannedReviewSubject => 'Review of a device';
+
+  @override
+  String get rooms_paused => 'Rooms are resting for a bit. Try again later.';
+
+  @override
+  String get rooms_pausedJoin =>
+      'Rooms are resting for a bit. Your check-in is saved.';
 
   @override
   String get rooms_title => 'Rooms';
@@ -2806,6 +3322,252 @@ class AppLocalizationsEn extends AppLocalizations {
       'Support contact, Grievance Officer and policies';
 
   @override
+  String get sounds_title => 'Sounds';
+
+  @override
+  String get sounds_cardBody =>
+      'Rain, ocean, wind and more. Nothing plays until you choose.';
+
+  @override
+  String get sounds_cardPlaying => 'Playing now';
+
+  @override
+  String get sounds_intro =>
+      'Pick a sound to begin, or mix up to four. Nothing plays until you tap.';
+
+  @override
+  String get sounds_nothingPlaying => 'Nothing playing';
+
+  @override
+  String get sounds_statePlaying => 'Playing';
+
+  @override
+  String get sounds_statePaused => 'Paused';
+
+  @override
+  String get sounds_backgroundNote =>
+      'Sounds keep playing with the screen off. They pause if your headphones disconnect or a call comes in.';
+
+  @override
+  String get sounds_notificationChannel => 'Sounds playback';
+
+  @override
+  String get sounds_windDownTitle => 'Night wind-down';
+
+  @override
+  String get sounds_windDownBody =>
+      'About 20 minutes of sounds that slowly thin out to silence. The order changes each night.';
+
+  @override
+  String get sounds_windDownBegin => 'Begin wind-down';
+
+  @override
+  String sounds_windDownLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'About $minutes minutes left',
+      one: 'About 1 minute left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_windDownBusy =>
+      'The wind-down is playing. Stop it to make your own mix.';
+
+  @override
+  String get sounds_mixSection => 'Mix your own';
+
+  @override
+  String get sounds_mixHint => 'Up to four at once, each with its own volume.';
+
+  @override
+  String get sounds_stemRain => 'Rain';
+
+  @override
+  String get sounds_stemOcean => 'Ocean';
+
+  @override
+  String get sounds_stemWind => 'Wind';
+
+  @override
+  String get sounds_stemNightInsects => 'Night insects';
+
+  @override
+  String get sounds_stemSingingBowl => 'Singing bowl';
+
+  @override
+  String get sounds_stemChimes => 'Chimes';
+
+  @override
+  String get sounds_stemBrownNoise => 'Brown noise';
+
+  @override
+  String get sounds_stemPinkNoise => 'Pink noise';
+
+  @override
+  String get sounds_stemDeepBell => 'Distant bell';
+
+  @override
+  String get sounds_stemMonsoonRoof => 'Monsoon on a roof';
+
+  @override
+  String get sounds_stemStream => 'Stream';
+
+  @override
+  String get sounds_stemFireplace => 'Fireplace';
+
+  @override
+  String get sounds_stemDistantThunder => 'Distant thunder';
+
+  @override
+  String sounds_stemOn(String name, int percent) {
+    return '$name, playing, volume $percent%';
+  }
+
+  @override
+  String sounds_stemPaused(String name, int percent) {
+    return '$name, paused, volume $percent%';
+  }
+
+  @override
+  String sounds_stemOff(String name) {
+    return '$name, off';
+  }
+
+  @override
+  String sounds_stemLocked(String name) {
+    return '$name, part of Aura Plus';
+  }
+
+  @override
+  String sounds_stemNeedsDownload(String name, String size) {
+    return '$name, $size to download once';
+  }
+
+  @override
+  String sounds_stemDownloading(String name) {
+    return '$name, downloading';
+  }
+
+  @override
+  String sounds_volume(String name) {
+    return '$name volume';
+  }
+
+  @override
+  String get sounds_plusBadge => 'Aura Plus';
+
+  @override
+  String get sounds_plusNote => 'Coming with Aura Plus.';
+
+  @override
+  String get sounds_full =>
+      'Four sounds are playing. Turn one off to add another.';
+
+  @override
+  String get sounds_play => 'Play';
+
+  @override
+  String get sounds_pause => 'Pause';
+
+  @override
+  String get sounds_stop => 'Stop';
+
+  @override
+  String get sounds_timer => 'Timer';
+
+  @override
+  String get sounds_timerTitle => 'Fade out after';
+
+  @override
+  String get sounds_timerOff => 'Off';
+
+  @override
+  String sounds_timerValue(String value) {
+    return 'Timer · $value';
+  }
+
+  @override
+  String sounds_timerLeft(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Fades out in about $minutes minutes',
+      one: 'Fades out in about 1 minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sounds_fadingOut => 'Fading out';
+
+  @override
+  String get sounds_saveMix => 'Save this mix';
+
+  @override
+  String get sounds_savedMixes => 'Saved mixes';
+
+  @override
+  String get sounds_mixSaved => 'Saved on this phone.';
+
+  @override
+  String get sounds_mixAlreadySaved => 'This mix is already saved.';
+
+  @override
+  String sounds_playMix(String mix) {
+    return 'Play $mix';
+  }
+
+  @override
+  String sounds_removeMix(String mix) {
+    return 'Remove $mix';
+  }
+
+  @override
+  String get sounds_mixUnavailable => 'This mix can\'t play right now.';
+
+  @override
+  String get sounds_downloadTitle => 'Recorded sounds';
+
+  @override
+  String sounds_downloadBody(String size) {
+    return '$size to download once. After that they play offline. Until then, sounds made on your phone play instead.';
+  }
+
+  @override
+  String get sounds_download => 'Download';
+
+  @override
+  String get sounds_downloading => 'Downloading…';
+
+  @override
+  String get sounds_downloadOffline =>
+      'You\'re offline. Brown noise and the sounds made on your phone play now; recordings can download later.';
+
+  @override
+  String get sounds_downloadFailed =>
+      'The download didn\'t finish. Nothing is lost; you can download again later.';
+
+  @override
+  String sounds_noSpace(String size) {
+    return 'Sounds need about $size. Free some space, or play brown noise, which needs none.';
+  }
+
+  @override
+  String sounds_megabytes(String size) {
+    return '$size MB';
+  }
+
+  @override
+  String get sounds_removeDownloads => 'Remove downloaded sounds';
+
+  @override
+  String get sounds_downloadsRemoved =>
+      'Downloaded sounds removed. The sounds made on your phone still play.';
+
+  @override
   String get voice_record => 'Record a voice note';
 
   @override
@@ -2920,20 +3682,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get voice_hasVoice => 'Has a voice note';
-
-  @override
-  String get device_bannedTitle => 'This device can\'t use Aura';
-
-  @override
-  String get device_bannedBody => 'Aura isn\'t available on this phone.';
-
-  @override
-  String get device_bannedReviewSubject => 'Review of a device';
-
-  @override
-  String get rooms_paused => 'Rooms are resting for a bit. Try again later.';
-
-  @override
-  String get rooms_pausedJoin =>
-      'Rooms are resting for a bit. Your check-in is saved.';
 }

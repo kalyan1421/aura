@@ -5,11 +5,14 @@ import android.net.Uri
 import android.provider.Settings
 import com.google.android.play.agesignals.AgeSignalsManagerFactory
 import com.google.android.play.agesignals.AgeSignalsRequest
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+// AudioServiceActivity (a FlutterActivity) shares this engine with the
+// Sounds media-playback service, so lock-screen controls and background
+// playback reach the Dart mixer (F15; audio_service).
+class MainActivity : AudioServiceActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // App ↔ OS glue (lib/src/features/voice/voice_devices.dart,

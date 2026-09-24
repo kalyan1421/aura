@@ -154,6 +154,14 @@ class RoomController extends _$RoomController {
   /// Gestures you received (the anonymous copy is never shown).
   final Set<String> _receivedIds = {};
 
+  /// Reflection hints for the reflections list (F6): `reflection_*` events
+  /// and gestures received on your reflections.
+  final StreamController<ReflectionEvent> _reflectionEvents =
+      StreamController<ReflectionEvent>.broadcast();
+
+  /// Ids only: the listener refetches.
+  Stream<ReflectionEvent> get reflectionEvents => _reflectionEvents.stream;
+
   bool _disposed = false;
   bool _foreground = true;
   bool _flushing = false;
@@ -262,6 +270,7 @@ class RoomController extends _$RoomController {
 
   void _dispose() {
     _disposed = true;
+    unawaited(_reflectionEvents.close());
     _stopTimers();
     for (final t in _expiry.values) {
       t.cancel();
@@ -500,8 +509,15 @@ class RoomController extends _$RoomController {
         });
       case GestureSentEvent(:final gesture):
         _onRoomGesture(gesture);
-      case GestureReceivedEvent(:final gesture):
+      case GestureReceivedEvent(:final gesture, :final reflectionId):
         _onReceived(gesture);
+        if (reflectionId != null) {
+          _reflectionEvents.add(
+            ReflectionEvent('gesture_received', reflectionId),
+          );
+        }
+      case ReflectionEvent():
+        _reflectionEvents.add(event);
       case RoomStateEvent():
         _set(
           (s) => s.copyWith(
@@ -648,6 +664,13 @@ class RoomController extends _$RoomController {
       _drop(item.localId); // stale: dropped quietly
     });
     _flush();
+  }
+
+  /// A gesture you sent outside the tray (on a reflection, F6): never shown
+  /// again as someone else's from the room feed.
+  void noteOwnGesture(String gestureId) {
+    _ownIds.add(gestureId);
+    _twins.remove(gestureId)?.cancel();
   }
 
   void _drop(int localId) => _set(
@@ -821,6 +844,8 @@ class RoomController extends _$RoomController {
           );
         }
       case RoomReportTarget():
+      case ReflectionReportTarget():
+        // A reflection hides in the reflections list (F6).
         break;
     }
     unawaited(refresh());

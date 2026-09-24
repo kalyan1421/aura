@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import type { Pool } from 'pg';
 import request from 'supertest';
@@ -915,7 +915,11 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       // F5/F9: a room membership (through the API), plus a sanction and a strike as the moderation service writes them.
       // Matching needs the current community guidelines accepted first (REQ-SAFE-04).
       await as(u, http().post('/v1/safety/guidelines/accept')).send({ version: 1 }).expect(200);
-      await as(u, http().post('/v1/rooms/match')).send({ quadrant: 'storm', moodId: 'anxious' }).expect(200);
+      const matched = await as(u, http().post('/v1/rooms/match')).send({ quadrant: 'storm', moodId: 'anxious' }).expect(200);
+      // F6: a reflection (a strike above would hold it; stored either way). Before the strike is inserted.
+      await as(u, http().post(`/v1/rooms/${matched.body.room.roomId as string}/reflections`))
+        .send({ reflectionId: randomUUID(), text: 'a quiet evening' })
+        .expect((r) => expect([200, 201]).toContain(r.status));
       await db.query(`insert into public.sanctions (user_id, kind, reason_code, source) values ($1, 'warning', 'e2e', 'moderator')`, [u.id]);
       await db.query(
         `insert into public.strikes (user_id, reason_code, created_by, expires_at) values ($1, 'e2e', 'staff:e2e', now() + interval '90 days')`,
@@ -926,6 +930,8 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       await db.query(`insert into public.minor_signals (user_id, minor_until) values ($1, current_date + 1)`, [u.id]);
       // REQ-ADM-14 (migration 20261005000017): an app install the account used (hashed id).
       await db.query(`insert into public.device_installs (user_id, install_hash, platform) values ($1, $2, 'ios')`, [u.id, randomBytes(32).toString('hex')]);
+      // F5 "Tell me when they open" (migration 20261005000019): a waiting opt-in for the Hindi + Hinglish pool.
+      await db.query(`insert into public.room_pool_waitlist (user_id, pool) values ($1, 'hi')`, [u.id]);
       await db.query(`insert into public.apple_auth_tokens (user_id, client_id, wrapped_refresh_token) values ($1, 'com.akvega.aura', $2)`, [
         u.id,
         randomBytes(64).toString('base64'),

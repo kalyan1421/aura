@@ -11,6 +11,10 @@
  *       development key with --dev. Publishing to phones always goes through the console (POST /admin/lexicons/crisis/*).
  *   pnpm lexicon verify <bundle.json> [--key <base64 public key>]... [--kind crisis_lexicon]
  *       Check a signed bundle the way the app does: format, known key, signature, kind, then its vectors.
+ *   pnpm lexicon sign <helplines.json> --kind helplines [--seq N] [--out bundle.json] [--dev]
+ *   pnpm lexicon verify <bundle.json> --kind helplines
+ *       The same for the helpline directory (contracts/safety/helplines.schema.json): schema + the bundled regions, then
+ *       the resolution vectors (region × adult/minor → dials) the app re-derives before it uses a version.
  *
  * Never prints the private key except from `keygen` (which is its job).
  */
@@ -18,8 +22,9 @@ import { randomBytes } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { DEFAULT_ENV_FILE, loadEnvFile } from '../config/app-config';
+import { helplinesProblems, lineCount, parseHelplines, resolutionVectors } from './helplines/document';
 import { contractVectors, failingVectors, lexiconProblems, matcherFor, parseLexicon, parseVectors } from './lexicon/document';
-import { BundleSigner, verifyBundle, trustedKeys, type BundlePayload } from './signing';
+import { BundleSigner, canonicalJson, verifyBundle, trustedKeys, type BundlePayload } from './signing';
 
 const out = (line = ''): void => {
   process.stdout.write(`${line}\n`);
@@ -84,6 +89,7 @@ function main(argv: string[]): void {
     }
     case 'sign': {
       const [file] = positionals;
+      if (values.kind === 'helplines') return signHelplines(file, values);
       if (!file) return fail('usage: pnpm lexicon sign <lexicon.json> [--vectors cases.json] [--seq N] [--out bundle.json] [--dev]');
       const raw = readJson(file);
       const problems = lexiconProblems(raw);
@@ -120,6 +126,16 @@ function main(argv: string[]): void {
       } catch (err) {
         return fail((err as Error).message);
       }
+      if (payload.kind === 'helplines') {
+        const problems = helplinesProblems(payload.content);
+        if (problems.length) return fail(`invalid directory:\n  - ${problems.join('\n  - ')}`);
+        const directory = parseHelplines(payload.content);
+        const same = canonicalJson(resolutionVectors(directory)) === canonicalJson(payload.vectors);
+        out(`ok: helplines v${payload.version}, seq ${payload.seq}, issued ${payload.issuedAt}, ${lineCount(directory)} lines`);
+        out(same ? `all ${payload.vectors.length} vectors match` : 'but its vectors do not match the directory');
+        if (!same) process.exit(1);
+        return;
+      }
       const doc = parseLexicon(payload.content);
       const failures = failingVectors(matcherFor(doc), parseVectors(payload.vectors));
       out(`ok: ${payload.kind} v${payload.version}, seq ${payload.seq}, issued ${payload.issuedAt}, ${doc.entries.length} entries`);
@@ -129,6 +145,32 @@ function main(argv: string[]): void {
     }
     default:
       fail('commands: keygen | public-key [--dev] | sign <lexicon.json> | verify <bundle.json>');
+  }
+}
+
+function signHelplines(file: string | undefined, values: { dev?: boolean; seq?: string; out?: string }): void {
+  if (!file) return fail('usage: pnpm lexicon sign <helplines.json> --kind helplines [--seq N] [--out bundle.json] [--dev]');
+  const raw = readJson(file);
+  const problems = helplinesProblems(raw);
+  if (problems.length) return fail(`invalid directory:\n  - ${problems.join('\n  - ')}`);
+  const doc = parseHelplines(raw);
+  const seq = values.seq ? Number(values.seq) : Date.now();
+  if (!Number.isSafeInteger(seq) || seq < 1) return fail('--seq must be a positive integer');
+  const signer = signerFrom(values.dev ?? false);
+  const payload: BundlePayload = {
+    kind: 'helplines',
+    seq,
+    issuedAt: new Date().toISOString(),
+    version: doc.version,
+    content: doc,
+    vectors: resolutionVectors(doc),
+  };
+  const text = `${JSON.stringify(signer.sign(payload), null, 2)}\n`;
+  if (values.out) {
+    writeFileSync(values.out, text);
+    out(`signed helplines v${doc.version} (seq ${seq}, key ${signer.keyId}${signer.isDevKey ? ', DEVELOPMENT key' : ''}) → ${values.out}`);
+  } else {
+    process.stdout.write(text);
   }
 }
 

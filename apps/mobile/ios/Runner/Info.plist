@@ -47,8 +47,12 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<!-- audio: F15 Sounds keep playing with the screen locked (PRD
+	     15-permissions "Background audio"). Used only while the person is
+	     playing Sounds; no silent keep-alive audio, never for recording. -->
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>remote-notification</string>
 	</array>
 	<!-- FCM: no token until the user opts in after the first check-in

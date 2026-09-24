@@ -1,0 +1,2767 @@
+{
+  "cases": [
+    {
+      "kind": "part",
+      "name": "08:59 IST is morning",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "rain",
+        "deviceTs": "2026-10-05T03:29:00Z",
+        "tzOffsetMinutes": 330
+      },
+      "expect": {
+        "live": true,
+        "part": "morning"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "03:59 IST belongs to the previous Aura day, at night",
+      "checkIn": {
+        "localDay": "2026-10-04",
+        "quadrant": "rain",
+        "deviceTs": "2026-10-04T22:29:00Z",
+        "tzOffsetMinutes": 330
+      },
+      "expect": {
+        "live": true,
+        "part": "night"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "04:00 IST rolls over into the morning",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "rain",
+        "deviceTs": "2026-10-04T22:30:00Z",
+        "tzOffsetMinutes": 330
+      },
+      "expect": {
+        "live": true,
+        "part": "morning"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "a backfill (day differs from its instant) has no part",
+      "checkIn": {
+        "localDay": "2026-10-04",
+        "quadrant": "rain",
+        "deviceTs": "2026-10-06T06:30:00Z",
+        "tzOffsetMinutes": 330
+      },
+      "expect": {
+        "live": false,
+        "part": null
+      }
+    },
+    {
+      "kind": "part",
+      "name": "no instant (pulled without one) has no part",
+      "checkIn": {
+        "localDay": "2026-10-04",
+        "quadrant": "rain"
+      },
+      "expect": {
+        "live": false,
+        "part": null
+      }
+    },
+    {
+      "kind": "part",
+      "name": "20:30 New York, stamped in New York, is evening",
+      "checkIn": {
+        "localDay": "2026-10-07",
+        "quadrant": "sunrise",
+        "deviceTs": "2026-10-08T00:30:00Z",
+        "tzOffsetMinutes": -240
+      },
+      "expect": {
+        "live": true,
+        "part": "evening"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 11:59 is morning",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T11:59:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "morning"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 12:00 is afternoon",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T12:00:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "afternoon"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 16:59 is afternoon",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T16:59:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "afternoon"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 17:00 is evening",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T17:00:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "evening"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 20:59 is evening",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T20:59:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "evening"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 21:00 is night",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T21:00:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "night"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 23:59 is night",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-05T23:59:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "night"
+      }
+    },
+    {
+      "kind": "part",
+      "name": "UTC 00:00 is night",
+      "checkIn": {
+        "localDay": "2026-10-05",
+        "quadrant": "moonlight",
+        "deviceTs": "2026-10-06T00:00:00Z",
+        "tzOffsetMinutes": 0
+      },
+      "expect": {
+        "live": true,
+        "part": "night"
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "no check-ins: plain sky",
+      "quadrants": [],
+      "rest": false,
+      "expect": {
+        "star": "empty",
+        "quadrants": []
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "rest day: faint ring",
+      "quadrants": [],
+      "rest": true,
+      "expect": {
+        "star": "rest",
+        "quadrants": []
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "one check-in",
+      "quadrants": [
+        "rain"
+      ],
+      "rest": false,
+      "expect": {
+        "star": "single",
+        "quadrants": [
+          "rain"
+        ]
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "most frequent wins",
+      "quadrants": [
+        "storm",
+        "sunrise",
+        "storm"
+      ],
+      "rest": false,
+      "expect": {
+        "star": "single",
+        "quadrants": [
+          "storm"
+        ]
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "a tie splits, catalogue order",
+      "quadrants": [
+        "sunrise",
+        "rain"
+      ],
+      "rest": false,
+      "expect": {
+        "star": "split",
+        "quadrants": [
+          "rain",
+          "sunrise"
+        ]
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "four-way tie",
+      "quadrants": [
+        "moonlight",
+        "storm",
+        "sunrise",
+        "rain"
+      ],
+      "rest": false,
+      "expect": {
+        "star": "split",
+        "quadrants": [
+          "storm",
+          "rain",
+          "moonlight",
+          "sunrise"
+        ]
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "only the tied top quadrants split",
+      "quadrants": [
+        "rain",
+        "rain",
+        "sunrise",
+        "sunrise",
+        "storm"
+      ],
+      "rest": false,
+      "expect": {
+        "star": "split",
+        "quadrants": [
+          "rain",
+          "sunrise"
+        ]
+      }
+    },
+    {
+      "kind": "day_star",
+      "name": "check-ins win over a rest flag",
+      "quadrants": [
+        "rain"
+      ],
+      "rest": true,
+      "expect": {
+        "star": "single",
+        "quadrants": [
+          "rain"
+        ]
+      }
+    },
+    {
+      "kind": "rest_days",
+      "name": "welcome rest day bridges a one-day gap",
+      "days": [
+        "2026-10-05",
+        "2026-10-07"
+      ],
+      "expect": [
+        "2026-10-06"
+      ]
+    },
+    {
+      "kind": "rest_days",
+      "name": "gap larger than the bank: no rest days",
+      "days": [
+        "2026-10-05",
+        "2026-10-08"
+      ],
+      "expect": []
+    },
+    {
+      "kind": "rest_days",
+      "name": "earned rest day bridges two days",
+      "days": [
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-07"
+      ],
+      "expect": [
+        "2026-10-05",
+        "2026-10-06"
+      ]
+    },
+    {
+      "kind": "rest_days",
+      "name": "unsorted input with duplicates",
+      "days": [
+        "2026-10-07",
+        "2026-10-05",
+        "2026-10-05"
+      ],
+      "expect": [
+        "2026-10-06"
+      ]
+    },
+    {
+      "kind": "rest_days",
+      "name": "spent bank: the next gap resets",
+      "days": [
+        "2026-10-01",
+        "2026-10-03",
+        "2026-10-05"
+      ],
+      "expect": [
+        "2026-10-02"
+      ]
+    },
+    {
+      "kind": "rest_days",
+      "name": "no active days",
+      "days": [],
+      "expect": []
+    },
+    {
+      "kind": "week",
+      "name": "Monday 10:00 IST: card covers the week just ended",
+      "now": "2026-10-05T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-05",
+        "weekStart": "2026-10-05",
+        "from": "2026-09-28",
+        "to": "2026-10-04"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "Monday 02:00 IST is still Sunday's Aura day",
+      "now": "2026-10-04T20:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-04",
+        "weekStart": "2026-09-28",
+        "from": "2026-09-21",
+        "to": "2026-09-27"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "Monday 04:00 IST exactly starts the new week",
+      "now": "2026-10-04T22:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-05",
+        "weekStart": "2026-10-05",
+        "from": "2026-09-28",
+        "to": "2026-10-04"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "same instant in New York is still Sunday (travel)",
+      "now": "2026-10-05T01:00:00Z",
+      "tz": "America/New_York",
+      "expect": {
+        "today": "2026-10-04",
+        "weekStart": "2026-09-28",
+        "from": "2026-09-21",
+        "to": "2026-09-27"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "same instant in IST is Monday",
+      "now": "2026-10-05T01:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-05",
+        "weekStart": "2026-10-05",
+        "from": "2026-09-28",
+        "to": "2026-10-04"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "Sunday late in the week keeps that week's card",
+      "now": "2026-10-11T12:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-11",
+        "weekStart": "2026-10-05",
+        "from": "2026-09-28",
+        "to": "2026-10-04"
+      }
+    },
+    {
+      "kind": "week",
+      "name": "a week that starts on Sunday",
+      "now": "2026-10-05T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "weekStartsOn": 7,
+      "expect": {
+        "today": "2026-10-05",
+        "weekStart": "2026-10-04",
+        "from": "2026-09-27",
+        "to": "2026-10-03"
+      }
+    },
+    {
+      "kind": "month",
+      "name": "1 Nov 02:00 IST is still 31 Oct: September's recap",
+      "now": "2026-10-31T20:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-31",
+        "monthStart": "2026-10-01",
+        "from": "2026-09-01",
+        "to": "2026-09-30"
+      }
+    },
+    {
+      "kind": "month",
+      "name": "1 Nov 04:00 IST: October's recap",
+      "now": "2026-10-31T22:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-11-01",
+        "monthStart": "2026-11-01",
+        "from": "2026-10-01",
+        "to": "2026-10-31"
+      }
+    },
+    {
+      "kind": "month",
+      "name": "New Year: December of the previous year",
+      "now": "2027-01-01T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2027-01-01",
+        "monthStart": "2027-01-01",
+        "from": "2026-12-01",
+        "to": "2026-12-31"
+      }
+    },
+    {
+      "kind": "month",
+      "name": "leap-year February",
+      "now": "2028-03-01T06:00:00Z",
+      "tz": "UTC",
+      "expect": {
+        "today": "2028-03-01",
+        "monthStart": "2028-03-01",
+        "from": "2028-02-01",
+        "to": "2028-02-29"
+      }
+    },
+    {
+      "kind": "month",
+      "name": "the same instant in New York is still 31 Oct",
+      "now": "2026-11-01T03:00:00Z",
+      "tz": "America/New_York",
+      "expect": {
+        "today": "2026-10-31",
+        "monthStart": "2026-10-01",
+        "from": "2026-09-01",
+        "to": "2026-09-30"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "REQ-INS-01: 6 check-ins show 6/7",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        }
+      ],
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": {
+        "status": "need_checkins",
+        "checkIns": 6,
+        "days": 6
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "REQ-INS-01 negative: 7 check-ins over 4 days",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise"
+        }
+      ],
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": {
+        "status": "need_days",
+        "checkIns": 7,
+        "days": 4
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "7 check-ins over 5 days pass",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "moonlight"
+        }
+      ],
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": {
+        "status": "ok",
+        "checkIns": 7,
+        "days": 5
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "only the window counts",
+      "checkIns": [
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-31",
+          "quadrant": "rain"
+        }
+      ],
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": {
+        "status": "need_checkins",
+        "checkIns": 6,
+        "days": 6
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "empty",
+      "checkIns": [],
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": {
+        "status": "need_checkins",
+        "checkIns": 0,
+        "days": 0
+      }
+    },
+    {
+      "kind": "patterns",
+      "name": "gate fails: no patterns, however strong",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "quadrant mix: one clear most-frequent quadrant",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "storm"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "quadrant_mix",
+          "quadrant": "moonlight",
+          "key": null
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "quadrant mix: a lead of 1 is too weak",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "storm"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "quadrant mix: under 40% is too weak",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "storm"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "quadrant mix: a tie at the top is no pattern",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "sunrise"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "tag x quadrant: Study more often with Storm",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "tag_quadrant",
+          "quadrant": "storm",
+          "key": "study"
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "tag x quadrant needs 14 check-ins (13 here)",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "tag x quadrant needs the tag on 3 days (2 here)",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "rain"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "equal tags: key order; one quadrant per tag",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "work",
+            "family"
+          ]
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "work",
+            "family"
+          ]
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm",
+          "tags": [
+            "work",
+            "family"
+          ]
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain",
+          "tags": [
+            "family",
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain",
+          "tags": [
+            "family",
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain",
+          "tags": [
+            "family",
+            "work"
+          ]
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "moonlight"
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "tag_quadrant",
+          "quadrant": "storm",
+          "key": "family"
+        },
+        {
+          "kind": "tag_quadrant",
+          "quadrant": "storm",
+          "key": "work"
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "habit x quadrant is hidden on Free",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-01"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-02"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-03"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-04"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-11-02"
+        }
+      ],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "habit x quadrant on Plus",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-01"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-02"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-03"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-10-04"
+        },
+        {
+          "habitId": "h-water",
+          "localDay": "2026-11-02"
+        }
+      ],
+      "includeHabits": true,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "habit_quadrant",
+          "quadrant": "sunrise",
+          "key": "h-water"
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "time of day: Rain more often in the evening",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-01T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-02T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-03T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-04T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-05T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-06T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-07T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-09T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-10T14:00:00Z",
+          "tzOffsetMinutes": 330
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "time_of_day",
+          "quadrant": "rain",
+          "key": "evening"
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "time of day ignores backfills",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-01T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-02T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-03T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-04T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-05T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-06T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-07T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-20T06:30:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-10T14:00:00Z",
+          "tzOffsetMinutes": 330
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "patterns",
+      "name": "time of day: 01:30 check-ins are that Aura day's night",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-01T20:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-02T20:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-03T20:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-04T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-05T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-06T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-07T08:30:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T08:30:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-09T08:30:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-10T03:00:00Z",
+          "tzOffsetMinutes": 330
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "time_of_day",
+          "quadrant": "moonlight",
+          "key": "night"
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "ranking: larger lift first, the mix last",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-01T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-02T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-03T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-04T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-05T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-06T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-07T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-08T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-09T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-10T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-11T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-12T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-13T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-14T03:00:00Z",
+          "tzOffsetMinutes": 330
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-01",
+      "to": "2026-10-30",
+      "expect": [
+        {
+          "kind": "time_of_day",
+          "quadrant": "rain",
+          "key": "evening"
+        },
+        {
+          "kind": "tag_quadrant",
+          "quadrant": "storm",
+          "key": "study"
+        },
+        {
+          "kind": "time_of_day",
+          "quadrant": "sunrise",
+          "key": "morning"
+        },
+        {
+          "kind": "quadrant_mix",
+          "quadrant": "sunrise",
+          "key": null
+        }
+      ]
+    },
+    {
+      "kind": "patterns",
+      "name": "the window bounds the data",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-01T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-02T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-03T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ],
+          "deviceTs": "2026-10-04T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-05T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-06T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain",
+          "deviceTs": "2026-10-07T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-08T14:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-09T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-10T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-11T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-12T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-13T03:00:00Z",
+          "tzOffsetMinutes": 330
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "storm",
+          "deviceTs": "2026-10-14T03:00:00Z",
+          "tzOffsetMinutes": 330
+        }
+      ],
+      "habitLogs": [],
+      "includeHabits": false,
+      "from": "2026-10-09",
+      "to": "2026-10-30",
+      "expect": []
+    },
+    {
+      "kind": "weekly",
+      "name": "Free: the strongest free pattern of the week just ended",
+      "checkIns": [
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-28"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-29"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-30"
+        }
+      ],
+      "now": "2026-10-05T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "includeHabits": false,
+      "expect": {
+        "kind": "tag_quadrant",
+        "quadrant": "storm",
+        "key": "study"
+      }
+    },
+    {
+      "kind": "weekly",
+      "name": "Plus: habit x mood can win",
+      "checkIns": [
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-28"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-29"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-30"
+        }
+      ],
+      "now": "2026-10-05T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "includeHabits": true,
+      "expect": {
+        "kind": "habit_quadrant",
+        "quadrant": "storm",
+        "key": "h-walk"
+      }
+    },
+    {
+      "kind": "weekly",
+      "name": "Monday 02:00 IST is still Sunday: that week has not ended",
+      "checkIns": [
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-28"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-29"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-30"
+        }
+      ],
+      "now": "2026-10-04T20:30:00Z",
+      "tz": "Asia/Kolkata",
+      "includeHabits": false,
+      "expect": null
+    },
+    {
+      "kind": "weekly",
+      "name": "a week later the old week is gone",
+      "checkIns": [
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise",
+          "tags": [
+            "study"
+          ]
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        }
+      ],
+      "habitLogs": [
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-28"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-29"
+        },
+        {
+          "habitId": "h-walk",
+          "localDay": "2026-09-30"
+        }
+      ],
+      "now": "2026-10-12T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "includeHabits": false,
+      "expect": null
+    },
+    {
+      "kind": "weekly",
+      "name": "REQ-INS-06 negative: nothing passes, no card",
+      "checkIns": [
+        {
+          "localDay": "2026-09-28",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-09-29",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        }
+      ],
+      "habitLogs": [],
+      "now": "2026-10-05T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "includeHabits": true,
+      "expect": null
+    },
+    {
+      "kind": "month_recap",
+      "name": "REQ-INS-07: on 1 Nov, October",
+      "checkIns": [
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-31",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-11-01",
+          "quadrant": "storm"
+        }
+      ],
+      "now": "2026-11-01T04:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "month": "2026-10",
+        "from": "2026-10-01",
+        "to": "2026-10-31",
+        "checkIns": 8,
+        "daysCheckedIn": 7,
+        "quadrantCounts": {
+          "storm": 1,
+          "rain": 3,
+          "moonlight": 2,
+          "sunrise": 2
+        }
+      }
+    },
+    {
+      "kind": "month_recap",
+      "name": "before 04:00 on 1 Nov it is still September's",
+      "checkIns": [
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-31",
+          "quadrant": "moonlight"
+        },
+        {
+          "localDay": "2026-11-01",
+          "quadrant": "storm"
+        }
+      ],
+      "now": "2026-10-31T21:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "month": "2026-09",
+        "from": "2026-09-01",
+        "to": "2026-09-30",
+        "checkIns": 1,
+        "daysCheckedIn": 1,
+        "quadrantCounts": {
+          "storm": 1,
+          "rain": 0,
+          "moonlight": 0,
+          "sunrise": 0
+        }
+      }
+    },
+    {
+      "kind": "care",
+      "name": "REQ-INS-04: 8 of 9 Storm or Rain",
+      "checkIns": [
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        }
+      ],
+      "now": "2026-10-14T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": true
+    },
+    {
+      "kind": "care",
+      "name": "exactly 80% (8 of 10) shows",
+      "checkIns": [
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "moonlight"
+        }
+      ],
+      "now": "2026-10-14T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": true
+    },
+    {
+      "kind": "care",
+      "name": "5 of 7 is not enough",
+      "checkIns": [
+        {
+          "localDay": "2026-10-08",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "sunrise"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "moonlight"
+        }
+      ],
+      "now": "2026-10-14T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": false
+    },
+    {
+      "kind": "care",
+      "name": "6 check-ins are too few, even all Storm",
+      "checkIns": [
+        {
+          "localDay": "2026-10-09",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-10",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-11",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-12",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-13",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-14",
+          "quadrant": "storm"
+        }
+      ],
+      "now": "2026-10-14T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": false
+    },
+    {
+      "kind": "care",
+      "name": "only the last 14 Aura days count",
+      "checkIns": [
+        {
+          "localDay": "2026-09-30",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "storm"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "storm"
+        }
+      ],
+      "now": "2026-10-14T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": false
+    },
+    {
+      "kind": "care",
+      "name": "the window follows the 04:00 rollover",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        }
+      ],
+      "now": "2026-10-14T22:29:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": true
+    },
+    {
+      "kind": "care",
+      "name": "a minute later (04:00) 1 Oct has left the window",
+      "checkIns": [
+        {
+          "localDay": "2026-10-01",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-02",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-03",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-04",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-05",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-06",
+          "quadrant": "rain"
+        },
+        {
+          "localDay": "2026-10-07",
+          "quadrant": "rain"
+        }
+      ],
+      "now": "2026-10-14T22:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": false
+    }
+  ]
+}

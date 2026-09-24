@@ -9,6 +9,8 @@ import '../../features/checkin/checkin_screen.dart';
 import '../../features/history/checkin_detail_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/insights/insights_screen.dart';
+import '../../features/insights/month_in_stars_screen.dart';
 import '../../features/onboarding/blocked_screen.dart';
 import '../../features/onboarding/dob_screen.dart';
 import '../../features/onboarding/gate_controller.dart';
@@ -108,7 +110,24 @@ GoRouter router(Ref ref) {
           tab(Routes.home, const HomeScreen()),
           tab(Routes.sanctuary, const SanctuaryScreen()),
           tab(Routes.rooms, const RoomsHomeScreen()),
-          tab(Routes.insights, const HistoryScreen()),
+          // Aura Sky (F10); the full history and the month recap stay in
+          // the Insights stack, so the tab stays selected there.
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.insights,
+                pageBuilder: (context, state) => _page(
+                  state,
+                  const InsightsScreen(),
+                  reduceMotion: reduceMotionOf(context),
+                ),
+                routes: [
+                  route('history', (_) => const HistoryScreen()),
+                  route('month', (_) => const MonthInStarsScreen()),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
       route(
@@ -120,9 +139,8 @@ GoRouter router(Ref ref) {
       route(Routes.safety, (_) => const SafetyCenterScreen()),
       route(Routes.settings, (_) => const SettingsScreen()),
       route(Routes.deleteAccount, (_) => const DeleteAccountScreen()),
-      // The history list is the Insights tab (until F10 gives Insights its
-      // own screen); older links and fallbacks land there.
-      GoRoute(path: Routes.history, redirect: (_, _) => Routes.insights),
+      // The history list lives in the Insights tab; older links land there.
+      GoRoute(path: Routes.history, redirect: (_, _) => Routes.insightsHistory),
       route(
         '${Routes.history}/:id',
         (s) => CheckInDetailScreen(id: s.pathParameters['id']!),

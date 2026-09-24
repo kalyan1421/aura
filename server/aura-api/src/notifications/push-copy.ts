@@ -15,7 +15,7 @@ export type PushLocale = (typeof PUSH_LOCALES)[number];
 
 /** One line per push type, plus `discreet`: the single line every push uses in discreet mode (rule 4). */
 export type CopyKey = NotificationType | 'discreet';
-export const COPY_KEYS: readonly CopyKey[] = ['daily_reminder', 'capsule_unlocked', 'discreet'];
+export const COPY_KEYS: readonly CopyKey[] = ['daily_reminder', 'capsule_unlocked', 'rooms_pool_open', 'discreet'];
 
 export type CopyTable = Readonly<Record<CopyKey, string>>;
 
@@ -23,17 +23,21 @@ export const PUSH_COPY: Readonly<Record<PushLocale, CopyTable | null>> = {
   en: {
     daily_reminder: "A quiet minute for you. How's today feeling?",
     capsule_unlocked: 'Something you sealed is ready to open.',
+    // "Tell me when they open" (14-states): names the pool the person asked about, nothing about them or a mood.
+    rooms_pool_open: 'Hindi and Hinglish rooms are open now.',
     // Rule 4: "Aura · You have a gentle update" — the OS shows the app name, the body is the line.
     discreet: 'You have a gentle update',
   },
   te: {
     daily_reminder: 'మీ కోసం ఒక నిమిషం. ఈ రోజు ఎలా అనిపిస్తోంది?',
     capsule_unlocked: 'మీరు దాచుకున్నది ఇప్పుడు తెరవొచ్చు.', // draft (= the app's local notice)
+    rooms_pool_open: 'హిందీ, హింగ్లిష్ రూమ్‌లు ఇప్పుడు మొదలయ్యాయి.', // draft
     discreet: 'మీకు ఒక మృదువైన అప్‌డేట్ ఉంది', // draft
   },
   'te-Latn': {
     daily_reminder: 'Mee kosam oka quiet minute. Ee roju ela anipistondi?',
     capsule_unlocked: 'Meeru daachukunnadi ippudu open cheyyochu.',
+    rooms_pool_open: 'Hindi, Hinglish rooms ippudu modalayyaayi.', // draft
     discreet: 'Meeku oka gentle update undi', // draft
   },
   // TODO(l10n-hi): Hindi and Hinglish ship from beta; English until then.

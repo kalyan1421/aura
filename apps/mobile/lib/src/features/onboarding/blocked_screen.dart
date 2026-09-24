@@ -15,8 +15,9 @@ import '../support/support_sheet.dart';
 import 'onboarding_frame.dart';
 
 /// Helplines the under-13 screen offers in India (F8: Childline 1098 and
-/// 112), taken from the verified list in `helplines.dart`.
-const _blockedDials = {'1098', '112'};
+/// 112), taken from the verified directory in `helplines.dart` by their
+/// stable ids (a signed update may change a number, not the id).
+const _blockedIds = {'in.childline', 'in.emergency'};
 
 /// The "Entered the wrong date?" email (F8 edge case): the support address
 /// and a subject line only. Never the date of birth or anything else about
@@ -64,8 +65,13 @@ class _BlockedScreenState extends ConsumerState<BlockedScreen> {
     final india = region == 'IN';
     final lines = india
         ? [
-            for (final h in helplinesFor(region, l, isMinor: true))
-              if (_blockedDials.contains(h.dial)) h,
+            for (final h in helplinesFor(
+              region,
+              l,
+              isMinor: true,
+              directory: ref.watch(helplineDirectoryProvider),
+            ))
+              if (_blockedIds.contains(h.id)) h,
           ]
         : const <Helpline>[];
     final email = widget.supportEmail ?? Env.supportEmail;

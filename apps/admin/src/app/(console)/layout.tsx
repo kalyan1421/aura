@@ -13,9 +13,12 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
   const common = [
     { href: '/now', label: 'Now' },
     { href: '/queue', label: 'Queue' },
+    { href: '/reflections', label: 'Reflections' },
     { href: '/sanctions', label: 'Sanctions' },
   ];
-  if (role === 'moderator') return [...common, { href: '/lexicons', label: 'Lexicon' }, { href: '/stats', label: 'Stats' }];
+  if (role === 'moderator') {
+    return [...common, { href: '/lexicons', label: 'Lexicon' }, { href: '/helplines', label: 'Helplines' }, { href: '/stats', label: 'Stats' }];
+  }
   return [
     ...common,
     { href: '/mandatory', label: 'Mandatory reports' },
@@ -26,6 +29,7 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
     { href: '/audit', label: 'Audit log' },
     { href: '/config', label: 'Kill switches' },
     { href: '/lexicons', label: 'Lexicon' },
+    { href: '/helplines', label: 'Helplines' },
     { href: '/devices', label: 'Device bans' },
     { href: '/staff', label: 'Staff' },
     { href: '/stats', label: 'Stats' },

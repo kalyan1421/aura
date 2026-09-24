@@ -20,20 +20,25 @@ const gestureShape = z.object({
   type: z.enum(GESTURE_TYPES),
   target: z.enum(GESTURE_TARGETS),
   toMemberId: uuid.nullish(),
+  toReflectionId: uuid.nullish(),
 });
 
 export interface GestureRequest {
   type: GestureType;
   target: GestureTarget;
   toMemberId: string | null;
+  /** F6: exactly when `target` is `reflection`. */
+  toReflectionId: string | null;
 }
 
-/** `POST /v1/rooms/:roomId/gestures` (§1.5): `toMemberId` exactly when `target` is `member`. */
+/** `POST /v1/rooms/:roomId/gestures` (§1.5): `toMemberId` exactly when `target` is `member`, `toReflectionId` for `reflection`. */
 export function parseGestureRequest(body: unknown): GestureRequest {
   const g = parseOrThrow(gestureShape, body);
   if (g.target === 'member' && !g.toMemberId) throw ApiError.badRequest('invalid_request', 'toMemberId: required for a member gesture');
-  if (g.target === 'room' && g.toMemberId) throw ApiError.badRequest('invalid_request', 'toMemberId: not allowed for a room gesture');
-  return { type: g.type, target: g.target, toMemberId: g.toMemberId ?? null };
+  if (g.target !== 'member' && g.toMemberId) throw ApiError.badRequest('invalid_request', `toMemberId: not allowed for a ${g.target} gesture`);
+  if (g.target === 'reflection' && !g.toReflectionId) throw ApiError.badRequest('invalid_request', 'toReflectionId: required for a reflection gesture');
+  if (g.target !== 'reflection' && g.toReflectionId) throw ApiError.badRequest('invalid_request', `toReflectionId: not allowed for a ${g.target} gesture`);
+  return { type: g.type, target: g.target, toMemberId: g.toMemberId ?? null, toReflectionId: g.toReflectionId ?? null };
 }
 
 export const surveyRequestSchema = z.object({ answer: z.enum(['yes', 'no', 'skip']) });

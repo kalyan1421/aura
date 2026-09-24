@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aura.akvega/contracts/safety/helplines.schema.json",
+  "title": "aura.helplines — the crisis helpline directory (PRD 06c F9, 18 'Helplines by country')",
+  "description": "The content of a `helplines` signed bundle and of the bundled baseline (helplines.v1.json). Every implementation (apps/mobile/tool/gen_helplines.py, the app's compileHelplines, NestJS helplines/document.ts) enforces exactly these rules plus the three this schema cannot say: (1) every line id starts with its country code in lower case, and ids are unique across the document; (2) the digits of `number` are exactly `dial` (what is shown is what is dialled); (3) every country of the bundled baseline (IN, US) is present. Unknown keys are allowed and ignored (review notes, later additions).",
+  "type": "object",
+  "required": ["name", "version", "countries"],
+  "properties": {
+    "name": { "const": "aura.helplines" },
+    "version": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+    "verifiedOn": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "description": "When the numbers were last checked by a person." },
+    "review": { "type": "object" },
+    "countries": {
+      "type": "object",
+      "description": "ISO 3166-1 alpha-2 region (the device region, never IP or GPS) → its lines, in the order the app lists them. A region that is not here gets the generic 'call your local emergency number' card, never an empty list.",
+      "minProperties": 1,
+      "maxProperties": 250,
+      "propertyNames": { "pattern": "^[A-Z]{2}$" },
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 10,
+        "contains": { "type": "object", "properties": { "audience": { "const": "everyone" } }, "required": ["audience"] },
+        "items": { "$ref": "#/$defs/line" }
+      }
+    }
+  },
+  "$defs": {
+    "line": {
+      "type": "object",
+      "required": ["id", "number", "dial", "audience", "names"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z]{2}\\.[a-z0-9_]{1,40}$", "description": "<country in lower case>.<snake_case>; stable, never reused for another line (analytics `crisis_helpline_tapped.helpline`)." },
+        "number": { "type": "string", "pattern": "^[0-9+() -]{2,24}$", "description": "As shown (grouping allowed)." },
+        "dial": { "type": "string", "pattern": "^[0-9]{2,15}$", "description": "Digits for tel:; must equal the digits of `number`." },
+        "audience": { "enum": ["everyone", "minors"], "description": "`minors`: listed only until the 18th birthday (and behind the under-13 lock)." },
+        "names": {
+          "type": "object",
+          "required": ["en"],
+          "propertyNames": { "enum": ["en", "te", "te-Latn", "hi", "hi-Latn"] },
+          "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+          "description": "Name per app locale; a locale without one shows `en`."
+        }
+      }
+    },
+    "vector": {
+      "description": "An entry of the signed payload's `vectors`: what the resolver must list for a region. NestJS writes one per country × {adult, minor} plus the unlisted region ZZ (empty); the app refuses a bundle whose vectors its own resolver doesn't reproduce.",
+      "type": "object",
+      "required": ["country", "minor", "dials"],
+      "properties": {
+        "country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "minor": { "type": "boolean" },
+        "dials": { "type": "array", "items": { "type": "string", "pattern": "^[0-9]{2,15}$" } }
+      }
+    }
+  }
+}

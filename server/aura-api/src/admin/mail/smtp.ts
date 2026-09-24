@@ -80,11 +80,24 @@ export function addrSpec(mailbox: string): string {
 
 const noLineBreaks = (s: string): string => s.replace(/[\r\n]+/g, ' ').trim();
 
-/** RFC 2047 encoded-word for non-ASCII header text. */
+/**
+ * RFC 2047 encoded-words for non-ASCII header text (e.g. a Telugu subject): each word at most 75 characters (45 UTF-8
+ * bytes, never splitting a character), folded onto continuation lines.
+ */
 export function encodeHeader(value: string): string {
   const v = noLineBreaks(value);
   if (/^[\x20-\x7e]*$/.test(v)) return v;
-  return `=?UTF-8?B?${Buffer.from(v, 'utf8').toString('base64')}?=`;
+  const words: string[] = [];
+  let chunk = '';
+  for (const ch of v) {
+    if (Buffer.byteLength(chunk + ch, 'utf8') > 45) {
+      words.push(chunk);
+      chunk = '';
+    }
+    chunk += ch;
+  }
+  if (chunk) words.push(chunk);
+  return words.map((w) => `=?UTF-8?B?${Buffer.from(w, 'utf8').toString('base64')}?=`).join('\r\n ');
 }
 
 function wrap76(b64: string): string {

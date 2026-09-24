@@ -31,15 +31,26 @@ export const Broadcast = {
   },
 
   /** Anonymous: everyone sees an unnamed animation. No sender, no recipient. */
-  gestureSent(q: Queryable, roomId: string, g: { gestureId: string; type: GestureType; target: GestureTarget }, at: Date): Promise<void> {
-    return send(q, roomTopic(roomId), 'gesture_sent', { gestureId: g.gestureId, type: g.type, target: g.target, at: iso(at) });
+  gestureSent(
+    q: Queryable,
+    roomId: string,
+    g: { gestureId: string; type: GestureType; target: GestureTarget; reflectionId?: string | null },
+    at: Date,
+  ): Promise<void> {
+    return send(q, roomTopic(roomId), 'gesture_sent', {
+      gestureId: g.gestureId,
+      type: g.type,
+      target: g.target,
+      ...(g.reflectionId ? { reflectionId: g.reflectionId } : {}), // F6: which card animates (never who sent it)
+      at: iso(at),
+    });
   },
 
   /** Only the recipient's own member topic learns who sent it ("Quiet Comet sent you Warm Tea"). */
   gestureReceived(
     q: Queryable,
     toMemberId: string,
-    g: { gestureId: string; type: GestureType; fromMemberId: string; fromPseudonym: string },
+    g: { gestureId: string; type: GestureType; fromMemberId: string; fromPseudonym: string; reflectionId?: string | null },
     at: Date,
   ): Promise<void> {
     return send(q, memberTopic(toMemberId), 'gesture_received', {
@@ -47,6 +58,7 @@ export const Broadcast = {
       type: g.type,
       fromMemberId: g.fromMemberId,
       fromPseudonym: g.fromPseudonym,
+      ...(g.reflectionId ? { reflectionId: g.reflectionId } : {}), // F6: a gesture on your reflection
       at: iso(at),
     });
   },

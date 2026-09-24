@@ -53,7 +53,8 @@ final capsulePushBridgeProvider = Provider<CapsulePushBridge>(
 
 /// Opens the right place for a tapped push, respecting the gate (the
 /// under-13 lock and onboarding win, as for `aura://` links): the daily
-/// reminder → the check-in (above whatever shows); a capsule → the capsules.
+/// reminder → the check-in (above whatever shows); a capsule → the capsules;
+/// "rooms are open" → Rooms.
 class PushRouter {
   PushRouter({
     required this._router,
@@ -78,6 +79,8 @@ class PushRouter {
         if (context != null && context.mounted) {
           await _capsules().open(context, push.id);
         }
+      case PushTypes.roomsPoolOpen:
+        openDeepLink(router, gate, Routes.rooms);
     }
   }
 
@@ -174,6 +177,9 @@ class PushInbox {
           if (id == null || _announced.contains(id)) return;
           if (!await _capsules().shouldShow(id)) return;
           _announced.add(id);
+        case PushTypes.roomsPoolOpen:
+          // Sent once per request; shown once per session all the same.
+          if (!_announced.add(PushTypes.roomsPoolOpen)) return;
         default:
           return; // a type this build doesn't know: nothing to show
       }
@@ -232,6 +238,10 @@ void showPushNotice(GoRouter router, PushEnvelope push, VoidCallback open) {
   final (text, action) = switch (push.type) {
     PushTypes.dailyReminder => (l.notif_reminderBanner, l.notif_reminderAction),
     PushTypes.capsuleUnlocked => (l.notif_capsuleBanner, l.notif_capsuleAction),
+    PushTypes.roomsPoolOpen => (
+      l.notif_roomsPoolBanner,
+      l.notif_roomsPoolAction,
+    ),
     _ => (null, null),
   };
   if (text == null || action == null) return;
@@ -251,9 +261,13 @@ void showPushNotice(GoRouter router, PushEnvelope push, VoidCallback open) {
 abstract final class PushChannels {
   static const String reminders = 'reminders';
   static const String capsules = 'capsules';
+
+  /// "Rooms & Lantern Hour" (PRD 15-permissions): the pool-open push now.
+  static const String rooms = 'rooms';
 }
 
-/// Creates the Reminders and Capsules channels in [localeTag]'s language
+/// Creates the Reminders, Capsules and Rooms & Lantern Hour channels in
+/// [localeTag]'s language
 /// (Android 8+; nothing elsewhere). No permission prompt.
 Future<void> ensureAndroidChannels(String localeTag) async {
   if (defaultTargetPlatform != TargetPlatform.android) return;
@@ -275,6 +289,13 @@ Future<void> ensureAndroidChannels(String localeTag) async {
       PushChannels.capsules,
       l.capsules_channelName,
       description: l.capsules_channelDescription,
+    ),
+  );
+  await android.createNotificationChannel(
+    AndroidNotificationChannel(
+      PushChannels.rooms,
+      l.notif_channelRooms,
+      description: l.notif_channelRoomsDescription,
     ),
   );
 }

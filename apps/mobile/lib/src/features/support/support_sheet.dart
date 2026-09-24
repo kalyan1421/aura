@@ -37,7 +37,14 @@ Future<void> showSupportSheet(
 
 /// What was just saved when a crisis-lexicon hit opened the sheet: its
 /// reassurance line and the way back name it ("Your capsule is sealed.").
-enum SupportOrigin { checkIn, capsule }
+enum SupportOrigin {
+  checkIn,
+  capsule,
+
+  /// A reflection that was crisis-diverted (F6): never published, no
+  /// rejection wording, "Back to the room".
+  reflection,
+}
 
 /// Opens the Safety Center (`/safety`), a full route above everything, from
 /// any screen and gate state. Outside the app's router (a bare navigator)
@@ -298,6 +305,7 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
                 : switch (widget.origin) {
                     SupportOrigin.checkIn => l.help_crisisSubtitle,
                     SupportOrigin.capsule => l.help_crisisSubtitleCapsule,
+                    SupportOrigin.reflection => l.reflections_supportSubtitle,
                   },
             style: theme.textTheme.bodyLarge?.copyWith(
               color: AuraColors.textSoft,
@@ -335,6 +343,7 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
               child: Text(switch (widget.origin) {
                 SupportOrigin.checkIn => l.help_backToCheckin,
                 SupportOrigin.capsule => l.help_backToCapsule,
+                SupportOrigin.reflection => l.reflections_backToRoom,
               }),
             ),
           ],

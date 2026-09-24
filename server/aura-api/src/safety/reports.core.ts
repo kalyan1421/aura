@@ -14,7 +14,7 @@ import { hasActiveSanction, type SafetyConfig } from './safety.queries';
  */
 export interface NewReport {
   source: 'user' | 'auto';
-  autoSignal?: 'gesture_flood';
+  autoSignal?: 'gesture_flood' | 'reflection_hold' | 'reflection_crisis' | 'reflection_minor_safety' | 'reflection_violation';
   reporterUserId: string | null;
   reporterMemberId: string | null;
   reason: ReportReason;
@@ -22,8 +22,10 @@ export interface NewReport {
   roomId: string | null;
   targetMemberId: string | null;
   targetGestureId: string | null;
+  /** F6: the reported / queued reflection (target kind `reflection`). */
+  targetReflectionId?: string | null;
   targetUserId: string | null;
-  /** member / gesture / room id: the dedupe key. */
+  /** member / gesture / room / reflection id: the dedupe key. */
   targetRef: string;
   note: string | null;
   involvesMinor: boolean;
@@ -50,8 +52,8 @@ export async function insertReport(q: Queryable, r: NewReport, cfg: Pick<SafetyC
   const ins = await q.query<{ id: string }>(
     `insert into public.reports (source, auto_signal, reporter_user_id, reporter_member_id, reason, lane, involves_minor, pages,
                                  target_kind, room_id, target_member_id, target_gesture_id, target_user_id, target_ref, note,
-                                 sla_due_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                                 sla_due_at, target_reflection_id)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
      returning id`,
     [
       r.source,
@@ -70,6 +72,7 @@ export async function insertReport(q: Queryable, r: NewReport, cfg: Pick<SafetyC
       r.targetRef,
       r.note,
       sla.dueAt,
+      r.targetReflectionId ?? null,
     ],
   );
   const id = ins.rows[0].id;
@@ -79,6 +82,7 @@ export async function insertReport(q: Queryable, r: NewReport, cfg: Pick<SafetyC
     roomId: r.roomId,
     memberId: r.targetMemberId,
     gestureId: r.targetGestureId,
+    reflectionId: r.targetReflectionId ?? null,
     reason: `${lane}:${REPORT_REASONS[r.reason]}`,
     reporterUserId: r.reporterUserId,
     fallbackSubjectUserId: r.targetUserId,

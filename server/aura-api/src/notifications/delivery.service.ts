@@ -10,7 +10,8 @@ import {
   type NotificationTransport,
   type PushMessage,
 } from './notification-types';
-import { auraDayOf, decide, endOfAuraDay, reservedSlots, type DeliveryFacts, type SkipReason } from './policy';
+import { auraDayOf, cappedDecision, decide, endOfAuraDay, reservedSlots, type DeliveryFacts, type SkipReason } from './policy';
+import { POOL_FLAGS } from './pool-waitlist';
 import { renderPushBody, resolvePushLocale } from './push-copy';
 
 export type DeliveryOutcome =
@@ -112,9 +113,11 @@ export class NotificationDelivery {
         if (prefs.capsuleUnlocked && (await this.capsuleDueLater(n.userId, now, endOfAuraDay(now, tz)))) {
           facts.expectedLater = ['capsule_unlocked'];
         }
-      } else {
+      } else if (n.type === 'capsule_unlocked') {
         unlockDate = n.id === null ? null : await this.sealedCapsuleDate(n.userId, n.id);
         facts.capsuleSealed = unlockDate !== null;
+      } else {
+        facts.poolOpen = await this.flagOn(POOL_FLAGS.hi);
       }
     }
     return { facts, locale: row?.ui_locale ?? null, devices, unlockDate };
@@ -129,7 +132,10 @@ export class NotificationDelivery {
 
     const day = auraDayOf(now, facts.tz as string);
     const limit = CAP_EXEMPT.includes(n.type) ? null : DAILY_PUSH_CAP - reservedSlots(n.type, facts.sentToday, facts.expectedLater);
-    if (!(await this.reserve(n.userId, day, n.type, limit))) return { status: 'skipped', reason: 'capped' };
+    if (!(await this.reserve(n.userId, day, n.type, limit))) {
+      const capped = cappedDecision(facts);
+      return capped.action === 'defer' ? { status: 'deferred', until: capped.until } : { status: 'skipped', reason: 'capped' };
+    }
 
     const message: PushMessage = {
       type: n.type,
@@ -172,6 +178,12 @@ export class NotificationDelivery {
       [userId, day],
     );
     return (r.rowCount ?? 0) > 0;
+  }
+
+  /** A feature flag straight from the table (not the API's cached config: the worker has none). Missing = off. */
+  private async flagOn(key: string): Promise<boolean> {
+    const r = await this.db.query<{ enabled: boolean }>('select enabled from public.feature_flags where key = $1', [key]);
+    return r.rows[0]?.enabled === true;
   }
 
   /** The unlock date of the user's date capsule while it is still sealed (not opened, not deleted), else null. */

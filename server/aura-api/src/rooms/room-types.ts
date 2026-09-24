@@ -13,8 +13,8 @@ export const GESTURE_TYPES = [
 ] as const;
 export type GestureType = (typeof GESTURE_TYPES)[number];
 
-/** `reflection` arrives with F6 (Milestone B); until then it is rejected with `400 invalid_request`. */
-export const GESTURE_TARGETS = ['member', 'room'] as const;
+/** `reflection` (F6): a published reflection; the recipient is its author (contracts/api/v1-reflections.md §1.5). */
+export const GESTURE_TARGETS = ['member', 'room', 'reflection'] as const;
 export type GestureTarget = (typeof GESTURE_TARGETS)[number];
 
 /** Why a gesture was not delivered. The sender never learns it (every drop answers like a delivery). */

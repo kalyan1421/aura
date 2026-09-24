@@ -55,6 +55,14 @@ dependencies:
   record: ^7.1.1
   audioplayers: ^6.8.1
 
+  # Sanctuary › Sounds (F15, Milestone B): one just_audio player per layer,
+  # audio_session for focus, calls and headphone changes, audio_service for
+  # the lock-screen / notification controls and the Android media-playback
+  # foreground service (PRD 15-permissions "Background audio").
+  just_audio: ^0.10.6
+  audio_session: ^0.2.4
+  audio_service: ^0.18.19
+
   # Time capsules (F4): photos from the system picker (PHPicker / Android
   # Photo Picker, no library permission), resized to ≤ 2,048 px with EXIF/GPS
   # stripped on device (package:image), and the offline date-unlock local

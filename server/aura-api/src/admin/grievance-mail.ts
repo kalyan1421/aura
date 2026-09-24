@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DbService } from '../db/db.service';
 import { AdminConfig } from './admin-config';
 import type { GrievanceCategory } from './clocks';
+import { mailLocale, type MailLocale } from './mail/copy';
 import { MAILER, mailErrorCode, type Mailer } from './mail/mailer';
 import { grievanceAckMail, grievanceReplyMail, officerNewGrievanceMail, type GrievanceOutcome } from './mail/templates';
 
@@ -19,6 +20,7 @@ interface GrievanceRow {
   channel: string;
   complainant_name: string | null;
   complainant_email: string;
+  locale: string | null;
   received_at: Date;
   resolve_due_at: Date;
   outcome: GrievanceOutcome | null;
@@ -27,7 +29,7 @@ interface GrievanceRow {
   ack_email_attempts: number;
 }
 
-const COLS = `id, ticket, category, channel, complainant_name, complainant_email, received_at, resolve_due_at, outcome, reply,
+const COLS = `id, ticket, category, channel, complainant_name, complainant_email, locale, received_at, resolve_due_at, outcome, reply,
               ack_email_sent_at, ack_email_attempts`;
 
 @Injectable()
@@ -53,6 +55,7 @@ export class GrievanceMail {
     const mail = grievanceAckMail(
       { ticket: g.ticket, category: g.category, complainantName: g.complainant_name, receivedAt: g.received_at, resolveDueAt: g.resolve_due_at },
       this.config.officer,
+      await this.ackLocale(g),
     );
     try {
       await this.mailer.send({ to: [g.complainant_email], ...mail, replyTo: this.config.officer.email, autoSubmitted: true });
@@ -67,6 +70,22 @@ export class GrievanceMail {
       this.logger.warn(`acknowledgement for ${g.ticket} not sent (${mailErrorCode(e)})`);
       return false;
     }
+  }
+
+  /**
+   * The acknowledgement's language: the app language of the Aura account that signs in with the complainant's address
+   * (they get it in the language they use Aura in), else the language the grievance came in (`locale`, sent by the
+   * form), else English. Only a language comes back; nothing about the account is kept or logged.
+   */
+  private async ackLocale(g: GrievanceRow): Promise<MailLocale> {
+    const r = await this.db
+      .query<{ ui_locale: string }>(
+        `select p.ui_locale from auth.users u join public.profiles p on p.user_id = u.id
+          where lower(u.email) = lower($1) and u.deleted_at is null limit 1`,
+        [g.complainant_email],
+      )
+      .catch(() => ({ rows: [] as Array<{ ui_locale: string }> }));
+    return mailLocale(r.rows[0]?.ui_locale ?? g.locale);
   }
 
   /** Content-free notice to the Grievance Officer's inbox (2-hour categories also page). */

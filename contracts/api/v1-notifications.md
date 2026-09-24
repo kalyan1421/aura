@@ -5,8 +5,9 @@ Extends `contracts/api/v1.md` (same auth, error shape, sync envelope; device reg
 `15-permissions.md` (asked in context, no re-ask for 30 days), `16-offline.md` (settings: one write path, LWW per
 field). Capsule push scheduling: `v1-capsules.md` §6.
 
-**Milestone A ships two pushes:** the daily check-in reminder (`daily_reminder`) and "date capsule unlocked"
-(`capsule_unlocked`). Everything else in the catalogue comes later; the cap and precedence already account for it.
+**Milestone A ships three pushes:** the daily check-in reminder (`daily_reminder`), "date capsule unlocked"
+(`capsule_unlocked`) and "Tell me when they open" (`rooms_pool_open`, §5). Everything else in the catalogue comes
+later; the cap and precedence already account for it.
 
 ## 1. Settings: sync entity `notification_prefs`
 
@@ -57,6 +58,7 @@ id>" }`. Never a mood, quadrant, room theme, title, text, date, pseudonym or str
 |---|---|---|---|---|---|
 | `daily_reminder` | the person's time, daily; **skipped** if a live check-in exists for that Aura day | `reminders` | "A quiet minute for you. How's today feeling?" | "Mee kosam oka quiet minute. Ee roju ela anipistondi?" | `daily_reminder` |
 | `capsule_unlocked` | 10:00 local on the unlock date (v1-capsules.md §6) while the capsule is sealed; max 1/day | `capsules` | "Something you sealed is ready to open." | "Meeru daachukunnadi ippudu open cheyyochu." | the unlock date's notice id (below) |
+| `rooms_pool_open` | once, when a language pool the person asked about opens (§5) | `rooms` ("Rooms & Lantern Hour") | "Hindi and Hinglish rooms are open now." | "Hindi, Hinglish rooms ippudu modalayyaayi." | `rooms_pool_open` |
 
 - Copy is rendered server-side in the profile's `ui_locale` (`en`, `te`, `te-Latn`; `hi` / `hi-Latn` → English until
   beta). Discreet mode: "You have a gentle update" (te-Latn "Meeku oka gentle update undi") for every type. There is no
@@ -113,3 +115,30 @@ log-only transport (logs the type only), the worker keeps running.
   `capsule_unlocked` → the capsule (the capsules feature provides the location; Home until then).
 - Copy lint (REQ-NTF-01, `pnpm lint` in server/aura-api): the server catalogue and every app ARB key starting with
   `notif_` (in-app banners, lock-screen copy) must pass. Name any new notification string `notif_…`.
+
+## 5. "Tell me when they open": sync entity `room_pool_waitlist` → push `rooms_pool_open`
+
+PRD 06b F5 (Hindi + Hinglish rooms stay off until moderation is ready) and 14-states ("Join English room" / "Tell me
+when they open"). Migration 20261005000019; `src/notifications/pool-waitlist.ts`.
+
+```json
+{ "id": "<mutation uuidv7>", "entity": "room_pool_waitlist", "op": "upsert",
+  "deviceTs": "2026-10-08T20:15:00+05:30", "localDay": "2026-10-08", "tz": "Asia/Kolkata", "payload": { "pool": "hi" } }
+```
+
+- `op` `upsert` (a repeat keeps the first request) or `delete` (withdraw). `pool`: `hi` only (the pools that open
+  later) → else `invalid_payload`. Stored in `public.room_pool_waitlist` — server-only (no select-own), purged with the
+  account.
+- **Worker** `pool-open-sweep` (every minute, `notifications` queue): while the pool's flag is on (`hi` →
+  `feature_flags.rooms_pool_hi`), each waiting row is claimed (oldest first, `SKIP LOCKED`), **deleted**, and one
+  `rooms_pool_open` push enqueued in the same transaction (Redis refusing → the batch rolls back and waits for the next
+  sweep; BullMQ drops a duplicate after a commit failure). **Once:** the opt-in is used up; flipping the flag off and on
+  again sends nothing more, and someone who taps again while it's off is told at the next opening. No push for an
+  account with a scheduled deletion, a missing profile, or an active `account_ban` / `social_ban` / `rooms_pause`.
+- **Delivery** follows §3: master switch (no type toggle of its own — the tap is the opt-in), a registered install
+  (i.e. OS permission given), quiet hours (deferred to their end), once per Aura day, and the 2/day cap — when capped
+  it **waits for the next Aura day** instead of being dropped; given up after 72 h. Re-checks the flag: a pool closed
+  again meanwhile sends nothing. Android channel `rooms` ("Rooms & Lantern Hour", muteable in phone Settings), TTL 24 h,
+  payload `{ "type": "rooms_pool_open" }` (no id).
+- **App:** the pool screen's "Tell me when they open" keeps the tap on the phone and queues the mutation; a foreground
+  push shows "Hindi and Hinglish rooms are open now." with "See rooms"; a tap opens Rooms.

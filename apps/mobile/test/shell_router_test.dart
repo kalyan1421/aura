@@ -223,7 +223,7 @@ void main() {
   });
 
   group('the real router', () {
-    testWidgets('after onboarding: the shell with Home; /history is the '
+    testWidgets('after onboarding: the shell with Home; /history is in the '
         'Insights tab', (tester) async {
       final c = await _app(tester);
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -232,7 +232,7 @@ void main() {
 
       c.read(routerProvider).go(Routes.history);
       await _settle(tester);
-      expect(_location(c), Routes.insights);
+      expect(_location(c), Routes.insightsHistory);
       expect(_selected(tester, ShellTab.insights), isTrue);
       await _end(tester);
     });

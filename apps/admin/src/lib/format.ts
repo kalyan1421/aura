@@ -159,6 +159,12 @@ export const LEXICON_ACTION_LABEL: Record<string, string> = {
   lexicon_rollback: 'Rolled back',
 };
 
+export const HELPLINES_ACTION_LABEL: Record<string, string> = {
+  helplines_upload: 'Stored',
+  helplines_publish: 'Published',
+  helplines_rollback: 'Rolled back',
+};
+
 /**
  * A refusal's `details` as short lines for a form (lexicon problems, failed vectors). Strings stay as they are;
  * objects become `key: value` pairs; at most `max` lines.

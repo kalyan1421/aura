@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../time/clock.dart';
 import 'remote_config_store.dart';
+import 'remote_helplines.dart';
 import 'remote_lexicon.dart';
 
 /// Server-authoritative feature flags and kill switches (PRD 19 REQ-ADM-12:
@@ -17,8 +18,8 @@ import 'remote_lexicon.dart';
 /// foreground, with `If-None-Match` (a `304` costs nothing). The last document
 /// is kept on the phone for offline use; before the first one, or when the
 /// kept one is unreadable, the bundled [RemoteFlags.defaults] apply. The same
-/// document points at the live signed lexicon; a newer one is downloaded and
-/// checked by [RemoteLexicon].
+/// document points at the live signed lexicon and helpline directory; a newer
+/// one is downloaded and checked by [RemoteLexicon] / [RemoteHelplines].
 ///
 /// Flags only hide or grey UI here: the server enforces every kill switch
 /// itself (a flag on the phone alone never opens anything).
@@ -181,6 +182,9 @@ abstract interface class RemoteConfigApi {
 
   /// The live signed lexicon envelope (decoded JSON), unverified.
   Future<Fetched<Object?>> lexicon({String? etag});
+
+  /// The live signed helpline directory envelope (decoded JSON), unverified.
+  Future<Fetched<Object?>> helplines({String? etag});
 }
 
 class HttpRemoteConfigApi implements RemoteConfigApi {
@@ -218,6 +222,10 @@ class HttpRemoteConfigApi implements RemoteConfigApi {
   @override
   Future<Fetched<Object?>> lexicon({String? etag}) =>
       _get('/v1/lexicon/crisis', etag);
+
+  @override
+  Future<Fetched<Object?>> helplines({String? etag}) =>
+      _get('/v1/helplines', etag);
 }
 
 /// Keeps [flags] current and the lexicon up to date. Timers run only while
@@ -227,6 +235,7 @@ class RemoteConfigController {
     required this._api,
     required this._store,
     required this.lexicon,
+    this.helplines,
     this._clock = const Clock(),
     this.minGap = const Duration(seconds: 20),
   });
@@ -239,6 +248,9 @@ class RemoteConfigController {
   final RemoteConfigApi? _api;
   final RemoteConfigStore _store;
   final RemoteLexicon lexicon;
+
+  /// The signed helpline directory (null: bundled numbers only).
+  final RemoteHelplines? helplines;
   final Clock _clock;
 
   /// Refreshes closer together than this (resume + sync + poll) are merged.
@@ -266,6 +278,7 @@ class RemoteConfigController {
   Future<void> start({required bool foreground}) async {
     await _restore();
     await lexicon.restore();
+    await helplines?.restore();
     if (foreground) await onForeground();
   }
 
@@ -320,6 +333,29 @@ class RemoteConfigController {
       debugPrint('remote config: ${e.runtimeType}');
     }
     await _updateLexicon();
+    await _updateHelplines();
+  }
+
+  /// Like the lexicon: only when the server points at a newer seq than the
+  /// one in use, there is a key to check it with, and it isn't the bundle
+  /// this phone already refused.
+  Future<void> _updateHelplines() async {
+    final api = _api;
+    final remote = helplines;
+    final live = _doc?.bundles[RemoteHelplines.kind];
+    if (api == null || remote == null || live == null) return;
+    if (live.seq <= remote.activeSeq || remote.keys.isEmpty) return;
+    if (live.seq == remote.refusedSeq) return;
+    try {
+      switch (await api.helplines(etag: remote.etag)) {
+        case Got(:final value, :final etag):
+          await remote.apply(value, etag: etag);
+        case NotModified() || NotPublished():
+          break;
+      }
+    } on Object catch (e) {
+      debugPrint('helplines: download ${e.runtimeType}');
+    }
   }
 
   Future<void> _updateLexicon() async {

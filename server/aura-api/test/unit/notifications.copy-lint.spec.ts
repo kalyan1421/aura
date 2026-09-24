@@ -62,7 +62,7 @@ function appNotificationTemplates(): TemplateSource[] {
 describe('REQ-NTF-01: shipped notification copy passes the lint', () => {
   it('the server push catalogue, in all five languages (as rendered, fallbacks included)', () => {
     const templates = serverPushTemplates();
-    expect(templates).toHaveLength(5 * 3);
+    expect(templates).toHaveLength(5 * 4); // daily_reminder, capsule_unlocked, rooms_pool_open, discreet
     const violations = lintTemplates(templates, TERMS);
     expect(violations.map(formatViolation)).toEqual([]);
   });

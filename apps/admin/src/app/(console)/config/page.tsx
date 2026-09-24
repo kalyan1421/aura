@@ -12,14 +12,15 @@ const FLAG_HELP: Record<string, string> = {
   rooms_pool_hi: 'Hindi + Hinglish rooms (off until moderation is ready; those users join English rooms meanwhile).',
   rooms_enabled: 'Mood rooms. Off: no new room joins; rooms already joined keep working until they close.',
   reduced_mode:
-    'Reduced mode — turn on before you are unreachable (PRD 19). Pauses reflections and throttles sign-ups; check-ins, gestures and crisis support keep working. Today: recorded and sent to the app; reflections arrive with F6 (Milestone B) and the sign-up throttle is not wired yet (see the setup doc).',
+    'Reduced mode — turn on before you are unreachable (PRD 19). Pauses reflections everywhere (the server refuses new ones) and throttles sign-ups; check-ins, gestures and crisis support keep working. The sign-up throttle is not wired yet (see the setup doc).',
   hold_all:
-    'Hold-all — every new reflection waits for a human (06c F9, before planned absences); gestures are unaffected. Takes effect with reflections (F6, Milestone B).',
+    'Hold-all — every new reflection waits for a human (06c F9, before planned absences); gestures are unaffected. Applies within 60 s of the flip; review them under Reflections.',
+  reflections_composer:
+    'Reflections composer. Off: no new reflections anywhere. Its payload.pausedPools pauses one language pool (tripped automatically above 50 held in that pool); resume a pool on the Reflections page.',
 };
 
 /** PRD 19 "Configuration" kill switches that belong to features not built yet. */
 const LATER: Array<[string, string]> = [
-  ['Reflections per language pool', 'F6 reflections, Milestone B'],
   ['Breath Ripples', 'F7, Milestone B'],
   ['Echoes', 'F7, Milestone B'],
   ['Gifts', 'F12, Milestone B'],

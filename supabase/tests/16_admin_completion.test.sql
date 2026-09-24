@@ -24,7 +24,8 @@ select is_empty(
         and c.relname not in ('reports','rooms','room_members','room_gestures','evidence_holds','sanctions','strikes',
                               'safety_config','matching_config','moderation_actions','feature_flags',
                               'admin_staff','admin_grievances','admin_legal_orders','admin_pages',
-                              'admin_page_deliveries','admin_mandatory_checklists')
+                              'admin_page_deliveries','admin_mandatory_checklists',
+                              'reflections','reflection_config') -- F6: column-scoped review reads (18_reflections)
         and (has_table_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
              or has_any_column_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')) $$,
   'aura_admin still has no privilege on any other public table');
@@ -59,7 +60,8 @@ select is(
   array['admin_account_age_days','admin_add_sanction','admin_add_strike','admin_audit_anchor','admin_deletion_case_close',
         'admin_deletion_case_mark_sent','admin_deletion_case_open','admin_deletion_case_reissue','admin_deletion_case_schedule',
         'admin_deletion_cases_list','admin_extend_evidence_hold','admin_hide_account_from_rooms','admin_item_crisis_flagged',
-        'admin_lift_sanction','admin_record_mandatory_report','admin_report_for_action','admin_resolve_report',
+        'admin_lift_sanction','admin_record_mandatory_report','admin_reflection_author','admin_reflection_decide',
+        'admin_reflection_escalate','admin_report_for_action','admin_resolve_report', -- F6: migration 18
         'admin_staff_add','admin_staff_list','admin_staff_update','user_is_minor'],
   'aura_admin can execute only the listed SECURITY DEFINER functions');
 select is_empty(

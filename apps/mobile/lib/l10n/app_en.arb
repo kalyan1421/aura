@@ -1638,6 +1638,22 @@
   "@closed_signOutNote": {
     "description": "Small note under the actions: what Sign out does on this phone."
   },
+  "notif_roomsPoolBanner": "Hindi and Hinglish rooms are open now.",
+  "@notif_roomsPoolBanner": {
+    "description": "In-app notice when the 'rooms are open' push arrives while the app is open (the same line as the push; the person tapped 'Tell me when they open'). Never a mood or a room name."
+  },
+  "notif_roomsPoolAction": "See rooms",
+  "@notif_roomsPoolAction": {
+    "description": "Action on the 'rooms are open' notice: opens Rooms."
+  },
+  "notif_channelRooms": "Rooms & Lantern Hour",
+  "@notif_channelRooms": {
+    "description": "Android notification channel name for room notices (phone Settings; PRD 15-permissions)."
+  },
+  "notif_channelRoomsDescription": "When rooms you asked about open.",
+  "@notif_channelRoomsDescription": {
+    "description": "Android notification channel description (phone Settings)."
+  },
   "home_stageProgress": "{stage}, {count} of {target} Starlight toward {next}",
   "@home_stageProgress": {
     "description": "Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.",
@@ -1857,6 +1873,384 @@
     "placeholders": {
       "habit": {
         "type": "String"
+      }
+    }
+  },
+  "insights_title": "Aura Sky",
+  "@insights_title": {
+    "description": "Title of the Insights tab: the person's check-in history drawn as a night sky. 'Aura Sky' is a brand name."
+  },
+  "insights_private": "Only you can see your sky. It's worked out on this phone.",
+  "@insights_private": {
+    "description": "Privacy line under the sky: patterns are computed on the device and never uploaded (PRD F10)."
+  },
+  "insights_empty": "Your sky fills in as you check in.",
+  "@insights_empty": {
+    "description": "Empty Insights (no check-ins yet): a quiet sky and a Check in button (PRD F10 edge cases, 14-states)."
+  },
+  "insights_allCheckIns": "All check-ins",
+  "@insights_allCheckIns": {
+    "description": "Button that opens the full private list of check-ins (history), with edit and delete."
+  },
+  "insights_viewMonth": "Month",
+  "@insights_viewMonth": {
+    "description": "Sky view switch: one month of days."
+  },
+  "insights_viewYear": "Year",
+  "@insights_viewYear": {
+    "description": "Sky view switch: a whole year of days."
+  },
+  "insights_prevMonth": "Previous month",
+  "@insights_prevMonth": {
+    "description": "Button (icon, screen-reader label) that shows the month before."
+  },
+  "insights_nextMonth": "Next month",
+  "@insights_nextMonth": {
+    "description": "Button (icon, screen-reader label) that shows the month after."
+  },
+  "insights_prevYear": "Previous year",
+  "@insights_prevYear": {
+    "description": "Button (icon, screen-reader label) that shows the year before."
+  },
+  "insights_nextYear": "Next year",
+  "@insights_nextYear": {
+    "description": "Button (icon, screen-reader label) that shows the year after."
+  },
+  "insights_dayEmpty": "{date}, quiet sky",
+  "@insights_dayEmpty": {
+    "description": "Screen-reader label of a day with no check-in. Neutral: an inactive day is plain sky, never 'missed'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_dayRest": "{date}, a rest day",
+  "@insights_dayRest": {
+    "description": "Screen-reader label of a rest day (a faint ring in the sky).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_daySingle": "{date}, {quadrant}, {count, plural, =1{1 check-in} other{{count} check-ins}}",
+  "@insights_daySingle": {
+    "description": "Screen-reader label of a day whose most frequent quadrant is {quadrant} (Storm, Rain, Moonlight or Sunrise).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "quadrant": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_dayPair": "{date}, {first} and {second} equally, {count, plural, =1{1 check-in} other{{count} check-ins}}",
+  "@insights_dayPair": {
+    "description": "Screen-reader label of a mixed day: two quadrants tied (a split star).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_dayMixed": "{date}, an even mix, {count, plural, =1{1 check-in} other{{count} check-ins}}",
+  "@insights_dayMixed": {
+    "description": "Screen-reader label of a mixed day: three or four quadrants tied (a split star).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_dayHint": "Shows this day's check-ins",
+  "@insights_dayHint": {
+    "description": "Screen-reader hint on a day with check-ins."
+  },
+  "insights_dayNone": "Nothing was logged this day. The sky was just quiet.",
+  "@insights_dayNone": {
+    "description": "Day sheet for a day without check-ins. Calm, no blame."
+  },
+  "insights_monthSemantic": "{month}, {count, plural, =0{a quiet sky} =1{1 day checked in} other{{count} days checked in}}",
+  "@insights_monthSemantic": {
+    "description": "Screen-reader label of one month in the year view; tapping it opens that month.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_legendRest": "Rest day",
+  "@insights_legendRest": {
+    "description": "Sky legend: the faint ring."
+  },
+  "insights_legendMixed": "Mixed day",
+  "@insights_legendMixed": {
+    "description": "Sky legend: the split star (quadrants tied that day)."
+  },
+  "insights_patternsTitle": "Patterns",
+  "@insights_patternsTitle": {
+    "description": "Section title: plain-language patterns from the person's own check-ins."
+  },
+  "insights_patternsLast30": "From your last 30 days",
+  "@insights_patternsLast30": {
+    "description": "Under the Patterns title on Free: the window the patterns come from."
+  },
+  "insights_patternsNeedCheckIns": "Patterns appear after 7 check-ins ({count}/7)",
+  "@insights_patternsNeedCheckIns": {
+    "description": "Shown instead of patterns while there are fewer than 7 check-ins in the window (PRD F10, REQ-INS-01: '6/7').",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_patternsNeedDays": "Patterns appear after check-ins on 5 different days ({count}/5)",
+  "@insights_patternsNeedDays": {
+    "description": "Shown when there are 7+ check-ins but on fewer than 5 different days (REQ-INS-01 negative).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_patternsNone": "No clear patterns right now. Your sky is still here.",
+  "@insights_patternsNone": {
+    "description": "Enough check-ins, but nothing passes the thresholds (weak patterns are hidden, not caveated)."
+  },
+  "insights_patternTag": "On check-ins with {tag}, {quadrant} showed up more often.",
+  "@insights_patternTag": {
+    "description": "A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise.",
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      },
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternHabit": "On days you did {habit}, {quadrant} showed up more often.",
+  "@insights_patternHabit": {
+    "description": "A pattern (Aura Plus): on days the habit was done, check-ins were {quadrant} more often. Descriptive only, never causal.",
+    "placeholders": {
+      "habit": {
+        "type": "String"
+      },
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternMorning": "In the mornings, {quadrant} showed up more often.",
+  "@insights_patternMorning": {
+    "description": "A pattern: morning check-ins (04:00–12:00) were {quadrant} more often than the rest of the day.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternAfternoon": "In the afternoons, {quadrant} showed up more often.",
+  "@insights_patternAfternoon": {
+    "description": "A pattern: afternoon check-ins (12:00–17:00) were {quadrant} more often.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternEvening": "In the evenings, {quadrant} showed up more often.",
+  "@insights_patternEvening": {
+    "description": "A pattern: evening check-ins (17:00–21:00) were {quadrant} more often.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternNight": "At night, {quadrant} showed up more often.",
+  "@insights_patternNight": {
+    "description": "A pattern: late check-ins (21:00–04:00) were {quadrant} more often.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_patternMix": "{quadrant} showed up most often in your sky.",
+  "@insights_patternMix": {
+    "description": "A pattern: the most frequent quadrant in the window. Same warmth for every quadrant.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_plusBadge": "Aura Plus",
+  "@insights_plusBadge": {
+    "description": "Small label on an Insights extra that comes with Aura Plus (brand name)."
+  },
+  "insights_rangeLocked": "Any range and habits alongside moods come with Aura Plus. Your sky and 30-day patterns are always free.",
+  "@insights_rangeLocked": {
+    "description": "Locked note under the patterns on Free (PRD F10: Plus gates depth only; REQ-INS-05). Calm, no pressure."
+  },
+  "insights_rangeLabel": "Patterns from",
+  "@insights_rangeLabel": {
+    "description": "Screen-reader label of the range picker (Aura Plus)."
+  },
+  "insights_range7": "7 days",
+  "@insights_range7": {
+    "description": "Range choice (Aura Plus)."
+  },
+  "insights_range30": "30 days",
+  "@insights_range30": {
+    "description": "Range choice."
+  },
+  "insights_range90": "90 days",
+  "@insights_range90": {
+    "description": "Range choice (Aura Plus)."
+  },
+  "insights_range365": "1 year",
+  "@insights_range365": {
+    "description": "Range choice (Aura Plus)."
+  },
+  "insights_rangeAll": "All time",
+  "@insights_rangeAll": {
+    "description": "Range choice (Aura Plus)."
+  },
+  "insights_weeklyTitle": "From your past week",
+  "@insights_weeklyTitle": {
+    "description": "Weekly insight card title, shown on the first Aura day of the week in Insights only (never pushed). The body is one pattern sentence."
+  },
+  "insights_weeklyHide": "Hide for this week",
+  "@insights_weeklyHide": {
+    "description": "Hides the weekly card until next week."
+  },
+  "insights_careTitle": "It's been a heavy couple of weeks",
+  "@insights_careTitle": {
+    "description": "Care card when most recent check-ins were Storm or Rain (PRD F10 literal). Shown in Insights only, never pushed. Warm, never diagnostic."
+  },
+  "insights_careBody": "You don't have to carry it alone. Support and a room are here whenever you want them.",
+  "@insights_careBody": {
+    "description": "Care card body. No pressure, no labels."
+  },
+  "insights_careSupport": "See support",
+  "@insights_careSupport": {
+    "description": "Care card button: opens the support sheet (helplines, grounding)."
+  },
+  "insights_careRoom": "Find a room",
+  "@insights_careRoom": {
+    "description": "Care card button: opens Rooms."
+  },
+  "insights_monthTitle": "Your month in stars",
+  "@insights_monthTitle": {
+    "description": "Title of the monthly recap, shown from the first Aura day of each month (PRD F10)."
+  },
+  "insights_monthCardBody": "{month} in your sky",
+  "@insights_monthCardBody": {
+    "description": "Monthly recap card body; month = e.g. 'October 2026'.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_monthOpen": "Open",
+  "@insights_monthOpen": {
+    "description": "Opens the monthly recap."
+  },
+  "insights_monthHide": "Hide",
+  "@insights_monthHide": {
+    "description": "Hides the monthly recap card until next month."
+  },
+  "insights_monthDays": "{count, plural, =1{1 day checked in} other{{count} days checked in}}",
+  "@insights_monthDays": {
+    "description": "Recap: distinct days with a check-in in that month.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_monthMixTitle": "Your skies this month",
+  "@insights_monthMixTitle": {
+    "description": "Recap: heading of the quadrant mix drawn as a sky."
+  },
+  "insights_monthMixItem": "{quadrant}: {count, plural, =1{1 check-in} other{{count} check-ins}}",
+  "@insights_monthMixItem": {
+    "description": "Recap legend row (glyph + name + count), also read by screen readers.",
+    "placeholders": {
+      "quadrant": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_monthSkySemantic": "A sky of {count, plural, =1{1 star} other{{count} stars}}, one for each check-in in {month}",
+  "@insights_monthSkySemantic": {
+    "description": "Screen-reader label of the recap's drawn sky.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_deeperTitle": "Deeper monthly review",
+  "@insights_deeperTitle": {
+    "description": "Section of the recap with patterns across the month and habit × mood (Aura Plus)."
+  },
+  "insights_deeperLocked": "Patterns across the month, with habits alongside moods, come with Aura Plus.",
+  "@insights_deeperLocked": {
+    "description": "Locked note on Free (PRD 14-states: blurred deeper chart, basic sky stays free)."
+  },
+  "insights_deeperNone": "No clear patterns this month.",
+  "@insights_deeperNone": {
+    "description": "Plus recap: nothing passed the thresholds for that month."
+  },
+  "insights_statsTitle": "All time",
+  "@insights_statsTitle": {
+    "description": "Section title: lifetime stats (free)."
+  },
+  "insights_statsCheckIns": "{count, plural, =1{1 check-in} other{{count} check-ins}}",
+  "@insights_statsCheckIns": {
+    "description": "Lifetime stat: check-ins (not deleted).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insights_statsDays": "{count, plural, =1{1 day in your sky} other{{count} days in your sky}}",
+  "@insights_statsDays": {
+    "description": "Lifetime stat: distinct days with a check-in.",
+    "placeholders": {
+      "count": {
+        "type": "int"
       }
     }
   },
@@ -2108,6 +2502,287 @@
   "polish_helpNumberCopied": "Number copied",
   "@polish_helpNumberCopied": {
     "description": "Shown and announced after the helpline number was copied."
+  },
+  "reflections_title": "Reflections",
+  "@reflections_title": {
+    "description": "Room screen: heading over the reflections (short moderated posts answered only with gestures)."
+  },
+  "reflections_intro": "A few words from people here. Answered only with gestures.",
+  "@reflections_intro": {
+    "description": "Room screen: one line under the Reflections heading. No replies exist."
+  },
+  "reflections_share": "Share a reflection",
+  "@reflections_share": {
+    "description": "Button that opens the reflection composer."
+  },
+  "reflections_empty": "No reflections here yet. You can share one, or just read and send gestures.",
+  "@reflections_empty": {
+    "description": "Reflections list is empty. No pressure to write."
+  },
+  "reflections_emptyMemory": "No reflections were shared in this room.",
+  "@reflections_emptyMemory": {
+    "description": "A memory room with no reflections."
+  },
+  "reflections_loadFailed": "Reflections couldn't load just now.",
+  "@reflections_loadFailed": {
+    "description": "Loading reflections failed (server or network). No blame."
+  },
+  "reflections_offline": "Reflections need a connection. Anything you write stays on this phone.",
+  "@reflections_offline": {
+    "description": "Offline: the list can't load; drafts are kept."
+  },
+  "reflections_memory": "This room is a memory: its reflections can be read, not added to.",
+  "@reflections_memory": {
+    "description": "A memory room: read-only list, no composer."
+  },
+  "reflections_paused": "Reflections are resting for a bit. Gestures still work.",
+  "@reflections_paused": {
+    "description": "Composer paused (kill switch / reduced mode). Contract wording."
+  },
+  "reflections_limit": "{count, plural, =1{That's 1 reflection for today. Gestures are always open.} other{That's {count} reflections for today. Gestures are always open.}}",
+  "@reflections_limit": {
+    "description": "Daily cap reached (3 per room, or 10 across rooms, rolling 24 h). Calm; not a punishment.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_slow": "Reflections are slower right now",
+  "@reflections_slow": {
+    "description": "The automatic check is degraded: sending may take longer."
+  },
+  "reflections_left": "{remaining} of {total} left today",
+  "@reflections_left": {
+    "description": "Composer / section: reflections left in this room today (rolling 24 h).",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_cardLabel": "Reflection by {pseudonym}",
+  "@reflections_cardLabel": {
+    "description": "Screen reader: a reflection card (the text follows).",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "reflections_mine": "Your reflection",
+  "@reflections_mine": {
+    "description": "Label on your own reflection card."
+  },
+  "reflections_onlyYou": "Only you can see this",
+  "@reflections_onlyYou": {
+    "description": "Your own reflection that is not published (checking, held, not posted, taken down)."
+  },
+  "reflections_pending": "Still checking. You can keep reading.",
+  "@reflections_pending": {
+    "description": "Your reflection is still being checked (moderation took longer than 2 s)."
+  },
+  "reflections_heldSoon": "Waiting for a quick check",
+  "@reflections_heldSoon": {
+    "description": "Your reflection is held for a human review (only you see it)."
+  },
+  "reflections_heldOvernight": "Waiting for a quick check. This may take until morning.",
+  "@reflections_heldOvernight": {
+    "description": "Held overnight (the reviewer's night)."
+  },
+  "reflections_rejectedCard": "This one didn't go up here.",
+  "@reflections_rejectedCard": {
+    "description": "Your own rejected reflection in the list (a reason line follows)."
+  },
+  "reflections_removedCard": "This one was taken down after a review.",
+  "@reflections_removedCard": {
+    "description": "Your own reflection removed after a report was upheld. Calm, no blame."
+  },
+  "reflections_gestureCount": "{count, plural, =0{No gestures yet} =1{1 gesture} other{{count} gestures}}",
+  "@reflections_gestureCount": {
+    "description": "Gestures on your own published reflection.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_countPrivate": "Only you see this count",
+  "@reflections_countPrivate": {
+    "description": "Under the gesture count on your own reflection: counts are never public."
+  },
+  "reflections_options": "Reflection options",
+  "@reflections_options": {
+    "description": "Tooltip / screen reader: the ⋯ menu on a reflection card (report, block, mute, delete)."
+  },
+  "reflections_gestureHint": "Sends to {pseudonym} for this reflection",
+  "@reflections_gestureHint": {
+    "description": "Screen-reader hint on a gesture under someone's reflection.",
+    "placeholders": {
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "reflections_gestureSent": "{gesture} sent to {pseudonym}",
+  "@reflections_gestureSent": {
+    "description": "After sending a gesture on a reflection (announced).",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      },
+      "pseudonym": {
+        "type": "String"
+      }
+    }
+  },
+  "reflections_delete": "Delete",
+  "@reflections_delete": {
+    "description": "Delete your own published reflection (no editing exists)."
+  },
+  "reflections_withdraw": "Withdraw",
+  "@reflections_withdraw": {
+    "description": "Withdraw your own reflection while it is checked or held."
+  },
+  "reflections_deleteTitle": "Delete this reflection?",
+  "@reflections_deleteTitle": {
+    "description": "Delete confirmation title."
+  },
+  "reflections_deleteBody": "It goes away for everyone here. Reflections can't be edited, but you can share a new one.",
+  "@reflections_deleteBody": {
+    "description": "Delete confirmation body."
+  },
+  "reflections_withdrawTitle": "Withdraw this reflection?",
+  "@reflections_withdrawTitle": {
+    "description": "Withdraw confirmation title."
+  },
+  "reflections_withdrawBody": "It won't go up. You can share a new one any time.",
+  "@reflections_withdrawBody": {
+    "description": "Withdraw confirmation body."
+  },
+  "reflections_deleted": "Your reflection is gone.",
+  "@reflections_deleted": {
+    "description": "After deleting or withdrawing your reflection."
+  },
+  "reflections_reportTitle": "Report this reflection",
+  "@reflections_reportTitle": {
+    "description": "Report sheet title for a reflection (F9)."
+  },
+  "reflections_reportHidden": "Thank you for telling us. That reflection is hidden for you now.",
+  "@reflections_reportHidden": {
+    "description": "After reporting a reflection (it hides for the reporter at once)."
+  },
+  "reflections_composeTitle": "Share a reflection",
+  "@reflections_composeTitle": {
+    "description": "Composer sheet title."
+  },
+  "reflections_composeLabel": "What's on your mind?",
+  "@reflections_composeLabel": {
+    "description": "Composer text field label. Gentle; no pressure."
+  },
+  "reflections_composeNote": "A few words for this room. People can answer with gestures only, never replies.",
+  "@reflections_composeNote": {
+    "description": "Composer helper line."
+  },
+  "reflections_counter": "{count}/{max}",
+  "@reflections_counter": {
+    "description": "Composer character counter (characters as a person sees them).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_counterSemantic": "{count} of {max} characters",
+  "@reflections_counterSemantic": {
+    "description": "Screen reader: the composer's character counter.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_tooLong": "A little shorter, please: up to {max} characters.",
+  "@reflections_tooLong": {
+    "description": "Composer over the limit (Send is disabled).",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "reflections_send": "Send",
+  "@reflections_send": {
+    "description": "Composer send button."
+  },
+  "reflections_sending": "Sending gently…",
+  "@reflections_sending": {
+    "description": "Composer while the check takes longer than usual."
+  },
+  "reflections_contactBlocked": "Phone numbers, links and handles can't be shared here. It keeps everyone safer.",
+  "@reflections_contactBlocked": {
+    "description": "On-device block: contact details or a link in the text. Nothing was sent (14-states wording)."
+  },
+  "reflections_draftKept": "Draft kept. You can send it once you're back online.",
+  "@reflections_draftKept": {
+    "description": "Composer offline: Send is disabled, the text stays on this phone."
+  },
+  "reflections_sendFailed": "It didn't send just now. Your words are still here: try again in a moment.",
+  "@reflections_sendFailed": {
+    "description": "A send failed (network / server). The draft and its id are kept."
+  },
+  "reflections_rejectedContact": "Reflections can't include contact details. Want to try without it?",
+  "@reflections_rejectedContact": {
+    "description": "Rejected by the server: contact details (PRD F6 wording). The text stays to edit."
+  },
+  "reflections_rejectedLink": "Reflections can't include links. Want to try without it?",
+  "@reflections_rejectedLink": {
+    "description": "Rejected by the server: a link. The text stays to edit."
+  },
+  "reflections_rejectedPersonal": "Questions about someone's personal details can't go up here. Want to try without them?",
+  "@reflections_rejectedPersonal": {
+    "description": "Rejected by the server: personal questions (age, school, where someone lives, photos, meeting). Never names the rule; never mentions anyone's age."
+  },
+  "reflections_rejectedGeneral": "This one can't go up here. It may hurt someone or share personal details. Your words are still here to edit.",
+  "@reflections_rejectedGeneral": {
+    "description": "Rejected by the server (hurtful, sexual, other). 14-states wording; no blame."
+  },
+  "reflections_supportSubtitle": "You don't have to carry it alone.",
+  "@reflections_supportSubtitle": {
+    "description": "Support sheet subtitle after a reflection was crisis-diverted (no rejection wording). Safe messaging."
+  },
+  "reflections_backToRoom": "Back to the room",
+  "@reflections_backToRoom": {
+    "description": "Support sheet button after a crisis-diverted reflection."
+  },
+  "device_bannedTitle": "This device can't use Aura",
+  "@device_bannedTitle": {
+    "description": "Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off)."
+  },
+  "device_bannedBody": "Aura isn't available on this phone.",
+  "@device_bannedBody": {
+    "description": "Body under device_bannedTitle. No reason, no blame."
+  },
+  "device_bannedReviewSubject": "Review of a device",
+  "@device_bannedReviewSubject": {
+    "description": "Email subject when asking for a review of a device ban. Nothing about the person or the phone."
+  },
+  "rooms_paused": "Rooms are resting for a bit. Try again later.",
+  "@rooms_paused": {
+    "description": "Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame."
+  },
+  "rooms_pausedJoin": "Rooms are resting for a bit. Your check-in is saved.",
+  "@rooms_pausedJoin": {
+    "description": "After a check-in, when the rooms kill switch is off."
   },
   "rooms_title": "Rooms",
   "@rooms_title": {
@@ -3585,6 +4260,350 @@
   "@safety_settingsHint": {
     "description": "Screen-reader hint on the link above: what that Settings section holds."
   },
+  "sounds_title": "Sounds",
+  "@sounds_title": {
+    "description": "Title of Sanctuary › Sounds: ambient sounds to mix (rain, ocean, wind…). Also the Sanctuary section header."
+  },
+  "sounds_cardBody": "Rain, ocean, wind and more. Nothing plays until you choose.",
+  "@sounds_cardBody": {
+    "description": "Under the Sounds card on the Sanctuary tab."
+  },
+  "sounds_cardPlaying": "Playing now",
+  "@sounds_cardPlaying": {
+    "description": "Under the Sounds card while sounds are playing."
+  },
+  "sounds_intro": "Pick a sound to begin, or mix up to four. Nothing plays until you tap.",
+  "@sounds_intro": {
+    "description": "Intro at the top of Sounds. Promise: silent until chosen."
+  },
+  "sounds_nothingPlaying": "Nothing playing",
+  "@sounds_nothingPlaying": {
+    "description": "Status line (also for screen readers) when no sound plays."
+  },
+  "sounds_statePlaying": "Playing",
+  "@sounds_statePlaying": {
+    "description": "Status line while sounds play."
+  },
+  "sounds_statePaused": "Paused",
+  "@sounds_statePaused": {
+    "description": "Status line while sounds are paused."
+  },
+  "sounds_backgroundNote": "Sounds keep playing with the screen off. They pause if your headphones disconnect or a call comes in.",
+  "@sounds_backgroundNote": {
+    "description": "Small note at the bottom of Sounds."
+  },
+  "sounds_notificationChannel": "Sounds playback",
+  "@sounds_notificationChannel": {
+    "description": "Android notification channel name for the Sounds media controls (Settings › Notifications)."
+  },
+  "sounds_windDownTitle": "Night wind-down",
+  "@sounds_windDownTitle": {
+    "description": "A ~20-minute sequence of sounds that slowly thins out to silence. No voice, no claims."
+  },
+  "sounds_windDownBody": "About 20 minutes of sounds that slowly thin out to silence. The order changes each night.",
+  "@sounds_windDownBody": {
+    "description": "Under the wind-down title."
+  },
+  "sounds_windDownBegin": "Begin wind-down",
+  "@sounds_windDownBegin": {
+    "description": "Starts the night wind-down."
+  },
+  "sounds_windDownLeft": "{minutes, plural, =1{About 1 minute left} other{About {minutes} minutes left}}",
+  "@sounds_windDownLeft": {
+    "description": "While the wind-down plays: roughly how long until it has faded to silence.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sounds_windDownBusy": "The wind-down is playing. Stop it to make your own mix.",
+  "@sounds_windDownBusy": {
+    "description": "Tapping a sound while the wind-down plays."
+  },
+  "sounds_mixSection": "Mix your own",
+  "@sounds_mixSection": {
+    "description": "Section header above the list of sounds."
+  },
+  "sounds_mixHint": "Up to four at once, each with its own volume.",
+  "@sounds_mixHint": {
+    "description": "Under the mixer header."
+  },
+  "sounds_stemRain": "Rain",
+  "@sounds_stemRain": {
+    "description": "Sound: steady rain."
+  },
+  "sounds_stemOcean": "Ocean",
+  "@sounds_stemOcean": {
+    "description": "Sound: ocean waves."
+  },
+  "sounds_stemWind": "Wind",
+  "@sounds_stemWind": {
+    "description": "Sound: wind."
+  },
+  "sounds_stemNightInsects": "Night insects",
+  "@sounds_stemNightInsects": {
+    "description": "Sound: crickets and insects at night."
+  },
+  "sounds_stemSingingBowl": "Singing bowl",
+  "@sounds_stemSingingBowl": {
+    "description": "Sound: a singing bowl struck now and then."
+  },
+  "sounds_stemChimes": "Chimes",
+  "@sounds_stemChimes": {
+    "description": "Sound: wind chimes."
+  },
+  "sounds_stemBrownNoise": "Brown noise",
+  "@sounds_stemBrownNoise": {
+    "description": "Sound: soft, deep steady noise (generated on the phone)."
+  },
+  "sounds_stemPinkNoise": "Pink noise",
+  "@sounds_stemPinkNoise": {
+    "description": "Aura Plus sound: soft steady noise."
+  },
+  "sounds_stemDeepBell": "Distant bell",
+  "@sounds_stemDeepBell": {
+    "description": "Aura Plus sound: a low bell far away."
+  },
+  "sounds_stemMonsoonRoof": "Monsoon on a roof",
+  "@sounds_stemMonsoonRoof": {
+    "description": "Aura Plus sound: heavy monsoon rain on a roof."
+  },
+  "sounds_stemStream": "Stream",
+  "@sounds_stemStream": {
+    "description": "Aura Plus sound: a flowing stream."
+  },
+  "sounds_stemFireplace": "Fireplace",
+  "@sounds_stemFireplace": {
+    "description": "Aura Plus sound: a crackling fire."
+  },
+  "sounds_stemDistantThunder": "Distant thunder",
+  "@sounds_stemDistantThunder": {
+    "description": "Aura Plus sound: soft thunder far away."
+  },
+  "sounds_stemOn": "{name}, playing, volume {percent}%",
+  "@sounds_stemOn": {
+    "description": "Screen-reader label of a sound that is on, e.g. 'Rain, playing, volume 60%'.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "sounds_stemPaused": "{name}, paused, volume {percent}%",
+  "@sounds_stemPaused": {
+    "description": "Screen-reader label of a sound in the mix while paused.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "sounds_stemOff": "{name}, off",
+  "@sounds_stemOff": {
+    "description": "Screen-reader label of a sound that is not playing. Tapping it adds it.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_stemLocked": "{name}, part of Aura Plus",
+  "@sounds_stemLocked": {
+    "description": "Screen-reader label of an Aura Plus sound on Free. Calm, no pressure.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_stemNeedsDownload": "{name}, {size} to download once",
+  "@sounds_stemNeedsDownload": {
+    "description": "Screen-reader label (and line) of a sound that downloads when first picked.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_stemDownloading": "{name}, downloading",
+  "@sounds_stemDownloading": {
+    "description": "Screen-reader label while a sound downloads.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_volume": "{name} volume",
+  "@sounds_volume": {
+    "description": "Screen-reader label of a sound's volume slider.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_plusBadge": "Aura Plus",
+  "@sounds_plusBadge": {
+    "description": "Small label on a sound that comes with Aura Plus (brand, not translated)."
+  },
+  "sounds_plusNote": "Coming with Aura Plus.",
+  "@sounds_plusNote": {
+    "description": "Shown when a Free user taps an Aura Plus sound. Calm, no pressure, no countdown."
+  },
+  "sounds_full": "Four sounds are playing. Turn one off to add another.",
+  "@sounds_full": {
+    "description": "Tapping a fifth sound."
+  },
+  "sounds_play": "Play",
+  "@sounds_play": {
+    "description": "Resumes paused sounds (fades in)."
+  },
+  "sounds_pause": "Pause",
+  "@sounds_pause": {
+    "description": "Pauses the sounds."
+  },
+  "sounds_stop": "Stop",
+  "@sounds_stop": {
+    "description": "Stops all sounds and clears the mix."
+  },
+  "sounds_timer": "Timer",
+  "@sounds_timer": {
+    "description": "Opens the timer choices (15, 30, 60 min or off)."
+  },
+  "sounds_timerTitle": "Fade out after",
+  "@sounds_timerTitle": {
+    "description": "Title of the timer sheet: the sound fades out and stops after the chosen time."
+  },
+  "sounds_timerOff": "Off",
+  "@sounds_timerOff": {
+    "description": "Timer choice: no timer."
+  },
+  "sounds_timerValue": "Timer · {value}",
+  "@sounds_timerValue": {
+    "description": "Timer button with its setting, e.g. 'Timer · 30 minutes' or 'Timer · Off'.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_timerLeft": "{minutes, plural, =1{Fades out in about 1 minute} other{Fades out in about {minutes} minutes}}",
+  "@sounds_timerLeft": {
+    "description": "While a timer runs.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sounds_fadingOut": "Fading out",
+  "@sounds_fadingOut": {
+    "description": "The timer's last 30 seconds: the sound is fading to silence."
+  },
+  "sounds_saveMix": "Save this mix",
+  "@sounds_saveMix": {
+    "description": "Saves the current sounds and volumes on this phone (no name to type)."
+  },
+  "sounds_savedMixes": "Saved mixes",
+  "@sounds_savedMixes": {
+    "description": "Section header for mixes saved on this phone."
+  },
+  "sounds_mixSaved": "Saved on this phone.",
+  "@sounds_mixSaved": {
+    "description": "After saving a mix."
+  },
+  "sounds_mixAlreadySaved": "This mix is already saved.",
+  "@sounds_mixAlreadySaved": {
+    "description": "Saving a mix that is already in the list."
+  },
+  "sounds_playMix": "Play {mix}",
+  "@sounds_playMix": {
+    "description": "Screen-reader label of a saved mix, e.g. 'Play Rain · Chimes'.",
+    "placeholders": {
+      "mix": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_removeMix": "Remove {mix}",
+  "@sounds_removeMix": {
+    "description": "Screen-reader label of the ✕ on a saved mix.",
+    "placeholders": {
+      "mix": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_mixUnavailable": "This mix can't play right now.",
+  "@sounds_mixUnavailable": {
+    "description": "A saved mix whose sounds are all unavailable (e.g. Plus ended, download removed)."
+  },
+  "sounds_downloadTitle": "Recorded sounds",
+  "@sounds_downloadTitle": {
+    "description": "Card offering the one-time download of the recorded base sounds."
+  },
+  "sounds_downloadBody": "{size} to download once. After that they play offline. Until then, sounds made on your phone play instead.",
+  "@sounds_downloadBody": {
+    "description": "Download card body. size = e.g. '8.1 MB' (shown before downloading).",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_download": "Download",
+  "@sounds_download": {
+    "description": "Starts the one-time download."
+  },
+  "sounds_downloading": "Downloading…",
+  "@sounds_downloading": {
+    "description": "While the download runs."
+  },
+  "sounds_downloadOffline": "You're offline. Brown noise and the sounds made on your phone play now; recordings can download later.",
+  "@sounds_downloadOffline": {
+    "description": "Download needs a connection. Calm: most sounds still play."
+  },
+  "sounds_downloadFailed": "The download didn't finish. Nothing is lost; you can download again later.",
+  "@sounds_downloadFailed": {
+    "description": "A download failed or didn't match its checksum (it was deleted)."
+  },
+  "sounds_noSpace": "Sounds need about {size}. Free some space, or play brown noise, which needs none.",
+  "@sounds_noSpace": {
+    "description": "Storage full (PRD 06d copy). size = e.g. '8 MB'.",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_megabytes": "{size} MB",
+  "@sounds_megabytes": {
+    "description": "A download size in megabytes, e.g. '8.1 MB'.",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "sounds_removeDownloads": "Remove downloaded sounds",
+  "@sounds_removeDownloads": {
+    "description": "Deletes the downloaded recordings from this phone."
+  },
+  "sounds_downloadsRemoved": "Downloaded sounds removed. The sounds made on your phone still play.",
+  "@sounds_downloadsRemoved": {
+    "description": "After removing downloads."
+  },
   "voice_record": "Record a voice note",
   "@voice_record": {
     "description": "Button in the check-in details that starts recording a voice note (also its screen-reader label)."
@@ -3719,25 +4738,5 @@
   "voice_hasVoice": "Has a voice note",
   "@voice_hasVoice": {
     "description": "Screen-reader label for the voice icon on a history row."
-  },
-  "device_bannedTitle": "This device can't use Aura",
-  "@device_bannedTitle": {
-    "description": "Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off)."
-  },
-  "device_bannedBody": "Aura isn't available on this phone.",
-  "@device_bannedBody": {
-    "description": "Body under device_bannedTitle. No reason, no blame."
-  },
-  "device_bannedReviewSubject": "Review of a device",
-  "@device_bannedReviewSubject": {
-    "description": "Email subject when asking for a review of a device ban. Nothing about the person or the phone."
-  },
-  "rooms_paused": "Rooms are resting for a bit. Try again later.",
-  "@rooms_paused": {
-    "description": "Shown where rooms are offered while the rooms kill switch is off (flag rooms_enabled, 503 rooms_paused). Calm, no blame."
-  },
-  "rooms_pausedJoin": "Rooms are resting for a bit. Your check-in is saved.",
-  "@rooms_pausedJoin": {
-    "description": "After a check-in, when the rooms kill switch is off."
   }
 }

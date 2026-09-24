@@ -15,6 +15,7 @@ const reportShape = z.object({
     z.object({ kind: z.literal('member'), roomId: uuid, memberId: uuid }),
     z.object({ kind: z.literal('gesture'), roomId: uuid, gestureId: uuid }),
     z.object({ kind: z.literal('room'), roomId: uuid }),
+    z.object({ kind: z.literal('reflection'), roomId: uuid, reflectionId: uuid }), // F6, contracts/api/v1-reflections.md §1.6
   ]),
   reason: z.number().int().min(1).max(MAX_REPORT_REASON),
   note: z.string().nullish(),
@@ -25,6 +26,7 @@ export interface ReportRequest {
   roomId: string;
   memberId: string | null;
   gestureId: string | null;
+  reflectionId: string | null;
   reason: ReportReason;
   note: string | null;
 }
@@ -40,6 +42,7 @@ export function parseReportRequest(body: unknown): ReportRequest {
     roomId: r.target.roomId,
     memberId: r.target.kind === 'member' ? r.target.memberId : null,
     gestureId: r.target.kind === 'gesture' ? r.target.gestureId : null,
+    reflectionId: r.target.kind === 'reflection' ? r.target.reflectionId : null,
     reason: r.reason as ReportReason,
     note,
   };

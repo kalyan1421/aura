@@ -126,6 +126,21 @@ class RoomReportTarget extends ReportTarget {
   Map<String, dynamic> toJson() => {'kind': 'room', 'roomId': roomId};
 }
 
+/// A reflection (F6, contracts/api/v1-reflections.md §1.6): it hides for
+/// the reporter at once; the author is never told who reported.
+class ReflectionReportTarget extends ReportTarget {
+  const ReflectionReportTarget(super.roomId, this.reflectionId);
+
+  final String reflectionId;
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'kind': 'reflection',
+    'roomId': roomId,
+    'reflectionId': reflectionId,
+  };
+}
+
 // ---- shared shapes ------------------------------------------------------------
 
 @freezed

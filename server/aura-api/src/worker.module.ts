@@ -9,6 +9,7 @@ import { probe } from './health/health.controller';
 import { NotificationsModule } from './notifications/notifications.module';
 import { QueuesModule } from './queues/queues.module';
 import { QueuesService } from './queues/queues.service';
+import { ReflectionsWorkerModule } from './reflections/reflections.worker';
 import { WorkerHostService } from './queues/worker-host.service';
 
 /** `GET /health` on :3311 — redis, db, worker state and the last heartbeat. */
@@ -39,7 +40,8 @@ class WorkerHealthController {
 /** Worker process (src/worker.ts): BullMQ processors + tiny health endpoint. No auth, no API routes. */
 @Module({
   // AdminWorkerModule: the admin console's pager (30 s tick, repeats / escalation, weekly test page).
-  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule],
+  // ReflectionsWorkerModule: F6 (30 s tick: stuck pending → held, memory → expired, pool auto-pause).
+  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule, ReflectionsWorkerModule],
   controllers: [WorkerHealthController],
   providers: [WorkerHostService],
 })

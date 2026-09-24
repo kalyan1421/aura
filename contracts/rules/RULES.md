@@ -75,3 +75,52 @@ Related rules (state transitions, not vectors): `armedAt = sealedAt + 24 h`; a r
 `armedAt` = the re-arm time. A fire at `t` sets that capsule's `cooldownUntil = t + 168 h` (7 × 24 h, absolute —
 REQ-CAP-03: fired Mon 09:00 → nothing fires before the next Mon 09:00). When two devices fire the same capsule
 offline, the earliest `t` wins and the cooldown starts from it. Instants compare as instants (offsets respected).
+
+## 10. Insights — Aura Sky (`insights.json`, F10)
+Pure functions over the person's **own local data**, run **on the device only** (PRD F10: "computed on device and
+never uploaded"). The TypeScript copy exists so both engines keep passing the vectors; no endpoint uses it.
+Every case has a `kind`. Inputs: check-ins `{localDay, quadrant, tags?, deviceTs?, tzOffsetMinutes?}` (live rows
+only — deleted entries leave the sky) and habit logs `{habitId, localDay}`. A window is `[from, to]` in Aura days,
+inclusive, matched on each row's stamped `localDay` (never recomputed, so a timezone change moves no entry).
+`today = auraDay(now, currentTz)` (§1).
+
+- **`part`** — a check-in is **live** iff it has `deviceTs` and `tzOffsetMinutes` and
+  `localDay == date(deviceTs + tzOffsetMinutes − 4h)` (the wall clock it was stamped at; a backfill fails this).
+  Only live check-ins have a part of the day, from the local hour `h` of `deviceTs + tzOffsetMinutes`:
+  `morning` 4 ≤ h < 12 · `afternoon` 12 ≤ h < 17 · `evening` 17 ≤ h < 21 · `night` otherwise (21:00–03:59, so a
+  01:30 check-in is the night of the Aura day before).
+- **`day_star`** — `dayStar(quadrants, rest)`: no check-ins → `rest` if the day is a rest day, else `empty` (plain
+  sky; never grey or crossed out). Otherwise the quadrant(s) with the highest count, in catalogue order
+  (storm, rain, moonlight, sunrise): one → `single`, a tie → `split` (all tied quadrants). Check-ins win over `rest`.
+- **`rest_days`** — `restDays(activeDays)`: fold §7 from the new-user state over the distinct active days in
+  ascending order; whenever a gap is bridged (`1 ≤ gap ≤ restBank`), each day of that gap is a rest day. Returns
+  them ascending. (On the device, active days are the live check-in and habit days, deleted ones included.)
+- **`week`** — weeks start on `weekStartsOn` (ISO 1 = Monday, the default; 7 = Sunday).
+  `weekStart = today − ((isoWeekday(today) − weekStartsOn + 7) mod 7)`. The **weekly card** covers the week just
+  ended, `[weekStart − 7, weekStart − 1]`, from the first Aura day of the week (Monday 04:00 local) until the next.
+- **`month`** — `monthStart` = the 1st of today's month; **Your month in stars** recaps the previous calendar month
+  `[1st of previous month, monthStart − 1]` from the first Aura day of the month (1st, 04:00 local).
+- **`gate`** — in the window, `N` check-ins over `D` distinct days: `N < 7` → `need_checkins`; else `D < 5` →
+  `need_days`; else `ok`. Returns `{status, checkIns: N, days: D}` (the "4/7" counter).
+- **`patterns`** — `findPatterns(checkIns, habitLogs, from, to, includeHabits)`; empty unless the gate is `ok`.
+  - **Contrast** (tag, habit and time patterns). A population of check-ins is split by a context X into `in` and
+    `out`. X passes with quadrant Q iff: `in` spans **≥ 3 distinct days**; `n_out ≥ 3`; `k_in ≥ 3` (in-check-ins
+    with Q); and the lift `k_in/n_in − k_out/n_out ≥ 1/4`, compared exactly in integers:
+    `4·(k_in·n_out − k_out·n_in) ≥ n_in·n_out`. Per context only the **best** quadrant is kept (largest lift, then
+    larger `k_in`, then catalogue order). Only "more often" is ever expressed; there is no "less often" pattern.
+  - `tag_quadrant` — needs `N ≥ 14`; one context per distinct tag string: `in` = check-ins carrying the tag.
+  - `habit_quadrant` — only when `includeHabits` (Plus); needs `N ≥ 14`; one context per habit with logs in the
+    window: `in` = check-ins on a day that habit was logged.
+  - `time_of_day` — population = the window's **live** check-ins; one context per part of the day.
+  - `quadrant_mix` — over all window check-ins: the top quadrant must be unique, hold **≥ 40 %**
+    (`5·top ≥ 2·N`) and lead the second by **≥ 2**.
+  - **Order:** contrast patterns by lift descending (exact: `numA·denB` vs `numB·denA`), then `k_in` descending,
+    then kind (`tag_quadrant`, `habit_quadrant`, `time_of_day`), then key ascending (plain string order; the key
+    is the tag, the habit id or the part name). `quadrant_mix` (at most one, `key: null`) comes last.
+- **`weekly`** — the first pattern of the week-just-ended window (above), or `null`. Free: `includeHabits = false`.
+- **`month_recap`** — for the previous month: `{month: "YYYY-MM", from, to, checkIns, daysCheckedIn,
+  quadrantCounts}`. (Lifetime glow days come from §7, not from here.)
+- **`care`** — window `[today − 13, today]`: `N ≥ 7` and ≥ 80 % Storm or Rain (`5·(storm + rain) ≥ 4·N`).
+
+Copy is descriptive only ("more often"), never causal, never a number, percentage, score, label or diagnosis
+(REQ-INS-03); every quadrant uses the same template.

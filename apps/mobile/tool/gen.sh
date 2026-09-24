@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Regenerates everything derived in apps/mobile: ARB files (tool/l10n_source.py
-# + tool/l10n/*.py), gen-l10n output, the crisis lexicon data
-# (contracts/safety → tool/gen_lexicon.py) and build_runner code (Riverpod,
-# Freezed, JSON, Drift).
+# + tool/l10n/*.py), gen-l10n output, the crisis lexicon and helpline data
+# (contracts/safety → tool/gen_lexicon.py, tool/gen_helplines.py) and
+# build_runner code (Riverpod, Freezed, JSON, Drift).
 #
 # Serialized with a lock directory so parallel workers never run two
 # build_runner / gen-l10n passes on the same package at once.
@@ -31,5 +31,6 @@ python3 tool/l10n_source.py
 flutter gen-l10n
 if [ "${1:-}" != "l10n" ]; then
   if [ -f tool/gen_lexicon.py ]; then python3 tool/gen_lexicon.py; fi
+  if [ -f tool/gen_helplines.py ]; then python3 tool/gen_helplines.py; fi
   dart run build_runner build
 fi

@@ -1,35 +1,45 @@
 import type { GrievanceOfficer } from '../admin-config';
 import { GAC_APPEAL_TEXT, GRIEVANCE_RULES, type GrievanceCategory } from '../clocks';
+import { MAIL_COPY, type MailLocale } from './copy';
 
 /**
- * Email copy for grievances (English, v0). Acknowledgements and replies never quote the complaint back; officer
- * notifications carry no complaint text and no complainant address (the console shows them to the Owner).
+ * Email copy for grievances and deletion cases. The acknowledgement and the deletion link go out in the person's
+ * language (en / te / te-Latn, from copy.ts — the one place their wording lives); the decision reply and staff mail
+ * are English. Acknowledgements and replies never quote the complaint back; officer notifications carry no complaint
+ * text and no complainant address (the console shows them to the Owner).
  */
-const IST = new Intl.DateTimeFormat('en-IN', {
-  timeZone: 'Asia/Kolkata',
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-  hour: 'numeric',
-  minute: '2-digit',
-  hour12: true,
-});
+const formats = new Map<string, Intl.DateTimeFormat>();
 
-export function istTime(d: Date): string {
-  return `${IST.format(d)} IST`;
+/** A date and time in IST (the Grievance Officer's clock), written the way `locale` writes dates (PRD 18). */
+export function istTime(d: Date, locale: MailLocale = 'en'): string {
+  const tag = MAIL_COPY[locale].dateLocale;
+  let f = formats.get(tag);
+  if (!f) {
+    f = new Intl.DateTimeFormat(tag, {
+      timeZone: 'Asia/Kolkata',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    formats.set(tag, f);
+  }
+  return `${f.format(d)} IST`;
 }
 
-function window(hours: number): string {
-  if (hours % 24 === 0 && hours >= 48) return `within ${hours / 24} days`;
-  return `within ${hours} hours`;
+function window(hours: number, locale: MailLocale): string {
+  const c = MAIL_COPY[locale];
+  if (hours % 24 === 0 && hours >= 48) return c.withinDays(hours / 24);
+  return c.withinHours(hours);
 }
 
-function officerLines(o: GrievanceOfficer): string[] {
+function officerLines(o: GrievanceOfficer, locale: MailLocale = 'en'): string[] {
+  const c = MAIL_COPY[locale];
   const contact = [o.name, o.email, o.address].filter((x): x is string => !!x).join(', ');
-  return [`Grievance Officer: ${contact}`, 'Aura is published by AKVega.'];
+  return [c.officer(contact), c.publisher];
 }
-
-const SAFETY_LINE = 'If someone is in immediate danger, call your local emergency number (India: 112).';
 
 export interface GrievanceMailFields {
   ticket: string;
@@ -39,26 +49,27 @@ export interface GrievanceMailFields {
   resolveDueAt: Date;
 }
 
-export function grievanceAckMail(g: GrievanceMailFields, officer: GrievanceOfficer): { subject: string; text: string } {
+export function grievanceAckMail(g: GrievanceMailFields, officer: GrievanceOfficer, locale: MailLocale = 'en'): { subject: string; text: string } {
+  const c = MAIL_COPY[locale];
   const rule = GRIEVANCE_RULES[g.category];
-  const hello = g.complainantName ? `Hello ${g.complainantName.replace(/[\r\n]+/g, ' ').slice(0, 120)},` : 'Hello,';
+  const hello = g.complainantName ? c.helloNamed(g.complainantName.replace(/[\r\n]+/g, ' ').slice(0, 120)) : c.hello;
   return {
-    subject: `Aura: we received your grievance ${g.ticket}`,
+    subject: c.ack.subject(g.ticket),
     text: [
       hello,
       '',
-      "Thank you for writing to Aura's Grievance Officer. This email acknowledges your grievance.",
+      c.ack.intro,
       '',
-      `Ticket: ${g.ticket}`,
-      `Received: ${istTime(g.receivedAt)}`,
-      `Category: ${rule.label}`,
-      `We will resolve it by: ${istTime(g.resolveDueAt)} (${window(rule.resolveHours)} of receipt)`,
+      `${c.ack.ticket}: ${g.ticket}`,
+      `${c.ack.received}: ${istTime(g.receivedAt, locale)}`,
+      `${c.ack.category}: ${c.categories[g.category]}`,
+      c.ack.resolveBy(istTime(g.resolveDueAt, locale), window(rule.resolveHours, locale)),
       '',
-      'Please quote your ticket number if you write to us again. You can reply to this email.',
+      c.ack.quoteTicket,
       '',
-      ...officerLines(officer),
+      ...officerLines(officer, locale),
       '',
-      SAFETY_LINE,
+      c.safety,
     ].join('\n'),
   };
 }
@@ -96,31 +107,34 @@ export function grievanceReplyMail(
 
 /**
  * REQ-ADM-11: the one-time confirmation link for an emailed / grievance deletion request, sent to the address ON THE
- * ACCOUNT (never to wherever the request came from). No personal data in the link: a random token only.
+ * ACCOUNT (never to wherever the request came from), in the account's app language. No personal data in the link: a
+ * random token only.
  */
 export function deletionVerificationMail(
   c: { ticket: string; link: string; expiresAt: Date; graceDays: number },
   officer: GrievanceOfficer,
+  locale: MailLocale = 'en',
 ): { subject: string; text: string } {
+  const t = MAIL_COPY[locale];
   return {
-    subject: `Aura: confirm the request to delete your account (${c.ticket})`,
+    subject: t.deletion.subject(c.ticket),
     text: [
-      'Hello,',
+      t.hello,
       '',
-      `Aura's Grievance Officer received a request to delete the Aura account that signs in with this email address (request ${c.ticket}).`,
+      t.deletion.intro(c.ticket),
       '',
-      'If you made this request, open the link below and press "Delete my account":',
+      t.deletion.ifYou,
       c.link,
       '',
-      `The link works once, until ${istTime(c.expiresAt)}.`,
+      t.deletion.linkWorks(istTime(c.expiresAt, locale)),
       '',
-      "If you did not ask for this, you don't need to do anything: nothing is deleted without your confirmation. You can also open the link and press \"This wasn't me\".",
+      t.deletion.ifNot,
       '',
-      `What happens next: once you confirm, Aura starts the same deletion as the in-app option. The account is switched off straight away and deleted for good within 30 days (normally after ${c.graceDays} days, during which signing in to the app lets you keep it). Records the law requires us to keep (for example about reported content) are kept only as long as required.`,
+      t.deletion.next(c.graceDays),
       '',
-      ...officerLines(officer),
+      ...officerLines(officer, locale),
       '',
-      SAFETY_LINE,
+      t.safety,
     ].join('\n'),
   };
 }

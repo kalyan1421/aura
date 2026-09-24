@@ -4,8 +4,9 @@ import { AdminCoreModule } from '../admin/admin-core.module';
 import { AdminGuard } from '../admin/admin.guard';
 import { AppConfig } from '../config/app-config';
 import { KillSwitchGuard } from './kill-switch';
+import { HelplinesService } from './helplines.service';
 import { LexiconService } from './lexicon.service';
-import { LexiconAdminController, RemoteConfigController } from './remote-config.controller';
+import { HelplinesAdminController, LexiconAdminController, RemoteConfigController } from './remote-config.controller';
 import { RemoteConfigSettings, parseRemoteConfigSettings } from './remote-config.config';
 import { RemoteConfigService } from './remote-config.service';
 
@@ -14,12 +15,13 @@ import { RemoteConfigService } from './remote-config.service';
  * - `GET /v1/config` — feature flags / kill switches + signed-bundle pointers, ETag, public;
  * - `GET /v1/lexicon/crisis` — the live signed crisis lexicon, ETag, public;
  * - `/admin/lexicons/crisis*` — upload, test on samples, publish, roll back (Owner), audited;
+ * - `GET /v1/helplines` + `/admin/helplines*` — the signed helpline directory, the same way (Owner publishes);
  * - KillSwitchGuard (global) — routes marked @KillSwitch(...) answer 503 while their flag is off.
  * Flags themselves are flipped by the console's `POST /admin/config/flags/:key` (src/admin).
  */
 @Module({
   imports: [AdminCoreModule],
-  controllers: [RemoteConfigController, LexiconAdminController],
+  controllers: [RemoteConfigController, LexiconAdminController, HelplinesAdminController],
   providers: [
     {
       provide: RemoteConfigSettings,
@@ -36,6 +38,7 @@ import { RemoteConfigService } from './remote-config.service';
     },
     RemoteConfigService,
     LexiconService,
+    HelplinesService,
     AdminGuard,
     { provide: APP_GUARD, useClass: KillSwitchGuard },
   ],

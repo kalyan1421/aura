@@ -59,7 +59,8 @@ select is_empty(
         and c.relname not in ('reports','rooms','room_members','room_gestures','evidence_holds','sanctions','strikes',
                               'safety_config','matching_config','moderation_actions','feature_flags',
                               'admin_staff','admin_grievances','admin_legal_orders','admin_pages',
-                              'admin_page_deliveries','admin_mandatory_checklists')
+                              'admin_page_deliveries','admin_mandatory_checklists',
+                              'reflections','reflection_config') -- F6: column-scoped review reads (18_reflections)
         and (has_table_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
              or has_any_column_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')) $$,
   'aura_admin has no privilege on any other public table (check-ins, notes, habits, capsules, keys, ledgers, profiles …)'

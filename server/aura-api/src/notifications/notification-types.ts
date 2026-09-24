@@ -4,9 +4,10 @@ import { isUuid } from '../common/uuid';
  * Server-sent push types (PRD Notifications; F14 Milestone A ships the daily check-in reminder and the date-capsule
  * push). Payloads are content-free — global rule 3: only a type, an opaque id and generic copy; never a mood,
  * quadrant, title, text, pseudonym or date. Add a type here (and to `TYPE_RULES`, the copy catalogue and the app's
- * router) before enqueueing it.
+ * router) before enqueueing it. `rooms_pool_open`: "Tell me when they open" (06b F5 / 14-states) — once, when a language
+ * pool the person waited for opens (pool-waitlist.ts).
  */
-export const NOTIFICATION_TYPES = ['capsule_unlocked', 'daily_reminder'] as const;
+export const NOTIFICATION_TYPES = ['capsule_unlocked', 'daily_reminder', 'rooms_pool_open'] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 
 export const isNotificationType = (v: unknown): v is NotificationType =>
@@ -35,9 +36,10 @@ export function parseNotificationJob(data: unknown): NotificationJobData | null 
 
 /**
  * Android notification channels (PRD 15-permissions: Reminders, Capsules, Rooms & Lantern Hour, Account — each can
- * be muted on its own). The app creates them; the ids are a contract with apps/mobile (features/push).
+ * be muted on its own). The app creates them; the ids are a contract with apps/mobile (features/push). `rooms` is
+ * "Rooms & Lantern Hour" (the pool-open push now; Lantern Hour and gestures later).
  */
-export const ANDROID_CHANNELS = ['reminders', 'capsules'] as const;
+export const ANDROID_CHANNELS = ['reminders', 'capsules', 'rooms'] as const;
 export type AndroidChannelId = (typeof ANDROID_CHANNELS)[number];
 
 /** One rendered push for one device: content-free data + generic, localized copy. */

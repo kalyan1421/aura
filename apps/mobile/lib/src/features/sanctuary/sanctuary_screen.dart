@@ -10,6 +10,7 @@ import '../capsules/capsules_entry.dart';
 import '../progress/progress_view.dart';
 import 'breath_orb.dart';
 import 'sanctuary_activities.dart';
+import 'sounds/sounds_entry.dart';
 
 /// The Sanctuary tab (F15 v1): a private, calm space. Top to bottom: the
 /// person's Aura as a still orb, "Today's minute" (one suggestion per Aura
@@ -84,6 +85,9 @@ class SanctuaryScreen extends ConsumerWidget {
                   activity: a,
                 ),
               ),
+            // F15 Sounds (Milestone B): opening it plays nothing.
+            section(l.sounds_title),
+            const SoundsEntryCard(),
             const SizedBox(height: AuraSpace.l),
             // F4 "Future you": the capsules feature fills this tile (and its
             // own heading); it renders nothing until then.

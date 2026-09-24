@@ -15,6 +15,7 @@ import type { GestureDrop } from './room-types';
 import { countsView, stateOf } from './room-views';
 import { RoomsRepository, type MemberRow, type RoomRow } from './rooms.repository';
 import { invalidTarget, memberNotFound, parseGestureRequest, pathId, roomNotFound, roomReadOnly, type GestureRequest } from './rooms.schema';
+import { reflectionNotFound } from '../reflections/reflections.schema';
 
 export interface GestureAccepted {
   gestureId: string;
@@ -37,7 +38,7 @@ export class GesturesService {
 
   async send(userId: string, roomIdParam: string, body: unknown, now = new Date()): Promise<GestureAccepted> {
     const roomId = pathId(roomIdParam, roomNotFound);
-    const req = parseGestureRequest(body);
+    let req = parseGestureRequest(body);
     await assertRoomAccess(this.db, userId);
 
     return this.db.withTx(async (tx) => {
@@ -56,6 +57,22 @@ export class GesturesService {
         target = await this.repo.memberInRoom(tx, roomId, req.toMemberId);
         if (!target || target.left_at) throw memberNotFound();
       }
+      // F6: a gesture on a published reflection goes to its author (blocks, mutes and hidden accounts drop it below).
+      let authorLeft = false;
+      if (req.target === 'reflection' && req.toReflectionId) {
+        const refl = (
+          await tx.query<{ member_id: string; user_id: string; status: string; hidden_at: Date | null }>(
+            'select member_id, user_id, status, hidden_at from public.reflections where id = $1 and room_id = $2',
+            [req.toReflectionId, roomId],
+          )
+        ).rows[0];
+        if (!refl || refl.status !== 'published' || refl.hidden_at) throw reflectionNotFound();
+        if (refl.user_id === userId) throw invalidTarget();
+        target = await this.repo.memberInRoom(tx, roomId, refl.member_id);
+        if (!target) throw reflectionNotFound();
+        authorLeft = target.left_at !== null;
+        req = { ...req, toMemberId: target.member_id };
+      }
 
       const shadowMuted = await isShadowMuted(tx, userId);
       const breach = gestureLimitBreach(await this.history(tx, userId, me, req, cfg), cfg.gestures);
@@ -72,7 +89,7 @@ export class GesturesService {
       let dropped: GestureDrop | null = null;
       if (shadowMuted) dropped = 'shadow_muted';
       else if (target) {
-        if (await isHiddenAccount(tx, target.user_id)) dropped = 'hidden';
+        if (authorLeft || (await isHiddenAccount(tx, target.user_id))) dropped = 'hidden';
         else if (await blockBetween(tx, userId, target.user_id)) dropped = 'blocked';
         else if (await this.mutedBy(tx, target.member_id, me.member_id)) dropped = 'muted';
       }
@@ -84,12 +101,12 @@ export class GesturesService {
         await Broadcast.presence(tx, roomId, countsView(await this.repo.counts(tx, roomId, cfg.liveWindowS)), now);
       }
       if (!dropped) {
-        await Broadcast.gestureSent(tx, roomId, { gestureId: g.id, type: req.type, target: req.target }, g.created_at);
+        await Broadcast.gestureSent(tx, roomId, { gestureId: g.id, type: req.type, target: req.target, reflectionId: req.toReflectionId }, g.created_at);
         if (target) {
           await Broadcast.gestureReceived(
             tx,
             target.member_id,
-            { gestureId: g.id, type: req.type, fromMemberId: me.member_id, fromPseudonym: me.pseudonym },
+            { gestureId: g.id, type: req.type, fromMemberId: me.member_id, fromPseudonym: me.pseudonym, reflectionId: req.toReflectionId },
             g.created_at,
           );
         }
@@ -144,9 +161,9 @@ export class GesturesService {
     dropped: GestureDrop | null,
   ): Promise<{ id: string; created_at: Date }> {
     const r = await q.query<{ id: string; created_at: Date }>(
-      `insert into public.room_gestures (room_id, from_member_id, to_member_id, type, target, dropped)
-       values ($1, $2, $3, $4, $5, $6) returning id, created_at`,
-      [room.id, me.member_id, target?.member_id ?? null, req.type, req.target, dropped],
+      `insert into public.room_gestures (room_id, from_member_id, to_member_id, type, target, dropped, to_reflection_id)
+       values ($1, $2, $3, $4, $5, $6, $7) returning id, created_at`,
+      [room.id, me.member_id, target?.member_id ?? null, req.type, req.target, dropped, req.toReflectionId],
     );
     return r.rows[0];
   }

@@ -16,6 +16,7 @@ import '../account/deletion_pending.dart';
 import '../checkin/quadrant_glyph.dart';
 import 'room_guidelines.dart';
 import 'room_navigation.dart';
+import 'pool_waitlist.dart';
 import 'room_status.dart';
 import 'rooms_providers.dart';
 import 'rooms_repository.dart';
@@ -210,7 +211,8 @@ class _RoomJoinScreenState extends ConsumerState<RoomJoinScreen> {
 
   Future<void> _notifyWhenOpen() async {
     try {
-      await ref.read(kvStoreProvider).set(roomsNotifyHiPoolKey, '1');
+      // Kept here and queued for the server: one push when the pool opens.
+      await ref.read(poolWaitlistProvider).request();
     } on Object catch (e) {
       debugPrint('rooms: notify flag (${e.runtimeType})');
     }

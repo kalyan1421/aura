@@ -41,7 +41,7 @@ returned — not even to the person a sanction is about (§2.3, no tipping off).
 | `RoomState` | `forming` · `open` · `lantern_hour` · `closing` · `memory` (a purged room is simply `404`) |
 | `Stage` | `spark` · `ember` · `glow` · `radiance` · `constellation` |
 | `GestureType` (the 8 presets) | `warm_tea` · `light_a_candle` · `hug` · `me_too` · `soft_rain` · `stargaze` · `deep_breath` · `youre_not_alone` |
-| `GestureTarget` | `member` · `room` (`reflection` arrives with F6, Milestone B; until then → `400`) |
+| `GestureTarget` | `member` · `room` · `reflection` (F6: `toReflectionId`, contracts/api/v1-reflections.md §1.5) |
 | `ReportReason` (int) | `1` in danger or self-harm · `2` harassment · `3` sexual content or advances · `4` hate · `5` contact or personal info · `6` spam or selling · `7` may be under 13 · `8` other · `9` targeting a young person. Codes never change meaning; new ones are appended (apps list 9 before 8 "other") |
 
 ### Shared shapes
@@ -166,7 +166,7 @@ an account already shadow-muted for flooding, which are not stored at all. Sendi
 
 | Error | When |
 |---|---|
-| `400 invalid_request` | unknown `type`/`target`, `toMemberId` missing for `member` or present for `room`, `target: reflection` (F6) |
+| `400 invalid_request` | unknown `type`/`target`, `toMemberId` missing for `member` or present otherwise, `toReflectionId` missing for `reflection` or present otherwise (v1-reflections.md §1.5) |
 | `400 invalid_target` | `toMemberId` is you |
 | `404 not_found` | not a current member of the room / room gone |
 | `404 member_not_found` | `toMemberId` is not a current member of this room (left, or never was) |
@@ -372,7 +372,7 @@ The console's NestJS admin layer (SSO + 2FA, roles) wraps these methods; nothing
   hash-chained (`prev_hash` → `row_hash`).
 
 ## 6. Not in this slice (hooks only)
-Reflections (F6: `target: reflection`, `reflection_published` / `reflection_removed` events), Breath Ripples (F7:
+Reflections are specified in `contracts/api/v1-reflections.md` (F6: gesture `target: reflection`, report `target.kind: reflection`, `reflection_published` / `reflection_removed` / `reflection_status` events). Breath Ripples (F7:
 `game:<sessionId>` topics), gifts (F12: fail before charge on a block), gesture pushes (F14: "3 people in your room
 sent you warmth", batched, 1 per room per day), bring-a-friend rooms (`rooms.kind`), the admin console HTTP layer
 (the internal `ModerationService` exists: queue by lane, act, audit log).

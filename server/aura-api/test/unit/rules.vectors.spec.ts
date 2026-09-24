@@ -19,6 +19,21 @@ import {
   type StreakState,
 } from '../../src/rules';
 import { isValidUnlockDate, pickTrigger, unlockAt, type TriggerCapsule, type TriggerCheckIn } from '../../src/capsules/capsule-rules';
+import {
+  dayStar,
+  findPatterns,
+  isLive,
+  monthRecap,
+  monthWindow,
+  partOf,
+  patternGate,
+  restDays,
+  showCareCard,
+  weeklyInsight,
+  weeklyWindow,
+  type InsightCheckIn,
+  type InsightHabitLog,
+} from '../../src/rules/insights';
 
 const VECTORS_DIR = resolve(__dirname, '..', '..', '..', '..', 'contracts', 'rules', 'vectors');
 
@@ -58,6 +73,46 @@ const runners: Record<string, Runner> = {
       return expect(pickTrigger(c.capsules as TriggerCapsule[], c.checkIn as TriggerCheckIn)).toEqual(c.expect);
     }
     throw new Error(`capsules.json: unknown kind ${String(c.kind)}`);
+  },
+  // RULES.md §10 (F10 Insights). Several pure rules told apart by `kind`.
+  'insights.json': (c) => {
+    const cs = (c.checkIns ?? []) as InsightCheckIn[];
+    const logs = (c.habitLogs ?? []) as InsightHabitLog[];
+    const today = () => auraDay(c.now, c.tz);
+    switch (c.kind) {
+      case 'part':
+        return expect({ live: isLive(c.checkIn), part: partOf(c.checkIn) }).toEqual(c.expect);
+      case 'day_star':
+        return expect(dayStar(c.quadrants as Quadrant[], c.rest)).toEqual(c.expect);
+      case 'rest_days':
+        return expect(restDays(c.days)).toEqual(c.expect);
+      case 'week':
+        return expect(weeklyWindow(today(), c.weekStartsOn ?? 1)).toEqual(c.expect);
+      case 'month':
+        return expect(monthWindow(today())).toEqual(c.expect);
+      case 'gate':
+        return expect(patternGate(cs, c.from, c.to)).toEqual(c.expect);
+      case 'patterns':
+        return expect(
+          findPatterns({ checkIns: cs, habitLogs: logs, from: c.from, to: c.to, includeHabits: c.includeHabits }),
+        ).toEqual(c.expect);
+      case 'weekly':
+        return expect(
+          weeklyInsight({
+            checkIns: cs,
+            habitLogs: logs,
+            today: today(),
+            weekStartsOn: c.weekStartsOn ?? 1,
+            includeHabits: c.includeHabits,
+          }),
+        ).toEqual(c.expect);
+      case 'month_recap':
+        return expect(monthRecap(cs, today())).toEqual(c.expect);
+      case 'care':
+        return expect(showCareCard(cs, today())).toBe(c.expect);
+      default:
+        throw new Error(`insights.json: unknown kind ${String(c.kind)}`);
+    }
   },
 };
 

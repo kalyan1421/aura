@@ -3,6 +3,7 @@ import { AppConfig } from '../config/app-config';
 import type { Queryable } from '../db/db';
 import { DbService } from '../db/db.service';
 import { lockUser } from '../db/locks';
+import { hideReflectionIfDue, reflectionForReport } from '../reflections/reflection-reports';
 import { applyUnder13PauseIfDue, insertReport } from './reports.core';
 import { CRISIS_REASON, TARGETING_MINOR_REASON, UNDER_13_REASON, type ReportReason, type ReportTargetKind } from './safety-types';
 import { invalidTarget, notFound, parseReportRequest, reportLimit } from './safety.schema';
@@ -69,6 +70,7 @@ export class ReportsService {
       let targetMemberId: string | null = null;
       let targetUserId: string | null = null;
       let targetGestureId: string | null = null;
+      let targetReflectionId: string | null = null;
       if (req.targetKind === 'member') {
         const t = await this.member(tx, req.roomId, req.memberId as string);
         if (!t) throw notFound();
@@ -88,8 +90,23 @@ export class ReportsService {
         targetGestureId = row.id;
         targetMemberId = row.from_member_id;
         targetUserId = row.from_user_id;
+      } else if (req.targetKind === 'reflection') {
+        // F6: a published reflection in this room (contracts/api/v1-reflections.md §1.6); the author is the subject.
+        const t = await reflectionForReport(tx, req.roomId, req.reflectionId as string, userId);
+        if (!t) throw notFound();
+        if (t.user_id === userId) throw invalidTarget();
+        targetReflectionId = t.id;
+        targetMemberId = t.member_id;
+        targetUserId = t.user_id;
       }
-      const targetRef = req.targetKind === 'member' ? (targetMemberId as string) : req.targetKind === 'gesture' ? (targetGestureId as string) : req.roomId;
+      const targetRef =
+        req.targetKind === 'member'
+          ? (targetMemberId as string)
+          : req.targetKind === 'gesture'
+            ? (targetGestureId as string)
+            : req.targetKind === 'reflection'
+              ? (targetReflectionId as string)
+              : req.roomId;
 
       const existing = await tx.query<{ id: string }>(
         `select id from public.reports
@@ -131,6 +148,7 @@ export class ReportsService {
           roomId: req.roomId,
           targetMemberId,
           targetGestureId,
+          targetReflectionId,
           targetUserId,
           targetRef,
           note: req.note,
@@ -148,6 +166,11 @@ export class ReportsService {
            on conflict (muter_member_id, muted_member_id) do nothing`,
           [req.roomId, mine.member_id, targetMemberId],
         );
+      }
+      // F6 REQ-REF-06: the reflection hides for the reporter at once (it drops out of their list: they reported it) and
+      // for everyone at the report threshold.
+      if (targetReflectionId) {
+        await hideReflectionIfDue(tx, targetReflectionId, { reporterUserId: userId, reason: req.reason, reportId: created.id }, this.config.masterKey, this.clock());
       }
       if (req.reason === UNDER_13_REASON && targetUserId) {
         await applyUnder13PauseIfDue(tx, targetUserId, created.id, cfg, this.config.masterKey);

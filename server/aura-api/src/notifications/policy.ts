@@ -10,7 +10,8 @@ import type { NotificationType } from './notification-types';
  *   2. at most 2 pushes per local (Aura) day across types, precedence capsule unlocked > daily reminder > …;
  *   4. discreet mode (rendering, push-copy.ts); 8. per-type toggles + a master switch;
  *   plus: never to an account with a scheduled deletion or to signed-out installs (no token), the daily reminder is
- *   skipped once the user checked in that Aura day, a capsule push only while the capsule is still sealed.
+ *   skipped once the user checked in that Aura day, a capsule push only while the capsule is still sealed, the
+ *   pool-open push only while the pool is still open (and, capped, it waits for the next day instead of dropping).
  */
 
 /** A user's effective settings (`public.notification_prefs`, or these defaults when there is no row). */
@@ -112,7 +113,9 @@ export type SkipReason =
   | 'not_sealed'
   | 'already_sent'
   | 'quiet_hours'
-  | 'capped';
+  | 'capped'
+  /** rooms_pool_open: the pool closed again before the push went out. */
+  | 'pool_closed';
 
 export type Decision = { action: 'send' } | { action: 'skip'; reason: SkipReason } | { action: 'defer'; until: Date };
 
@@ -136,6 +139,8 @@ export interface DeliveryFacts {
   checkedInToday?: boolean;
   /** capsule_unlocked: the capsule is still sealed (exists, not opened, not deleted). */
   capsuleSealed?: boolean;
+  /** rooms_pool_open: the pool's flag is still on. */
+  poolOpen?: boolean;
 }
 
 const countsTowardCap = (kind: string): boolean => !CAP_EXEMPT.includes(kind);
@@ -155,8 +160,17 @@ export function capBudget(type: string, sentToday: readonly string[], expectedLa
   return DAILY_PUSH_CAP - reservedSlots(type, sentToday, expectedLater) - cappedSentCount(sentToday);
 }
 
-const typeEnabled = (type: NotificationType, p: NotificationPrefsValues): boolean =>
-  type === 'daily_reminder' ? p.reminderEnabled && p.reminderTime !== null : p.capsuleUnlocked;
+/** Per-type toggles (rule 8). The pool-open push has none of its own: the person's "Tell me when they open" tap is it. */
+const typeEnabled = (type: NotificationType, p: NotificationPrefsValues): boolean => {
+  switch (type) {
+    case 'daily_reminder':
+      return p.reminderEnabled && p.reminderTime !== null;
+    case 'capsule_unlocked':
+      return p.capsuleUnlocked;
+    case 'rooms_pool_open':
+      return true;
+  }
+};
 
 /** Decide one push. Pure: the same facts always give the same answer. */
 export function decide(f: DeliveryFacts): Decision {
@@ -170,6 +184,7 @@ export function decide(f: DeliveryFacts): Decision {
   if (f.now.getTime() - f.createdAt.getTime() > rules.maxAgeMs) return skip('expired');
   if (f.type === 'daily_reminder' && f.checkedInToday) return skip('checked_in');
   if (f.type === 'capsule_unlocked' && !f.capsuleSealed) return skip('not_sealed');
+  if (f.type === 'rooms_pool_open' && !f.poolOpen) return skip('pool_closed');
   if (f.sentToday.filter((t) => t === f.type).length >= rules.perDay) return skip('already_sent');
 
   if (inQuietHours(f.now, f.tz, f.prefs.quietStart, f.prefs.quietEnd)) {
@@ -184,6 +199,15 @@ export function decide(f: DeliveryFacts): Decision {
     }
   }
 
-  if (capBudget(f.type, f.sentToday, f.expectedLater) <= 0) return skip('capped');
+  if (capBudget(f.type, f.sentToday, f.expectedLater) <= 0) return cappedDecision(f);
   return { action: 'send' };
+}
+
+/** Today's cap is used: dropped, or (TypeRules.capped `defer`) moved to the start of the next Aura day. */
+export function cappedDecision(f: Pick<DeliveryFacts, 'type' | 'now' | 'createdAt' | 'tz'>): Decision {
+  const rules = TYPE_RULES[f.type];
+  if (rules.capped !== 'defer' || f.tz === null) return { action: 'skip', reason: 'capped' };
+  const until = endOfAuraDay(f.now, f.tz);
+  if (until.getTime() - f.createdAt.getTime() > rules.maxAgeMs) return { action: 'skip', reason: 'capped' };
+  return { action: 'defer', until };
 }

@@ -29,6 +29,9 @@ export const PERSONAL_TABLES = [
   'device_installs',
   'notification_prefs',
   'user_consents',
+  // F6: the account's reflections (encrypted text); gestures sent to them cascade. Reported / queued ones were copied
+  // into evidence_holds first (LEGAL_HOLD_TABLES). Before room_members (they reference the membership).
+  'reflections',
   // F5 rooms: memberships (pseudonyms, heartbeats, survey marks); their gestures — incl. limit-hit rows — and mutes
   // in both directions cascade from room_members.
   'room_members',
@@ -43,6 +46,8 @@ export const PERSONAL_TABLES = [
   // F9 REQ-SAFE-04: which community-guidelines version the account accepted
   // (also cascades from profiles).
   'guidelines_acceptances',
+  // F5 "Tell me when they open" (Hindi + Hinglish pool): pending opt-ins (migration 20261005000019).
+  'room_pool_waitlist',
   'profiles',
 ] as const;
 

@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DelayedError, type Job } from 'bullmq';
 import { NotificationDelivery } from './delivery.service';
 import { NOTIFICATION_JOB, parseNotificationJob } from './notification-types';
+import { POOL_OPEN_SWEEP_JOB, PoolOpenSweep } from './pool-waitlist';
 import { REMINDER_RECONCILE_JOB, REMINDER_SWEEP_JOB, ReminderScheduler } from './reminder.service';
 
 /** Deferred pushes (quiet hours) spread over this window after the quiet hours end, so they don't all land at 08:00. */
@@ -19,11 +20,14 @@ export class NotificationDispatcher {
   constructor(
     private readonly delivery: NotificationDelivery,
     private readonly reminders: ReminderScheduler,
+    /** Always injected by Nest (explicit token); optional only for hand-built unit tests. */
+    @Inject(PoolOpenSweep) private readonly poolOpen?: PoolOpenSweep,
   ) {}
 
   /** Registers the repeatable reminder jobs (worker bootstrap). */
   async ensureSchedulers(): Promise<void> {
     await this.reminders.ensureSchedulers();
+    await this.poolOpen?.ensureScheduler();
     this.logger.log(`push transport: ${this.delivery.transportName}`);
   }
 
@@ -41,6 +45,9 @@ export class NotificationDispatcher {
         if (n) this.logger.log(`reminder reconcile: re-planned ${n}`);
         return;
       }
+      case POOL_OPEN_SWEEP_JOB:
+        await this.poolOpen?.sweep();
+        return;
       default:
         this.logger.warn(`ignored unknown notifications job ${job.name}`);
     }

@@ -6,10 +6,11 @@ import '../env/env.dart';
 /// - `/` resolves through [gateRedirect]; onboarding (`/welcome`,
 ///   `/onboarding/*`) and `/blocked` stand alone.
 /// - The app shell (`StatefulShellRoute`, one stack per tab): `/home`,
-///   `/sanctuary`, `/rooms`, `/insights` (the check-in history until F10).
+///   `/sanctuary`, `/rooms`, `/insights` (Aura Sky, F10; its stack holds
+///   `/insights/history` and `/insights/month`).
 /// - Above the shell: `/checkin`, `/safety`, `/settings/**`,
 ///   `/history/:id`, `/rooms/join`, `/rooms/:id`, `/sign-in`, `/debug/**`.
-///   `/history` is `/insights`.
+///   `/history` is `/insights/history`.
 abstract final class Routes {
   static const String root = '/';
   static const String welcome = '/welcome';
@@ -29,6 +30,13 @@ abstract final class Routes {
   /// One room (F5), above the shell.
   static String room(String roomId) => '/rooms/$roomId';
   static const String insights = '/insights';
+
+  /// The full check-in list (with the 24 h edit and delete), inside the
+  /// Insights tab.
+  static const String insightsHistory = '/insights/history';
+
+  /// "Your month in stars" (F10), inside the Insights tab.
+  static const String insightsMonth = '/insights/month';
   static const String checkIn = '/checkin';
   static const String safety = '/safety';
   static const String settings = '/settings';

@@ -58,8 +58,22 @@ class GestureSentEvent extends RoomEvent {
 
 /// Only on your own member topic: who sent you what.
 class GestureReceivedEvent extends RoomEvent {
-  const GestureReceivedEvent(this.gesture);
+  const GestureReceivedEvent(this.gesture, {this.reflectionId});
   final ReceivedGesture gesture;
+
+  /// Set when the gesture was on your reflection (F6).
+  final String? reflectionId;
+}
+
+/// A reflection changed (F6, contracts/api/v1-reflections.md §2): ids only,
+/// the reflections list refetches. [event] is the broadcast's name
+/// (`reflection_published`, `reflection_removed`, `reflection_status`);
+/// [status] only for your own (`reflection_status`).
+class ReflectionEvent extends RoomEvent {
+  const ReflectionEvent(this.event, this.reflectionId, {this.status});
+  final String event;
+  final String reflectionId;
+  final String? status;
 }
 
 class RoomStateEvent extends RoomEvent {
@@ -111,7 +125,22 @@ RoomEvent? parseRoomEvent(String event, Map<String, dynamic> payload) {
       case 'gesture_sent':
         return GestureSentEvent(RoomGesture.fromJson(payload));
       case 'gesture_received':
-        return GestureReceivedEvent(ReceivedGesture.fromJson(payload));
+        final onReflection = payload['reflectionId'];
+        return GestureReceivedEvent(
+          ReceivedGesture.fromJson(payload),
+          reflectionId: onReflection is String ? onReflection : null,
+        );
+      case 'reflection_published' ||
+          'reflection_removed' ||
+          'reflection_status':
+        final id = payload['reflectionId'];
+        if (id is! String) return null;
+        final status = payload['status'];
+        return ReflectionEvent(
+          event,
+          id,
+          status: status is String ? status : null,
+        );
       case 'room_state':
         final state = payload['state'];
         if (state is! String) return null;

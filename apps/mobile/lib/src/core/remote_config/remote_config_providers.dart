@@ -10,6 +10,7 @@ import '../sync/sync_service.dart';
 import 'install_id.dart';
 import 'remote_config.dart';
 import 'remote_config_store.dart';
+import 'remote_helplines.dart';
 import 'remote_lexicon.dart';
 import 'signed_bundle.dart';
 
@@ -45,6 +46,10 @@ final remoteConfigControllerProvider = Provider<RemoteConfigController>((ref) {
     api: ref.watch(remoteConfigApiProvider),
     store: store,
     lexicon: RemoteLexicon(keys: ref.watch(bundleKeysProvider), store: store),
+    helplines: RemoteHelplines(
+      keys: ref.watch(bundleKeysProvider),
+      store: store,
+    ),
   );
   bool visible() =>
       WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
