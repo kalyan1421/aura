@@ -1,0 +1,33 @@
+SIGN-IN
+Aura signs in with a one-time email code. For review, use this account:
+1. Enter the email below and tap "Email me a code".
+2. On the next screen, type the code below and continue.
+Email: {{REVIEW_EMAIL}}
+Code: {{REVIEW_CODE}}
+(This code is fixed for review; you don't need access to the inbox.)
+The first launch asks for a date of birth: use any date 18+ years ago. Sign in with Apple and Google also work with any account.
+
+WHAT AURA IS
+Aura is a private mood journal: check in with how you feel in two taps, and a procedural "Aura" avatar grows over time. Optional, time-limited mood rooms let people who feel the same respond to each other with 8 preset gestures and short pre-moderated reflections.
+Aura is not random or anonymous chat, messaging, dating, therapy, a medical device or an emergency service.
+
+SAFEGUARDS (Guidelines 1.2, 1.2.1(a), 1.4.1)
+- No chat: no DMs, replies, threads, profiles or photos. Reflections are at most 200 characters, 3 per room per day, and can only be answered with preset gestures.
+- Every reflection is filtered before anyone sees it (on-device list, server rules, automated moderation, then human review when uncertain). Links, handles, phone numbers and images are blocked.
+- Report, block and mute are one tap away on every room surface. Reports are reviewed by a human within 24 hours (crisis reports within 1 hour). Blocked people are never matched again.
+- Under-13s are blocked at sign-up (date-of-birth gate plus Apple's Declared Age Range where available) with a 30-day device lock. Accounts under 18 get stricter moderation thresholds.
+- A fresh pseudonym in every room. Rooms close after 24 hours.
+- Community guidelines must be accepted before the first room.
+- "I need help now" is on every main screen, works offline and shows regional helplines. The app never gives medical advice.
+- Grievance Officer and support contact: https://aura-akvega.web.app/support/
+
+WHERE TO LOOK
+- Home: tap a feeling to check in; "A minute for you" and Sanctuary (breathing pacer, grounding, sounds).
+- Rooms tab: join tonight's room for your mood. Rooms may be quiet in the first days after launch; gestures, reflections, report and block are all visible in an empty room.
+- Insights (Aura Sky), Future-you capsules, Settings > Safety Center, Settings > Account > Delete my account (in-app deletion, Guideline 5.1.1(v)).
+
+AUDIO
+Sounds play only after the user starts them (Guideline 2.5.4); background audio continues the sound the user chose.
+
+PURCHASES
+Version 1.0 has no in-app purchases. Everything is free.
