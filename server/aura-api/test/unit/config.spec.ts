@@ -1,4 +1,5 @@
 import { ConfigError, parseConfig } from '../../src/config/app-config';
+import { createPool } from '../../src/db/db';
 
 const base = {
   DATABASE_URL: 'postgresql://postgres:postgres@127.0.0.1:55522/postgres',
@@ -55,5 +56,28 @@ describe('config (zod)', () => {
     } catch (e) {
       expect(String(e)).not.toContain('tiny-secret');
     }
+  });
+});
+
+const loadConfigForTest = (extra: Record<string, string>) => parseConfig({ ...base, ...extra });
+
+describe('DATABASE_CA_CERT (verified TLS to a managed Postgres, e.g. Supabase)', () => {
+  it('takes a PEM, unescapes \\n from env stores, and createPool pins that CA with the URL sslmode dropped', () => {
+    const pem = '-----BEGIN CERTIFICATE-----\\nMIIB\\n-----END CERTIFICATE-----';
+    const cfg = loadConfigForTest({ DATABASE_CA_CERT: pem });
+    expect(cfg.databaseCaCert).toBe('-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----');
+    const pool = createPool('postgresql://u:p@db.example.com:5432/postgres?sslmode=require', 1, cfg.databaseCaCert);
+    const opts = (pool as unknown as { options: { connectionString: string; ssl: unknown } }).options;
+    expect(opts.connectionString).not.toContain('sslmode');
+    expect(opts.ssl).toEqual({ ca: cfg.databaseCaCert, rejectUnauthorized: true });
+    void pool.end();
+  });
+
+  it('rejects a value that is not a PEM certificate; unset keeps the URL in charge', () => {
+    expect(() => loadConfigForTest({ DATABASE_CA_CERT: 'not a cert' })).toThrow(/DATABASE_CA_CERT/);
+    expect(loadConfigForTest({}).databaseCaCert).toBeNull();
+    const pool = createPool('postgresql://u:p@localhost:5432/postgres', 1);
+    expect((pool as unknown as { options: { ssl?: unknown } }).options.ssl).toBeUndefined();
+    void pool.end();
   });
 });

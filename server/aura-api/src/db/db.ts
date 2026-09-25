@@ -48,9 +48,22 @@ export class Tx implements Queryable {
   }
 }
 
-export function createPool(connectionString: string, max: number): Pool {
+/**
+ * With [caCert] the connection uses TLS verified against that CA only (hostname and chain checked); the URL's
+ * `sslmode` is dropped so it can't downgrade that. Without it, the URL decides (local stacks use plain TCP).
+ */
+export function createPool(connectionString: string, max: number, caCert?: string | null): Pool {
+  let url = connectionString;
+  let ssl: { ca: string; rejectUnauthorized: true } | undefined;
+  if (caCert) {
+    const u = new URL(connectionString);
+    u.searchParams.delete('sslmode');
+    url = u.toString();
+    ssl = { ca: caCert, rejectUnauthorized: true };
+  }
   const pool = new Pool({
-    connectionString,
+    connectionString: url,
+    ...(ssl ? { ssl } : {}),
     max,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,

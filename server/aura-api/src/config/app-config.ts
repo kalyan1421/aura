@@ -10,6 +10,8 @@ export class AppConfig {
   readonly workerHealthPort: number;
   readonly databaseUrl: string;
   readonly dbPoolMax: number;
+  /** PEM CA for the database's TLS certificate (null: the system trust store / the URL's sslmode). */
+  readonly databaseCaCert: string | null;
   readonly redisUrl: string;
   readonly supabaseUrl: string;
   readonly jwtSecret: string | undefined;
@@ -27,6 +29,8 @@ export class AppConfig {
     this.workerHealthPort = e.WORKER_HEALTH_PORT;
     this.databaseUrl = e.DATABASE_URL;
     this.dbPoolMax = e.DB_POOL_MAX;
+    // Env stores often keep newlines escaped as \n.
+    this.databaseCaCert = e.DATABASE_CA_CERT ? e.DATABASE_CA_CERT.replace(/\\n/g, '\n') : null;
     this.redisUrl = e.REDIS_URL;
     this.supabaseUrl = e.SUPABASE_URL.replace(/\/+$/, '');
     this.jwtSecret = e.SUPABASE_JWT_SECRET;

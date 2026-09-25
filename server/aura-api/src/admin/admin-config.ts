@@ -25,6 +25,11 @@ export interface SsoConfig {
   provider: 'google';
   /** Google Workspace domains whose accounts may sign in (the ID token's `hd` claim, stored by Supabase Auth). */
   domains: ReadonlySet<string>;
+  /**
+   * Individual Google accounts (lower-case, verified email) that may sign in without a Workspace domain, for a team
+   * that has none yet (`ADMIN_SSO_ALLOWED_ACCOUNTS`, e.g. personal Gmail). Still SSO + TOTP + the admin_staff allowlist.
+   */
+  accounts: ReadonlySet<string>;
 }
 
 export class AdminConfig {
@@ -146,6 +151,7 @@ const schema = z.object({
   ADMIN_SESSION_MAX_HOURS: int(1, 24, 12),
   ADMIN_SSO_PROVIDER: opt(z.enum(['google'])),
   ADMIN_SSO_ALLOWED_DOMAINS: csv(domain),
+  ADMIN_SSO_ALLOWED_ACCOUNTS: csv(email),
   ADMIN_ALLOW_EMAIL_LOGIN: bool,
   ADMIN_QUEUE_SESSION_MINUTES: int(15, 480, 120),
   ADMIN_QUEUE_BREAK_MINUTES: int(5, 240, 15),
@@ -208,9 +214,9 @@ export function parseAdminConfig(env: Record<string, string | undefined>): Admin
       'Invalid admin console environment:\n  - PAGING_ESCALATION_WEBHOOK_TOKEN: the PagerDuty routing key is required',
     );
   }
-  if (e.ADMIN_SSO_PROVIDER && e.ADMIN_SSO_ALLOWED_DOMAINS.length === 0) {
+  if (e.ADMIN_SSO_PROVIDER && e.ADMIN_SSO_ALLOWED_DOMAINS.length === 0 && e.ADMIN_SSO_ALLOWED_ACCOUNTS.length === 0) {
     throw new AdminConfigError(
-      'Invalid admin console environment:\n  - ADMIN_SSO_ALLOWED_DOMAINS: the Google Workspace domain(s) are required with ADMIN_SSO_PROVIDER',
+      'Invalid admin console environment:\n  - ADMIN_SSO_ALLOWED_DOMAINS or ADMIN_SSO_ALLOWED_ACCOUNTS: at least one Google Workspace domain or Google account is required with ADMIN_SSO_PROVIDER',
     );
   }
   const production = e.NODE_ENV === 'production';
@@ -230,7 +236,13 @@ export function parseAdminConfig(env: Record<string, string | undefined>): Admin
     allowedEmails: e.ADMIN_ALLOWED_EMAILS.length ? new Set(e.ADMIN_ALLOWED_EMAILS.map((x) => x.toLowerCase())) : null,
     sessionMaxHours: e.ADMIN_SESSION_MAX_HOURS,
     production,
-    sso: e.ADMIN_SSO_PROVIDER ? { provider: e.ADMIN_SSO_PROVIDER, domains: new Set(e.ADMIN_SSO_ALLOWED_DOMAINS) } : null,
+    sso: e.ADMIN_SSO_PROVIDER
+      ? {
+          provider: e.ADMIN_SSO_PROVIDER,
+          domains: new Set(e.ADMIN_SSO_ALLOWED_DOMAINS),
+          accounts: new Set(e.ADMIN_SSO_ALLOWED_ACCOUNTS.map((x) => x.toLowerCase())),
+        }
+      : null,
     // Development sign-in: on by default only for NODE_ENV development / test; never in production (above).
     allowEmailLogin: emailLoginFlag ?? knownDevelopment,
     queueSession: { maxMinutes: e.ADMIN_QUEUE_SESSION_MINUTES, breakMinutes: e.ADMIN_QUEUE_BREAK_MINUTES },

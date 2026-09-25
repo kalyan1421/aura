@@ -343,7 +343,7 @@ describe('AdminGuard — SSO (Google Workspace) + TOTP, as in production', () =>
 });
 
 describe('firstFactor (pure)', () => {
-  const sso = { provider: 'google' as const, domains: new Set(['akvega.test']) };
+  const sso = { provider: 'google' as const, domains: new Set(['akvega.test']), accounts: new Set<string>() };
   const claims = (...methods: string[]): JWTPayload => ({ amr: methods.map((method, i) => ({ method, timestamp: i })) });
   const row = { google_domains: ['akvega.test'], providers: ['google'] };
 
@@ -351,6 +351,19 @@ describe('firstFactor (pure)', () => {
     expect(firstFactor(claims('totp', 'oauth'), row, { sso, allowEmailLogin: false })).toBe('sso');
     expect(firstFactor(claims('totp', 'otp'), row, { sso, allowEmailLogin: false })).toBeNull();
     expect(firstFactor(claims('oauth'), { google_domains: ['other.test'], providers: ['google'] }, { sso, allowEmailLogin: false })).toBeNull();
+  });
+
+  it('a listed personal Google account counts as SSO; an unlisted or unverified one does not (ADMIN_SSO_ALLOWED_ACCOUNTS)', () => {
+    const accounts = { provider: 'google' as const, domains: new Set<string>(), accounts: new Set(['owner@gmail.com']) };
+    const gmail = { google_domains: [], providers: ['google', 'email'], google_emails: ['owner@gmail.com'] };
+    expect(firstFactor(claims('totp', 'oauth'), gmail, { sso: accounts, allowEmailLogin: false })).toBe('sso');
+    expect(firstFactor(claims('oauth'), { ...gmail, google_emails: ['someone@gmail.com'] }, { sso: accounts, allowEmailLogin: false })).toBeNull();
+    // The SQL only returns verified Google emails; none listed means refused.
+    expect(firstFactor(claims('oauth'), { ...gmail, google_emails: [] }, { sso: accounts, allowEmailLogin: false })).toBeNull();
+    // Another external identity still disqualifies the OAuth sign-in.
+    expect(firstFactor(claims('oauth'), { ...gmail, providers: ['google', 'apple'] }, { sso: accounts, allowEmailLogin: false })).toBeNull();
+    // An email-code sign-in by the same account is never SSO.
+    expect(firstFactor(claims('otp'), gmail, { sso: accounts, allowEmailLogin: false })).toBeNull();
   });
 
   it('the development sign-in only while allowed; second factors and refreshes never count as a first factor', () => {
@@ -379,7 +392,9 @@ describe('admin config: sign-in defaults', () => {
     expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'google' })).toThrow(/ADMIN_SSO_ALLOWED_DOMAINS/);
     expect(() => parseAdminConfig({ ADMIN_SSO_PROVIDER: 'okta', ADMIN_SSO_ALLOWED_DOMAINS: 'akvega.test' })).toThrow(/ADMIN_SSO_PROVIDER/);
     const c = parseAdminConfig({ NODE_ENV: 'production', ADMIN_SSO_PROVIDER: 'google', ADMIN_SSO_ALLOWED_DOMAINS: 'AKVega.com, akvega.in' });
-    expect(c.sso).toEqual({ provider: 'google', domains: new Set(['akvega.com', 'akvega.in']) });
+    expect(c.sso).toEqual({ provider: 'google', domains: new Set(['akvega.com', 'akvega.in']), accounts: new Set() });
+    const byAccount = parseAdminConfig({ NODE_ENV: 'production', ADMIN_SSO_PROVIDER: 'google', ADMIN_SSO_ALLOWED_ACCOUNTS: 'A@Gmail.com, b@gmail.com' });
+    expect(byAccount.sso?.accounts).toEqual(new Set(['a@gmail.com', 'b@gmail.com']));
     expect(c.warnings()).toEqual([]);
   });
 });

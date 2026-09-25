@@ -44,6 +44,8 @@ interface GuardRow {
   google_domains?: string[] | null;
   /** Every identity provider the account has (`email`, `google`, `apple`, …). */
   providers?: string[] | null;
+  /** Verified emails of the account's Google identities (for `ADMIN_SSO_ALLOWED_ACCOUNTS`). */
+  google_emails?: string[] | null;
 }
 
 /**
@@ -62,6 +64,11 @@ const GUARD_SQL = `
                      from auth.identities i
                     where i.user_id = q.uid and i.provider = 'google'
                       and i.identity_data -> 'custom_claims' ->> 'hd' is not null), '{}') as google_domains,
+         coalesce((select array_agg(distinct lower(i.identity_data ->> 'email'))
+                     from auth.identities i
+                    where i.user_id = q.uid and i.provider = 'google'
+                      and i.identity_data ->> 'email' is not null
+                      and coalesce((i.identity_data ->> 'email_verified')::boolean, false)), '{}') as google_emails,
          coalesce((select array_agg(distinct i.provider) from auth.identities i where i.user_id = q.uid), '{}') as providers
     from (select $1::uuid as uid) q
     left join public.admin_staff s on s.staff_id = q.uid
@@ -98,7 +105,7 @@ const NOT_FIRST_FACTORS = new Set(['totp', 'mfa/phone', 'mfa/webauthn', 'token_r
  */
 export function firstFactor(
   claims: JWTPayload,
-  row: Pick<GuardRow, 'google_domains' | 'providers'>,
+  row: Pick<GuardRow, 'google_domains' | 'providers' | 'google_emails'>,
   cfg: Pick<AdminConfig, 'sso' | 'allowEmailLogin'>,
 ): FirstFactor | null {
   const methods = amrMethods(claims);
@@ -106,7 +113,8 @@ export function firstFactor(
     const providers = row.providers ?? [];
     const onlySso = providers.length > 0 && providers.every((p) => p === cfg.sso?.provider || p === 'email');
     const domainOk = (row.google_domains ?? []).some((d) => cfg.sso?.domains.has(d.toLowerCase()));
-    if (onlySso && domainOk) return 'sso';
+    const accountOk = (row.google_emails ?? []).some((e) => cfg.sso?.accounts.has(e.toLowerCase()));
+    if (onlySso && (domainOk || accountOk)) return 'sso';
   }
   const first = methods.filter((m) => !NOT_FIRST_FACTORS.has(m));
   if (cfg.allowEmailLogin && first.length > 0) return 'dev';

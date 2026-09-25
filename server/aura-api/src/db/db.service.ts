@@ -9,7 +9,7 @@ export class DbService implements Queryable, OnModuleDestroy {
   readonly pool: Pool;
 
   constructor(config: AppConfig) {
-    this.pool = createPool(config.databaseUrl, config.dbPoolMax);
+    this.pool = createPool(config.databaseUrl, config.dbPoolMax, config.databaseCaCert);
   }
 
   query<R extends QueryResultRow = QueryResultRow>(text: string, params?: unknown[]): Promise<QueryResult<R>> {
