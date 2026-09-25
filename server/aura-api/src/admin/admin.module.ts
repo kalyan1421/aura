@@ -15,6 +15,8 @@ import { ModerationController } from './moderation.controller';
 import { PagingConsoleService } from './paging-console.service';
 import { PagingController } from './paging.controller';
 import { QueueSessionService } from './queue-session';
+import { RegionPauseController } from './region-pause.controller';
+import { RegionPauseService } from './region-pause.service';
 import { SessionController } from './session.controller';
 import { StaffController, StaffService } from './staff.service';
 
@@ -40,6 +42,7 @@ import { StaffController, StaffService } from './staff.service';
     LegalOrdersIntakeController,
     PagingController,
     ConfigController,
+    RegionPauseController,
     StaffController,
     DeletionCasesAdminController,
     DeletionRequestsPublicController,
@@ -51,6 +54,7 @@ import { StaffController, StaffService } from './staff.service';
     LegalOrdersService,
     PagingConsoleService,
     ConsoleConfigService,
+    RegionPauseService,
     QueueSessionService,
     StaffService,
     DeletionCasesService,

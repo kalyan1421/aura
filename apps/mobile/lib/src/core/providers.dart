@@ -258,6 +258,10 @@ abstract interface class SyncController implements SyncTrigger {
   /// Sign-out: stop syncing (and wait for an in-flight drain) until [resume].
   Future<void> pause();
   void resume();
+
+  /// Background runs (F11 widget refresh): push what is due and wait for it,
+  /// at most [timeout].
+  Future<void> drain({Duration timeout});
 }
 
 class _ServiceController implements SyncController {
@@ -278,6 +282,9 @@ class _ServiceController implements SyncController {
   Future<void> pause() => _s.pause();
   @override
   void resume() => _s.resume();
+  @override
+  Future<void> drain({Duration timeout = const Duration(seconds: 20)}) =>
+      _s.drainNow(timeout: timeout);
 }
 
 @Riverpod(keepAlive: true)

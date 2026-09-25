@@ -192,6 +192,20 @@ class AuraWidgetStoreTest {
     }
 
     @Test
+    fun backgroundImportIsNeededOnlyForUnsentNotYetHandled() {
+        val (s, kv) = store(display())
+        assertFalse(s.needsBackgroundImport)
+        val saved = s.save("calm", afternoon, ist)!!
+        assertTrue(s.needsBackgroundImport)
+        // A background run imported it without acknowledging: the widget still shows it, the worker skips it.
+        kv.putString(AuraWidgetKeys.BG_HANDLED, JSONArray(listOf(saved.id)).toString())
+        assertFalse(s.needsBackgroundImport)
+        assertTrue(s.state(afternoon, ist).checkedInToday)
+        s.save("anxious", afternoon.plusSeconds(10), ist)
+        assertTrue(s.needsBackgroundImport)
+    }
+
+    @Test
     fun pendingIsCapped() {
         val (s, _) = store(display())
         for (i in 0 until AuraWidgetKeys.MAX_PENDING + 5) {

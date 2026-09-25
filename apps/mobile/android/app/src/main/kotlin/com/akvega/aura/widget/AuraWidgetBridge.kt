@@ -20,17 +20,28 @@ import kotlinx.coroutines.launch
 object AuraWidgetBridge {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    fun register(context: Context, messenger: BinaryMessenger) {
+    /**
+     * [notifySaves] false for the headless engine of [WidgetSyncWorker]: it must not claim to be the running app
+     * (the worker hands saves to the app's engine only while that one is alive).
+     */
+    fun register(context: Context, messenger: BinaryMessenger, notifySaves: Boolean = true) {
         val app = context.applicationContext
         val channel = MethodChannel(messenger, "com.akvega.aura/widget")
         val prefs = SharedPrefsKeyValue(app.getSharedPreferences(AuraWidgetKeys.PREFS, Context.MODE_PRIVATE))
         val main = Handler(Looper.getMainLooper())
-        AuraWidgetEnv.onPending = { main.post { channel.invokeMethod("pendingChanged", null) } }
+        // The app's engine is cached for the process (AudioServiceActivity), so this stays valid while it lives.
+        if (notifySaves) {
+            AuraWidgetEnv.onPending = { main.post { channel.invokeMethod("pendingChanged", null) } }
+        }
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "readPending" -> result.success(prefs.getString(AuraWidgetKeys.PENDING))
                 "writeAcked" -> {
                     prefs.putString(AuraWidgetKeys.ACKED, call.arguments as? String)
+                    result.success(null)
+                }
+                "writeBackgroundHandled" -> {
+                    prefs.putString(AuraWidgetKeys.BG_HANDLED, call.arguments as? String)
                     result.success(null)
                 }
                 "publish" -> {

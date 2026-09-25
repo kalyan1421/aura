@@ -223,13 +223,23 @@ The filing itself follows the lawyer's SOP (action A3); the console files nothin
 
 ## 9. Kill switches, lexicon, staff, queue sessions, audit export
 
-**Kill switches** (Owner, audited with a reason code): every `feature_flags` row with its description and last change —
-`rooms_enabled`, `rooms_pool_hi`, and (off by default) **`reduced_mode`** and **`hold_all`**. Turn reduced mode on before
-being unreachable. Today both are recorded and reach the app through `GET /v1/config`; their effects arrive with the
-features they switch (reduced mode pauses reflections and throttles sign-ups; hold-all sends every new reflection to a
-human — reflections are F6, Milestone B; the sign-up throttle refuses new profiles beyond `payload.signupsPerHour`
-(default 20) in the last hour with `503 signups_throttled`, existing accounts untouched — contracts/api/v1.md "Reduced mode"). `matching_config` / `safety_config` are
-read-only in v0.
+**Kill switches** (console → Kill switches; Owner, audited with a reason code): every `feature_flags` row with its
+description and last change. The description column is the source of truth for what a switch does (the page shows it
+as is; keep it current in the migration that changes the behaviour, ≤ 300 characters). Today: `rooms_enabled`,
+`rooms_pool_hi`, `reflections_composer` (single language pools on the Reflections page), **`reduced_mode`** (off by
+default; pauses reflections and throttles sign-ups beyond `payload.signupsPerHour`, default 20/h, with `503
+signups_throttled` — contracts/api/v1.md "Reduced mode"; turn it on before being unreachable), **`hold_all`** (off by
+default; every new reflection waits for a human), `ripples_enabled`, `ripples_echoes`, `gifts_enabled`,
+`room_lanterns_enabled`, `room_intention_enabled`, `quiet_enabled` and `lantern_wind_down_enabled`. A "PRD 19 kill
+switches" list on the page maps each switch PRD 19 names to its flag and flags any that is missing.
+
+**Per region** (same page): Quiet Together (`quiet_enabled`) and the Lantern Hour wind-down (`lantern_wind_down_enabled`)
+pause per timezone region (`americas`, `europe_africa`, `south_asia`, `east_asia_pacific` — the server's own list,
+src/rooms/regions.ts) through `payload.pausedRegions`; the server's `isPaused` (src/quiet/quiet-flags.ts) honours it on
+the next join. Owner changes (`POST /admin/config/regions/:key/:region/pause|resume {reasonCode}` → the flag's state;
+audited as `config_region_pause` / `config_region_resume` with the key and regions only); a Moderator sees the table
+read-only (`GET /admin/config/regions`; the Moderator's nav has Kill switches for it). The flag itself turned off still
+pauses every region. `matching_config` / `safety_config` are read-only in v0.
 
 **Crisis lexicon** (console → Lexicon; contracts/api/v1.md "Crisis lexicon versions"): overview of the live signed
 version, signing key status and stored versions; *Test on samples* (Owner and Moderator; samples are not stored or
@@ -274,6 +284,7 @@ account survive until their `hold_until`. Every step is audited with the ticket 
 | `GET/POST /admin/legal-orders`, `GET /admin/legal-orders/:id`, `POST …/:id/acknowledge`, `POST …/:id/close` | Owner |
 | `GET /admin/paging/status`, `GET /admin/pages`, `GET /admin/pages/:id`, `POST /admin/pages/:id/ack`, `POST /admin/pages/test` | Owner |
 | `GET /admin/config`, `POST /admin/config/flags/:key` `{ enabled, reasonCode }`, `GET /admin/audit`, `GET /admin/audit/verify`, `GET/POST /admin/audit/exports` | Owner |
+| `GET /admin/config/regions` · `POST /admin/config/regions/:key/:region/pause`, `…/resume` `{ reasonCode }` (`key` ∈ `quiet_enabled` · `lantern_wind_down_enabled`) | Owner + Moderator · Owner |
 | `GET /admin/staff`, `POST /admin/staff` `{ email, role, displayName }`, `POST /admin/staff/:staffId` `{ role?, displayName?, disabled? }` | Owner |
 | `GET /admin/deletion-cases?status`, `POST /admin/deletion-cases` `{ email, channel, receivedAt, grievanceId? }`, `GET …/:id`, `POST …/:id/resend`, `POST …/:id/delete` `{ mode: grace \| immediate, reasonCode? }`, `POST …/:id/close` `{ outcome }` | Owner |
 | `GET /v1/deletion-requests/:token`, `POST …/:token/confirm`, `POST …/:token/decline` (the account holder's link; public, rate-limited) | — |

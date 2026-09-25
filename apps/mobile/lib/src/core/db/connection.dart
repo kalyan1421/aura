@@ -29,7 +29,9 @@ Future<AppDatabase> openAppDatabase(SecureStore secure) async {
     await db.customSelect('SELECT count(*) FROM sqlite_master').get();
     return db;
   } catch (e) {
-    debugPrint('db: could not open with stored key (${e.runtimeType}); resetting');
+    debugPrint(
+      'db: could not open with stored key (${e.runtimeType}); resetting',
+    );
     await db.close();
     final dir = await getApplicationSupportDirectory();
     for (final suffix in ['', '-wal', '-shm', '-journal']) {
@@ -39,6 +41,32 @@ Future<AppDatabase> openAppDatabase(SecureStore secure) async {
     db = _open(key);
     await db.customSelect('SELECT 1').get();
     return db;
+  }
+}
+
+/// Opens the database only if this phone already has it and its key: for
+/// headless background work (F11 widget refresh), which must never create a
+/// key, reset a file it can't open, or race the app's first launch. Returns
+/// null (and leaves everything as it was) when any of that would be needed,
+/// e.g. the Keychain isn't readable yet.
+Future<AppDatabase?> openExistingAppDatabase(SecureStore secure) async {
+  try {
+    final key = await secure.read(SecureKeys.dbKey);
+    if (key == null || key.length != 64) return null;
+    final dir = await getApplicationSupportDirectory();
+    if (!File('${dir.path}/$_dbName.sqlite').existsSync()) return null;
+    final db = _open(key);
+    try {
+      await db.customSelect('SELECT count(*) FROM sqlite_master').get();
+      return db;
+    } catch (e) {
+      await db.close();
+      debugPrint('db: background open failed (${e.runtimeType})');
+      return null;
+    }
+  } catch (e) {
+    debugPrint('db: background open failed (${e.runtimeType})');
+    return null;
   }
 }
 

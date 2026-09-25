@@ -40,6 +40,13 @@ class MemoryWidgetHost implements WidgetHost {
   @override
   Stream<void> get pendingChanged => _changes.stream;
 
+  /// What the app registered for an OS background wake-up (iOS).
+  Future<void> Function()? backgroundSync;
+
+  @override
+  set backgroundSyncHandler(Future<void> Function()? handler) =>
+      backgroundSync = handler;
+
   @override
   Future<String?> readPending() async {
     readCalls++;
@@ -48,6 +55,13 @@ class MemoryWidgetHost implements WidgetHost {
 
   @override
   Future<void> writeAcked(List<String> ids) async => acked = [...ids];
+
+  /// `aura.widget.bgHandled` as a background run last wrote it.
+  List<String> backgroundHandled = [];
+
+  @override
+  Future<void> writeBackgroundHandled(List<String> ids) async =>
+      backgroundHandled = [...ids];
 
   @override
   Future<void> publish({required String display, Uint8List? avatarPng}) async {

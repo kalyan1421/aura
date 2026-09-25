@@ -68,6 +68,9 @@ dependencies {
     // ActionCallback, 2x2 deep link). No network, no Supabase: it writes to
     // app-private shared preferences that the Flutter app imports.
     implementation("androidx.glance:glance-appwidget:1.2.0")
+    // F11 background refresh: after a widget save, WidgetSyncWorker imports and syncs once online with the battery
+    // not low, without opening the app (widget/WidgetSyncWorker.kt).
+    implementation("androidx.work:work-runtime:2.10.5")
     // Unit tests of the widget store logic (app/src/test): the JVM needs a
     // real org.json (Android's is a stub there).
     testImplementation("junit:junit:4.13.2")

@@ -19,6 +19,9 @@ enum AuraWidgetKeys {
   static let display = "aura.widget.display"
   static let pending = "aura.widget.pending"
   static let acked = "aura.widget.acked"
+  /// App (background run) only: ids imported but not acknowledged yet, so the
+  /// widget keeps showing them while background refresh skips them.
+  static let bgHandled = "aura.widget.bgHandled"
   static let ui = "aura.widget.ui"
   /// The avatar PNG the app writes into the App Group container.
   static let avatarFile = "aura-widget-avatar.png"
@@ -238,6 +241,18 @@ final class AuraWidgetStore {
   var unsent: [PendingCheckIn] {
     let done = acked
     return pendingRaw.filter { !done.contains($0.id) }
+  }
+
+  /// Unsent check-ins no background run has imported yet: worth starting
+  /// Flutter for (Runner `AuraWidgetBackgroundSync`).
+  var needsBackgroundImport: Bool {
+    var handled = Set<String>()
+    if let data = kv.string(forKey: AuraWidgetKeys.bgHandled)?.data(using: .utf8),
+      let ids = try? JSONDecoder().decode([String].self, from: data)
+    {
+      handled = Set(ids)
+    }
+    return unsent.contains { !handled.contains($0.id) }
   }
 
   private var pendingRaw: [PendingCheckIn] {

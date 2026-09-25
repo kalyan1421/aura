@@ -190,6 +190,25 @@ class SyncService implements SyncTrigger {
     await kick();
   }
 
+  /// A background run (F11 widget refresh, PRD 16-offline "via WorkManager /
+  /// BGTaskScheduler"): pushes what is due now and waits for it, including a
+  /// drain already in flight, for at most [timeout]. Backoff is respected.
+  Future<void> drainNow({
+    Duration timeout = const Duration(seconds: 20),
+  }) async {
+    if (_disposed || _paused) return;
+    Future<void> run() async {
+      await kick();
+      // `kick` returns at once when a drain is already running (it then
+      // runs once more): wait for that one too.
+      while (_running && !_disposed) {
+        await (_drained ??= Completer<void>()).future;
+      }
+    }
+
+    await run().timeout(timeout, onTimeout: () {});
+  }
+
   /// Sign-out: stops syncing and waits (up to [timeout]) for an in-flight
   /// drain; whatever it still receives is dropped. Call [resume] after the
   /// local data is wiped.

@@ -154,6 +154,20 @@ final class AuraWidgetCoreTests: XCTestCase {
     XCTAssertEqual(stored.map(\.id), [second.id])
   }
 
+  func testBackgroundImportIsNeededOnlyForUnsentNotYetHandled() throws {
+    let (s, kv) = store(display())
+    XCTAssertFalse(s.needsBackgroundImport)
+    let saved = try XCTUnwrap(s.save(moodId: "calm", now: afternoon, timeZone: ist))
+    XCTAssertTrue(s.needsBackgroundImport)
+    // A background run imported it without acknowledging: the widget still
+    // shows it, background refresh skips it.
+    kv.values[AuraWidgetKeys.bgHandled] = "[\"\(saved.id)\"]"
+    XCTAssertFalse(s.needsBackgroundImport)
+    XCTAssertTrue(s.state(now: afternoon, timeZone: ist).checkedInToday)
+    XCTAssertNotNil(s.save(moodId: "anxious", now: afternoon.addingTimeInterval(10), timeZone: ist))
+    XCTAssertTrue(s.needsBackgroundImport)
+  }
+
   func testADoubleTapSavesOnce() {
     let (s, kv) = store(display())
     XCTAssertNotNil(s.save(moodId: "calm", now: afternoon, timeZone: ist))

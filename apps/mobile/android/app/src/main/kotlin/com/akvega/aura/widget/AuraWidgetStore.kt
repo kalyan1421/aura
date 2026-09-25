@@ -23,6 +23,8 @@ object AuraWidgetKeys {
     const val DISPLAY = "aura.widget.display"
     const val PENDING = "aura.widget.pending"
     const val ACKED = "aura.widget.acked"
+    /** App (background run) only: ids already imported but not acknowledged yet (WidgetSyncWorker skips them). */
+    const val BG_HANDLED = "aura.widget.bgHandled"
     const val UI = "aura.widget.ui"
     const val AVATAR_FILE = "aura-widget-avatar.png"
     const val STORE_VERSION = 1
@@ -237,6 +239,18 @@ class AuraWidgetStore(private val kv: WidgetKeyValue) {
             return (0 until a.length())
                 .mapNotNull { a.optJSONObject(it)?.let(PendingCheckIn::fromJson) }
                 .filter { it.id !in done }
+        }
+
+    /** Unsent check-ins no background run has imported yet: worth starting Flutter for (WidgetSyncWorker). */
+    val needsBackgroundImport: Boolean
+        get() {
+            val handled = try {
+                val a = JSONArray(kv.getString(AuraWidgetKeys.BG_HANDLED) ?: "[]")
+                (0 until a.length()).map { a.getString(it) }.toSet()
+            } catch (e: Exception) {
+                emptySet()
+            }
+            return unsent.any { it.id !in handled }
         }
 
     fun state(now: Instant, zone: ZoneId): WidgetState {

@@ -22,6 +22,8 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
       { href: '/lexicons', label: 'Lexicon' },
       { href: '/helplines', label: 'Helplines' },
       { href: '/intentions', label: 'Intentions' },
+      // Read-only for a Moderator: the per-region pauses (PRD 19 Roles: no config changes).
+      { href: '/config', label: 'Kill switches' },
       { href: '/stats', label: 'Stats' },
     ];
   }

@@ -55,7 +55,14 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>fetch</string>
 		<string>remote-notification</string>
+	</array>
+	<!-- F11 widget background refresh (AuraWidgetChannel.swift
+	     AuraWidgetBackgroundSync): imports widget check-ins and syncs. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.akvega.aura.widget-sync</string>
 	</array>
 	<!-- FCM: no token until the user opts in after the first check-in
 	     (PushService enables auto-init then, and disables it at sign-out). -->

@@ -1277,6 +1277,44 @@ describe('Admin console v0 (e2e, live Supabase Auth + TOTP, Postgres, Redis, Mai
       expect(row.rows[0].detail).toEqual({ key: 'rooms_pool_hi', enabled: before.enabled, previous: before.enabled });
     });
 
+    it('per-region pause (quiet_enabled, lantern_wind_down_enabled): Owner changes, Moderator reads, audited; the payload is restored', async () => {
+      const saved = (await db.query<{ key: string; payload: unknown }>(`select key, payload from public.feature_flags where key in ('quiet_enabled', 'lantern_wind_down_enabled')`)).rows;
+      expect(saved).toHaveLength(2);
+      try {
+        const read = await adm(moderator, 'get', '/admin/config/regions');
+        expect(read.status).toBe(200);
+        expect(read.body.regions).toEqual(['americas', 'europe_africa', 'south_asia', 'east_asia_pacific']);
+        expect(read.body.flags.map((f: { key: string }) => f.key)).toEqual(['lantern_wind_down_enabled', 'quiet_enabled']);
+
+        const denied = await adm(moderator, 'post', '/admin/config/regions/quiet_enabled/south_asia/pause', { reasonCode: 'e2e_region' });
+        expect(denied.status).toBe(403);
+        expect(denied.body.code).toBe('forbidden_role');
+
+        const paused = await adm(owner, 'post', '/admin/config/regions/quiet_enabled/south_asia/pause', { reasonCode: 'e2e_region' });
+        expect(paused.status).toBe(200);
+        expect(paused.body.pausedRegions).toContain('south_asia');
+        const stored = (await db.query<{ payload: { pausedRegions: string[] } }>(`select payload from public.feature_flags where key = 'quiet_enabled'`)).rows[0];
+        expect(stored.payload.pausedRegions).toContain('south_asia');
+        const audit = (
+          await db.query<{ action: string; detail: Record<string, unknown> }>(
+            `select action, detail from public.moderation_actions where action = 'config_region_pause' and reason_code = 'e2e_region' order by id desc limit 1`,
+          )
+        ).rows[0];
+        expect(audit.detail).toMatchObject({ key: 'quiet_enabled', region: 'south_asia' });
+        expect(Object.keys(audit.detail).sort()).toEqual(['key', 'pausedRegions', 'previous', 'region']);
+
+        const resumed = await adm(owner, 'post', '/admin/config/regions/quiet_enabled/south_asia/resume', { reasonCode: 'e2e_region' });
+        expect(resumed.status).toBe(200);
+        expect(resumed.body.pausedRegions).not.toContain('south_asia');
+
+        expect((await adm(owner, 'post', '/admin/config/regions/quiet_enabled/mars/pause', { reasonCode: 'e2e_region' })).status).toBe(404);
+        expect((await adm(owner, 'post', '/admin/config/regions/rooms_enabled/south_asia/pause', { reasonCode: 'e2e_region' })).status).toBe(404);
+        expect((await adm(owner, 'post', '/admin/config/regions/lantern_wind_down_enabled/south_asia/pause', {})).status).toBe(400);
+      } finally {
+        for (const s of saved) await db.query('update public.feature_flags set payload = $2::jsonb where key = $1', [s.key, JSON.stringify(s.payload)]);
+      }
+    });
+
     it('the audit log reads back with staff names and the hash chain verifies', async () => {
       const log = await adm(owner, 'get', '/admin/audit?limit=200');
       expect(log.status).toBe(200);

@@ -35,6 +35,8 @@ No member list, no pseudonyms, no silhouettes, no mood, no text, no user audio. 
   - `lantern_wind_down_enabled` — off, or the room's region in `payload.pausedRegions` → no wind-down is offered
     (`windDown: null`) and joining answers `503 wind_down_paused`.
   A missing flag counts as on. The app hides entries while a flag is off; the server decides.
+  Regions are paused and resumed from the console (`POST /admin/config/regions/:key/:region/pause|resume`, Owner,
+  audited; docs/setup/admin-console.md §9).
 
 ### DS-10 / REQ-QUIET-01: counts only (tested on every payload: `test/e2e/quiet.e2e-spec.ts` "REQ-QUIET-01 payload scan")
 No response and no realtime payload here ever contains a **member list** (even a pseudonymous one), a pseudonym, a

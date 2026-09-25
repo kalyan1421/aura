@@ -390,7 +390,12 @@ class SaveMoodAction : ActionCallback {
         val mood = parameters[MOOD] ?: return
         val saved = AuraWidgetEnv.store(context).save(mood, Instant.now(), ZoneId.systemDefault())
         AuraWidgetEnv.refreshAll(context)
-        if (saved != null) AuraWidgetEnv.onPending?.invoke()
+        if (saved != null) {
+            // App running: it imports now. Either way a background run (online, battery not low) makes sure the
+            // check-in reaches the server without opening the app (F11; WidgetSyncWorker).
+            AuraWidgetEnv.onPending?.invoke()
+            WidgetSyncWorker.enqueue(context)
+        }
     }
 }
 

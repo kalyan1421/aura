@@ -1,3 +1,4 @@
+import BackgroundTasks
 import Flutter
 import Foundation
 import WidgetKit
@@ -8,6 +9,7 @@ import WidgetKit
 ///
 /// * `readPending` → the widget's `aura.widget.pending` JSON (or nil)
 /// * `writeAcked(json)` → `aura.widget.acked`
+/// * `writeBackgroundHandled(json)` → `aura.widget.bgHandled` (background runs)
 /// * `publish({display, avatar})` → `aura.widget.display` + the avatar PNG in
 ///   the App Group container (nil removes it), then every widget redraws.
 ///
@@ -27,6 +29,9 @@ enum AuraWidgetChannel {
         result(kv.string(forKey: AuraWidgetKeys.pending))
       case "writeAcked":
         kv.setString(call.arguments as? String, forKey: AuraWidgetKeys.acked)
+        result(nil)
+      case "writeBackgroundHandled":
+        kv.setString(call.arguments as? String, forKey: AuraWidgetKeys.bgHandled)
         result(nil)
       case "publish":
         let args = call.arguments as? [String: Any]
@@ -51,5 +56,93 @@ enum AuraWidgetChannel {
     } else {
       try? FileManager.default.removeItem(at: url)
     }
+  }
+}
+
+/// Widget background refresh (F11 "Data path": the app imports widget
+/// check-ins "on next launch or background refresh, then syncs"; PRD
+/// 16-offline: the outbox drains "via … BGTaskScheduler").
+///
+/// A widget extension can't schedule background tasks, so the app asks for a
+/// `BGAppRefreshTask` whenever it goes to the background while an Aura widget
+/// is installed, and again after each run; iOS decides when (battery, usage).
+/// A run:
+///  - does nothing (and starts no Flutter) unless the widget holds check-ins
+///    no background run imported yet;
+///  - hands the work to the app's engine when it is alive (suspended in the
+///    background): `backgroundSync` on `com.akvega.aura/widget`;
+///  - otherwise runs a headless engine at `widgetBackgroundMain`
+///    (lib/main.dart → lib/src/features/widget/widget_background.dart), which
+///    imports and pushes without UI and answers `done` on
+///    `com.akvega.aura/widget_background`. Nothing runs signed out, before
+///    onboarding or under the under-13 lock (checked in Dart).
+/// Never logs what it moves.
+enum AuraWidgetBackgroundSync {
+  static let taskId = "com.akvega.aura.widget-sync"
+  private static let minimumInterval: TimeInterval = 15 * 60
+
+  /// The app's own engine, while it exists.
+  static weak var appMessenger: FlutterBinaryMessenger?
+  private static var engine: FlutterEngine?
+
+  /// Before `didFinishLaunching` returns (BGTaskScheduler requirement).
+  static func register() {
+    BGTaskScheduler.shared.register(forTaskWithIdentifier: taskId, using: DispatchQueue.main) { task in
+      guard let task = task as? BGAppRefreshTask else {
+        task.setTaskCompleted(success: false)
+        return
+      }
+      handle(task)
+    }
+    NotificationCenter.default.addObserver(
+      forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main
+    ) { _ in schedule() }
+  }
+
+  /// Asks for the next run, only while an Aura widget is on a screen.
+  static func schedule() {
+    WidgetCenter.shared.getCurrentConfigurations { result in
+      guard case .success(let widgets) = result, !widgets.isEmpty else { return }
+      let request = BGAppRefreshTaskRequest(identifier: taskId)
+      request.earliestBeginDate = Date(timeIntervalSinceNow: minimumInterval)
+      try? BGTaskScheduler.shared.submit(request)
+    }
+  }
+
+  private static func handle(_ task: BGAppRefreshTask) {
+    schedule()
+    var completed = false
+    func complete(_ success: Bool) {
+      guard !completed else { return }
+      completed = true
+      engine?.destroyContext()
+      engine = nil
+      task.setTaskCompleted(success: success)
+    }
+    guard let kv = UserDefaultsKeyValue(), AuraWidgetStore(kv: kv).needsBackgroundImport else {
+      complete(true)
+      return
+    }
+    task.expirationHandler = { DispatchQueue.main.async { complete(false) } }
+
+    if let messenger = appMessenger {
+      FlutterMethodChannel(name: "com.akvega.aura/widget", binaryMessenger: messenger)
+        .invokeMethod("backgroundSync", arguments: nil) { _ in complete(true) }
+      return
+    }
+
+    let headless = FlutterEngine(name: "aura.widget-sync", project: nil, allowHeadlessExecution: true)
+    guard headless.run(withEntrypoint: "widgetBackgroundMain") else {
+      complete(false)
+      return
+    }
+    engine = headless
+    GeneratedPluginRegistrant.register(with: headless)
+    AuraWidgetChannel.register(messenger: headless.binaryMessenger)
+    FlutterMethodChannel(name: "com.akvega.aura/widget_background", binaryMessenger: headless.binaryMessenger)
+      .setMethodCallHandler { call, result in
+        result(nil)
+        if call.method == "done" { complete(true) }
+      }
   }
 }

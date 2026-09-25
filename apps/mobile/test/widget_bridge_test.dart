@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
+import 'package:aura/src/core/db/kv_store.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/features/checkin/post_save.dart';
 import 'package:aura/src/features/onboarding/gate_controller.dart';
+import 'package:aura/src/features/widget/widget_background.dart';
 import 'package:aura/src/features/widget/widget_bridge.dart';
 import 'package:aura/src/features/widget/widget_follow_up.dart';
 import 'package:aura/src/features/widget/widget_prefs.dart';
 import 'package:aura/src/features/widget/widget_settings_section.dart';
 import 'package:aura/src/core/ids/ids.dart';
 import 'package:aura_domain/aura_domain.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -140,6 +145,58 @@ void main() {
     expect(sync.writes, 1);
     expect(capsuleSteps, hasLength(1));
     await unmount(tester);
+  });
+
+  testWidgets('a check-in imported in the background gets its capsule step '
+      'at this app open; an OS wake-up while the app runs imports and '
+      'pushes here', (tester) async {
+    // A background run (widget_background.dart) imported it and left the
+    // capsule step for this open.
+    final bgId = const Ids().v7();
+    await tester.runAsync(() async {
+      await db
+          .into(db.checkIns)
+          .insert(
+            CheckInsCompanion.insert(
+              id: bgId,
+              moodId: 'calm',
+              quadrant: 'moonlight',
+              deviceTs: testNow,
+              tzOffsetMinutes: 330,
+              tz: const Value('Asia/Kolkata'),
+              localDay: '2026-10-08',
+              source: const Value('widget'),
+            ),
+          );
+      await rememberWidgetFollowUps(KvStore(db), [bgId]);
+    });
+    await pumpApp(tester);
+    expect(capsuleSteps, ['$bgId:calm']);
+    expect(
+      await io(tester, () => KvStore(db).get(WidgetKvKeys.followUps)),
+      isNull,
+    );
+
+    // iOS woke the app (engine alive) for a widget refresh.
+    final owner = host.lastDisplay!['owner']! as String;
+    final id = const Ids().v7();
+    host.pending = [
+      widgetRecord(
+        id: id,
+        deviceTs: testNow,
+        localDay: '2026-10-08',
+        owner: owner,
+      ),
+    ];
+    expect(host.backgroundSync, isNotNull);
+    var finished = false;
+    unawaited(host.backgroundSync!().then((_) => finished = true));
+    await settleIo(tester, rounds: 10);
+    expect(finished, isTrue);
+    expect(await io(tester, () => db.select(db.checkIns).get()), hasLength(2));
+    expect(sync.drainCalls, 1);
+    await unmount(tester);
+    expect(host.backgroundSync, isNull);
   });
 
   testWidgets('before onboarding: "Open Aura to continue" only, nothing is '

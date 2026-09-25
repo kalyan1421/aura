@@ -88,6 +88,11 @@ Everything is in `GET /admin/lexicons/crisis` (`live`, `versions`, `history`) an
 
 - Flip: console → Config → the flag (`POST /admin/config/flags/:key {enabled, reasonCode}`, Owner, audited). The config
   document changes at once; open apps see it within `pollSeconds` + `REMOTE_CONFIG_CACHE_MS` (≤ 250 s by default).
+- Per region (Quiet Together, the Lantern Hour wind-down): console → Kill switches → Per region
+  (`POST /admin/config/regions/:key/:region/pause|resume {reasonCode}`, Owner, audited; Moderator reads). It edits
+  `payload.pausedRegions`, which the server checks on every join; the flag off still pauses every region.
+- What a flag does is its `feature_flags.description`, shown as is by the console: update it in the migration that
+  changes the behaviour.
 - Milestone A flags: `rooms_enabled` (kill switch: no new joins, `503 rooms_paused`; the app hides the join offers and
   says rooms are resting) and `rooms_pool_hi` (Hindi + Hinglish pool; the app offers an English room without a refused
   call). The app's bundled defaults: `rooms_enabled` on, `rooms_pool_hi` off.

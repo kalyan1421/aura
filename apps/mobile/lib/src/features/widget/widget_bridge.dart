@@ -17,6 +17,7 @@ import '../capsules/capsule_repository.dart' show triggerCapsuleOf;
 import '../onboarding/gate_controller.dart';
 import '../progress/progress_view.dart';
 import 'avatar_snapshot.dart';
+import 'widget_background.dart';
 import 'widget_display.dart';
 import 'widget_ingest.dart';
 import 'widget_prefs.dart';
@@ -81,12 +82,25 @@ class WidgetBridge {
   Uint8List? _lastAvatar;
   bool _published = false;
 
+  WidgetHost? _host;
+
   void start() {
+    final host = _ref.read(widgetHostProvider);
+    _host = host;
     _subs.add(
-      _ref.read(widgetHostProvider).pendingChanged.listen((_) {
+      host.pendingChanged.listen((_) {
         unawaited(syncNow());
       }),
     );
+    // iOS woke the app for a widget refresh while this engine is alive:
+    // import here and wait for the push (widget_background.dart).
+    host.backgroundSyncHandler = () async {
+      await syncNow();
+      if (_disposed) return;
+      await _ref
+          .read(syncControllerProvider)
+          .drain(timeout: widgetBackgroundSyncBudget);
+    };
     try {
       _lifecycle = AppLifecycleListener(onResume: () => unawaited(syncNow()));
     } catch (_) {
@@ -106,6 +120,7 @@ class WidgetBridge {
 
   void dispose() {
     _disposed = true;
+    _host?.backgroundSyncHandler = null;
     _debounce?.cancel();
     _lifecycle?.dispose();
     for (final s in _subs) {
@@ -128,9 +143,15 @@ class WidgetBridge {
           .read(widgetIngestorProvider)
           .ingest(owner: owner);
       if (_disposed) return;
+      // Imported in the background since the last open: their capsule step
+      // is due now (PRD 12 "waits for the next app open").
+      final earlier = await _takeBackgroundFollowUps();
+      if (_disposed) return;
       if (imported.isNotEmpty) {
         _ref.read(syncControllerProvider).notifyLocalWrite();
-        followUps.value = [...followUps.value, ...imported];
+      }
+      if (earlier.isNotEmpty || imported.isNotEmpty) {
+        followUps.value = [...followUps.value, ...earlier, ...imported];
       }
     }
     await publishNow();
@@ -264,6 +285,18 @@ class WidgetBridge {
       awardsToday: awards.today,
       awardsFreshDay: awards.freshDay,
     );
+  }
+
+  Future<List<ImportedWidgetCheckIn>> _takeBackgroundFollowUps() async {
+    try {
+      return await takeWidgetFollowUps(
+        _ref.read(kvStoreProvider),
+        _ref.read(appDatabaseProvider),
+      );
+    } catch (e) {
+      debugPrint('widget: follow-ups failed (${e.runtimeType})');
+      return const [];
+    }
   }
 
   /// The owner token for the signed-in person on this phone (made once;

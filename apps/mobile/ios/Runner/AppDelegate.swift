@@ -17,6 +17,9 @@ import UserNotifications
     // app delegate forwards notification callbacks to plugins. Asks for no
     // permission; that stays with the push soft ask.
     UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+    // F11 widget background refresh (AuraWidgetChannel.swift); must be
+    // registered before launch finishes.
+    AuraWidgetBackgroundSync.register()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -27,6 +30,7 @@ import UserNotifications
     AuraStoreChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
     // Home-screen widget store (F11; AuraWidgetChannel.swift).
     AuraWidgetChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
+    AuraWidgetBackgroundSync.appMessenger = engineBridge.applicationRegistrar.messenger()
   }
 }
 

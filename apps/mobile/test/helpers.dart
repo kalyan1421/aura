@@ -39,6 +39,7 @@ class FakeSync implements SyncController {
   final ValueNotifier<bool> _online = ValueNotifier(true);
   int writes = 0;
   int syncNowCalls = 0;
+  int drainCalls = 0;
 
   @override
   ValueListenable<SyncPhase> get phase => _phase;
@@ -54,6 +55,9 @@ class FakeSync implements SyncController {
   Future<void> pause() async {}
   @override
   void resume() {}
+  @override
+  Future<void> drain({Duration timeout = const Duration(seconds: 20)}) async =>
+      drainCalls++;
 }
 
 AvatarAssets emptyAssets() => AvatarAssets(

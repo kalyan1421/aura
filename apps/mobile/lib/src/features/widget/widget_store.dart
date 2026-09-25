@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 /// | `aura.widget.display`| app    | what the widget shows (buildWidgetDisplay) |
 /// | `aura.widget.pending`| widget | check-ins saved in the widget            |
 /// | `aura.widget.acked`  | app    | ids of pending check-ins already handled |
+/// | `aura.widget.bgHandled` | app (background) | ids imported by a background run, not yet acknowledged |
 ///
 /// The widget drops acknowledged ids from `pending` the next time it writes
 /// it. The avatar PNG sits next to the store (App Group container / app
@@ -158,6 +159,12 @@ abstract class WidgetHost {
   /// Replaces `aura.widget.acked` with [ids].
   Future<void> writeAcked(List<String> ids);
 
+  /// Replaces `aura.widget.bgHandled` with [ids]: pending check-ins a
+  /// background run already imported (not acknowledged, so the widget keeps
+  /// showing them until the app republishes); the native side skips them
+  /// when deciding whether to start Flutter in the background.
+  Future<void> writeBackgroundHandled(List<String> ids);
+
   /// Writes `aura.widget.display` and the avatar PNG ([avatarPng] null →
   /// removed), then asks the OS to redraw the widgets.
   Future<void> publish({required String display, Uint8List? avatarPng});
@@ -165,16 +172,32 @@ abstract class WidgetHost {
   /// Fires when the widget saved a check-in while this process runs
   /// (Android: same process; iOS: a Darwin notification from the extension).
   Stream<void> get pendingChanged;
+
+  /// Runs when the OS woke the app for a widget refresh while this engine
+  /// is alive (iOS `BGAppRefreshTask`, widget_background.dart): import and
+  /// push, completing when done. The native side waits for it.
+  set backgroundSyncHandler(Future<void> Function()? handler);
 }
 
 class ChannelWidgetHost implements WidgetHost {
   ChannelWidgetHost({MethodChannel? channel})
     : _channel = channel ?? const MethodChannel(channelName) {
     _channel.setMethodCallHandler((call) async {
-      if (call.method == 'pendingChanged') _changes.add(null);
+      switch (call.method) {
+        case 'pendingChanged':
+          _changes.add(null);
+        case 'backgroundSync':
+          await _backgroundSync?.call();
+      }
       return null;
     });
   }
+
+  Future<void> Function()? _backgroundSync;
+
+  @override
+  set backgroundSyncHandler(Future<void> Function()? handler) =>
+      _backgroundSync = handler;
 
   static const String channelName = 'com.akvega.aura/widget';
 
@@ -190,6 +213,10 @@ class ChannelWidgetHost implements WidgetHost {
   @override
   Future<void> writeAcked(List<String> ids) =>
       _call<void>('writeAcked', jsonEncode(ids));
+
+  @override
+  Future<void> writeBackgroundHandled(List<String> ids) =>
+      _call<void>('writeBackgroundHandled', jsonEncode(ids));
 
   @override
   Future<void> publish({required String display, Uint8List? avatarPng}) =>

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/providers.dart';
 
-/// KV keys of the widget feature. Both belong to the signed-in person: they
+/// KV keys of the widget feature. All belong to the signed-in person: they
 /// are wiped at sign-out (not in `KvKeys.deviceScoped`), so the next person
 /// starts from the private defaults and a new owner token.
 abstract final class WidgetKvKeys {
@@ -13,6 +13,10 @@ abstract final class WidgetKvKeys {
 
   /// Opaque token stamped on widget check-ins (see `WidgetCheckIn.owner`).
   static const String owner = 'widget.owner';
+
+  /// Ids of widget check-ins imported in the background, waiting for the
+  /// capsule step at the next app open (widget_background.dart).
+  static const String followUps = 'widget.followUps';
 }
 
 /// Settings → Home-screen widget (F11 privacy). Both off by default: the

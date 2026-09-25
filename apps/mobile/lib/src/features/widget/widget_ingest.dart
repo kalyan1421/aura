@@ -37,10 +37,24 @@ class WidgetIngestor {
   /// Imports what the widget saved for [owner] (the current owner token).
   /// Concurrent calls share one run. Never throws: a failure leaves the
   /// records in the widget's store for the next launch.
-  Future<List<ImportedWidgetCheckIn>> ingest({required String owner}) =>
-      _running ??= _ingest(owner).whenComplete(() => _running = null);
+  ///
+  /// [background] (widget_background.dart): nothing is acknowledged, because
+  /// the widget would then forget today's check-in before the app republishes
+  /// what it shows; the handled ids go to `aura.widget.bgHandled` instead, so
+  /// the OS doesn't wake Flutter again for them. The next app open imports
+  /// nothing new, acknowledges them and republishes.
+  Future<List<ImportedWidgetCheckIn>> ingest({
+    required String owner,
+    bool background = false,
+  }) => _running ??= _ingest(
+    owner,
+    background,
+  ).whenComplete(() => _running = null);
 
-  Future<List<ImportedWidgetCheckIn>> _ingest(String owner) async {
+  Future<List<ImportedWidgetCheckIn>> _ingest(
+    String owner,
+    bool background,
+  ) async {
     final PendingWidgetCheckIns pending;
     try {
       pending = parsePendingWidgetCheckIns(await _host.readPending());
@@ -82,7 +96,11 @@ class WidgetIngestor {
       }
     }
     try {
-      await _host.writeAcked(handled);
+      if (background) {
+        await _host.writeBackgroundHandled(handled);
+      } else {
+        await _host.writeAcked(handled);
+      }
     } catch (e) {
       debugPrint('widget: ack failed (${e.runtimeType})');
     }

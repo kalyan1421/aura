@@ -19,6 +19,7 @@ import 'src/core/time/device_timezone.dart';
 import 'src/features/onboarding/age_gate.dart';
 import 'src/features/onboarding/gate_controller.dart';
 import 'src/features/push/push_messaging.dart';
+import 'src/features/widget/widget_background.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,3 +77,9 @@ Future<void> main() async {
     ),
   );
 }
+
+/// Headless entrypoint for widget background refresh (F11; Android
+/// `WidgetSyncWorker`, iOS `AuraWidgetBackgroundSync`): imports widget
+/// check-ins and pushes the outbox without UI (widget_background.dart).
+@pragma('vm:entry-point')
+Future<void> widgetBackgroundMain() => runWidgetBackgroundEntry();
