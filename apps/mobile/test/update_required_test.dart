@@ -1,6 +1,8 @@
 // Forced update (MASVS-CODE-2, docs/security/masvs-l1.md F-6): the server's
 // `minAppVersion` (GET /v1/config) against this install's version, and the
 // calm "Please update Aura" screen that keeps "I need help now" reachable.
+import 'dart:async';
+
 import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/env/env.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
@@ -32,14 +34,6 @@ class _Min extends MinAppVersionNotifier {
   @override
   MinAppVersions build() => initial;
   void set(MinAppVersions v) => state = v;
-}
-
-class _Presenter implements UpdateRequiredPresenter {
-  final calls = <String>[];
-  @override
-  void show() => calls.add('show');
-  @override
-  void hide() => calls.add('hide');
 }
 
 void main() {
@@ -113,16 +107,12 @@ void main() {
       AppVersion? installed,
       MinAppVersions min = MinAppVersions.none,
       TargetPlatform platform = TargetPlatform.android,
-      _Presenter? presenter,
     }) {
       final c = ProviderContainer(
         overrides: [
           installedVersionReaderProvider.overrideWithValue(_Reader(installed)),
           minAppVersionProvider.overrideWith(() => _Min(min)),
           updatePlatformProvider.overrideWithValue(platform),
-          updateRequiredPresenterProvider.overrideWithValue(
-            presenter ?? _Presenter(),
-          ),
         ],
       );
       addTearDown(c.dispose);
@@ -148,53 +138,114 @@ void main() {
       expect(unknown.read(updateRequiredProvider), isFalse);
     });
 
-    test('shows the screen when the server raises the minimum and hides it '
-        'when it is lowered again', () async {
-      final presenter = _Presenter();
-      final c = container(installed: _v('1.0.0+4'), presenter: presenter);
-      await c.read(installedAppVersionProvider.future);
-      c.read(updateGateProvider);
-      expect(presenter.calls, ['hide']);
+    test(
+      'follows the server: raised minimum → required, lowered → not',
+      () async {
+        final c = container(installed: _v('1.0.0+4'));
+        await c.read(installedAppVersionProvider.future);
+        expect(c.read(updateRequiredProvider), isFalse);
+        final min = c.read(minAppVersionProvider.notifier) as _Min;
+        min.set(MinAppVersions.fromJson({'android': '1.1.0'}));
+        expect(c.read(updateRequiredProvider), isTrue);
+        min.set(MinAppVersions.none);
+        expect(c.read(updateRequiredProvider), isFalse);
+      },
+    );
+  });
 
-      final min = c.read(minAppVersionProvider.notifier) as _Min;
-      min.set(MinAppVersions.fromJson({'android': '1.1.0'}));
-      c.read(updateGateProvider);
-      expect(presenter.calls.last, 'show');
+  group('updateRedirect (every navigation passes it)', () {
+    test('while required: everything lands on the update screen except the '
+        'Safety Center', () {
+      for (final loc in [
+        Routes.root,
+        Routes.home,
+        Routes.checkIn,
+        Routes.rooms,
+        Routes.settings,
+        '/insights/history',
+      ]) {
+        expect(
+          updateRedirect(required: true, location: loc),
+          Routes.updateRequired,
+          reason: loc,
+        );
+      }
+      expect(
+        updateRedirect(required: true, location: Routes.updateRequired),
+        isNull,
+      );
+      expect(updateRedirect(required: true, location: Routes.safety), isNull);
+    });
 
-      min.set(MinAppVersions.none);
-      c.read(updateGateProvider);
-      expect(presenter.calls.last, 'hide');
+    test('once lifted: the update screen bounces to the root; nothing else '
+        'is touched', () {
+      expect(
+        updateRedirect(required: false, location: Routes.updateRequired),
+        Routes.root,
+      );
+      expect(updateRedirect(required: false, location: Routes.home), isNull);
+      expect(updateRedirect(required: false, location: Routes.safety), isNull);
     });
   });
 
-  testWidgets('the router presenter pushes the screen once and removes it', (
-    tester,
-  ) async {
-    final navKey = GlobalKey<NavigatorState>();
+  testWidgets('a deep link or go() cannot get past it; help opens and closes '
+      'back onto it; lifting the minimum lets the app through', (tester) async {
+    final required = ValueNotifier<bool>(true);
+    addTearDown(required.dispose);
+    final router = GoRouter(
+      initialLocation: Routes.home,
+      refreshListenable: required,
+      redirect: (_, state) => updateRedirect(
+        required: required.value,
+        location: state.matchedLocation,
+      ),
+      routes: [
+        GoRoute(path: Routes.root, redirect: (_, _) => Routes.home),
+        GoRoute(path: Routes.home, builder: (_, _) => const Text('home')),
+        GoRoute(path: Routes.checkIn, builder: (_, _) => const Text('checkin')),
+        GoRoute(path: Routes.safety, builder: (_, _) => const Text('safety')),
+        GoRoute(
+          path: Routes.updateRequired,
+          builder: (_, _) =>
+              const UpdateRequiredScreen(platform: TargetPlatform.android),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(
-          navigatorKey: navKey,
+        child: MaterialApp.router(
+          routerConfig: router,
           theme: buildAuraTheme(const Locale('en')),
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             ...systemLocalizationDelegates,
           ],
-          home: const Scaffold(body: Text('home')),
         ),
       ),
     );
-    final presenter = RouterUpdateRequiredPresenter(() => navKey.currentState);
-    presenter
-      ..show()
-      ..show();
-    await tester.pumpAndSettle();
-    expect(find.text('Please update Aura'), findsOneWidget);
-    presenter.show();
     await tester.pumpAndSettle();
     expect(find.byType(UpdateRequiredScreen), findsOneWidget);
-    presenter.hide();
+
+    // The widget's aura://checkin, a notification tap, any go()/push().
+    router.go(Routes.checkIn);
+    await tester.pumpAndSettle();
+    expect(find.text('checkin'), findsNothing);
+    expect(find.byType(UpdateRequiredScreen), findsOneWidget);
+    unawaited(router.push(Routes.checkIn));
+    await tester.pumpAndSettle();
+    expect(find.text('checkin'), findsNothing);
+
+    // Help is never locked, and closing it returns to the update screen.
+    unawaited(router.push(Routes.safety));
+    await tester.pumpAndSettle();
+    expect(find.text('safety'), findsOneWidget);
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byType(UpdateRequiredScreen), findsOneWidget);
+
+    required.value = false;
     await tester.pumpAndSettle();
     expect(find.byType(UpdateRequiredScreen), findsNothing);
     expect(find.text('home'), findsOneWidget);
@@ -309,7 +360,7 @@ void main() {
       );
       await tester.pump();
       router.routerDelegate.navigatorKey.currentState!.push(
-        UpdateRequiredScreen.route(),
+        MaterialPageRoute<void>(builder: (_) => const UpdateRequiredScreen()),
       );
       await tester.pumpAndSettle();
       expect(find.text('Please update Aura'), findsOneWidget);

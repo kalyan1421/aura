@@ -204,3 +204,12 @@ Stored once per (person, key) with the day computed the first time (`on conflict
 deleting a capsule or check-in, a refund, a downgrade or a purged room never removes one, and no purchase, gift,
 Stardust or Plus perk grants one (REQ-SHR-05). Nothing (Starlight, Stardust) comes with a keepsake, and nothing comes
 with sharing (REQ-SHR-03).
+
+## 12. Minimum app version (`app_version.json`, MASVS F-6)
+
+`GET /v1/config` `minAppVersion` (per platform) against the installed version. Format
+`MAJOR[.MINOR[.PATCH]][+BUILD]` (1–5 digits per part, build 1–9 digits, surrounding spaces trimmed); anything else
+parses to nothing. Compare numerically part by part, missing parts are 0; the build number breaks a tie **only when
+both sides have one**. An update is required only when both versions parse and the installed one is lower
+(fail open: an unreadable version on either side never blocks the app). Dart: `packages/aura_domain`
+`app_version.dart`; TS: `server/aura-api/src/remote-config/app-version.ts`.

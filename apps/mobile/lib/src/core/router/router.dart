@@ -31,6 +31,7 @@ import '../../features/safety/safety_center_screen.dart';
 import '../../features/sanctuary/sanctuary_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
+import '../../features/update/update_required.dart';
 import '../a11y/motion.dart';
 import 'deep_links.dart';
 import 'routes.dart';
@@ -79,6 +80,10 @@ GoRouter router(Ref ref) {
   final gate = ValueNotifier<GateState>(ref.read(gateControllerProvider));
   ref.listen(gateControllerProvider, (_, next) => gate.value = next);
   ref.onDispose(gate.dispose);
+  // Forced update (MASVS F-6): a redirect, so no navigation can get past it.
+  final update = ValueNotifier<bool>(ref.read(updateRequiredProvider));
+  ref.listen(updateRequiredProvider, (_, next) => update.value = next);
+  ref.onDispose(update.dispose);
 
   GoRoute route(String path, Widget Function(GoRouterState s) build) => GoRoute(
     path: path,
@@ -91,11 +96,19 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
     initialLocation: Routes.root,
-    refreshListenable: gate,
+    refreshListenable: Listenable.merge([gate, update]),
     onEnter: (context, current, next, router) =>
         deepLinkOnEnter(router, next.uri, () => gate.value),
-    redirect: (context, state) =>
-        gateRedirect(gate.value, state.matchedLocation),
+    redirect: (context, state) {
+      final location = state.matchedLocation;
+      // The under-13 lock wins; otherwise an update is required before
+      // anything else (the Safety Center stays open in every state).
+      if (!gate.value.isBlocked && update.value) {
+        return updateRedirect(required: true, location: location);
+      }
+      return updateRedirect(required: false, location: location) ??
+          gateRedirect(gate.value, location);
+    },
     routes: [
       route(Routes.root, (_) => const SizedBox.shrink()),
       route(Routes.welcome, (_) => const WelcomeScreen()),
@@ -104,6 +117,7 @@ GoRouter router(Ref ref) {
       route(Routes.language, (_) => const LanguageScreen()),
       route(Routes.onboardingSignIn, (_) => const SignInScreen()),
       route(Routes.blocked, (_) => const BlockedScreen()),
+      route(Routes.updateRequired, (_) => const UpdateRequiredScreen()),
       // Home · Sanctuary · [Check in] · Rooms · Insights. Branch order is
       // ShellTab's.
       StatefulShellRoute.indexedStack(

@@ -10,6 +10,7 @@ import { redisOptionsFromUrl } from '../queues/redis';
 import { appendAudit } from '../safety/audit';
 import { COMPOSER_FLAG, REFLECTION_POOLS, loadReflectionConfig } from './reflection-config';
 import { holdPending } from './reflections.service';
+import { errorText } from '../common/log-scrub';
 
 /**
  * Worker side of F6 (its own BullMQ queue, like the admin pager, so the module is self-contained). Every 30 s:
@@ -133,7 +134,7 @@ export class ReflectionsWorkerHost implements OnApplicationBootstrap, OnApplicat
       concurrency: 1,
     });
     this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${err.name}`));
-    this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
+    this.worker.on('error', (err) => this.logger.warn(`worker: ${errorText(err)}`));
     await this.queue.upsertJobScheduler(TICK_SCHEDULER, { every: TICK_EVERY_MS }, { name: 'tick', data: {}, opts: { removeOnComplete: 10, removeOnFail: 50 } });
     await this.worker.waitUntilReady();
     this.logger.log(`reflections worker ready (tick every ${TICK_EVERY_MS / 1000}s: stuck pending → held, memory → expired, pool auto-pause)`);

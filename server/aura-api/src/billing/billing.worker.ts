@@ -12,6 +12,7 @@ import { BillingCoreModule } from './billing.module';
 import { expireOpenGifts } from './gifts';
 import { StoreSync, errCode } from './store-sync.service';
 import { claimTrialReminders, releaseTrialReminder } from './trial-reminder';
+import { errorText } from '../common/log-scrub';
 
 /**
  * Worker side of F12 (its own BullMQ queue `billing`, self-contained like the reflections worker):
@@ -51,7 +52,7 @@ export class BillingWorkerHost implements OnApplicationBootstrap, OnApplicationS
       concurrency: 1,
     });
     this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${errCode(err)}`));
-    this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
+    this.worker.on('error', (err) => this.logger.warn(`worker: ${errorText(err)}`));
     const opts = { removeOnComplete: 10, removeOnFail: 50 };
     await this.queue.upsertJobScheduler('aura-billing-tick', { every: BILLING_TICK_MS }, { name: 'tick', data: {}, opts });
     await this.queue.upsertJobScheduler('aura-billing-daily', { pattern: BILLING_DAILY_CRON, tz: 'UTC' }, { name: 'daily', data: {}, opts });

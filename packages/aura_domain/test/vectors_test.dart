@@ -27,7 +27,37 @@ StreakState _streak(Map<String, dynamic> j) => StreakState(
   lastActiveDay: _day(j['lastActiveDay']),
 );
 
+Map<String, Object?>? _versionJson(AppVersion? v) => v == null
+    ? null
+    : {'major': v.major, 'minor': v.minor, 'patch': v.patch, 'build': v.build};
+
+void _appVersionCase(Map<String, dynamic> c) {
+  switch (c['kind'] as String) {
+    case 'parse':
+      expect(_versionJson(AppVersion.tryParse(c['input'])), c['expect']);
+    case 'compare':
+      final a = AppVersion.tryParse(c['a'])!;
+      final b = AppVersion.tryParse(c['b'])!;
+      expect(a.compareTo(b).sign, c['expect']);
+    case 'required':
+      expect(
+        isUpdateRequired(
+          AppVersion.tryParse(c['installed']),
+          AppVersion.tryParse(c['minimum']),
+        ),
+        c['expect'],
+      );
+    default:
+      fail('Unknown app_version.json case kind "${c['kind']}"');
+  }
+}
+
 final Map<String, void Function(Map<String, dynamic>)> runners = {
+  'app_version.json': (json) {
+    for (final c in _cases(json)) {
+      test(c['name'], () => _appVersionCase(c));
+    }
+  },
   'aura_day.json': (json) {
     for (final c in _cases(json)) {
       test(c['name'], () {

@@ -14,7 +14,6 @@ import 'features/capsules/capsule_providers.dart';
 import 'features/onboarding/gate_controller.dart';
 import 'features/profile/timezone_sync.dart';
 import 'features/push/push_inbox.dart';
-import 'features/update/update_required.dart';
 import 'features/widget/widget_bridge.dart';
 import 'features/widget/widget_follow_up.dart';
 
@@ -65,9 +64,6 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     // Remote flags + the signed crisis lexicon (PRD 19 REQ-ADM-12): kept copy
     // at start, then polled while in the foreground.
     ref.watch(remoteConfigControllerProvider);
-    // Forced update (MASVS F-6): "Please update Aura" above everything while
-    // this install is older than the server's minimum.
-    ref.watch(updateGateProvider);
     // Home-screen widget (F11): imports widget check-ins, publishes what
     // the widget shows.
     ref.watch(widgetBridgeProvider);

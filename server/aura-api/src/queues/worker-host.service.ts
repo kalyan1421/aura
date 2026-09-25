@@ -91,7 +91,7 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
     );
     for (const w of this.workers) {
       w.on('failed', (job, err) => this.logger.warn(`[${w.name}] job ${job?.name} id=${job?.id} failed: ${errorText(err)}`));
-      w.on('error', (err) => this.logger.warn(`[${w.name}] ${err.message}`));
+      w.on('error', (err) => this.logger.warn(`[${w.name}] ${errorText(err)}`));
     }
     // Idempotent: upserting the scheduler never duplicates the repeatable job.
     await this.queues

@@ -78,12 +78,21 @@ done
 hr "Dart advisories: pubspec.lock"
 LOCK="$ROOT/pubspec.lock"
 if command -v osv-scanner >/dev/null; then
-  if osv-scanner scan source --lockfile "$LOCK" 2>&1 || osv-scanner --lockfile "$LOCK" 2>&1; then
-    record "pubspec.lock (osv-scanner)" "OK"
-  else
-    record "pubspec.lock (osv-scanner)" "VULNERABLE or ERROR (see above)"
-    found=1
+  # osv-scanner exit codes: 0 = clean, 1 = vulnerabilities found, anything
+  # else = it couldn't scan. v2 syntax first; the v1 form only when v2 itself
+  # failed to run (never after it has already reported findings).
+  osv-scanner scan source --lockfile "$LOCK" 2>&1
+  rc=$?
+  if [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; then
+    echo "(osv-scanner v2 syntax failed with $rc; trying the v1 form)"
+    osv-scanner --lockfile "$LOCK" 2>&1
+    rc=$?
   fi
+  case "$rc" in
+    0) record "pubspec.lock (osv-scanner)" "OK" ;;
+    1) record "pubspec.lock (osv-scanner)" "VULNERABLE (see above)"; found=1 ;;
+    *) record "pubspec.lock (osv-scanner)" "ERROR (exit $rc)"; errored=1 ;;
+  esac
 else
   echo "(osv-scanner not installed: querying api.osv.dev directly)"
   out="$(python3 - "$LOCK" <<'PY'

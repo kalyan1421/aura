@@ -36,6 +36,7 @@ import {
 } from '../../src/rules/insights';
 import { addMonthsClamped, lookBackGate, lookBackSky, lookBackWindows, type LookBackEntry } from '../../src/rules/look-back';
 import { capsuleYears, earnedKeepsakes, sharePrompt, type KeepsakeSources } from '../../src/keepsakes/keepsake-rules';
+import { compareAppVersions, parseAppVersion } from '../../src/remote-config/app-version';
 
 const VECTORS_DIR = resolve(__dirname, '..', '..', '..', '..', 'contracts', 'rules', 'vectors');
 
@@ -43,6 +44,24 @@ type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-ex
 type Runner = (c: Json, file: Json) => void;
 
 const runners: Record<string, Runner> = {
+  // RULES.md §12 (MASVS F-6 minimum app version).
+  'app_version.json': (c) => {
+    switch (c.kind) {
+      case 'parse': {
+        const v = parseAppVersion(c.input);
+        return expect(v ? { major: v.parts[0], minor: v.parts[1], patch: v.parts[2], build: v.build } : null).toEqual(c.expect);
+      }
+      case 'compare':
+        return expect(Math.sign(compareAppVersions(parseAppVersion(c.a)!, parseAppVersion(c.b)!))).toBe(c.expect);
+      case 'required': {
+        const installed = parseAppVersion(c.installed);
+        const minimum = parseAppVersion(c.minimum);
+        return expect(installed !== null && minimum !== null && compareAppVersions(installed, minimum) < 0).toBe(c.expect);
+      }
+      default:
+        throw new Error(`app_version.json: unknown kind ${String(c.kind)}`);
+    }
+  },
   'aura_day.json': (c) => expect(auraDay(c.utc, c.tz)).toBe(c.expect),
   'eligibility.json': (c) =>
     expect(isEligible({ deviceTs: c.deviceTs, serverNow: c.serverNow, tz: c.tz, localDay: c.localDay })).toBe(c.expect),

@@ -52,7 +52,7 @@ export class UserMailWorkerHost implements OnApplicationBootstrap, OnApplication
       concurrency: 2,
     });
     this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${errorText(err, 80)}`));
-    this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
+    this.worker.on('error', (err) => this.logger.warn(`worker: ${errorText(err)}`));
     await this.worker.waitUntilReady();
     this.logger.log('user mail worker ready (trial-ending email)');
   }

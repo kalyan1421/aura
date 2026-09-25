@@ -6,6 +6,7 @@ import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
 import { redisOptionsFromUrl } from '../queues/redis';
 import { runFullSweep, runRecentSweep, type SweepSummary } from './sweep';
+import { errorText } from '../common/log-scrub';
 
 /**
  * Worker side of F13 keepsakes (its own BullMQ queue, like the ripples tick, so the feature stays self-contained):
@@ -42,7 +43,7 @@ export class KeepsakesWorkerHost implements OnApplicationBootstrap, OnApplicatio
       concurrency: 1,
     });
     this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${err.name}`));
-    this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
+    this.worker.on('error', (err) => this.logger.warn(`worker: ${errorText(err)}`));
     await this.queue.upsertJobScheduler(TICK_SCHEDULER, { every: TICK_EVERY_MS }, { name: 'tick', data: {}, opts: { removeOnComplete: 10, removeOnFail: 50 } });
     await this.worker.waitUntilReady();
     this.logger.log(`keepsakes worker ready (tick every ${TICK_EVERY_MS / 60_000} min; everyone daily)`);

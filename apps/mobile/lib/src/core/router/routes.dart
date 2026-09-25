@@ -46,6 +46,10 @@ abstract final class Routes {
   static const String signIn = '/sign-in';
   static const String debugAvatar = '/debug/avatar';
 
+  /// "Please update Aura" (MASVS F-6, features/update): every other route
+  /// redirects here while this install is below the server's minimum.
+  static const String updateRequired = '/update-required';
+
   static String forStage(OnboardingStage s) => switch (s) {
     OnboardingStage.welcome => welcome,
     OnboardingStage.trust => trust,
@@ -55,6 +59,19 @@ abstract final class Routes {
     OnboardingStage.firstCheckIn => checkIn,
     OnboardingStage.done => home,
   };
+}
+
+/// Forced update (MASVS F-6), a pure rule applied by the router to every
+/// navigation (deep links, `go`, `push`, notification taps): while [required],
+/// everything but the Safety Center lands on [Routes.updateRequired]; once the
+/// minimum is lowered, that route bounces to the root (the gate takes over).
+/// Null = no opinion (the gate rule decides).
+String? updateRedirect({required bool required, required String location}) {
+  if (location == Routes.safety) return null;
+  if (required) {
+    return location == Routes.updateRequired ? null : Routes.updateRequired;
+  }
+  return location == Routes.updateRequired ? Routes.root : null;
 }
 
 /// Pure redirect rule (unit-testable): the Safety Center opens in every

@@ -9,6 +9,7 @@ import { AdminCoreModule } from '../admin-core.module';
 import { AuditExportService } from '../audit-export';
 import { GrievanceMail } from '../grievance-mail';
 import { PagingService } from './paging.service';
+import { errorText } from '../../common/log-scrub';
 
 /**
  * The admin module's own BullMQ queue (kept apart from the shared registry in src/queues so this module is
@@ -51,7 +52,7 @@ export class PagingWorkerHost implements OnApplicationBootstrap, OnApplicationSh
       concurrency: 1,
     });
     this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${err.name}`));
-    this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
+    this.worker.on('error', (err) => this.logger.warn(`worker: ${errorText(err)}`));
     const opts = { removeOnComplete: 10, removeOnFail: 50 };
     await this.queue.upsertJobScheduler(TICK_SCHEDULER, { every: TICK_EVERY_MS }, { name: 'tick', data: {}, opts });
     const cron = this.config.paging.weeklyTestCron;

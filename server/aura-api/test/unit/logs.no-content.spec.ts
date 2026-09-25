@@ -52,16 +52,9 @@ const ALLOWLIST: Record<string, string> = {
   'src/main.ts :: String(err)': 'bootstrap config error: names variables, never values',
   'src/worker.ts :: err.message': 'bootstrap config error: names variables, never values',
   'src/worker.ts :: String(err)': 'bootstrap config error: names variables, never values',
-  // BullMQ `worker.on('error')` and ioredis `error` events are connection and
-  // Redis protocol errors (ECONNREFUSED, READONLY…); they never carry job data.
-  'src/reflections/reflections.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/user-mail/user-mail.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/admin/paging/paging.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/quiet/quiet.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/ripples/ripples.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/keepsakes/keepsakes.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/billing/billing.worker.ts :: err.message': 'BullMQ worker connection error',
-  'src/queues/worker-host.service.ts :: err.message': 'BullMQ worker connection error (the job-failed handler uses errorText)',
+  // ioredis `error` events are connection and Redis protocol errors
+  // (ECONNREFUSED, READONLY…); they never carry job data. (BullMQ worker
+  // `error` handlers go through errorText like every other error log.)
   'src/queues/queues.service.ts :: e.message': 'ioredis connection error',
   // `error` holds mailErrorCode(e) (src/admin/mail/mailer.ts), a fixed code.
   'src/admin/deletion-cases.service.ts :: error': 'a mailErrorCode() code, not error text',
@@ -225,6 +218,15 @@ describe('log scrubbing (src/common/log-scrub.ts)', () => {
     );
     expect(scrubErrorText('column "note_ct" of relation "checkins" does not exist')).toBe('column "note_ct" of relation "checkins" does not exist');
     expect(scrubErrorText('x'.repeat(400)).length).toBe(301);
+  });
+
+  it('values with line breaks, escaped quotes or no closing quote are scrubbed too', () => {
+    expect(scrubErrorText(`Unexpected token 'I', "I felt\nalone today" is not valid JSON`)).toBe(
+      `Unexpected token '…', "…" is not valid JSON`,
+    );
+    expect(scrubErrorText('bad value "a\\"b secret" here')).toBe('bad value "…" here');
+    expect(scrubErrorText('cut off "I felt so alone and')).toBe('cut off "…');
+    expect(scrubErrorText("can't parse, it's fine")).toBe("can't parse, it's fine");
   });
 
   it('errorText / errorStack scrub thrown values', () => {

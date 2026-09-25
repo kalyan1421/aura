@@ -12,15 +12,37 @@
 const IDENTIFIER_BEFORE =
   /\b(constraint|relation|column|table|index|function|type|schema|role|database|operator|sequence|trigger|view|extension|queue|job)\s*$/i;
 
-const QUOTED = /"([^"\n]*)"|'([^'\n]*)'|`([^`\n]*)`/g;
+const WORD_CHAR = /[\p{L}\p{N}]/u;
 
+/**
+ * Quoted values (`"…"`, `` `…` ``, and `'…'` that opens a token, so apostrophes in "can't" are prose) become `"…"`,
+ * whatever they hold: line breaks and escaped quotes (`"a\"b"`) included. An opening `"` or backtick that never
+ * closes (a value cut off mid-message) drops the rest of the text.
+ */
 export function scrubErrorText(text: string, max = 300): string {
-  const out = text.replace(QUOTED, (match: string, _d: string, _s: string, _b: string, offset: number, whole: string) => {
-    const before = whole.slice(Math.max(0, offset - 24), offset);
-    if (IDENTIFIER_BEFORE.test(before)) return match;
-    const q = match[0];
-    return `${q}…${q}`;
-  });
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i];
+    const opens = c === '"' || c === '`' || (c === "'" && (i === 0 || !WORD_CHAR.test(text[i - 1])));
+    if (!opens) {
+      out += c;
+      i++;
+      continue;
+    }
+    let j = i + 1;
+    while (j < text.length && text[j] !== c && !(c === "'" && text[j] === '\n')) j += text[j] === '\\' ? 2 : 1;
+    if (j < text.length && text[j] === c) {
+      out += IDENTIFIER_BEFORE.test(out.slice(-24)) ? text.slice(i, j + 1) : `${c}…${c}`;
+      i = j + 1;
+    } else if (c === "'") {
+      out += c; // a lone apostrophe-like quote: prose
+      i++;
+    } else {
+      out += `${c}…`; // unclosed value: nothing after it is logged
+      break;
+    }
+  }
   return out.length > max ? `${out.slice(0, max)}…` : out;
 }
 
