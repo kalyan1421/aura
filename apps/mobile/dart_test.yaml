@@ -1,0 +1,11 @@
+# Tags used by this package's tests.
+tags:
+  # The design capture harness (test/design_capture): renders every screen to
+  # docs/design/screens/. Skipped by a plain `flutter test`. A config-level
+  # `exclude_tags` can't be undone from the command line (package:test
+  # intersects --tags with it), so it is skipped here instead and run with
+  #   flutter test --tags capture --run-skipped test/design_capture
+  capture:
+    skip: >-
+      Design capture harness; run it with
+      flutter test --tags capture --run-skipped test/design_capture

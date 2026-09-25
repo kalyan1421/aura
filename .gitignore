@@ -26,3 +26,6 @@ infra/redis-data/
 key.properties
 *.jks
 *.keystore
+
+# Design captures (regenerate: cd apps/mobile && flutter test --tags capture --run-skipped test/design_capture)
+docs/design/screens/*.png
