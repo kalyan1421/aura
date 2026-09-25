@@ -371,7 +371,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'ae7c8d1f5d9d9d94da04696fbc8f7d23b226b685';
+String _$authRepositoryHash() => r'33cc0cf9084cd2a26036e21f98ffc3b033140f86';
 
 /// `true` while the device has a network interface up.
 
@@ -1136,7 +1136,7 @@ final class SyncControllerProvider
   }
 }
 
-String _$syncControllerHash() => r'445ab86ac1746c41099f58726691ee4d5c2a59ce';
+String _$syncControllerHash() => r'c294b2bd78129d7311db5c6a6e029b2257888ea6';
 
 /// The FCM adapter, or `null` when Firebase did not initialise (main.dart
 /// overrides it). Push is then simply off; the app works fully without it.
