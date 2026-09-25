@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/db/database.dart';
 import '../../core/entitlements/plus.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../onboarding/gate_controller.dart';
 
 /// Where Aura Plus may be offered (PRD F12: "It shows only on limit screens
@@ -188,10 +189,13 @@ Quadrant? _quadrant(CheckInRow row) =>
     Quadrant.values.asNameMap()[row.quadrant];
 
 /// The decision for [surface] right now. Fails closed while the local
-/// signals load or can't be read.
+/// signals load or can't be read. With purchases switched off
+/// ([plusEnabledProvider]) it is only ever the calm "Part of Aura Plus" line:
+/// never an offer, a link or a price.
 final paywallModeProvider = Provider.autoDispose
     .family<PaywallMode, PaywallSurface>((ref, surface) {
       if (ref.watch(plusActiveProvider)) return PaywallMode.none;
+      if (!ref.watch(plusEnabledProvider)) return PaywallMode.lockedOnly;
       final signals = ref.watch(paywallSignalsProvider).value;
       if (signals == null) return PaywallMode.lockedOnly;
       final time = ref.read(timeContextProvider);

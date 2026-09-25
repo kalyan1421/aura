@@ -4,7 +4,7 @@ import { CurrentUser } from '../auth/current-user.decorator';
 import type { AuthUser } from '../auth/jwt-verifier';
 import { Public } from '../auth/public.decorator';
 import { ApiError } from '../common/api-error';
-import { KillSwitch, type KillSwitchSpec } from '../remote-config/kill-switch';
+import { KillSwitch, PLUS_KILL_SWITCH, type KillSwitchSpec } from '../remote-config/kill-switch';
 import { BillingService, type EntitlementView, type VerifyResponse } from './billing.service';
 import { PUBSUB_VERIFIER } from './billing.tokens';
 import type { GiftChecked, ReceivedGift } from './gifts';
@@ -21,6 +21,8 @@ export const GIFTS_KILL_SWITCH: KillSwitchSpec = {
 /**
  * F12 Monetization — contracts/api/v1-billing.md. Every `/v1/billing/*` route except the two webhooks: Supabase JWT,
  * `403 account_deletion_pending` during a deletion grace period (global guards), `Cache-Control: no-store`.
+ * Every route that buys or spends (purchases, restore, gifts, Stardust) answers `503 plus_disabled` while
+ * `plus_enabled` is off (v1.0 launches free; PLUS_KILL_SWITCH). Reads, the sky choice and gift cleanup stay open.
  */
 @Controller('v1/billing')
 export class BillingController {
@@ -35,6 +37,7 @@ export class BillingController {
   /** 200 with `status`; `confirming` answers 202 (the store couldn't be asked yet — nothing granted). */
   @Post('purchases')
   @Header('Cache-Control', 'no-store')
+  @KillSwitch(PLUS_KILL_SWITCH)
   async verify(@CurrentUser() user: AuthUser, @Body() body: unknown, @Res({ passthrough: true }) res: Response): Promise<VerifyResponse> {
     const out = await this.billing.verify(user.id, body);
     res.status(out.status === 'confirming' ? 202 : 200);
@@ -44,6 +47,7 @@ export class BillingController {
   @Post('restore')
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
+  @KillSwitch(PLUS_KILL_SWITCH)
   restore(@CurrentUser() user: AuthUser, @Body() body: unknown): ReturnType<BillingService['restore']> {
     return this.billing.restore(user.id, body);
   }
@@ -51,7 +55,7 @@ export class BillingController {
   @Post('gifts')
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
-  @KillSwitch(GIFTS_KILL_SWITCH)
+  @KillSwitch(PLUS_KILL_SWITCH, GIFTS_KILL_SWITCH)
   checkGift(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<GiftChecked & { accountToken: string }> {
     return this.billing.checkGift(user.id, body);
   }
@@ -79,6 +83,7 @@ export class BillingController {
   @Post('stardust/redeem')
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
+  @KillSwitch(PLUS_KILL_SWITCH)
   redeem(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<EntitlementView> {
     return this.billing.redeem(user.id, body);
   }

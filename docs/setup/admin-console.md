@@ -230,7 +230,9 @@ as is; keep it current in the migration that changes the behaviour, ≤ 300 char
 default; pauses reflections and throttles sign-ups beyond `payload.signupsPerHour`, default 20/h, with `503
 signups_throttled` — contracts/api/v1.md "Reduced mode"; turn it on before being unreachable), **`hold_all`** (off by
 default; every new reflection waits for a human), `ripples_enabled`, `ripples_echoes`, `gifts_enabled`,
-`room_lanterns_enabled`, `room_intention_enabled`, `quiet_enabled` and `lantern_wind_down_enabled`. A "PRD 19 kill
+`room_lanterns_enabled`, `room_intention_enabled`, `quiet_enabled`, `lantern_wind_down_enabled` and **`plus_enabled`**
+(off at v1.0 launch: every purchase surface hidden and purchase routes `503 plus_disabled`; turn on only once the store
+products are live and the privacy labels declare purchase history). A "PRD 19 kill
 switches" list on the page maps each switch PRD 19 names to its flag and flags any that is missing.
 
 **Per region** (same page): Quiet Together (`quiet_enabled`) and the Lantern Hour wind-down (`lantern_wind_down_enabled`)

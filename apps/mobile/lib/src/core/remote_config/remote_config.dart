@@ -50,6 +50,9 @@ class RemoteFlags {
     ripplesEnabledKey: true,
     quietEnabledKey: true,
     lanternWindDownEnabledKey: true,
+    // Off until the server says otherwise: a fresh install that has never
+    // reached the server (or is offline) never shows a purchase.
+    plusEnabledKey: false,
   };
 
   static const RemoteFlags defaults = RemoteFlags();
@@ -75,6 +78,14 @@ class RemoteFlags {
   /// server answers `503 wind_down_paused`, also per region).
   static const String lanternWindDownEnabledKey = 'lantern_wind_down_enabled';
 
+  /// Off switch for everything you can buy (v1.0 launches free): off → no
+  /// paywall, no Plus card or section, no gift, no sky / Stardust purchase,
+  /// no restore, and the store plugin is never asked anything. Plus-only
+  /// features stay locked with their calm "Part of Aura Plus" line. The
+  /// server refuses purchases itself (`503 plus_disabled`). Bundled default
+  /// OFF.
+  static const String plusEnabledKey = 'plus_enabled';
+
   final Map<String, FlagValue> _values;
 
   /// A flag the server sent, else its bundled default, else off.
@@ -88,6 +99,7 @@ class RemoteFlags {
   bool get ripplesEnabled => enabled(ripplesEnabledKey);
   bool get quietEnabled => enabled(quietEnabledKey);
   bool get lanternWindDownEnabled => enabled(lanternWindDownEnabledKey);
+  bool get plusEnabled => enabled(plusEnabledKey);
 
   /// Keys the server sent (tests, debug).
   Iterable<String> get keys => _values.keys;

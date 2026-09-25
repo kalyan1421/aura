@@ -24,8 +24,9 @@ import { createUser, dbPool, deleteUser, type TestUser } from './support';
 /**
  * F12 Monetization end to end: the real Nest app on the live local Supabase + Redis, with the store boundaries faked
  * (App Store Server API, Play Developer API) and App Store JWS signed by the committed TEST CA (the verifier is built
- * with that root instead of Apple's). Every user, room and store id here is unique; no global row (flags, configs) is
- * touched.
+ * with that root instead of Apple's). Every user, room and store id here is unique; the only global row touched is the
+ * `plus_enabled` flag (v1.0 ships it OFF): this suite turns purchases on for its run and puts the row back afterwards.
+ * The off state itself is covered in remote-config.e2e-spec.ts.
  */
 jest.setTimeout(60_000);
 
@@ -149,8 +150,16 @@ describe('F12 billing (e2e, live local Supabase + Redis, fake stores)', () => {
     ...over,
   });
 
+  let savedPlus: boolean | null = null;
+
   beforeAll(async () => {
     Logger.overrideLogger(['error']);
+    db = dbPool();
+    savedPlus = (await db.query<{ enabled: boolean }>(`select enabled from public.feature_flags where key = 'plus_enabled'`)).rows[0]?.enabled ?? null;
+    await db.query(
+      `insert into public.feature_flags (key, enabled, description) values ('plus_enabled', true, 'e2e (billing suite)')
+       on conflict (key) do update set enabled = true`,
+    );
     const jwk = (await exportJWK(google.publicKey)) as JWK;
     const ref = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(APPLE_JWS_VERIFIER)
@@ -168,11 +177,14 @@ describe('F12 billing (e2e, live local Supabase + Redis, fake stores)', () => {
     configureApp(app);
     await app.init();
     await app.listen(0, '127.0.0.1');
-    db = dbPool();
   });
 
   afterAll(async () => {
     for (const u of users) await deleteUser(u.id);
+    if (db) {
+      if (savedPlus === null) await db.query(`delete from public.feature_flags where key = 'plus_enabled'`);
+      else await db.query(`update public.feature_flags set enabled = $1 where key = 'plus_enabled'`, [savedPlus]);
+    }
     await db?.end();
     await app?.close();
   });

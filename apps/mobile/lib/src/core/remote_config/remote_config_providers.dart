@@ -114,3 +114,11 @@ class RemoteFlagsNotifier extends Notifier<RemoteFlags> {
     return flags.value;
   }
 }
+
+/// Whether anything can be bought in this build right now
+/// ([RemoteFlags.plusEnabled]; bundled default off). Every purchase surface
+/// (paywall routes, Plus cards and Settings section, gifts, skies, restore,
+/// the store plugin itself) checks this one provider.
+final plusEnabledProvider = Provider<bool>(
+  (ref) => ref.watch(remoteFlagsProvider.select((f) => f.plusEnabled)),
+);

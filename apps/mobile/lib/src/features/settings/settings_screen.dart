@@ -252,8 +252,11 @@ class SettingsScreen extends ConsumerWidget {
               ),
 
             // ---- Aura Plus (F12: status, manage, Restore, sky + Stardust;
-            // features/plus). Signed-in accounts only (purchases are online).
-            if (auth.isAvailable && user != null) ...[
+            // features/plus). Signed-in accounts only (purchases are online),
+            // and only while purchases are switched on (`plus_enabled`).
+            if (auth.isAvailable &&
+                user != null &&
+                ref.watch(plusEnabledProvider)) ...[
               section(l.plus_title, 'plus'),
               const PlusSettingsSection(),
             ],

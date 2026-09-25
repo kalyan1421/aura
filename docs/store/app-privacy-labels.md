@@ -41,6 +41,14 @@
 | Contacts, Browsing History, Search History, Sensitive Info | **No** | — | — | — | Aura collects no gender, religion, caste or similar fields. | — |
 | **Other Data → Other Data Types** | Yes | Yes | No | App Functionality | **Full date of birth** (DS-6: age gate, invisible under-18 protections). **Under-18 platform signal flag** (a boolean, only when a store age signal says under 18 but the DOB says adult). UI locale, language pool, IANA timezone and `tz_region`, device-region country (matching and Lantern Hour). Consents. | `public.profiles.birth_date`, `minor_signals`, `user_consents`; `POST /v1/profile` (`api_models.dart:132-140`) |
 
+> **v1.0 launches free (`plus_enabled` off).** While the `plus_enabled` flag is off (the default; migration
+> `20261005000035_plus_enabled.sql`) the app shows no purchase and never touches StoreKit, and NestJS refuses every
+> purchase route (`503 plus_disabled`), so **no purchase history is collected at launch**. The `Purchases → Purchase
+> History` row above is therefore accurate only once Plus is switched on. Either keep it declared for v1.0 (over-
+> declaring is allowed and saves a label change later), or remove it for v1.0 and re-add it **before** turning
+> `plus_enabled` on. AK decides. Nothing else in this table changes: `appAccountToken` is only created when the
+> entitlement is first read, and it is not purchase data.
+
 **Not collected even though they touch the network:**
 - Crisis sheet and helpline taps go to an unauthenticated **aggregate counter** (`crisis_events`: surface, locale, country, time; no user or device id; DS-7). This is aggregate operational data, not data about a user.
 - Echo breath traces (`echo_library.recordings`) are stored with **no link to anyone**. If AK wants them declared anyway: Product Interaction, **not linked**.

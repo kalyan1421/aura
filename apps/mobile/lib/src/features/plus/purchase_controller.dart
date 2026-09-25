@@ -7,6 +7,7 @@ import '../../core/entitlements/billing_api.dart';
 import '../../core/entitlements/plus.dart';
 import '../../core/net/aura_api.dart' show ApiException;
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import 'store_gateway.dart';
 
 /// Where a purchase stands (PRD 14-states "Paywall, trial and store").
@@ -95,6 +96,11 @@ class PurchaseController extends Notifier<PurchaseState> {
   StoreGateway get _store => ref.read(storeGatewayProvider);
   BillingApi? get _api => ref.read(billingApiProvider);
 
+  /// Purchases switched off (`plus_enabled`): the store plugin is never
+  /// initialised, listened to or asked for products, and nothing is bought
+  /// or restored — every flow answers "store unavailable" without a call.
+  bool get _off => !ref.read(plusEnabledProvider);
+
   @override
   PurchaseState build() {
     ref.onDispose(() {
@@ -109,6 +115,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   }
 
   void _listen() {
+    if (_off) return;
     try {
       _sub = _store.purchases.listen(
         (list) => unawaited(_onPurchases(list)),
@@ -122,6 +129,10 @@ class PurchaseController extends Notifier<PurchaseState> {
 
   /// Loads the store's own products and prices (skeleton until then).
   Future<void> load(Set<String> ids) async {
+    if (_off) {
+      state = state.copyWith(phase: PurchasePhase.storeUnavailable);
+      return;
+    }
     if (_sub == null && _api != null) _listen();
     state = state.copyWith(phase: PurchasePhase.loading);
     try {
@@ -148,7 +159,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   Future<void> buy(String productId, {String? giftId}) async {
     final product = state.products[productId];
     final api = _api;
-    if (product == null || api == null) {
+    if (_off || product == null || api == null) {
       state = state.copyWith(phase: PurchasePhase.storeUnavailable);
       return;
     }
@@ -182,7 +193,7 @@ class PurchaseController extends Notifier<PurchaseState> {
   /// purchases; the server confirms each and follows the account (§2.3).
   Future<void> restore() async {
     final api = _api;
-    if (api == null) {
+    if (_off || api == null) {
       state = state.copyWith(phase: PurchasePhase.storeUnavailable);
       return;
     }

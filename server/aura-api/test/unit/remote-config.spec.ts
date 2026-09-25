@@ -9,7 +9,8 @@ import { generateKeyPairSync } from 'node:crypto';
 import type { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ApiError } from '../../src/common/api-error';
-import { KILL_SWITCH, KillSwitchGuard, ROOMS_KILL_SWITCH } from '../../src/remote-config/kill-switch';
+import { KILL_SWITCH, KillSwitch, KillSwitchGuard, PLUS_KILL_SWITCH, ROOMS_KILL_SWITCH } from '../../src/remote-config/kill-switch';
+import { BillingController, GIFTS_KILL_SWITCH } from '../../src/billing/billing.controller';
 import { baselineLexicon, contractVectors, type LexiconDocument } from '../../src/remote-config/lexicon/document';
 import { diffLexicons } from '../../src/remote-config/lexicon.service';
 import { compareAppVersions, effectiveMinAppVersion, parseAppVersion } from '../../src/remote-config/app-version';
@@ -241,6 +242,42 @@ describe('KillSwitchGuard', () => {
     const err = await guard({ rooms_enabled: false }).canActivate(ctx(ROOMS_KILL_SWITCH)).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err).toMatchObject({ status: 503, code: 'rooms_paused' });
+  });
+
+  it('plus_enabled is opt-in: off OR missing → 503 plus_disabled; on → through', async () => {
+    for (const flags of [{ plus_enabled: false }, {}] as Array<Record<string, boolean>>) {
+      const err = await guard(flags).canActivate(ctx([PLUS_KILL_SWITCH])).catch((e: unknown) => e);
+      expect(err).toBeInstanceOf(ApiError);
+      expect(err).toMatchObject({ status: 503, code: 'plus_disabled' });
+    }
+    await expect(guard({ plus_enabled: true }).canActivate(ctx([PLUS_KILL_SWITCH]))).resolves.toBe(true);
+  });
+
+  it('several switches on one route: every one must be on; the first off one answers', async () => {
+    const both = ctx([PLUS_KILL_SWITCH, GIFTS_KILL_SWITCH]);
+    await expect(guard({ plus_enabled: true, gifts_enabled: true }).canActivate(both)).resolves.toBe(true);
+    await expect(guard({ plus_enabled: true }).canActivate(both)).resolves.toBe(true); // gifts missing → on
+    expect(await guard({ plus_enabled: false, gifts_enabled: true }).canActivate(both).catch((e: unknown) => e)).toMatchObject({ code: 'plus_disabled' });
+    expect(await guard({ plus_enabled: true, gifts_enabled: false }).canActivate(both).catch((e: unknown) => e)).toMatchObject({ code: 'gifts_paused' });
+  });
+
+  it('the billing routes that buy or spend carry PLUS_KILL_SWITCH; reads, sky choice and webhooks do not', () => {
+    const reflector = new Reflector();
+    const specs = (m: keyof BillingController): string[] =>
+      ((reflector.get<unknown>(KILL_SWITCH, BillingController.prototype[m] as () => unknown) as unknown[] | undefined) ?? [])
+        .flat()
+        .map((s) => (s as { flag: string }).flag);
+    for (const m of ['verify', 'restore', 'checkGift', 'redeem'] as const) expect(specs(m)).toContain('plus_enabled');
+    expect(specs('checkGift')).toEqual(['plus_enabled', 'gifts_enabled']);
+    for (const m of ['entitlement', 'sky', 'received', 'seen', 'cancelGift'] as const) expect(specs(m)).toEqual([]);
+  });
+
+  it('@KillSwitch stores its specs as a list', () => {
+    class C {
+      @KillSwitch(ROOMS_KILL_SWITCH)
+      m(): void {}
+    }
+    expect(new Reflector().get(KILL_SWITCH, C.prototype.m)).toEqual([ROOMS_KILL_SWITCH]);
   });
 });
 

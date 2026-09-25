@@ -15,10 +15,11 @@ import 'store_gateway.dart';
 const String giftsEnabledFlag = 'gifts_enabled';
 
 /// Whether this person can open the gift sheet at all (the member sheet's
-/// entry): the gifts switch is on and gifting isn't paused / disabled. Blocked
+/// entry): purchases are on (`plus_enabled`), the gifts switch is on and gifting isn't paused / disabled. Blocked
 /// people never appear in a room's member list, so their entry never shows
 /// (REQ-PAY-04 "Blocked recipient → gift icon hidden").
 final giftEntryVisibleProvider = Provider<bool>((ref) {
+  if (!ref.watch(plusEnabledProvider)) return false;
   final flags = ref.watch(remoteFlagsProvider);
   if (!flags.enabled(giftsEnabledFlag)) return false;
   if (ref.watch(billingApiProvider) == null) return false;

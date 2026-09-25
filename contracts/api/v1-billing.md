@@ -11,6 +11,13 @@ confirmed by the App Store Server API; a Google purchase token is always re-read
 notifications (App Store Server Notifications V2, Play RTDN) grant too — they come from the store. Nothing is ever
 granted offline (16-offline: purchases, restores and gifts are online only).
 
+**Purchases off switch (`plus_enabled`, v1.0 launches free).** While the flag is off — its default, and a missing row
+counts as off — `POST /v1/billing/purchases`, `POST /v1/billing/restore`, `POST /v1/billing/gifts` and
+`POST /v1/billing/stardust/redeem` answer **`503 { "code": "plus_disabled" }`** before anything else (migration
+`20261005000035_plus_enabled.sql`; `PLUS_KILL_SWITCH` in `src/remote-config/kill-switch.ts`). `GET /entitlement`,
+`PUT /sky`, the gift-received routes, `DELETE /gifts/:giftId` and both store webhooks are not affected. The app hides
+every purchase surface while the flag is off (its bundled default is off too).
+
 ## 1. Catalogue
 
 Same product ids in App Store Connect and Play Console. The app always shows the **store's localized price string**

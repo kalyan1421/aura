@@ -235,6 +235,50 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
       const again = await as(u, http().post('/v1/rooms/match')).send({ quadrant: 'moonlight', moodId: 'calm', timezone: 'Asia/Kolkata' });
       expect(again.status).not.toBe(503);
     });
+
+    it('purchases off switch: plus_enabled ships OFF → every buy / spend route 503 plus_disabled; reads stay open; on → through; a missing row is off', async () => {
+      const u = await appUser('rc-plus');
+      await profile(u).expect(200);
+      const saved = (await db.query<{ enabled: boolean; description: string }>(`select enabled, description from public.feature_flags where key = 'plus_enabled'`)).rows[0];
+      expect(saved).toBeDefined(); // migration 20261005000035
+      const buyOrSpend = (): Array<Promise<request.Response>> => [
+        as(u, http().post('/v1/billing/purchases')).send({ store: 'google', productId: 'aura_plus_monthly', purchaseToken: 'x'.repeat(40) }),
+        as(u, http().post('/v1/billing/restore')).send({ purchases: [] }),
+        as(u, http().post('/v1/billing/gifts')).send({ giftId: randomUUID(), roomId: randomUUID(), recipientMemberId: randomUUID(), kind: 'warm_tea' }),
+        as(u, http().post('/v1/billing/stardust/redeem')).send({ cosmeticId: 'deep_ocean', redemptionId: randomUUID() }),
+      ];
+      try {
+        await db.query(`update public.feature_flags set enabled = false where key = 'plus_enabled'`);
+        refresh();
+        expect((await http().get('/v1/config').expect(200)).body.flags.plus_enabled).toEqual({ enabled: false });
+        for (const r of await Promise.all(buyOrSpend())) {
+          expect(r.status).toBe(503);
+          expect(r.body.code).toBe('plus_disabled');
+        }
+        // Reading your own entitlement and choosing the free sky are not purchases.
+        await as(u, http().get('/v1/billing/entitlement')).expect(200);
+        await as(u, http().put('/v1/billing/sky')).send({ theme: 'night', soundscape: null }).expect(200);
+        await as(u, http().get('/v1/billing/gifts/received')).expect(200);
+
+        // A missing row counts as OFF for this switch (unlike the other kill switches).
+        await db.query(`delete from public.feature_flags where key = 'plus_enabled'`);
+        refresh();
+        const missing = await as(u, http().post('/v1/billing/restore')).send({ purchases: [] });
+        expect(missing.status).toBe(503);
+        expect(missing.body.code).toBe('plus_disabled');
+
+        await db.query(`insert into public.feature_flags (key, enabled, description) values ('plus_enabled', true, $1)`, [saved.description]);
+        refresh();
+        for (const r of await Promise.all(buyOrSpend())) expect(r.body.code).not.toBe('plus_disabled');
+      } finally {
+        await db.query(
+          `insert into public.feature_flags (key, enabled, description) values ('plus_enabled', $1, $2)
+           on conflict (key) do update set enabled = excluded.enabled, description = excluded.description`,
+          [saved.enabled, saved.description],
+        );
+        refresh();
+      }
+    });
   });
 
   // ================================================================== lexicon versions

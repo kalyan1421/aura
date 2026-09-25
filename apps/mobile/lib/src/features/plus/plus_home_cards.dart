@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/entitlements/billing_api.dart';
 import '../../core/entitlements/plus.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import 'paywall_gate.dart';
 import 'plus_format.dart';
@@ -19,7 +20,9 @@ import 'plus_format.dart';
 /// - the trial-ending card shows at most once a day in the last 2 days, and
 ///   never straight after a Storm or Rain check-in or in a crisis flow;
 /// - one-time notes (trial cancelled, Plus continues) show once per event;
-/// - every card is dismissible and opens the store's own page, nothing else.
+/// - every card is dismissible and opens the store's own page, nothing else;
+/// - with purchases switched off (`plus_enabled`) there are no cards at all,
+///   and the billing API isn't asked for gifts.
 class PlusHomeCards extends ConsumerStatefulWidget {
   const PlusHomeCards({
     super.key,
@@ -52,6 +55,10 @@ class _PlusHomeCardsState extends ConsumerState<PlusHomeCards> {
   }
 
   Future<void> _load() async {
+    if (!ref.read(plusEnabledProvider)) {
+      if (mounted) setState(() => _loaded = true);
+      return;
+    }
     try {
       final kv = ref.read(kvStoreProvider);
       final seen = await kv.getJson(_seenKey) ?? {};
@@ -93,6 +100,7 @@ class _PlusHomeCardsState extends ConsumerState<PlusHomeCards> {
 
   @override
   Widget build(BuildContext context) {
+    if (!ref.watch(plusEnabledProvider)) return const SizedBox.shrink();
     if (!_loaded) return const SizedBox.shrink();
     final l = AppLocalizations.of(context);
     final e = ref.watch(entitlementProvider);

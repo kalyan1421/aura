@@ -51,6 +51,12 @@ Every row is **collected: yes, shared: no**. "Required" means the user can't use
 | Device or other IDs → **Device or other IDs** | Yes | Automatic | App functionality; Fraud prevention, security and compliance | Random **install id** (`X-Aura-Install`, HMAC-stored, device bans REQ-ADM-14); **FCM token** after push opt-in. No Android ID, no AD_ID. | `lib/src/core/remote_config/install_id.dart`; `device_installs`, `device_bans`, `device_tokens` |
 | Location → Approximate, Precise | **No** | — | — | No location permission. The region comes from settings, declared under Other info. `[VERIFY]` | PRD 15 |
 
+> **v1.0 launches free (`plus_enabled` off).** While the flag is off (default; migration
+> `20261005000035_plus_enabled.sql`) the app shows no purchase and never queries Play Billing, and NestJS answers
+> `503 plus_disabled` on every purchase route, so **no purchase history is collected at launch**. Keeping `Financial
+> info → Purchase history` declared ("Optional (only if buying)") stays truthful and avoids a Data safety update when
+> Plus is switched on; if AK prefers to drop it for v1.0, it must be re-added **before** `plus_enabled` is turned on.
+
 **Not declared, with the reason:**
 - Crisis sheet and helpline counters (`crisis_events`) carry no user or device id (DS-7): anonymous aggregates.
 - Echo breath traces (`echo_library.recordings`) have no link to anyone.

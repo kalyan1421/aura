@@ -34,6 +34,7 @@ import '../../features/settings/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/update/update_required.dart';
 import '../a11y/motion.dart';
+import '../remote_config/remote_config_providers.dart';
 import 'deep_links.dart';
 import 'routes.dart';
 
@@ -161,16 +162,31 @@ GoRouter router(Ref ref) {
       route(Routes.settings, (_) => const SettingsScreen()),
       // F12 Aura Plus: opened only from a limit screen or Settings (`from`
       // names the surface; the screen re-checks the P0 exclusions itself).
-      route(
-        plusRoute,
-        (s) => PaywallScreen(
-          surface:
-              PaywallSurface.values
-                  .asNameMap()[s.uri.queryParameters['from']] ??
-              PaywallSurface.settings,
+      // Purchases switched off (`plus_enabled`, bundled default off): both
+      // routes send any stray link Home instead.
+      GoRoute(
+        path: plusRoute,
+        redirect: (_, _) => ref.read(plusEnabledProvider) ? null : Routes.home,
+        pageBuilder: (context, state) => _page(
+          state,
+          PaywallScreen(
+            surface:
+                PaywallSurface.values
+                    .asNameMap()[state.uri.queryParameters['from']] ??
+                PaywallSurface.settings,
+          ),
+          reduceMotion: reduceMotionOf(context),
         ),
       ),
-      route(plusSkiesRoute, (_) => const SkyThemesScreen()),
+      GoRoute(
+        path: plusSkiesRoute,
+        redirect: (_, _) => ref.read(plusEnabledProvider) ? null : Routes.home,
+        pageBuilder: (context, state) => _page(
+          state,
+          const SkyThemesScreen(),
+          reduceMotion: reduceMotionOf(context),
+        ),
+      ),
       // F13: the private keepsake box (opened from Insights, Home's new-seal
       // card and Settings › Account).
       route(keepsakesRoute, (_) => const KeepsakesScreen()),

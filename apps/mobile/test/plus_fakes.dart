@@ -4,6 +4,8 @@ import 'package:aura/src/core/entitlements/billing_api.dart';
 import 'package:aura/src/core/entitlements/entitlement_controller.dart';
 import 'package:aura/src/core/entitlements/plus.dart';
 import 'package:aura/src/core/net/aura_api.dart' show ApiException;
+import 'package:aura/src/core/remote_config/remote_config_providers.dart'
+    show plusEnabledProvider;
 import 'package:aura/src/features/plus/store_gateway.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
@@ -237,11 +239,15 @@ Entitlement plusAccount({
   );
 }
 
+/// [plusEnabled]: the `plus_enabled` remote flag (bundled default off); the
+/// Plus tests run with purchases on unless they say otherwise.
 List<Override> plusOverrides({
   required Entitlement entitlement,
   FakeBillingApi? api,
   FakeStore? store,
+  bool plusEnabled = true,
 }) => [
+  plusEnabledProvider.overrideWithValue(plusEnabled),
   entitlementProvider.overrideWith(() => FixedEntitlement(entitlement)),
   billingApiProvider.overrideWithValue(api),
   storeGatewayProvider.overrideWithValue(store ?? FakeStore()),

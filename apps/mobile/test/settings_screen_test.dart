@@ -7,6 +7,8 @@ import 'package:aura/src/core/ids/ids.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/prefs/comfort_prefs.dart';
 import 'package:aura/src/core/providers.dart';
+import 'package:aura/src/core/remote_config/remote_config_providers.dart'
+    show plusEnabledProvider;
 import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/core/security/secure_store.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
@@ -112,6 +114,7 @@ Future<ProviderContainer> _pump(
   AuthRepository? auth,
   _Account? account,
   double width = 390,
+  List<Override> extra = const [],
 }) async {
   // Tall enough for every section (Notifications grew in Milestone B;
   // Milestone C added Look back, the widget and the keepsakes entry).
@@ -119,7 +122,10 @@ Future<ProviderContainer> _pump(
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   final container = ProviderContainer(
-    overrides: _overrides(db, auth ?? _Auth(_alice), account ?? _Account()),
+    overrides: [
+      ..._overrides(db, auth ?? _Auth(_alice), account ?? _Account()),
+      ...extra,
+    ],
   );
   addTearDown(container.dispose);
   final gate = ValueNotifier(container.read(gateControllerProvider));
@@ -284,6 +290,34 @@ void main() {
     expect(find.byKey(const ValueKey('set-sign-out')), findsNothing);
     expect(find.byKey(const ValueKey('set-delete-account')), findsNothing);
     expect(find.byKey(const ValueKey('keepsakes-entry')), findsNothing);
+    await _unmount(tester);
+  });
+
+  // v1.0 launches free: with `plus_enabled` off (its bundled default, so no
+  // override here) a signed-in account sees no Aura Plus section — no
+  // status, no "See Aura Plus", no Restore, no sky / Stardust entry.
+  testWidgets('Plus switched off (bundled default): no Aura Plus section, '
+      'no Restore', (tester) async {
+    await _pump(tester, db: memoryDb());
+    expect(find.text('Signed in as a@aura.test'), findsOneWidget);
+    expect(find.byKey(const ValueKey('set-section-plus')), findsNothing);
+    expect(find.byKey(const ValueKey('plus-settings-restore')), findsNothing);
+    expect(find.byKey(const ValueKey('plus-settings-see')), findsNothing);
+    expect(find.byKey(const ValueKey('plus-settings-skies')), findsNothing);
+    expect(find.text('Restore purchases'), findsNothing);
+    await _unmount(tester);
+  });
+
+  testWidgets('Plus switched on: the Aura Plus section is back', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      db: memoryDb(),
+      extra: [plusEnabledProvider.overrideWithValue(true)],
+    );
+    expect(find.byKey(const ValueKey('set-section-plus')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plus-settings-restore')), findsOneWidget);
     await _unmount(tester);
   });
 
