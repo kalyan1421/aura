@@ -11,6 +11,7 @@ import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
 import { redisOptionsFromUrl } from '../queues/redis';
 import { TRIAL_EMAIL_MAX_ATTEMPTS, TrialEmailSender, dueTrialEmails } from './trial-email.sender';
+import { errorText } from '../common/log-scrub';
 
 /**
  * App-user mail, worker side (its own BullMQ queue `user-mail`). v1 sends exactly one kind: the trial-ending email
@@ -50,7 +51,7 @@ export class UserMailWorkerHost implements OnApplicationBootstrap, OnApplication
       prefix: QUEUE_PREFIX,
       concurrency: 2,
     });
-    this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${err.message.slice(0, 80)}`));
+    this.worker.on('failed', (job, err) => this.logger.warn(`job ${job?.name} failed: ${errorText(err, 80)}`));
     this.worker.on('error', (err) => this.logger.warn(`worker: ${err.message}`));
     await this.worker.waitUntilReady();
     this.logger.log('user mail worker ready (trial-ending email)');

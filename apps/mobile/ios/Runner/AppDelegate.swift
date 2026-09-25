@@ -120,6 +120,14 @@ private enum AuraPlatformChannel {
           return
         }
         UIApplication.shared.open(url, options: [:]) { opened in result(opened) }
+      case "appVersion":
+        // Forced update (MASVS F-6, lib/src/features/update): this install's
+        // pubspec version, as the OS knows it.
+        let info = Bundle.main.infoDictionary
+        result([
+          "version": info?["CFBundleShortVersionString"] as? String ?? "",
+          "build": info?["CFBundleVersion"] as? String ?? "",
+        ])
       case "excludeFromBackup":
         // Voice files live in Application Support, which iCloud backs up by
         // default: the `voice/` directory (and so its contents) opts out.

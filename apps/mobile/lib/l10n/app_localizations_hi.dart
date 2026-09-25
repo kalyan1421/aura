@@ -4868,6 +4868,27 @@ class AppLocalizationsHi extends AppLocalizations {
       'डाउनलोड की गई आवाज़ें हटा दी गईं। आपके फ़ोन पर बनी आवाज़ें अब भी बजती हैं।';
 
   @override
+  String get update_title => 'कृपया Aura अपडेट करें';
+
+  @override
+  String get update_body =>
+      'Aura को आगे चलाने के लिए इसे अपडेट करना ज़रूरी है। बस एक पल लगेगा।';
+
+  @override
+  String get update_safe =>
+      'इस फ़ोन पर सब कुछ सुरक्षित रहेगा। अपडेट होते ही आपके चेक-इन सिंक हो जाएँगे।';
+
+  @override
+  String get update_openAppStore => 'App Store में अपडेट करें';
+
+  @override
+  String get update_openPlayStore => 'Google Play पर अपडेट करें';
+
+  @override
+  String get update_storeFailed =>
+      'स्टोर नहीं खुला। कृपया खुद खोलकर Aura खोजें।';
+
+  @override
   String get voice_record => 'वॉइस नोट रिकॉर्ड करें';
 
   @override
@@ -9972,6 +9993,27 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   @override
   String get sounds_downloadsRemoved =>
       'Download ki gayi sounds hata di gayin. Aapke phone par bani sounds ab bhi bajti hain.';
+
+  @override
+  String get update_title => 'Please Aura update karein';
+
+  @override
+  String get update_body =>
+      'Aura ko aage chalane ke liye ise update karna zaroori hai. Bas ek pal lagega.';
+
+  @override
+  String get update_safe =>
+      'Is phone par sab kuch surakshit rahega. Update hote hi aapke check-ins sync ho jayenge.';
+
+  @override
+  String get update_openAppStore => 'App Store mein update karein';
+
+  @override
+  String get update_openPlayStore => 'Google Play par update karein';
+
+  @override
+  String get update_storeFailed =>
+      'Store nahi khula. Please khud kholkar Aura search karein.';
 
   @override
   String get voice_record => 'Voice note record karein';

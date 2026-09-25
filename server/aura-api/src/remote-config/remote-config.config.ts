@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parseAppVersion, type MinAppVersion } from './app-version';
 import { BundleKeyError, BundleSigner } from './signing';
 
 /**
@@ -12,6 +13,9 @@ import { BundleKeyError, BundleSigner } from './signing';
  * - `REMOTE_CONFIG_POLL_SECONDS` — how often a foregrounded app re-fetches `GET /v1/config` (60–300, default 240) —
  *   keeps "a flag change reaches clients within 5 minutes" (REQ-ADM-12) with room for the cache below.
  * - `REMOTE_CONFIG_CACHE_MS` — how long one API instance reuses a built config document (0–30000, default 10000).
+ * - `APP_MIN_VERSION_IOS` / `APP_MIN_VERSION_ANDROID` — the oldest app version still allowed to run (`1.4.0`, or
+ *   `1.4.0+57`); older apps show "Please update Aura" (MASVS F-6, `app-version.ts`). Unset → no minimum. The
+ *   `min_app_version` flag payload can raise it without a deploy.
  */
 export class RemoteConfigSettings {
   constructor(
@@ -21,6 +25,8 @@ export class RemoteConfigSettings {
     readonly cacheMs: number,
     /** Why signing is off, for logs and the console (never a key). */
     readonly signingOffReason: string | null,
+    /** Env minimum app versions per platform (`GET /v1/config` `minAppVersion`). */
+    readonly minAppVersion: MinAppVersion = {},
   ) {
     Object.freeze(this);
   }
@@ -30,11 +36,18 @@ export class RemoteConfigSettingsError extends Error {}
 
 const blankToUndefined = (v: unknown): unknown => (typeof v === 'string' && v.trim() === '' ? undefined : v);
 
+const appVersion = z
+  .string()
+  .trim()
+  .refine((v) => parseAppVersion(v) !== null, { message: 'must look like 1.4.0 or 1.4.0+57' });
+
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   LEXICON_SIGNING_KEY: z.preprocess(blankToUndefined, z.string().optional()),
   REMOTE_CONFIG_POLL_SECONDS: z.preprocess(blankToUndefined, z.coerce.number().int().min(60).max(300).default(240)),
   REMOTE_CONFIG_CACHE_MS: z.preprocess(blankToUndefined, z.coerce.number().int().min(0).max(30_000).default(10_000)),
+  APP_MIN_VERSION_IOS: z.preprocess(blankToUndefined, appVersion.optional()),
+  APP_MIN_VERSION_ANDROID: z.preprocess(blankToUndefined, appVersion.optional()),
 });
 
 export function parseRemoteConfigSettings(env: Record<string, string | undefined>): RemoteConfigSettings {
@@ -62,5 +75,9 @@ export function parseRemoteConfigSettings(env: Record<string, string | undefined
   } else {
     signer = BundleSigner.dev();
   }
-  return new RemoteConfigSettings(signer, e.REMOTE_CONFIG_POLL_SECONDS, e.REMOTE_CONFIG_CACHE_MS, off);
+  const minAppVersion: MinAppVersion = {
+    ...(e.APP_MIN_VERSION_IOS ? { ios: e.APP_MIN_VERSION_IOS } : {}),
+    ...(e.APP_MIN_VERSION_ANDROID ? { android: e.APP_MIN_VERSION_ANDROID } : {}),
+  };
+  return new RemoteConfigSettings(signer, e.REMOTE_CONFIG_POLL_SECONDS, e.REMOTE_CONFIG_CACHE_MS, off, minAppVersion);
 }

@@ -16,6 +16,7 @@ import {
   type UploadUrlRequest,
   type UploadUrlResponse,
 } from './media.schema';
+import { errorText } from '../common/log-scrub';
 
 export const mediaNotFound = (): ApiError => new ApiError(HttpStatus.NOT_FOUND, 'not_found', 'No such media.');
 
@@ -111,7 +112,7 @@ export class MediaService implements OnModuleInit {
     } catch (err) {
       if (err instanceof MediaStoreUnavailableError) throw mediaUnavailable();
       if (isStorageOutage(err)) {
-        this.logger.warn(`storage unavailable: ${err.name}: ${err.message}`);
+        this.logger.warn(`storage unavailable: ${err.name}: ${errorText(err)}`);
         throw mediaUnavailable();
       }
       throw err;

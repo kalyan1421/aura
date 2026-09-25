@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiError } from './api-error';
+import { errorStack, errorText } from './log-scrub';
 
 const STATUS_CODES: Record<number, string> = {
   400: 'bad_request',
@@ -56,7 +57,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
       return;
     }
     const err = exception as Error;
-    this.logger.error(`unhandled ${err?.name ?? 'error'}: ${err?.message ?? String(exception)}`, err?.stack);
+    // Scrubbed: Postgres and parser messages can quote the failing value (F-2).
+    this.logger.error(`unhandled ${err?.name ?? 'error'}: ${errorText(exception)}`, errorStack(exception));
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ code: 'internal_error', message: 'Something went wrong.' });
   }
 }

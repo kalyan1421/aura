@@ -2,6 +2,7 @@ package com.akvega.aura
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import com.google.android.play.agesignals.AgeSignalsManagerFactory
 import com.google.android.play.agesignals.AgeSignalsRequest
@@ -40,6 +41,25 @@ class MainActivity : AudioServiceActivity() {
                     // Backup and device transfer are off for the whole app
                     // (AndroidManifest.xml, res/xml/data_extraction_rules.xml).
                     "excludeFromBackup" -> result.success(true)
+                    // Forced update (MASVS F-6, lib/src/features/update): this
+                    // install's pubspec version, as the OS knows it.
+                    "appVersion" -> {
+                        try {
+                            val info = packageManager.getPackageInfo(packageName, 0)
+                            val build =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                    info.longVersionCode
+                                } else {
+                                    @Suppress("DEPRECATION")
+                                    info.versionCode.toLong()
+                                }
+                            result.success(
+                                mapOf("version" to (info.versionName ?: ""), "build" to build.toString()),
+                            )
+                        } catch (e: Exception) {
+                            result.success(null)
+                        }
+                    }
                     else -> result.notImplemented()
                 }
             }

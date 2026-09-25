@@ -27,7 +27,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ensureTimeZonesLoaded();
 
-  final secure = FlutterSecureStore();
+  // Key material (DB key, data keys) is ThisDeviceOnly; older items move on
+  // first read (MASVS F-3, secure_store.dart).
+  final secure = DeviceBoundKeyStore.platform();
   // iOS: keep the database directory out of iCloud backup (Apple 5.1.3).
   final db = await openAppDatabase(
     secure,

@@ -4891,6 +4891,27 @@ class AppLocalizationsTe extends AppLocalizations {
       'డౌన్‌లోడ్ చేసిన శబ్దాలు తీసేశాం. మీ ఫోన్‌లో తయారైన శబ్దాలు ఇంకా వినిపిస్తాయి.';
 
   @override
+  String get update_title => 'దయచేసి Auraని అప్‌డేట్ చేయండి';
+
+  @override
+  String get update_body =>
+      'Aura కొనసాగాలంటే ఈ కాపీకి అప్‌డేట్ అవసరం. ఒక్క క్షణమే పడుతుంది.';
+
+  @override
+  String get update_safe =>
+      'ఈ ఫోన్‌లో ఉన్నవన్నీ భద్రంగా ఉంటాయి. అప్‌డేట్ అయిన వెంటనే మీ చెక్-ఇన్‌లు సింక్ అవుతాయి.';
+
+  @override
+  String get update_openAppStore => 'App Storeలో అప్‌డేట్ చేయండి';
+
+  @override
+  String get update_openPlayStore => 'Google Playలో అప్‌డేట్ చేయండి';
+
+  @override
+  String get update_storeFailed =>
+      'స్టోర్ తెరుచుకోలేదు. దయచేసి మీరే తెరిచి Aura కోసం వెతకండి.';
+
+  @override
   String get voice_record => 'వాయిస్ నోట్ రికార్డ్ చేయండి';
 
   @override
@@ -10015,6 +10036,27 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   @override
   String get sounds_downloadsRemoved =>
       'Download chesina sounds teesesaam. Mee phone lo tayaaraina sounds inka vinipistaayi.';
+
+  @override
+  String get update_title => 'Dayachesi Aura ni update cheyandi';
+
+  @override
+  String get update_body =>
+      'Aura continue avvaalante ee copy ki update avasaram. Oka kshaname padutundi.';
+
+  @override
+  String get update_safe =>
+      'Ee phone lo unnavanni bhadranga untaayi. Update ayina ventane mee check-ins sync avutaayi.';
+
+  @override
+  String get update_openAppStore => 'App Store lo update cheyandi';
+
+  @override
+  String get update_openPlayStore => 'Google Play lo update cheyandi';
+
+  @override
+  String get update_storeFailed =>
+      'Store open avvaledu. Dayachesi meere open chesi Aura kosam vetakandi.';
 
   @override
   String get voice_record => 'Voice note record cheyandi';

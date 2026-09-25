@@ -115,7 +115,7 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
   };
 
   beforeAll(async () => {
-    for (const [k, v] of Object.entries({ ADMIN_ALLOWED_EMAILS: '', LEXICON_SIGNING_KEY: '', REMOTE_CONFIG_CACHE_MS: '0' })) {
+    for (const [k, v] of Object.entries({ ADMIN_ALLOWED_EMAILS: '', LEXICON_SIGNING_KEY: '', REMOTE_CONFIG_CACHE_MS: '0', APP_MIN_VERSION_IOS: '', APP_MIN_VERSION_ANDROID: '0.1.0' })) {
       savedEnv[k] = process.env[k];
       process.env[k] = v;
     }
@@ -183,6 +183,42 @@ describe('Remote config, signed lexicon versions, device bans (e2e)', () => {
       expect(after.headers.etag).not.toBe(before.headers.etag);
       const touched = await db.query<{ updated_at: Date }>('select updated_at from public.feature_flags where key = $1', [probeFlag]);
       expect(Date.now() - touched.rows[0].updated_at.getTime()).toBeLessThan(60_000);
+    });
+
+    it('minAppVersion (MASVS F-6): env baseline, raised by the min_app_version flag while it is on', async () => {
+      const saved = (await db.query<{ enabled: boolean; payload: unknown; description: string | null }>(
+        'select enabled, payload, description from public.feature_flags where key = $1',
+        ['min_app_version'],
+      )).rows[0];
+      try {
+        await db.query('delete from public.feature_flags where key = $1', ['min_app_version']);
+        refresh();
+        const envOnly = await http().get('/v1/config').expect(200);
+        expect(envOnly.body.minAppVersion).toEqual({ android: '0.1.0' });
+        await db.query(
+          `insert into public.feature_flags (key, enabled, payload, description) values ('min_app_version', true, $1::jsonb, 'e2e min version')`,
+          [JSON.stringify({ ios: '2.0.0', android: '0.0.9' })],
+        );
+        refresh();
+        const raised = await http().get('/v1/config').set('If-None-Match', envOnly.headers.etag).expect(200);
+        expect(raised.body.minAppVersion).toEqual({ ios: '2.0.0', android: '0.1.0' });
+        // Switched off in the console: back to the env values at once.
+        const off = await as(owner, http().post('/admin/config/flags/min_app_version')).send({ enabled: false, reasonCode: 'e2e_min_version' });
+        expect(off.status).toBe(200);
+        refresh();
+        expect((await http().get('/v1/config').expect(200)).body.minAppVersion).toEqual({ android: '0.1.0' });
+      } finally {
+        await db.query('delete from public.feature_flags where key = $1', ['min_app_version']);
+        if (saved) {
+          await db.query('insert into public.feature_flags (key, enabled, payload, description) values ($1, $2, $3::jsonb, $4)', [
+            'min_app_version',
+            saved.enabled,
+            JSON.stringify(saved.payload ?? {}),
+            saved.description,
+          ]);
+        }
+        refresh();
+      }
     });
 
     it('rooms kill switch: rooms_enabled off → POST /v1/rooms/match 503 rooms_paused', async () => {

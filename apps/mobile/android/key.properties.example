@@ -1,0 +1,9 @@
+# Copy to android/key.properties (git-ignored) and fill in. Never commit the
+# real file or the keystore. See docs/setup/android-release-signing.md.
+#
+# storeFile is relative to apps/mobile/android/ (or absolute). Keeping the
+# keystore OUTSIDE the repo is safest, e.g. storeFile=/Users/you/keys/aura-upload.jks
+storeFile=/absolute/path/to/aura-upload.jks
+storePassword=CHANGE_ME
+keyAlias=upload
+keyPassword=CHANGE_ME

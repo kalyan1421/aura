@@ -104,6 +104,9 @@ dev_dependencies:
   json_serializable: ^6.14.1
   drift_dev: ^2.35.0
   riverpod_generator: ^4.0.9
+  # test/no_content_in_logs_test.dart parses lib/ (MASVS F-2). Already in the
+  # lockfile through build_runner.
+  analyzer: ^13.3.0
 
 # Encrypted SQLite for Drift. package:sqlite3 (3.x) bundles SQLite through
 # build hooks; `sqlite3mc` selects the SQLite3MultipleCiphers build (drift's

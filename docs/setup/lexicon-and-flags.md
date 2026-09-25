@@ -24,6 +24,8 @@ Wire contract: `contracts/api/v1.md` → "Remote config", "Crisis lexicon versio
 | App build define (public) | `AURA_BUNDLE_PUBLIC_KEYS` | Comma-separated base64 public keys the app trusts, from `pnpm lexicon keygen` / `pnpm lexicon public-key`. **Release builds without it never use a downloaded lexicon** (bundled v1 only) — they never trust the development key. Debug/profile builds without it trust the development key, so a local API works. |
 | API env (optional) | `REMOTE_CONFIG_POLL_SECONDS` | 60–300, default 240: how often a foregrounded app re-fetches `/v1/config`. Keep ≤ 280 so a flip lands within 5 minutes. |
 | API env (optional) | `REMOTE_CONFIG_CACHE_MS` | 0–30000, default 10000: how long one API instance reuses the built config document. |
+| API env (optional) | `APP_MIN_VERSION_IOS`, `APP_MIN_VERSION_ANDROID` | Forced update (MASVS F-6, §4a): the oldest app version still allowed, e.g. `1.2.0`. Unset = no minimum. A malformed value stops the API at boot. |
+| App build define (public) | `AURA_APP_STORE_ID` | The numeric Apple ID from App Store Connect → App Information. The "Please update Aura" button opens `https://apps.apple.com/app/id<ID>`; without it, the iPhone button can only say "search for Aura". Android needs nothing (the Play link is fixed). |
 
 `AURA_MASTER_KEY` (already required) also keys the install-id HMAC: rotating it makes existing device bans unmatchable
 (they would have to be re-issued), so rotate it only with that in mind.
@@ -105,6 +107,36 @@ Everything is in `GET /admin/lexicons/crisis` (`live`, `versions`, `history`) an
   the route(s) it must stop (`src/remote-config/kill-switch.ts`), a typed getter in `RemoteFlags`
   (`apps/mobile/lib/src/core/remote_config/remote_config.dart`) and a one-line read where the UI hides or greys it
   (`ref.watch(remoteFlagsProvider).yourFlag`). The server must refuse on its own: a flag on the phone never decides.
+
+## 4a. Forced update (minimum app version; MASVS F-6)
+
+`GET /v1/config` carries `minAppVersion: { "ios": "1.2.0", "android": "1.2.0" }` when a minimum is set
+(contracts/api/v1.md "Remote config"). An app older than its platform's value shows a calm full-screen
+"Please update Aura" with the store button; "I need help now" stays in the top bar and opens the Safety Center; nothing
+on the phone is deleted or signed out, and unsynced check-ins sync after the update. When the minimum goes down again,
+the screen goes away on the next config fetch (≤ `pollSeconds`).
+
+- **Values:** `MAJOR[.MINOR[.PATCH]][+BUILD]`, compared numerically. Use `x.y.z` (the pubspec `version` name) and leave
+  out `+BUILD`: Android split-per-ABI APKs offset the build number. The app reads its own version from the OS
+  (CFBundleShortVersionString / versionName), not from `Env.appVersion`.
+- **Env (baseline, needs a deploy):** `APP_MIN_VERSION_IOS`, `APP_MIN_VERSION_ANDROID` on the API.
+- **Flag (no deploy):** a `min_app_version` row whose payload names the versions. The console can't edit payloads, so
+  create or change it in the Supabase SQL editor, then use the console to switch it on and off (audited):
+
+  ```sql
+  insert into public.feature_flags (key, enabled, payload, description)
+  values ('min_app_version', false, '{"ios": "1.2.0", "android": "1.2.0"}',
+          'Forced update: apps older than payload.ios / payload.android show "Please update Aura" (MASVS F-6)')
+  on conflict (key) do update set payload = excluded.payload;
+  ```
+
+  While the flag is **on**, each platform uses the higher of the env value and the payload value; **off** falls back
+  to the env values at once. That is the way out of a minimum set too high by mistake.
+- **Before raising it:** the new version must be live in both stores (App Store review done, Play rollout at 100%),
+  otherwise people are sent to a store page that has nothing newer. Raise it only for a security fix or a broken
+  server contract; a phone offline keeps its last config, so it never locks anyone out before it hears from the server.
+- The config document is not signed (it travels over TLS like every other API call). The worst a forged document could
+  do is show the update screen, which never deletes anything and keeps help reachable.
 
 ## 5. Device bans
 

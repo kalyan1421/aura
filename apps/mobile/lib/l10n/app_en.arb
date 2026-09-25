@@ -6246,6 +6246,30 @@
   "@sounds_downloadsRemoved": {
     "description": "After removing downloads."
   },
+  "update_title": "Please update Aura",
+  "@update_title": {
+    "description": "Title of the full screen shown when this app is too old to keep using. Calm, a request, not an error."
+  },
+  "update_body": "This copy of Aura needs an update before it can keep going. It only takes a moment.",
+  "@update_body": {
+    "description": "Body under update_title. Plain words, no version numbers or reasons."
+  },
+  "update_safe": "Everything on this phone stays safe. Your check-ins sync as soon as you've updated.",
+  "@update_safe": {
+    "description": "Reassurance under the body: nothing is deleted; unsynced check-ins are kept and sync after the update."
+  },
+  "update_openAppStore": "Update in the App Store",
+  "@update_openAppStore": {
+    "description": "Primary button on iPhone: opens Aura's App Store page."
+  },
+  "update_openPlayStore": "Update on Google Play",
+  "@update_openPlayStore": {
+    "description": "Primary button on Android: opens Aura's Google Play page."
+  },
+  "update_storeFailed": "The store didn't open. Please open it yourself and search for Aura.",
+  "@update_storeFailed": {
+    "description": "Shown under the button when the store page could not be opened."
+  },
   "voice_record": "Record a voice note",
   "@voice_record": {
     "description": "Button in the check-in details that starts recording a voice note (also its screen-reader label)."

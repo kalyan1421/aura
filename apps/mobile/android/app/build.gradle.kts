@@ -1,9 +1,41 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // Glance home-screen widget (F11, com.akvega.aura.widget).
     id("org.jetbrains.kotlin.plugin.compose")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Release signing (docs/setup/android-release-signing.md).
+// A release build is signed with the upload key named in android/key.properties
+// (git-ignored; see android/key.properties.example). Without that file a
+// release build FAILS: it never falls back to the debug key. Debug and profile
+// builds are unaffected. For a throwaway local release build (e.g. to inspect
+// the merged manifest) set AURA_DEBUG_SIGNED_RELEASE=1: it is debug-signed,
+// logs a Gradle warning (shown with `flutter build … -v` or ./gradlew), and
+// Play refuses it.
+val keystorePropertiesFile: File = rootProject.file("key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.isFile) keystorePropertiesFile.inputStream().use { load(it) }
+}
+val releaseSigningKeys = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val missingReleaseSigningKeys: List<String> =
+    if (!keystorePropertiesFile.isFile) releaseSigningKeys
+    else releaseSigningKeys.filter { keystoreProperties.getProperty(it).isNullOrBlank() }
+val releaseStoreFile: File? =
+    keystoreProperties.getProperty("storeFile")?.takeIf { it.isNotBlank() }?.let { rootProject.file(it) }
+val allowDebugSignedRelease: Boolean =
+    providers.environmentVariable("AURA_DEBUG_SIGNED_RELEASE").orNull == "1"
+val releaseSigningProblem: String? = when {
+    !keystorePropertiesFile.isFile ->
+        "android/key.properties is missing."
+    missingReleaseSigningKeys.isNotEmpty() ->
+        "android/key.properties is missing: ${missingReleaseSigningKeys.joinToString()}."
+    releaseStoreFile == null || !releaseStoreFile.isFile ->
+        "the keystore named by storeFile in android/key.properties does not exist (paths are relative to android/)."
+    else -> null
 }
 
 android {
@@ -39,14 +71,57 @@ android {
         compose = true
     }
 
+    signingConfigs {
+        if (releaseSigningProblem == null) {
+            create("release") {
+                storeFile = releaseStoreFile
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = when {
+                releaseSigningProblem == null -> signingConfigs.getByName("release")
+                allowDebugSignedRelease -> signingConfigs.getByName("debug")
+                // No signing config: the verifyReleaseSigning check below
+                // fails the build before anything is packaged.
+                else -> null
+            }
         }
     }
 }
+
+// Fails every release variant task graph (assembleRelease, bundleRelease,
+// `flutter build apk|appbundle --release`, `flutter run --release`) when the
+// upload key isn't configured. Debug and profile never depend on it.
+val verifyReleaseSigning by tasks.registering {
+    group = "verification"
+    description = "Fails a release build that has no upload key configured."
+    val problem = releaseSigningProblem
+    val debugSignedOk = allowDebugSignedRelease
+    doLast {
+        if (problem != null && !debugSignedOk) {
+            throw GradleException(
+                "Aura release signing is not configured: $problem\n" +
+                    "Create android/key.properties from android/key.properties.example " +
+                    "(see docs/setup/android-release-signing.md). Release builds never fall " +
+                    "back to the debug key. Use `flutter build apk --debug` for local builds, " +
+                    "or AURA_DEBUG_SIGNED_RELEASE=1 for a throwaway debug-signed release build.",
+            )
+        }
+        if (problem != null) {
+            logger.warn(
+                "WARNING: AURA_DEBUG_SIGNED_RELEASE=1: this release build is signed with the DEBUG key " +
+                    "($problem). Do not distribute it; Play rejects it.",
+            )
+        }
+    }
+}
+tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(verifyReleaseSigning) }
 
 kotlin {
     compilerOptions {

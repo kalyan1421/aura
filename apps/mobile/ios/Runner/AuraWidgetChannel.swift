@@ -14,8 +14,18 @@ import WidgetKit
 ///   the App Group container (nil removes it), then every widget redraws.
 ///
 /// Never logs what it moves (mood ids live in these strings).
+///
+/// MASVS F-1 (docs/security/masvs-l1.md): the App Group container (the
+/// widget's UserDefaults plist under Library/Preferences, the avatar PNG) is
+/// excluded from iCloud / Finder backup, like the app's own database (G-1).
+/// What's in it stays minimal: mood-only pending check-ins until the app
+/// imports them, the display state (a last mood only when "Show my last
+/// mood" is on), the avatar picture. Nothing is lost on a new phone: widget
+/// check-ins the app hasn't imported yet are the only thing not on the
+/// server, and the widget is set up again from the app.
 enum AuraWidgetChannel {
   static func register(messenger: FlutterBinaryMessenger) {
+    excludeContainerFromBackup()
     let channel = FlutterMethodChannel(
       name: "com.akvega.aura/widget", binaryMessenger: messenger)
     channel.setMethodCallHandler { call, result in
@@ -45,6 +55,25 @@ enum AuraWidgetChannel {
     }
   }
 
+  /// Sets `isExcludedFromBackup` on the App Group container and the
+  /// directories under it that exist (a directory covers its contents, and
+  /// directories survive the atomic rewrites of the plist and PNG inside).
+  /// Idempotent, runs at every launch, never fatal.
+  static func excludeContainerFromBackup() {
+    guard
+      let root = FileManager.default.containerURL(
+        forSecurityApplicationGroupIdentifier: AuraWidgetKeys.appGroup)
+    else { return }
+    let library = root.appendingPathComponent("Library", isDirectory: true)
+    for dir in [root, library, library.appendingPathComponent("Preferences", isDirectory: true)] {
+      guard FileManager.default.fileExists(atPath: dir.path) else { continue }
+      var url = dir
+      var values = URLResourceValues()
+      values.isExcludedFromBackup = true
+      try? url.setResourceValues(values)
+    }
+  }
+
   private static func writeAvatar(_ data: Data?) {
     guard
       let url = FileManager.default
@@ -53,6 +82,12 @@ enum AuraWidgetChannel {
     else { return }
     if let data {
       try? data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+      // An atomic write is a new file: mark it too (belt and braces; the
+      // container itself is already excluded).
+      var file = url
+      var values = URLResourceValues()
+      values.isExcludedFromBackup = true
+      try? file.setResourceValues(values)
     } else {
       try? FileManager.default.removeItem(at: url)
     }

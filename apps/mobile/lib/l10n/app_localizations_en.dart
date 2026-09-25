@@ -4864,6 +4864,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Downloaded sounds removed. The sounds made on your phone still play.';
 
   @override
+  String get update_title => 'Please update Aura';
+
+  @override
+  String get update_body =>
+      'This copy of Aura needs an update before it can keep going. It only takes a moment.';
+
+  @override
+  String get update_safe =>
+      'Everything on this phone stays safe. Your check-ins sync as soon as you\'ve updated.';
+
+  @override
+  String get update_openAppStore => 'Update in the App Store';
+
+  @override
+  String get update_openPlayStore => 'Update on Google Play';
+
+  @override
+  String get update_storeFailed =>
+      'The store didn\'t open. Please open it yourself and search for Aura.';
+
+  @override
   String get voice_record => 'Record a voice note';
 
   @override

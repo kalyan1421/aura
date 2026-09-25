@@ -152,6 +152,25 @@ abstract final class Env {
     if (_grievanceEmail.isEmpty) 'AURA_GRIEVANCE_EMAIL',
   ];
 
+  // ---- Store pages (forced update, MASVS F-6; features/update) -----------
+  // The App Store id is the numeric Apple ID from App Store Connect → App
+  // Information. Without it the "Please update" button can't open the App
+  // Store page and says so instead (release checklist: [missingStoreConfig]).
+  static const String _appStoreId = String.fromEnvironment('AURA_APP_STORE_ID');
+
+  /// Aura's App Store page, or `''` when [_appStoreId] isn't set.
+  static String get appStoreUrl =>
+      _appStoreId.isEmpty ? '' : 'https://apps.apple.com/app/id$_appStoreId';
+
+  /// Aura's Google Play page (the package name is fixed).
+  static const String playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.akvega.aura';
+
+  /// Store defines a release build is missing.
+  static List<String> get missingStoreConfig => [
+    if (_appStoreId.isEmpty) 'AURA_APP_STORE_ID',
+  ];
+
   /// Shown in Settings; keep in step with pubspec `version`.
   static const String appVersion = '0.1.0 (1)';
 

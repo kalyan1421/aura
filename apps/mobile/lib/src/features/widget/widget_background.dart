@@ -173,7 +173,8 @@ Future<void> runWidgetBackgroundEntry() async {
   ProviderContainer? container;
   try {
     ensureTimeZonesLoaded();
-    final secure = FlutterSecureStore();
+    // Reads only: the app itself moves key material (MASVS F-3).
+    final secure = DeviceBoundKeyStore.platform(migrate: false);
     db = Env.hasSupabase && Env.hasApi
         ? await openExistingAppDatabase(secure)
         : null;

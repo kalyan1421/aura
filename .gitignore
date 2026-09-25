@@ -21,3 +21,8 @@ supabase/.temp/
 infra/redis-data/
 # OS
 .DS_Store
+
+# Signing keys: never commit (docs/setup/android-release-signing.md)
+key.properties
+*.jks
+*.keystore

@@ -7781,6 +7781,42 @@ abstract class AppLocalizations {
   /// **'Downloaded sounds removed. The sounds made on your phone still play.'**
   String get sounds_downloadsRemoved;
 
+  /// Title of the full screen shown when this app is too old to keep using. Calm, a request, not an error.
+  ///
+  /// In en, this message translates to:
+  /// **'Please update Aura'**
+  String get update_title;
+
+  /// Body under update_title. Plain words, no version numbers or reasons.
+  ///
+  /// In en, this message translates to:
+  /// **'This copy of Aura needs an update before it can keep going. It only takes a moment.'**
+  String get update_body;
+
+  /// Reassurance under the body: nothing is deleted; unsynced check-ins are kept and sync after the update.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything on this phone stays safe. Your check-ins sync as soon as you\'ve updated.'**
+  String get update_safe;
+
+  /// Primary button on iPhone: opens Aura's App Store page.
+  ///
+  /// In en, this message translates to:
+  /// **'Update in the App Store'**
+  String get update_openAppStore;
+
+  /// Primary button on Android: opens Aura's Google Play page.
+  ///
+  /// In en, this message translates to:
+  /// **'Update on Google Play'**
+  String get update_openPlayStore;
+
+  /// Shown under the button when the store page could not be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'The store didn\'t open. Please open it yourself and search for Aura.'**
+  String get update_storeFailed;
+
   /// Button in the check-in details that starts recording a voice note (also its screen-reader label).
   ///
   /// In en, this message translates to:

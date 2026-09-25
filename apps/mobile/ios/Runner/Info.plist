@@ -43,12 +43,11 @@
 	<string>Only if you choose "Save Image" when sharing a card: Aura saves that one picture and never reads your photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Aura only sees the photos you choose to add to a capsule. They stay private to you.</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<!-- Local dev stack over http (localhost:3310 / :55521). -->
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+	<!-- No NSAppTransportSecurity here: ATS is fully on. The local dev stack's
+	     NSAllowsLocalNetworking (http to localhost:3310 / :55521) is added to
+	     Debug builds only by the "ATS (Debug only)" build phase
+	     (ios/scripts/ats_debug_only.sh, MASVS F-4); Release and Profile builds
+	     fail if any ATS exception is present. -->
 	<!-- audio: F15 Sounds keep playing with the screen locked (PRD
 	     15-permissions "Background audio"). Used only while the person is
 	     playing Sounds; no silent keep-alive audio, never for recording. -->

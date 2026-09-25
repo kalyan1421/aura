@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { Queryable } from '../db/db';
 import { DbService } from '../db/db.service';
+import { MIN_APP_VERSION_FLAG, effectiveMinAppVersion, type MinAppVersion } from './app-version';
 import { RemoteConfigSettings } from './remote-config.config';
 import { canonicalJson, sha256Hex } from './signing';
 
@@ -32,6 +33,11 @@ export interface ConfigDocument {
   flags: Record<string, FlagValue>;
   /** Published signed bundles by kind (`crisis_lexicon`); absent = none published (the app uses its bundled copy). */
   bundles: Record<string, BundlePointer>;
+  /**
+   * MASVS F-6: the oldest app version allowed per platform (`app-version.ts`); an older app shows "Please update
+   * Aura". Absent when no minimum is set anywhere.
+   */
+  minAppVersion?: MinAppVersion;
 }
 
 @Injectable()
@@ -49,7 +55,7 @@ export class RemoteConfigService {
     const c = this.cached;
     if (c && now - c.at < this.settings.cacheMs) return c.doc;
     // One rebuild at a time: a burst of polls after a deploy shares one pair of queries.
-    this.inflight ??= buildConfigDocument(this.db, this.settings.pollSeconds)
+    this.inflight ??= buildConfigDocument(this.db, this.settings.pollSeconds, this.settings.minAppVersion)
       .then((doc) => {
         this.cached = { doc, at: Date.now() };
         return doc;
@@ -72,7 +78,7 @@ export class RemoteConfigService {
   }
 }
 
-export async function buildConfigDocument(q: Queryable, pollSeconds: number): Promise<ConfigDocument> {
+export async function buildConfigDocument(q: Queryable, pollSeconds: number, envMinAppVersion: MinAppVersion = {}): Promise<ConfigDocument> {
   const [flags, bundles] = await Promise.all([
     q.query<{ key: string; enabled: boolean; payload: Record<string, unknown> | null }>(
       'select key, enabled, payload from public.feature_flags order by key',
@@ -85,6 +91,9 @@ export async function buildConfigDocument(q: Queryable, pollSeconds: number): Pr
     out.flags[f.key] = payload ? { enabled: f.enabled, payload } : { enabled: f.enabled };
   }
   for (const b of bundles.rows) out.bundles[b.kind] = { version: b.version, seq: Number(b.seq) };
+  const minFlag = flags.rows.find((f) => f.key === MIN_APP_VERSION_FLAG);
+  const minAppVersion = effectiveMinAppVersion(envMinAppVersion, minFlag);
+  if (Object.keys(minAppVersion).length > 0) out.minAppVersion = minAppVersion;
   return { configVersion: `c1-${sha256Hex(canonicalJson(out)).slice(0, 20)}`, ...out };
 }
 

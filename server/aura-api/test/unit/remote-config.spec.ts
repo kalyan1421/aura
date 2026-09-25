@@ -12,6 +12,7 @@ import { ApiError } from '../../src/common/api-error';
 import { KILL_SWITCH, KillSwitchGuard, ROOMS_KILL_SWITCH } from '../../src/remote-config/kill-switch';
 import { baselineLexicon, contractVectors, type LexiconDocument } from '../../src/remote-config/lexicon/document';
 import { diffLexicons } from '../../src/remote-config/lexicon.service';
+import { compareAppVersions, effectiveMinAppVersion, parseAppVersion } from '../../src/remote-config/app-version';
 import { parseRemoteConfigSettings } from '../../src/remote-config/remote-config.config';
 import { buildConfigDocument, etagMatches, RemoteConfigService } from '../../src/remote-config/remote-config.service';
 import {
@@ -268,5 +269,59 @@ describe('lexicon diff (crisis removals need an explicit yes at publish)', () =>
     expect(d.crisisFormsAdded).toBe(2);
     // Rolling back from `next` to the baseline removes the two added forms.
     expect(diffLexicons(next, base, 2).crisisFormsRemoved).toBe(2);
+  });
+});
+
+describe('minimum app version (MASVS F-6)', () => {
+  const v = (s: string) => parseAppVersion(s)!;
+
+  it('parses x[.y[.z]][+build] and nothing else', () => {
+    expect(parseAppVersion('1.4.0+57')).toEqual({ parts: [1, 4, 0], build: 57 });
+    expect(parseAppVersion('2')).toEqual({ parts: [2, 0, 0], build: null });
+    expect(parseAppVersion(' 1.2 ')).toEqual({ parts: [1, 2, 0], build: null });
+    for (const bad of ['', 'v1.2.0', '1.2.0-beta', '1..2', '1.2.3.4', 'latest', 12]) expect(parseAppVersion(bad)).toBeNull();
+  });
+
+  it('compares numerically; the build breaks a tie only when both have one', () => {
+    expect(compareAppVersions(v('1.10.0'), v('1.9.9'))).toBeGreaterThan(0);
+    expect(compareAppVersions(v('1.2'), v('1.2.0'))).toBe(0);
+    expect(compareAppVersions(v('1.2.0+5'), v('1.2.0+12'))).toBeLessThan(0);
+    expect(compareAppVersions(v('1.2.0+5'), v('1.2.0'))).toBe(0);
+    expect(compareAppVersions(v('0.9.0+99'), v('1.0.0'))).toBeLessThan(0);
+  });
+
+  it('env and an enabled flag payload: the higher wins per platform; an off flag or junk is ignored', () => {
+    expect(effectiveMinAppVersion({}, undefined)).toEqual({});
+    expect(effectiveMinAppVersion({ ios: '1.2.0' }, undefined)).toEqual({ ios: '1.2.0' });
+    expect(effectiveMinAppVersion({ ios: '1.2.0', android: '1.3.0' }, { enabled: true, payload: { ios: '1.5.0', android: '1.1.0' } })).toEqual({
+      ios: '1.5.0',
+      android: '1.3.0',
+    });
+    expect(effectiveMinAppVersion({ ios: '1.2.0' }, { enabled: false, payload: { ios: '9.0.0' } })).toEqual({ ios: '1.2.0' });
+    expect(effectiveMinAppVersion({}, { enabled: true, payload: { ios: 'latest', android: 3 } })).toEqual({});
+  });
+
+  it('env values are validated at boot, naming the variable', () => {
+    expect(parseRemoteConfigSettings({}).minAppVersion).toEqual({});
+    expect(parseRemoteConfigSettings({ APP_MIN_VERSION_IOS: '1.2.0', APP_MIN_VERSION_ANDROID: '' }).minAppVersion).toEqual({ ios: '1.2.0' });
+    expect(() => parseRemoteConfigSettings({ APP_MIN_VERSION_ANDROID: 'v1' })).toThrow(/APP_MIN_VERSION_ANDROID/);
+  });
+
+  it('the config document carries minAppVersion only when one is set, and the ETag follows it', async () => {
+    const db = (flags: Array<{ key: string; enabled: boolean; payload: Record<string, unknown> | null }>) => ({
+      query: jest.fn(async (sql: string) => ({ rows: sql.includes('feature_flags') ? flags : [] })),
+    });
+    const none = await buildConfigDocument(db([]) as never, 240);
+    expect(none).not.toHaveProperty('minAppVersion');
+    const env = await buildConfigDocument(db([]) as never, 240, { android: '1.1.0' });
+    expect(env.minAppVersion).toEqual({ android: '1.1.0' });
+    expect(env.configVersion).not.toBe(none.configVersion);
+    const flagged = await buildConfigDocument(
+      db([{ key: 'min_app_version', enabled: true, payload: { ios: '1.3.0' } }]) as never,
+      240,
+      { android: '1.1.0' },
+    );
+    expect(flagged.minAppVersion).toEqual({ ios: '1.3.0', android: '1.1.0' });
+    expect(flagged.flags.min_app_version).toEqual({ enabled: true, payload: { ios: '1.3.0' } });
   });
 });

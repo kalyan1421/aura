@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../time/clock.dart';
+import 'app_version.dart';
 import 'remote_config_store.dart';
 import 'remote_helplines.dart';
 import 'remote_lexicon.dart';
@@ -129,6 +130,7 @@ class RemoteConfigDoc {
     required this.pollSeconds,
     required this.flags,
     required this.bundles,
+    this.minAppVersion = MinAppVersions.none,
   });
 
   /// Throws [FormatException] for anything that isn't the contract shape.
@@ -165,6 +167,7 @@ class RemoteConfigDoc {
           if (e.value case {'version': final int v, 'seq': final int s})
             e.key: BundlePointer(version: v, seq: s),
       },
+      minAppVersion: MinAppVersions.fromJson(json['minAppVersion']),
     );
   }
 
@@ -172,6 +175,10 @@ class RemoteConfigDoc {
   final int pollSeconds;
   final RemoteFlags flags;
   final Map<String, BundlePointer> bundles;
+
+  /// MASVS F-6: the oldest app version allowed per platform (none when the
+  /// server sets no minimum).
+  final MinAppVersions minAppVersion;
 }
 
 /// The result of a conditional GET.
@@ -276,6 +283,13 @@ class RemoteConfigController {
   final Duration minGap;
 
   final ValueNotifier<RemoteFlags> flags = ValueNotifier(RemoteFlags.defaults);
+
+  /// The server's minimum app version (features/update). Kept with the rest
+  /// of the document, so it holds offline too; the next fetch lowers it again
+  /// if the server does.
+  final ValueNotifier<MinAppVersions> minAppVersion = ValueNotifier(
+    MinAppVersions.none,
+  );
 
   RemoteConfigDoc? _doc;
   String? _etag;
@@ -400,6 +414,9 @@ class RemoteConfigController {
     _doc = doc;
     _etag = etag;
     if (flags.value != doc.flags) flags.value = doc.flags;
+    if (minAppVersion.value != doc.minAppVersion) {
+      minAppVersion.value = doc.minAppVersion;
+    }
   }
 
   Future<void> _restore() async {
@@ -431,5 +448,6 @@ class RemoteConfigController {
     _disposed = true;
     onBackground();
     flags.dispose();
+    minAppVersion.dispose();
   }
 }

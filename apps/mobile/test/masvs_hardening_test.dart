@@ -7,7 +7,10 @@
 //    off, and strips the advertising-id permission (NETWORK-1, STORAGE-2,
 //    PRIVACY);
 //  - iOS ships privacy manifests (app + widget) that declare no tracking,
-//    registered in the Xcode project, and ATS stays on (PRIVACY, NETWORK).
+//    registered in the Xcode project, and ATS stays on (PRIVACY, NETWORK);
+//  - follow-ups: the ATS local-networking exception is Debug-only (F-4), the
+//    widget App Group container is out of backup (F-1), and Android release
+//    builds never fall back to the debug key (release signing).
 import 'dart:io';
 
 import 'package:aura/src/core/db/connection.dart';
@@ -188,5 +191,68 @@ void main() {
       ).allMatches(pbx).length;
       expect(inResources, 2);
     });
+
+    // F-4: http to localhost / *.local only in Debug builds.
+    test('the ATS local-networking exception is Debug-only', () {
+      final plist = _read('ios/Runner/Info.plist');
+      expect(plist, isNot(contains('<key>NSAllowsLocalNetworking</key>')));
+      expect(plist, isNot(contains('<key>NSAppTransportSecurity</key>')));
+      final script = _read('ios/scripts/ats_debug_only.sh');
+      expect(script, contains('Debug*)'));
+      expect(script, contains('NSAllowsLocalNetworking bool true'));
+      expect(script, contains('exit 1'), reason: 'release/profile guard');
+      final pbx = _read('ios/Runner.xcodeproj/project.pbxproj');
+      // Registered in the Runner target, after the Info.plist is processed.
+      expect(RegExp(r'/\* ATS \(Debug only\) \*/,').allMatches(pbx).length, 1);
+      expect(pbx, contains(r'scripts/ats_debug_only.sh'));
+    });
+
+    // F-1: the widget's App Group container stays out of iCloud backup.
+    test('the widget App Group container is excluded from backup', () {
+      final swift = _read('ios/Runner/AuraWidgetChannel.swift');
+      expect(swift, contains('static func excludeContainerFromBackup()'));
+      expect(swift, contains('isExcludedFromBackup = true'));
+      expect(
+        RegExp(
+          r'static func register\(messenger: FlutterBinaryMessenger\) \{\s*'
+          r'excludeContainerFromBackup\(\)',
+        ).hasMatch(swift),
+        isTrue,
+        reason: 'applied at every launch (app and headless engines)',
+      );
+    });
+  });
+
+  // Release signing (docs/setup/android-release-signing.md): a release build
+  // never falls back to the debug key.
+  group('Android release signing', () {
+    final gradle = _read('android/app/build.gradle.kts');
+
+    test('release signs with key.properties and fails without it', () {
+      expect(gradle, contains('rootProject.file("key.properties")'));
+      expect(gradle, contains('verifyReleaseSigning'));
+      expect(gradle, contains('"preReleaseBuild"'));
+      expect(gradle, contains('throw GradleException('));
+      expect(
+        gradle,
+        isNot(
+          matches(
+            RegExp(
+              r'release \{\s*signingConfig = signingConfigs\.getByName\("debug"\)',
+            ),
+          ),
+        ),
+      );
+    });
+
+    test(
+      'keystores and key.properties are git-ignored; the example is not',
+      () {
+        final ignore = _read('android/.gitignore');
+        expect(ignore, contains('key.properties'));
+        expect(ignore, contains('**/*.jks'));
+        expect(File('android/key.properties.example').existsSync(), isTrue);
+      },
+    );
   });
 }

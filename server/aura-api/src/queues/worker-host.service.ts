@@ -29,6 +29,7 @@ import {
 } from './queue-names';
 import { QueuesService } from './queues.service';
 import { redisOptionsFromUrl } from './redis';
+import { errorText } from '../common/log-scrub';
 
 /** Runs one BullMQ Worker per queue (worker entrypoint only) and schedules the heartbeat. */
 @Injectable()
@@ -89,7 +90,7 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
       new Worker(MAINTENANCE_QUEUE, (job) => this.maintenance(job), { connection, prefix: QUEUE_PREFIX, concurrency: 1 }),
     );
     for (const w of this.workers) {
-      w.on('failed', (job, err) => this.logger.warn(`[${w.name}] job ${job?.name} id=${job?.id} failed: ${err.message}`));
+      w.on('failed', (job, err) => this.logger.warn(`[${w.name}] job ${job?.name} id=${job?.id} failed: ${errorText(err)}`));
       w.on('error', (err) => this.logger.warn(`[${w.name}] ${err.message}`));
     }
     // Idempotent: upserting the scheduler never duplicates the repeatable job.
