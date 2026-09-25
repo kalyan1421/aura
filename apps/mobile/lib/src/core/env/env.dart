@@ -210,7 +210,7 @@ abstract final class Env {
   ];
 
   /// Shown in Settings; keep in step with pubspec `version`.
-  static const String appVersion = '0.1.0 (1)';
+  static const String appVersion = '1.0.0 (2)';
 
   /// Supabase redirect for magic links and browser OAuth (Apple on Android);
   /// allow-listed in supabase/config.toml.

@@ -364,7 +364,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Version 0.1.0 (1)'), findsOneWidget);
+    expect(find.text('Version 1.0.0 (2)'), findsOneWidget);
     await _unmount(tester);
   });
 
