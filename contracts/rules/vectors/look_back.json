@@ -1,0 +1,1536 @@
+{
+  "cases": [
+    {
+      "kind": "add_months",
+      "name": "31 Mar minus 1 month clamps to 28 Feb (common year)",
+      "day": "2027-03-31",
+      "months": -1,
+      "expect": "2027-02-28"
+    },
+    {
+      "kind": "add_months",
+      "name": "31 Mar minus 1 month clamps to 29 Feb (leap year)",
+      "day": "2028-03-31",
+      "months": -1,
+      "expect": "2028-02-29"
+    },
+    {
+      "kind": "add_months",
+      "name": "29 Feb minus 12 months clamps to 28 Feb",
+      "day": "2028-02-29",
+      "months": -12,
+      "expect": "2027-02-28"
+    },
+    {
+      "kind": "add_months",
+      "name": "29 Feb minus 48 months stays 29 Feb (leap to leap)",
+      "day": "2028-02-29",
+      "months": -48,
+      "expect": "2024-02-29"
+    },
+    {
+      "kind": "add_months",
+      "name": "31 Oct minus 1 month clamps to 30 Sep",
+      "day": "2026-10-31",
+      "months": -1,
+      "expect": "2026-09-30"
+    },
+    {
+      "kind": "add_months",
+      "name": "31 Aug minus 6 months clamps to 28 Feb",
+      "day": "2026-08-31",
+      "months": -6,
+      "expect": "2026-02-28"
+    },
+    {
+      "kind": "add_months",
+      "name": "30 May minus 3 months clamps to 28 Feb",
+      "day": "2027-05-30",
+      "months": -3,
+      "expect": "2027-02-28"
+    },
+    {
+      "kind": "add_months",
+      "name": "15 Jan minus 1 month crosses the year",
+      "day": "2027-01-15",
+      "months": -1,
+      "expect": "2026-12-15"
+    },
+    {
+      "kind": "add_months",
+      "name": "15 Jan minus 12 months",
+      "day": "2027-01-15",
+      "months": -12,
+      "expect": "2026-01-15"
+    },
+    {
+      "kind": "add_months",
+      "name": "the 30th stays the 30th in a 31-day month",
+      "day": "2026-12-30",
+      "months": -1,
+      "expect": "2026-11-30"
+    },
+    {
+      "kind": "add_months",
+      "name": "zero months is the same day",
+      "day": "2026-10-08",
+      "months": 0,
+      "expect": "2026-10-08"
+    },
+    {
+      "kind": "windows",
+      "name": "Thu 8 Oct 2026 15:30 IST: the weeks of 8 Sep, 8 Apr and 8 Oct 2025",
+      "now": "2026-10-08T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-08",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-08",
+            "from": "2026-09-07",
+            "to": "2026-09-13"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-08",
+            "from": "2026-04-06",
+            "to": "2026-04-12"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-08",
+            "from": "2025-10-06",
+            "to": "2025-10-12"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "03:59 IST on Fri 9 Oct is still the Aura day of 8 Oct",
+      "now": "2026-10-08T22:29:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-08",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-08",
+            "from": "2026-09-07",
+            "to": "2026-09-13"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-08",
+            "from": "2026-04-06",
+            "to": "2026-04-12"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-08",
+            "from": "2025-10-06",
+            "to": "2025-10-12"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "04:00 IST on Fri 9 Oct rolls over to 9 Oct",
+      "now": "2026-10-08T22:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-09",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-09",
+            "from": "2026-09-07",
+            "to": "2026-09-13"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-09",
+            "from": "2026-04-06",
+            "to": "2026-04-12"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-09",
+            "from": "2025-10-06",
+            "to": "2025-10-12"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "31 Mar 2027: 1 month back is 28 Feb (a Sunday), 6 months back 30 Sep",
+      "now": "2027-03-31T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2027-03-31",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2027-02-28",
+            "from": "2027-02-22",
+            "to": "2027-02-28"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-09-30",
+            "from": "2026-09-28",
+            "to": "2026-10-04"
+          },
+          {
+            "months": 12,
+            "anchor": "2026-03-31",
+            "from": "2026-03-30",
+            "to": "2026-04-05"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "31 Mar 2028 (leap year): 1 month back is 29 Feb",
+      "now": "2028-03-31T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2028-03-31",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2028-02-29",
+            "from": "2028-02-28",
+            "to": "2028-03-05"
+          },
+          {
+            "months": 6,
+            "anchor": "2027-09-30",
+            "from": "2027-09-27",
+            "to": "2027-10-03"
+          },
+          {
+            "months": 12,
+            "anchor": "2027-03-31",
+            "from": "2027-03-29",
+            "to": "2027-04-04"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "29 Feb 2028: a year back is 28 Feb 2027",
+      "now": "2028-02-29T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2028-02-29",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2028-01-29",
+            "from": "2028-01-24",
+            "to": "2028-01-30"
+          },
+          {
+            "months": 6,
+            "anchor": "2027-08-29",
+            "from": "2027-08-23",
+            "to": "2027-08-29"
+          },
+          {
+            "months": 12,
+            "anchor": "2027-02-28",
+            "from": "2027-02-22",
+            "to": "2027-02-28"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "31 Aug 2026: 6 months back clamps to 28 Feb",
+      "now": "2026-08-31T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-08-31",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-07-31",
+            "from": "2026-07-27",
+            "to": "2026-08-02"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-02-28",
+            "from": "2026-02-23",
+            "to": "2026-03-01"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-08-31",
+            "from": "2025-08-25",
+            "to": "2025-08-31"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "15 Jan 2027: 1 month back crosses the year",
+      "now": "2027-01-15T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2027-01-15",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-12-15",
+            "from": "2026-12-14",
+            "to": "2026-12-20"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-07-15",
+            "from": "2026-07-13",
+            "to": "2026-07-19"
+          },
+          {
+            "months": 12,
+            "anchor": "2026-01-15",
+            "from": "2026-01-12",
+            "to": "2026-01-18"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "1 Mar 2027 03:30 IST is still 28 Feb: windows from 28 Jan",
+      "now": "2027-02-28T22:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2027-02-28",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2027-01-28",
+            "from": "2027-01-25",
+            "to": "2027-01-31"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-08-28",
+            "from": "2026-08-24",
+            "to": "2026-08-30"
+          },
+          {
+            "months": 12,
+            "anchor": "2026-02-28",
+            "from": "2026-02-23",
+            "to": "2026-03-01"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "timezone change: the same instant in New York is still 7 Oct",
+      "now": "2026-10-08T03:00:00Z",
+      "tz": "America/New_York",
+      "expect": {
+        "today": "2026-10-07",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-07",
+            "from": "2026-09-07",
+            "to": "2026-09-13"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-07",
+            "from": "2026-04-06",
+            "to": "2026-04-12"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-07",
+            "from": "2025-10-06",
+            "to": "2025-10-12"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "timezone change: that instant in IST is already 8 Oct",
+      "now": "2026-10-08T03:00:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-10-08",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-08",
+            "from": "2026-09-07",
+            "to": "2026-09-13"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-08",
+            "from": "2026-04-06",
+            "to": "2026-04-12"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-08",
+            "from": "2025-10-06",
+            "to": "2025-10-12"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "New York, the night DST ends: 03:59 EST on 1 Nov is still 31 Oct",
+      "now": "2026-11-01T08:59:00Z",
+      "tz": "America/New_York",
+      "expect": {
+        "today": "2026-10-31",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-30",
+            "from": "2026-09-28",
+            "to": "2026-10-04"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-30",
+            "from": "2026-04-27",
+            "to": "2026-05-03"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-31",
+            "from": "2025-10-27",
+            "to": "2025-11-02"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "New York, the night DST ends: 04:00 EST rolls over to 1 Nov",
+      "now": "2026-11-01T09:00:00Z",
+      "tz": "America/New_York",
+      "expect": {
+        "today": "2026-11-01",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-10-01",
+            "from": "2026-09-28",
+            "to": "2026-10-04"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-05-01",
+            "from": "2026-04-27",
+            "to": "2026-05-03"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-11-01",
+            "from": "2025-10-27",
+            "to": "2025-11-02"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "weeks starting Sunday",
+      "now": "2026-10-08T10:00:00Z",
+      "tz": "Asia/Kolkata",
+      "weekStartsOn": 7,
+      "expect": {
+        "today": "2026-10-08",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-09-08",
+            "from": "2026-09-06",
+            "to": "2026-09-12"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-04-08",
+            "from": "2026-04-05",
+            "to": "2026-04-11"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-10-08",
+            "from": "2025-10-05",
+            "to": "2025-10-11"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "a 1-month anchor on a Monday (5 Oct) starts its own week",
+      "now": "2026-11-05T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-11-05",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-10-05",
+            "from": "2026-10-05",
+            "to": "2026-10-11"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-05-05",
+            "from": "2026-05-04",
+            "to": "2026-05-10"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-11-05",
+            "from": "2025-11-03",
+            "to": "2025-11-09"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "windows",
+      "name": "a 1-month anchor on a Sunday (11 Oct) ends its week",
+      "now": "2026-11-11T06:30:00Z",
+      "tz": "Asia/Kolkata",
+      "expect": {
+        "today": "2026-11-11",
+        "windows": [
+          {
+            "months": 1,
+            "anchor": "2026-10-11",
+            "from": "2026-10-05",
+            "to": "2026-10-11"
+          },
+          {
+            "months": 6,
+            "anchor": "2026-05-11",
+            "from": "2026-05-11",
+            "to": "2026-05-17"
+          },
+          {
+            "months": 12,
+            "anchor": "2025-11-11",
+            "from": "2025-11-10",
+            "to": "2025-11-16"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "nothing recent: open",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "open",
+        "until": null
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "Storm 2 h 59 min ago: hidden",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T07:01:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T10:01:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "Storm exactly 3 h ago: open",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T07:00:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "open",
+        "until": null
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "Rain 1 h ago: hidden until 3 h after it",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T09:00:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T12:00:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "Moonlight and Sunrise never hide it",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "moonlight",
+          "deviceTs": "2026-10-08T09:59:00Z"
+        },
+        {
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-08T09:30:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "open",
+        "until": null
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "a Rain check-in stamped with a +05:30 offset compares as an instant",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T14:00:00+05:30"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T11:30:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "the latest heavy check-in sets the end",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T08:00:00Z"
+        },
+        {
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T09:30:00Z"
+        },
+        {
+          "quadrant": "sunrise",
+          "deviceTs": "2026-10-08T09:45:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T12:30:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "a deleted or backfilled Storm still counts from when it was made",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T09:00:00Z",
+          "deleted": true,
+          "localDay": "2026-10-05"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T12:00:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "a heavy check-in stamped in the future (clock skew) keeps it hidden",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T11:00:00Z"
+        }
+      ],
+      "helpAt": null,
+      "hidden": false,
+      "expect": {
+        "status": "after_heavy",
+        "until": "2026-10-08T14:00:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "crisis sheet 23 h 59 min ago: hidden",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [],
+      "helpAt": "2026-10-07T10:01:00Z",
+      "hidden": false,
+      "expect": {
+        "status": "after_help",
+        "until": "2026-10-08T10:01:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "crisis sheet exactly 24 h ago: open",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [],
+      "helpAt": "2026-10-07T10:00:00Z",
+      "hidden": false,
+      "expect": {
+        "status": "open",
+        "until": null
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "crisis sheet and a later heavy check-in: the later end wins",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "rain",
+          "deviceTs": "2026-10-08T09:30:00Z"
+        }
+      ],
+      "helpAt": "2026-10-07T12:00:00Z",
+      "hidden": false,
+      "expect": {
+        "status": "after_help",
+        "until": "2026-10-08T12:30:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "crisis sheet wins the reason over a heavy check-in",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T09:00:00Z"
+        }
+      ],
+      "helpAt": "2026-10-08T08:00:00Z",
+      "hidden": false,
+      "expect": {
+        "status": "after_help",
+        "until": "2026-10-09T08:00:00.000Z"
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "hidden in Settings: off, whatever else",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [
+        {
+          "quadrant": "storm",
+          "deviceTs": "2026-10-08T09:00:00Z"
+        }
+      ],
+      "helpAt": "2026-10-08T08:00:00Z",
+      "hidden": true,
+      "expect": {
+        "status": "off",
+        "until": null
+      }
+    },
+    {
+      "kind": "gate",
+      "name": "hidden in Settings with nothing recent: off",
+      "now": "2026-10-08T10:00:00Z",
+      "checkIns": [],
+      "helpAt": null,
+      "hidden": true,
+      "expect": {
+        "status": "off",
+        "until": null
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "empty window: not visible, a quiet week",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [],
+      "restDays": [],
+      "expect": {
+        "visible": false,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "one check-in: visible, its day a single star",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "a",
+          "localDay": "2026-09-08",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-09-08T06:30:00Z"
+        },
+        {
+          "id": "out",
+          "localDay": "2026-09-14",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-14T06:30:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "single",
+            "quadrants": [
+              "moonlight"
+            ],
+            "entries": [
+              "a"
+            ]
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "crisis-flagged entries never appear, and the day's star ignores them",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "a",
+          "localDay": "2026-09-08",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-09-08T06:30:00Z"
+        },
+        {
+          "id": "b",
+          "localDay": "2026-09-08",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-08T07:30:00Z",
+          "lexiconCrisis": true
+        },
+        {
+          "id": "c",
+          "localDay": "2026-09-08",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-08T08:30:00Z",
+          "helpOpened": true
+        },
+        {
+          "id": "d",
+          "localDay": "2026-09-09",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-09T08:30:00Z",
+          "lexiconCrisis": true
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "single",
+            "quadrants": [
+              "moonlight"
+            ],
+            "entries": [
+              "a"
+            ]
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "a week with only crisis-flagged entries is not visible",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "b",
+          "localDay": "2026-09-08",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-08T07:30:00Z",
+          "lexiconCrisis": true
+        },
+        {
+          "id": "c",
+          "localDay": "2026-09-10",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-10T08:30:00Z",
+          "helpOpened": true
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": false,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "deleted entries leave Look back",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "a",
+          "localDay": "2026-09-08",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-08T06:30:00Z",
+          "deleted": true
+        },
+        {
+          "id": "b",
+          "localDay": "2026-09-11",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-09-11T06:30:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "single",
+            "quadrants": [
+              "sunrise"
+            ],
+            "entries": [
+              "b"
+            ]
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "a note this phone can't read (not checked by the lexicon) is left out",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "a",
+          "localDay": "2026-09-08",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-08T06:30:00Z",
+          "noteUnreadable": true
+        },
+        {
+          "id": "b",
+          "localDay": "2026-09-08",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-09-08T09:30:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "single",
+            "quadrants": [
+              "sunrise"
+            ],
+            "entries": [
+              "b"
+            ]
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "entries in the order they were made; a tie is a split star",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "z",
+          "localDay": "2026-09-12",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-09-12T12:00:00Z"
+        },
+        {
+          "id": "y",
+          "localDay": "2026-09-12",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-12T03:00:00Z"
+        },
+        {
+          "id": "x",
+          "localDay": "2026-09-12",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-12T12:00:00Z"
+        },
+        {
+          "id": "w",
+          "localDay": "2026-09-12",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-09-12T02:00:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "split",
+            "quadrants": [
+              "rain",
+              "sunrise"
+            ],
+            "entries": [
+              "w",
+              "y",
+              "x",
+              "z"
+            ]
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "rest days show as rings; a crisis-only day stays plain sky",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "a",
+          "localDay": "2026-09-07",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-09-07T06:30:00Z"
+        },
+        {
+          "id": "b",
+          "localDay": "2026-09-09",
+          "quadrant": "storm",
+          "deviceTs": "2026-09-09T06:30:00Z",
+          "lexiconCrisis": true
+        },
+        {
+          "id": "c",
+          "localDay": "2026-09-10",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-09-10T06:30:00Z"
+        }
+      ],
+      "restDays": [
+        "2026-09-08"
+      ],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "single",
+            "quadrants": [
+              "moonlight"
+            ],
+            "entries": [
+              "a"
+            ]
+          },
+          {
+            "day": "2026-09-08",
+            "star": "rest",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "single",
+            "quadrants": [
+              "moonlight"
+            ],
+            "entries": [
+              "c"
+            ]
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "matched on the stamped Aura day: a 01:30 check-in on the 14th belongs to the 13th",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "late",
+          "localDay": "2026-09-13",
+          "quadrant": "moonlight",
+          "deviceTs": "2026-09-13T20:00:00Z"
+        },
+        {
+          "id": "next",
+          "localDay": "2026-09-14",
+          "quadrant": "sunrise",
+          "deviceTs": "2026-09-14T00:00:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "single",
+            "quadrants": [
+              "moonlight"
+            ],
+            "entries": [
+              "late"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "kind": "sky",
+      "name": "a backfill shows on the day it was made for",
+      "from": "2026-09-07",
+      "to": "2026-09-13",
+      "entries": [
+        {
+          "id": "bf",
+          "localDay": "2026-09-09",
+          "quadrant": "rain",
+          "deviceTs": "2026-09-11T06:30:00Z"
+        }
+      ],
+      "restDays": [],
+      "expect": {
+        "visible": true,
+        "days": [
+          {
+            "day": "2026-09-07",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-08",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-09",
+            "star": "single",
+            "quadrants": [
+              "rain"
+            ],
+            "entries": [
+              "bf"
+            ]
+          },
+          {
+            "day": "2026-09-10",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-11",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-12",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          },
+          {
+            "day": "2026-09-13",
+            "star": "empty",
+            "quadrants": [],
+            "entries": []
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import '../../core/widgets/inline_notice.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../checkin/quadrant_glyph.dart';
+import '../quiet/quiet_entry.dart';
 import '../shell/app_shell.dart' show ShellSettingsButton, isShellTabRoot;
 import 'room_copy.dart';
 import 'room_models.dart';
@@ -146,6 +147,11 @@ class RoomsHomeScreen extends ConsumerWidget {
                   child: Text(l.rooms_checkInCta, textAlign: TextAlign.center),
                 ),
               ],
+              // F16 Quiet Together (Milestone C): study, read or rest alongside
+              // others — a count, a shared sound and gestures (hidden while
+              // switched off).
+              const SizedBox(height: AuraSpace.l),
+              const QuietTogetherCard(),
             ],
           ),
         ),

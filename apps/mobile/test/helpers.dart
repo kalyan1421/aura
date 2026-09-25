@@ -12,12 +12,15 @@ import 'package:aura/src/features/auth/auth_repository.dart';
 import 'package:aura/src/features/avatar/avatar_assets.dart';
 import 'package:aura/src/features/onboarding/gate_controller.dart';
 import 'package:aura/src/features/push/push_messaging.dart';
+import 'package:aura/src/features/widget/widget_bridge.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+
+import 'widget_fakes.dart';
 
 /// 15:30 IST on 8 Oct 2026 — a plain afternoon Aura day.
 final DateTime testNow = DateTime.utc(2026, 10, 8, 10);
@@ -69,6 +72,7 @@ List<Override> testOverrides({
   FakeSync? sync,
   TimeContext? time,
   AuthRepository auth = const UnavailableAuthRepository(),
+  MemoryWidgetHost? widgetHost,
 }) {
   final t = time ?? testTime();
   return [
@@ -84,6 +88,9 @@ List<Override> testOverrides({
     avatarAssetsProvider.overrideWith((ref) async => assets ?? emptyAssets()),
     initialGateProvider.overrideWithValue(gate),
     initialLocaleTagProvider.overrideWithValue(locale),
+    // Home-screen widget (F11): an in-memory store, no PNG rendering.
+    widgetHostProvider.overrideWithValue(widgetHost ?? MemoryWidgetHost()),
+    avatarSnapshotterProvider.overrideWithValue((_) async => null),
   ];
 }
 

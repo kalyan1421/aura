@@ -11,6 +11,8 @@ import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/help_app_bar.dart';
+import '../keepsakes/keepsakes_screen.dart'
+    show KeepsakesEntryTile, keepsakesRoute;
 import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
 import '../shell/app_shell.dart'
@@ -20,6 +22,8 @@ import 'day_sheet.dart';
 import 'insight_cards.dart';
 import 'insights_copy.dart';
 import 'insights_providers.dart';
+import 'look_back.dart' show lookBackAvailableProvider;
+import 'look_back_screen.dart';
 import 'sky_calendar.dart';
 
 /// The Insights tab: Aura Sky (PRD F10, Milestone B).
@@ -197,6 +201,14 @@ class _Body extends ConsumerWidget {
         ),
         const SizedBox(height: AuraSpace.xl),
         _Padded(child: _Lifetime(model: model)),
+        // F10 Look back (REQ-INS-08): pull-only, only here, only while its
+        // safety gate is open and a past week has something to show.
+        const _LookBackSlot(),
+        // F13: the private keepsakes box lives in Insights (PRD F13).
+        const SizedBox(height: AuraSpace.m),
+        _Padded(
+          child: KeepsakesEntryTile(onOpen: () => context.push(keepsakesRoute)),
+        ),
         const SizedBox(height: AuraSpace.l),
         Center(
           child: OutlinedButton.icon(
@@ -207,6 +219,19 @@ class _Body extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LookBackSlot extends ConsumerWidget {
+  const _LookBackSlot();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(lookBackAvailableProvider)) return const SizedBox.shrink();
+    return const Padding(
+      padding: EdgeInsets.only(top: AuraSpace.l),
+      child: LookBackEntryCard(),
     );
   }
 }

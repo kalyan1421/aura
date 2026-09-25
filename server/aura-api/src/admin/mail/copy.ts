@@ -1,15 +1,16 @@
 import type { GrievanceCategory } from '../clocks';
 
 /**
- * Every localized line of the emails Aura sends to people (not staff): the grievance acknowledgement and the
- * deletion-case confirmation link — in one place so a reviewer reads all five languages side by side
- * (docs/l10n/helplines-and-emails.md, docs/l10n/hindi-review.md). English is the reviewed original; **te, te-Latn, hi
- * and hi-Latn are drafts that NEED NATIVE REVIEW**, like every non-English string (Telugu uses the respectful *meeru*
- * form, Hindi and Hinglish *aap* with no verb that agrees with the reader's gender).
+ * Every localized line of the emails Aura sends to people (not staff): the grievance acknowledgement, the
+ * deletion-case confirmation link and the trial-ending reminder (src/user-mail) — in one place so a reviewer reads
+ * all five languages side by side (docs/l10n/helplines-and-emails.md, docs/l10n/hindi-review.md). English is the
+ * reviewed original; **te, te-Latn, hi and hi-Latn are drafts that NEED NATIVE REVIEW**, like every non-English
+ * string (Telugu uses the respectful *meeru* form, Hindi and Hinglish *aap* with no verb that agrees with the reader's
+ * gender).
  *
  * Content rules (the same in every language): never quote the complaint back, never a date of birth, a mood or any
- * account detail; the only link is the random-token deletion link (no personal data in a URL). Other languages get
- * English (`mailLocale`). The decision reply and staff mail stay English.
+ * account detail; the only links are the random-token deletion link and the store's own subscription page (no
+ * personal data in a URL). Other languages get English (`mailLocale`). The decision reply and staff mail stay English.
  */
 export const MAIL_LOCALES = ['en', 'te', 'te-Latn', 'hi', 'hi-Latn'] as const;
 export type MailLocale = (typeof MAIL_LOCALES)[number];
@@ -38,6 +39,20 @@ export interface MailCopy {
     category: string;
     resolveBy: (when: string, window: string) => string;
     quoteTicket: string;
+  };
+  /**
+   * The trial-ending email (PRD 12 "Aura Plus trial ending": push + in-app card + email; "Trial-ending reminder rules").
+   * Facts only: the end date, the store's own price string and period, and the store's subscription page. The first
+   * sentence is word for word the push line (push-copy.ts `trial_ending*`). Transactional and sent once, so there is
+   * no unsubscribe link; nothing about moods, content or the account beyond the trial.
+   */
+  trialEnding: {
+    subject: (date: string) => string;
+    facts: (date: string, price: string) => string;
+    factsYear: (date: string, price: string) => string;
+    factsNoPrice: (date: string) => string;
+    cancelHow: (store: string) => string;
+    once: string;
   };
   deletion: {
     subject: (ticket: string) => string;
@@ -75,6 +90,14 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
       category: 'Category',
       resolveBy: (when, window) => `We will resolve it by: ${when} (${window} of receipt)`,
       quoteTicket: 'Please quote your ticket number if you write to us again. You can reply to this email.',
+    },
+    trialEnding: {
+      subject: (date) => `Aura Plus: your free month ends on ${date}`,
+      facts: (date, price) => `Your free month of Aura Plus ends on ${date}. After that it's ${price}/month. Keep it or cancel anytime.`,
+      factsYear: (date, price) => `Your free month of Aura Plus ends on ${date}. After that it's ${price}/year. Keep it or cancel anytime.`,
+      factsNoPrice: (date) => `Your free month of Aura Plus ends on ${date}. Keep it or cancel anytime in the store.`,
+      cancelHow: (store) => `To cancel or change it, open your ${store} subscriptions:`,
+      once: 'This is a one-time email: your free month is ending, and Aura sends no other email about it.',
     },
     deletion: {
       subject: (ticket) => `Aura: confirm the request to delete your account (${ticket})`,
@@ -117,6 +140,14 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
       resolveBy: (when, window) => `పరిష్కరించే గడువు: ${when} (అందినప్పటి నుండి ${window})`,
       quoteTicket: 'మాకు మళ్ళీ రాసేటప్పుడు దయచేసి మీ టికెట్ నంబర్‌ను పేర్కొనండి. ఈ ఈమెయిల్‌కు మీరు జవాబు ఇవ్వవచ్చు.',
     },
+    trialEnding: {
+      subject: (date) => `Aura Plus: మీ ఉచిత నెల ${date}తో ముగుస్తుంది`,
+      facts: (date, price) => `మీ Aura Plus ఉచిత నెల ${date}తో ముగుస్తుంది. తర్వాత నెలకు ${price}. కొనసాగించవచ్చు, లేదా ఎప్పుడైనా రద్దు చేయవచ్చు.`,
+      factsYear: (date, price) => `మీ Aura Plus ఉచిత నెల ${date}తో ముగుస్తుంది. తర్వాత సంవత్సరానికి ${price}. కొనసాగించవచ్చు, లేదా ఎప్పుడైనా రద్దు చేయవచ్చు.`,
+      factsNoPrice: (date) => `మీ Aura Plus ఉచిత నెల ${date}తో ముగుస్తుంది. కొనసాగించవచ్చు, లేదా ఎప్పుడైనా రద్దు చేయవచ్చు.`,
+      cancelHow: (store) => `రద్దు చేయడానికి లేదా మార్చడానికి, మీ ${store} సబ్‌స్క్రిప్షన్లు తెరవండి:`,
+      once: 'ఇది ఒక్కసారి మాత్రమే వచ్చే ఈమెయిల్: మీ ఉచిత నెల ముగుస్తోంది. దీని గురించి Aura మరే ఈమెయిల్ పంపదు.',
+    },
     deletion: {
       subject: (ticket) => `Aura: మీ ఖాతా తొలగింపు అభ్యర్థనను నిర్ధారించండి (${ticket})`,
       intro: (ticket) =>
@@ -156,6 +187,15 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
       category: 'Category',
       resolveBy: (when, window) => `Parishkarinche gaduvu: ${when} (andinappati nundi ${window})`,
       quoteTicket: 'Maaku malli raasetappudu dayachesi mee ticket number mention cheyandi. Ee email ki reply ivvochu.',
+    },
+    trialEnding: {
+      subject: (date) => `Aura Plus: mee free month ${date} tho aipotundi`,
+      facts: (date, price) => `Mee Aura Plus free month ${date} tho aipotundi. Tarvatha nelaki ${price}. Continue cheyyochu, leda eppudaina cancel cheyyochu.`,
+      factsYear: (date, price) =>
+        `Mee Aura Plus free month ${date} tho aipotundi. Tarvatha samvatsaraaniki ${price}. Continue cheyyochu, leda eppudaina cancel cheyyochu.`,
+      factsNoPrice: (date) => `Mee Aura Plus free month ${date} tho aipotundi. Continue cheyyochu, leda eppudaina cancel cheyyochu.`,
+      cancelHow: (store) => `Cancel cheyyadaniki leda maarchadaniki, mee ${store} subscriptions open cheyandi:`,
+      once: 'Idi okkasaari maatrame vache email: mee free month aipotondi. Deeni gurinchi Aura inko email pampadu.',
     },
     deletion: {
       subject: (ticket) => `Aura: mee account delete request ni confirm cheyandi (${ticket})`,
@@ -197,6 +237,14 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
       resolveBy: (when, window) => `समाधान की समय-सीमा: ${when} (मिलने के ${window})`,
       quoteTicket: 'हमें दोबारा लिखते समय कृपया अपना टिकट नंबर बताएँ। इस ईमेल का जवाब भी दिया जा सकता है।',
     },
+    trialEnding: {
+      subject: (date) => `Aura Plus: आपका मुफ़्त महीना ${date} को पूरा होगा`,
+      facts: (date, price) => `Aura Plus का आपका मुफ़्त महीना ${date} को पूरा होगा। उसके बाद ${price}/महीना। इसे जारी रखें या कभी भी रद्द करें।`,
+      factsYear: (date, price) => `Aura Plus का आपका मुफ़्त महीना ${date} को पूरा होगा। उसके बाद ${price}/साल। इसे जारी रखें या कभी भी रद्द करें।`,
+      factsNoPrice: (date) => `Aura Plus का आपका मुफ़्त महीना ${date} को पूरा होगा। इसे जारी रखें या स्टोर में कभी भी रद्द करें।`,
+      cancelHow: (store) => `रद्द करने या बदलने के लिए, अपने ${store} सब्सक्रिप्शन खोलें:`,
+      once: 'यह ईमेल सिर्फ़ एक बार भेजा जाता है: आपका मुफ़्त महीना पूरा होने वाला है। इसके बारे में Aura कोई और ईमेल नहीं भेजेगा।',
+    },
     deletion: {
       subject: (ticket) => `Aura: अपना अकाउंट डिलीट करने के अनुरोध की पुष्टि करें (${ticket})`,
       intro: (ticket) =>
@@ -236,6 +284,14 @@ export const MAIL_COPY: Readonly<Record<MailLocale, MailCopy>> = {
       category: 'Category',
       resolveBy: (when, window) => `Samadhan ki deadline: ${when} (milne ke ${window})`,
       quoteTicket: 'Humein dobara likhte waqt please apna ticket number batayein. Is email ka reply bhi kiya ja sakta hai.',
+    },
+    trialEnding: {
+      subject: (date) => `Aura Plus: aapka free month ${date} ko poora hoga`,
+      facts: (date, price) => `Aapka Aura Plus free month ${date} ko poora hoga. Uske baad ${price}/month. Ise continue karein ya kabhi bhi cancel karein.`,
+      factsYear: (date, price) => `Aapka Aura Plus free month ${date} ko poora hoga. Uske baad ${price}/year. Ise continue karein ya kabhi bhi cancel karein.`,
+      factsNoPrice: (date) => `Aapka Aura Plus free month ${date} ko poora hoga. Ise continue karein ya store mein kabhi bhi cancel karein.`,
+      cancelHow: (store) => `Cancel karne ya badalne ke liye, apne ${store} subscriptions kholein:`,
+      once: 'Yeh email sirf ek baar bheja jata hai: aapka free month poora hone wala hai. Iske baare mein Aura koi aur email nahi bhejega.',
     },
     deletion: {
       subject: (ticket) => `Aura: apna account delete karne ki request confirm karein (${ticket})`,

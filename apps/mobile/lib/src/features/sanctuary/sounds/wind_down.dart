@@ -135,3 +135,19 @@ WindDownPlan windDownPlanFor(LocalDay day, List<Stem> pool) {
     ],
   );
 }
+
+/// A plan for a lineup chosen elsewhere (bed first): the F16 Lantern Hour
+/// wind-down, where the server picks the stems so every phone in a room
+/// plays the same track, shaped like the night wind-down (it thins out to
+/// silence at [windDownLength]). At most four stems.
+WindDownPlan windDownPlanWith(LocalDay day, List<String> order) {
+  final lineup = order.take(_slotShapes.length).toList();
+  return WindDownPlan(
+    day: day,
+    order: lineup,
+    tracks: [
+      for (var i = 0; i < lineup.length; i++)
+        WindDownTrack(lineup[i], _slotShapes[i]),
+    ],
+  );
+}

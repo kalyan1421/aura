@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
+import 'package:aura/src/core/entitlements/plus.dart';
 import 'package:aura/src/core/ids/ids.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
@@ -31,6 +32,7 @@ import 'package:image/image.dart' as img;
 
 import 'capsules_fakes.dart';
 import 'helpers.dart';
+import 'plus_fakes.dart';
 import 'voice_fakes.dart';
 
 /// F4 screens: the list and a capsule's page (PRD 14-states), the composer
@@ -645,6 +647,71 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('capsule-limit-pick-date')));
       await tester.pumpAndSettle();
       expect(find.byType(DatePickerDialog), findsOneWidget);
+    });
+
+    group('F12 long voice: the Plus entry under the voice limit', () {
+      const note = ValueKey('plus-note-capsuleLongVoice');
+      const open = ValueKey('plus-note-open-capsuleLongVoice');
+
+      /// Records until the free 2-minute limit stops it.
+      Future<void> recordToLimit(WidgetTester tester, Entitlement e) async {
+        await pump(
+          tester,
+          const CapsuleComposerScreen(),
+          extra: plusOverrides(entitlement: e),
+        );
+        await show(tester, 'voice-record');
+        await tester.tap(find.byKey(const ValueKey('voice-record')));
+        await until(tester, find.byKey(const ValueKey('voice-stop')));
+        expect(find.byKey(note), findsNothing); // nothing while recording
+        await tester.pump(const Duration(minutes: 2));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        await settleIo(tester);
+      }
+
+      capsuleWidgets(
+        'free: the limit note, then "Part of Aura Plus", the voice explainer '
+        'and "See Aura Plus" (the day\'s one unprompted showing)',
+        (tester) async {
+          await recordToLimit(tester, freeAccount());
+          expect(find.text(en.capsules_voiceLimit), findsOneWidget);
+          await show(tester, 'plus-note-capsuleLongVoice');
+          expect(find.byKey(note), findsOneWidget);
+          expect(find.text(en.plus_lockedOnly), findsOneWidget);
+          expect(find.text(en.plus_explainerVoice), findsOneWidget);
+          expect(find.text(en.plus_seePlus), findsOneWidget);
+          expect(find.byKey(open), findsOneWidget);
+        },
+      );
+
+      capsuleWidgets('Neg: first 24 h → only "Part of Aura Plus", no way in', (
+        tester,
+      ) async {
+        await recordToLimit(
+          tester,
+          freeAccount(allowedFrom: testNow.add(const Duration(hours: 3))),
+        );
+        await show(tester, 'plus-note-capsuleLongVoice');
+        expect(find.text(en.plus_lockedOnly), findsOneWidget);
+        expect(find.byKey(open), findsNothing);
+        expect(find.text(en.plus_explainerVoice), findsNothing);
+      });
+
+      capsuleWidgets('Plus on: 10 minutes, and no Plus entry at all', (
+        tester,
+      ) async {
+        await recordToLimit(tester, plusAccount());
+        // Still recording at 2:00 (Plus stops at 10:00).
+        expect(find.byKey(const ValueKey('voice-stop')), findsOneWidget);
+        await tester.pump(const Duration(minutes: 8));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        await settleIo(tester);
+        expect(find.byKey(const ValueKey('voice-stop')), findsNothing);
+        expect(find.byKey(note), findsNothing);
+        expect(find.byKey(open), findsNothing);
+      });
     });
 
     capsuleWidgets('photos: picked, resized and stripped, up to 3', (

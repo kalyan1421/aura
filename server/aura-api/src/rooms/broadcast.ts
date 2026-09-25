@@ -8,7 +8,7 @@ import { memberTopic, roomTopic, type GestureTarget, type GestureType } from './
  * transaction, so an event is delivered only if the write commits. `realtime.send` never throws (it logs a Postgres
  * WARNING), so broadcasting can't fail a request; delivery is best-effort and clients refetch the REST detail.
  */
-export type RoomEvent = 'member_joined' | 'member_left' | 'presence' | 'gesture_sent' | 'room_state' | 'lantern_hour';
+export type RoomEvent = 'member_joined' | 'member_left' | 'presence' | 'gesture_sent' | 'room_state' | 'lantern_hour' | 'wind_down';
 export type MemberEvent = 'gesture_received';
 
 async function send(q: Queryable, topic: string, event: RoomEvent | MemberEvent, payload: Record<string, unknown>): Promise<void> {
@@ -69,6 +69,14 @@ export const Broadcast = {
 
   lanternHour(q: Queryable, roomId: string, lanternHour: LanternHourView, at: Date): Promise<void> {
     return send(q, roomTopic(roomId), 'lantern_hour', { lanternHour, at: iso(at) });
+  },
+
+  /**
+   * F16 Lantern Hour wind-down (contracts/api/v1-quiet.md §2.4): "N winding down" — a room total. Never who opted in,
+   * never a member id or pseudonym.
+   */
+  windDown(q: Queryable, roomId: string, s: { state: 'soon' | 'open' | 'ended'; count: number }, at: Date): Promise<void> {
+    return send(q, roomTopic(roomId), 'wind_down', { state: s.state, count: s.count, at: iso(at) });
   },
 
   /**

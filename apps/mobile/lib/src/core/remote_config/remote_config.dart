@@ -47,6 +47,8 @@ class RemoteFlags {
     roomsEnabledKey: true,
     roomsPoolHiKey: false,
     ripplesEnabledKey: true,
+    quietEnabledKey: true,
+    lanternWindDownEnabledKey: true,
   };
 
   static const RemoteFlags defaults = RemoteFlags();
@@ -63,6 +65,15 @@ class RemoteFlags {
   /// `503 ripples_paused`); sessions already playing finish.
   static const String ripplesEnabledKey = 'ripples_enabled';
 
+  /// Kill switch (F16): off → the Quiet Together entry hides (the server
+  /// answers `503 quiet_paused`, also per region via `pausedRegions`);
+  /// sessions already running finish their block.
+  static const String quietEnabledKey = 'quiet_enabled';
+
+  /// Kill switch (F16): off → rooms offer no "Wind down together" (the
+  /// server answers `503 wind_down_paused`, also per region).
+  static const String lanternWindDownEnabledKey = 'lantern_wind_down_enabled';
+
   final Map<String, FlagValue> _values;
 
   /// A flag the server sent, else its bundled default, else off.
@@ -74,6 +85,8 @@ class RemoteFlags {
   bool get roomsEnabled => enabled(roomsEnabledKey);
   bool get roomsPoolHi => enabled(roomsPoolHiKey);
   bool get ripplesEnabled => enabled(ripplesEnabledKey);
+  bool get quietEnabled => enabled(quietEnabledKey);
+  bool get lanternWindDownEnabled => enabled(lanternWindDownEnabledKey);
 
   /// Keys the server sent (tests, debug).
   Iterable<String> get keys => _values.keys;

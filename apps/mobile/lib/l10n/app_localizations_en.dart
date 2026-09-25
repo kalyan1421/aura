@@ -1758,6 +1758,225 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get insights_lookBackTitle => 'Look back';
+
+  @override
+  String get insights_lookBackTileBody =>
+      'Your sky from the same week, a while back. Open it when you want to.';
+
+  @override
+  String get insights_lookBackIntro =>
+      'The same week a month, six months and a year ago. Only you can see this. It stays on this phone.';
+
+  @override
+  String get insights_lookBackMonth => 'A month ago';
+
+  @override
+  String get insights_lookBackSixMonths => 'Six months ago';
+
+  @override
+  String get insights_lookBackYear => 'A year ago';
+
+  @override
+  String insights_lookBackWeekOf(String date) {
+    return 'Week of $date';
+  }
+
+  @override
+  String get insights_lookBackEmpty =>
+      'Nothing to look back on yet. Weeks you checked in will appear here.';
+
+  @override
+  String get insights_lookBackClosed => 'Look back is closed for now.';
+
+  @override
+  String get insights_lookBackShowNote => 'Show note';
+
+  @override
+  String get insights_lookBackShowVoice => 'Show voice note';
+
+  @override
+  String get insights_lookBackHideNote => 'Hide';
+
+  @override
+  String get insights_lookBackSettingsHint =>
+      'You can turn Look back off in Settings.';
+
+  @override
+  String get insights_lookBackSetting => 'Look back in Aura Sky';
+
+  @override
+  String get insights_lookBackSettingNote =>
+      'Past weeks of your sky, only when you open them. Never sent to you as a notification.';
+
+  @override
+  String get keepsakes_title => 'Keepsakes';
+
+  @override
+  String get keepsakes_intro => 'Small moments, kept. Only you can see these.';
+
+  @override
+  String get keepsakes_empty =>
+      'Nothing here yet. Keepsakes arrive on their own, from small moments along the way.';
+
+  @override
+  String get keepsakes_privateNote =>
+      'Keepsakes are never shown to anyone else. One leaves your phone only if you share its card.';
+
+  @override
+  String keepsakes_keptOn(String date) {
+    return 'Kept on $date';
+  }
+
+  @override
+  String keepsakes_sealSemantic(String line, String date) {
+    return '$line, kept on $date';
+  }
+
+  @override
+  String get keepsakes_shareThis => 'Share this card';
+
+  @override
+  String get keepsakes_shareAura => 'Share your Aura';
+
+  @override
+  String get keepsakes_offline =>
+      'New keepsakes arrive when you\'re back online.';
+
+  @override
+  String get keepsakes_entry => 'Your keepsakes';
+
+  @override
+  String get keepsakes_entryNote => 'Seals from small moments, private to you.';
+
+  @override
+  String get keepsakes_newTitle => 'A new keepsake';
+
+  @override
+  String get keepsakes_newSeveral => 'New keepsakes are in your box.';
+
+  @override
+  String get keepsakes_newOpen => 'See your keepsakes';
+
+  @override
+  String get keepsakes_hideCard => 'Hide this card';
+
+  @override
+  String get keepsake_capsuleSealedFirst => 'Sealed a note for future me';
+
+  @override
+  String get keepsake_capsuleOpenedFirst => 'Opened a capsule from past me';
+
+  @override
+  String keepsake_glowDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days of glow',
+      one: '1 day of glow',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get keepsake_ripplesFirst => 'Breathed together for the first time';
+
+  @override
+  String get keepsake_lanternFirst => 'My first Lantern Hour';
+
+  @override
+  String keepsake_lanternHours(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count evenings of Lantern Hour',
+      one: '1 evening of Lantern Hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String keepsake_sanctuaryMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes quiet minutes in Sanctuary',
+      one: '1 quiet minute in Sanctuary',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String share_evolutionLine(String stage) {
+    return 'My Aura reached $stage';
+  }
+
+  @override
+  String share_anniversaryLine(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: 'Sealed a capsule $years years ago',
+      one: 'Sealed a capsule 1 year ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get share_storeLine => 'Aura · App Store and Google Play';
+
+  @override
+  String share_text(String link) {
+    return 'Aura, a quiet place to notice how you feel: $link';
+  }
+
+  @override
+  String get share_sheetTitle => 'Share a card';
+
+  @override
+  String get share_sheetNote =>
+      'The card shows your Aura and this moment. Never your moods, notes or name.';
+
+  @override
+  String get share_button => 'Share';
+
+  @override
+  String get share_failed =>
+      'The card couldn\'t be made just now. Please try again.';
+
+  @override
+  String share_cardSemantic(String line, String stage) {
+    return 'Card to share: $line. Your Aura at the $stage stage.';
+  }
+
+  @override
+  String share_promptEvolution(String stage) {
+    return 'Your Aura reached $stage. Share a card of it?';
+  }
+
+  @override
+  String share_promptGlow(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days of glow.',
+      one: '1 day of glow.',
+    );
+    return '$_temp0 Share a card of it?';
+  }
+
+  @override
+  String share_promptAnniversary(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: 'You sealed your first capsule $years years ago.',
+      one: 'You sealed your first capsule a year ago.',
+    );
+    return '$_temp0 Share a card of it?';
+  }
+
+  @override
   String get rooms_lanternTitle => 'Tonight\'s lantern';
 
   @override
@@ -2545,6 +2764,245 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get polish_helpNumberCopied => 'Number copied';
+
+  @override
+  String get quiet_title => 'Quiet Together';
+
+  @override
+  String get quiet_cardBody =>
+      'Study, read or rest alongside others. Just a count, a shared sound and gestures.';
+
+  @override
+  String get quiet_modeStudy => 'Study';
+
+  @override
+  String get quiet_modeRead => 'Read';
+
+  @override
+  String get quiet_modeRest => 'Rest';
+
+  @override
+  String get quiet_titleStudy => 'Study together';
+
+  @override
+  String get quiet_titleRead => 'Read together';
+
+  @override
+  String get quiet_titleRest => 'Rest together';
+
+  @override
+  String quiet_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count here',
+      one: '1 here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get quiet_justYou =>
+      'Just you right now. Others drop in through the hour.';
+
+  @override
+  String get quiet_joining => 'Finding your quiet place…';
+
+  @override
+  String get quiet_reconnecting => 'Reconnecting…';
+
+  @override
+  String get quiet_offline =>
+      'Quiet Together needs a connection. Sanctuary works offline.';
+
+  @override
+  String get quiet_openSanctuary => 'Open Sanctuary';
+
+  @override
+  String get quiet_paused =>
+      'Quiet Together is resting for a bit. The Sanctuary is always open.';
+
+  @override
+  String get quiet_failed =>
+      'Quiet Together couldn\'t open just now. Please try again.';
+
+  @override
+  String get quiet_tryAgain => 'Try again';
+
+  @override
+  String quiet_nextBlock(String time) {
+    return 'The next session starts at $time.';
+  }
+
+  @override
+  String get quiet_leave => 'Leave';
+
+  @override
+  String get quiet_leaveNote => 'Leave whenever you like. Nothing is lost.';
+
+  @override
+  String get quiet_soundTitle => 'The shared sound';
+
+  @override
+  String get quiet_soundBody =>
+      'Everyone hears the same moment, played on your own phone. No microphone, nothing recorded.';
+
+  @override
+  String get quiet_soundPlay => 'Play the shared sound';
+
+  @override
+  String get quiet_soundStop => 'Stop the sound';
+
+  @override
+  String get quiet_soundVolume => 'Volume';
+
+  @override
+  String get quiet_soundDownload =>
+      'The shared sound needs a one-time download.';
+
+  @override
+  String get quiet_soundDownloadCta => 'Download';
+
+  @override
+  String get quiet_soundUnavailable =>
+      'The sound can\'t play on this phone right now. Being here is enough.';
+
+  @override
+  String get quiet_rhythm => 'Focus rhythm (25 / 5)';
+
+  @override
+  String get quiet_rhythmBody => 'Optional. Everyone\'s breaks line up.';
+
+  @override
+  String quiet_rhythmFocus(String time) {
+    return 'Focus · break at $time';
+  }
+
+  @override
+  String quiet_rhythmBreak(String time) {
+    return 'Break · focus again at $time';
+  }
+
+  @override
+  String get quiet_rhythmToBreak => 'Break time.';
+
+  @override
+  String get quiet_rhythmToFocus => 'Focus time.';
+
+  @override
+  String get quiet_gesturesTitle => 'Send a gesture to everyone here';
+
+  @override
+  String quiet_gestureSent(String gesture) {
+    return 'You sent $gesture';
+  }
+
+  @override
+  String get quiet_moment_warm_tea => 'Someone shared warm tea';
+
+  @override
+  String get quiet_moment_light_a_candle => 'Someone lit a candle';
+
+  @override
+  String get quiet_moment_hug => 'Someone sent a hug';
+
+  @override
+  String get quiet_moment_me_too => 'Someone said: me too';
+
+  @override
+  String get quiet_moment_soft_rain => 'Someone sent soft rain';
+
+  @override
+  String get quiet_moment_stargaze => 'Someone is stargazing with you';
+
+  @override
+  String get quiet_moment_deep_breath => 'Someone took a deep breath';
+
+  @override
+  String get quiet_moment_youre_not_alone => 'Someone says: you\'re not alone';
+
+  @override
+  String get quiet_menu => 'Session menu';
+
+  @override
+  String get quiet_report => 'Report a problem here';
+
+  @override
+  String get quiet_hideGestures => 'Hide gestures';
+
+  @override
+  String get quiet_showGestures => 'Show gestures';
+
+  @override
+  String get quiet_gesturesHidden => 'Gestures are hidden for you.';
+
+  @override
+  String get quiet_reportBody =>
+      'Nobody is shown here, so tell us what happened. A moderator looks at this session\'s recent gestures.';
+
+  @override
+  String get quiet_reportNote =>
+      'Anything else a moderator should know? (optional)';
+
+  @override
+  String get quiet_reportSend => 'Send report';
+
+  @override
+  String get quiet_reportThanks => 'Thank you. A moderator will take a look.';
+
+  @override
+  String get quiet_reportFailed => 'That didn\'t go through. Please try again.';
+
+  @override
+  String get rooms_windDownTitle => 'Wind down together';
+
+  @override
+  String get rooms_windDownBody =>
+      'Twenty quiet minutes to end the day: one shared sound, slow breathing and a few gentle words.';
+
+  @override
+  String rooms_windDownCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count winding down',
+      one: '1 winding down',
+      zero: 'Nobody winding down yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rooms_windDownBack => 'Back to the wind-down';
+
+  @override
+  String get rooms_windDownFailed =>
+      'That didn\'t go through. Please try again.';
+
+  @override
+  String get rooms_windDownEnded => 'The wind-down has ended. Rest well.';
+
+  @override
+  String get rooms_windDownLeave => 'Leave';
+
+  @override
+  String get rooms_windDownCue_arrive => 'Arrive. There\'s nothing to do now.';
+
+  @override
+  String get rooms_windDownCue_day_quieter => 'Let the day get quieter.';
+
+  @override
+  String get rooms_windDownCue_shoulders => 'Let your shoulders soften.';
+
+  @override
+  String get rooms_windDownCue_nothing_to_do => 'Nothing needs you right now.';
+
+  @override
+  String get rooms_windDownCue_slower => 'Let each breath be a little slower.';
+
+  @override
+  String get rooms_windDownCue_rest_well =>
+      'Rest well. The night can hold the rest.';
 
   @override
   String get reflections_title => 'Reflections';
@@ -4520,4 +4978,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get voice_hasVoice => 'Has a voice note';
+
+  @override
+  String get widget_prompt => 'How are you feeling?';
+
+  @override
+  String get widget_checkIn => 'Check in';
+
+  @override
+  String get widget_doneToday => 'Checked in today';
+
+  @override
+  String get widget_saved => 'Saved';
+
+  @override
+  String widget_savedStarlight(int amount) {
+    return 'Saved · +$amount Starlight';
+  }
+
+  @override
+  String get widget_needHelp => 'Need help';
+
+  @override
+  String get widget_openApp => 'Open Aura to continue';
+
+  @override
+  String get widget_openAppDiscreet => 'Open the app to continue';
+
+  @override
+  String get widget_capsuleWaiting => 'Something from past you is waiting';
+
+  @override
+  String get widget_back => 'Back';
+
+  @override
+  String widget_lastMood(String mood) {
+    return 'Last: $mood';
+  }
+
+  @override
+  String get widget_galleryName => 'Aura check-in';
+
+  @override
+  String get widget_galleryDescription =>
+      'Check in with two taps, right from your home screen.';
+
+  @override
+  String get widget_lockGalleryName => 'Quick check-in';
+
+  @override
+  String get widget_lockGalleryDescription =>
+      'A star that opens your check-in. It never shows how you feel.';
+
+  @override
+  String get widget_settingsTitle => 'Home-screen widget';
+
+  @override
+  String get widget_showLastMood => 'Show my last mood';
+
+  @override
+  String get widget_showLastMoodNote =>
+      'On your home screen only. The lock screen never shows it.';
+
+  @override
+  String get widget_discreet => 'Discreet widget';
+
+  @override
+  String get widget_discreetNote =>
+      'A plain star with no app name and no mood words. Tapping it opens the app.';
 }

@@ -17,7 +17,13 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
     { href: '/sanctions', label: 'Sanctions' },
   ];
   if (role === 'moderator') {
-    return [...common, { href: '/lexicons', label: 'Lexicon' }, { href: '/helplines', label: 'Helplines' }, { href: '/stats', label: 'Stats' }];
+    return [
+      ...common,
+      { href: '/lexicons', label: 'Lexicon' },
+      { href: '/helplines', label: 'Helplines' },
+      { href: '/intentions', label: 'Intentions' },
+      { href: '/stats', label: 'Stats' },
+    ];
   }
   return [
     ...common,
@@ -30,6 +36,7 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
     { href: '/config', label: 'Kill switches' },
     { href: '/lexicons', label: 'Lexicon' },
     { href: '/helplines', label: 'Helplines' },
+    { href: '/intentions', label: 'Intentions' },
     { href: '/devices', label: 'Device bans' },
     { href: '/staff', label: 'Staff' },
     { href: '/stats', label: 'Stats' },

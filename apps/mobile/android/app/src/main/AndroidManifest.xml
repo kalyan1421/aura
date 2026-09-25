@@ -129,6 +129,20 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
+        <!-- F11 home-screen widget (Jetpack Glance, com.akvega.aura.widget):
+             2x2 opens aura://checkin, 4x2 saves a mood-only check-in to
+             app-private storage in two taps; the app imports and syncs it. -->
+        <receiver
+            android:name=".widget.AuraWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_galleryName">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/aura_widget_info" />
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

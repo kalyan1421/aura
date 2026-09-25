@@ -12,6 +12,7 @@ import 'package:aura/src/features/auth/auth_repository.dart';
 import 'package:aura/src/features/avatar/avatar_assets.dart';
 import 'package:aura/src/features/onboarding/gate_controller.dart';
 import 'package:aura/src/features/rooms/room_models.dart';
+import 'package:aura/src/features/rooms/intention_copy.dart';
 import 'package:aura/src/features/rooms/room_realtime.dart';
 import 'package:aura/src/features/rooms/rooms_api.dart';
 import 'package:aura/src/features/rooms/rooms_providers.dart';
@@ -421,6 +422,9 @@ List<Override> roomsTestOverrides({
     initialLocaleTagProvider.overrideWithValue(locale),
     roomsApiProvider.overrideWithValue(api),
     roomChannelOpenerProvider.overrideWithValue(channels?.open),
+    // Tonight's intention words (GET /v1/intentions): none from a server, so
+    // the bundled strings show; a test overrides intentionCopyProvider.
+    intentionCopyLoaderProvider.overrideWithValue(() async => const {}),
   ];
 }
 
@@ -467,6 +471,7 @@ Future<AppDatabase> pumpRooms(
   bool reduceMotion = false,
   Size size = const Size(390, 844),
   Future<void> Function(AppDatabase db)? seed,
+  List<Override> extra = const [],
 }) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
@@ -483,15 +488,17 @@ Future<AppDatabase> pumpRooms(
   final locale = localeFromTag(tag);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: roomsTestOverrides(
-        db: db,
-        api: api,
-        channels: channels,
-        connectivity: connectivity,
-        auth: auth,
-        gate: gate,
-        locale: tag,
-      ),
+      overrides:
+          roomsTestOverrides(
+            db: db,
+            api: api,
+            channels: channels,
+            connectivity: connectivity,
+            auth: auth,
+            gate: gate,
+            locale: tag,
+          ) +
+          extra,
       child: MaterialApp(
         theme: buildAuraTheme(locale),
         locale: locale,

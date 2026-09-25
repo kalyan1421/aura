@@ -49,6 +49,15 @@ abstract final class KvKeys {
   /// property of this phone, like [comfort].
   static const String guidedPromptsOff = 'companion.guided_prompts_off';
 
+  /// F10 Look back (features/insights/look_back.dart), all on this phone
+  /// only and never synced (DS-7): the last time a crisis sheet or the
+  /// Safety Center opened here (Look back rests 24 h after it), the ids of
+  /// check-ins help was opened from (never shown in Look back), and the
+  /// Settings switch ("true" = hidden). Device-scoped: "on that device".
+  static const String lookBackHelpAt = 'lookback.help_at';
+  static const String lookBackHelpCheckIns = 'lookback.help_checkins';
+  static const String lookBackHidden = 'lookback.hidden';
+
   /// The only keys kept when an account signs out. Everything else in the
   /// table belongs to the signed-in person and is wiped (shared phones).
   /// The under-13 lock and the DB key live in secure storage and stay too.
@@ -58,6 +67,9 @@ abstract final class KvKeys {
     pushDeleteOwed,
     comfort,
     guidedPromptsOff,
+    lookBackHelpAt,
+    lookBackHelpCheckIns,
+    lookBackHidden,
   };
 }
 

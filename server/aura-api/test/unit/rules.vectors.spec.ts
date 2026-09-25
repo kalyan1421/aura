@@ -34,6 +34,8 @@ import {
   type InsightCheckIn,
   type InsightHabitLog,
 } from '../../src/rules/insights';
+import { addMonthsClamped, lookBackGate, lookBackSky, lookBackWindows, type LookBackEntry } from '../../src/rules/look-back';
+import { capsuleYears, earnedKeepsakes, sharePrompt, type KeepsakeSources } from '../../src/keepsakes/keepsake-rules';
 
 const VECTORS_DIR = resolve(__dirname, '..', '..', '..', '..', 'contracts', 'rules', 'vectors');
 
@@ -112,6 +114,51 @@ const runners: Record<string, Runner> = {
         return expect(showCareCard(cs, today())).toBe(c.expect);
       default:
         throw new Error(`insights.json: unknown kind ${String(c.kind)}`);
+    }
+  },
+  // RULES.md §10.1 (F10 Look back).
+  'look_back.json': (c) => {
+    switch (c.kind) {
+      case 'add_months':
+        return expect(addMonthsClamped(c.day, c.months)).toBe(c.expect);
+      case 'windows': {
+        const today = auraDay(c.now, c.tz);
+        return expect({ today, windows: lookBackWindows(today, c.weekStartsOn ?? 1) }).toEqual(c.expect);
+      }
+      case 'gate': {
+        const g = lookBackGate({ now: c.now, checkIns: c.checkIns, helpAt: c.helpAt, hidden: c.hidden });
+        expect(g.status).toBe(c.expect.status);
+        return expect(g.until === null ? null : new Date(g.until).getTime()).toBe(
+          c.expect.until === null ? null : new Date(c.expect.until).getTime(),
+        );
+      }
+      case 'sky':
+        return expect(lookBackSky(c.from, c.to, c.entries as LookBackEntry[], c.restDays)).toEqual(c.expect);
+      default:
+        throw new Error(`look_back.json: unknown kind ${String(c.kind)}`);
+    }
+  },
+  // RULES.md §11 (F13 keepsakes and share milestones).
+  'keepsakes.json': (c) => {
+    switch (c.kind) {
+      case 'earned': {
+        const { glowDaysRange, ...rest } = c.sources as Json;
+        const sources = rest as KeepsakeSources;
+        if (glowDaysRange) {
+          const from = new Date(`${glowDaysRange.from as string}T00:00:00Z`).getTime();
+          sources.glowDays = Array.from({ length: glowDaysRange.count as number }, (_, i) => ({
+            day: new Date(from + i * 86_400_000).toISOString().slice(0, 10),
+            amount: 1,
+          }));
+        }
+        return expect(earnedKeepsakes(sources)).toEqual(c.expect);
+      }
+      case 'capsule_years':
+        return expect(capsuleYears(c.firstSealed, c.today)).toBe(c.expect);
+      case 'share_prompt':
+        return expect(sharePrompt(c.state)).toEqual(c.expect);
+      default:
+        throw new Error(`keepsakes.json: unknown kind ${String(c.kind)}`);
     }
   },
 };

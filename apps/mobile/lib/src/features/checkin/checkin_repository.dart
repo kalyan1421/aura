@@ -194,6 +194,62 @@ class CheckInRepository {
     return saved;
   }
 
+  /// Imports a check-in the home-screen widget saved (F11): mood only, with
+  /// the widget's own day stamp ([deviceTs], [tzOffsetMinutes], [tz],
+  /// [localDay]), which is kept as it is (PRD "set on device and never
+  /// recomputed"), so a widget tap at 01:30 still counts for the previous
+  /// Aura day however late the app imports it. `source` is `widget`.
+  ///
+  /// The row and its outbox upsert are written in one transaction, like
+  /// [save]; the same [id] twice is a no-op. Returns true when this call
+  /// inserted it. The same rules then apply as for any live check-in
+  /// (Starlight, streak, hue), locally and on the server (RULES.md §2).
+  Future<bool> importWidgetCheckIn({
+    required String id,
+    required Mood mood,
+    required DateTime deviceTs,
+    required int tzOffsetMinutes,
+    required String tz,
+    required LocalDay localDay,
+  }) => _db.transaction(() async {
+    final existing = await (_db.select(
+      _db.checkIns,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
+    if (existing != null) return false;
+    final inserted = await _db
+        .into(_db.checkIns)
+        .insert(
+          CheckInsCompanion.insert(
+            id: id,
+            moodId: mood.id,
+            quadrant: mood.quadrant.name,
+            localDay: localDay.toIso(),
+            deviceTs: deviceTs.toUtc(),
+            tzOffsetMinutes: tzOffsetMinutes,
+            tz: Value(tz),
+            source: const Value('widget'),
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+    if (inserted == 0) return false;
+    await _outbox.enqueue(
+      entity: Entities.checkIn,
+      op: Ops.upsert,
+      entityId: id,
+      deviceTs: deviceTs.toUtc(),
+      localDay: localDay,
+      tz: tz,
+      payload: {
+        'id': id,
+        'moodId': mood.id,
+        'tags': const <String>[],
+        'noteCt': null,
+        'source': 'widget',
+      },
+    );
+    return true;
+  });
+
   /// Edits mood, tags, note and voice of an existing check-in (within
   /// [checkInEditWindow]). Keeps the id, day and time, and queues an upsert
   /// of the same id: the server treats it as an edit and never re-earns

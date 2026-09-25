@@ -103,6 +103,55 @@ const List<String> _quadrantNames = [
   'सूर्योदय',
 ];
 
+/// Look back strings (F10, REQ-INS-08). Besides the Insights rules above:
+/// words only (no digits: "A month ago", never "1 month ago"), and none of
+/// the nostalgia or pressure words a pushed "on this day" feature leans on.
+bool _isLookBackCopy(String key) => key.startsWith('insights_lookBack');
+
+const List<String> _lookBackBanned = [
+  'memories',
+  'memory',
+  'on this day',
+  'ago today',
+  'remember when',
+  'nostalgia',
+  "don't miss",
+  'miss',
+  'missed',
+  'streak',
+  'yaadein', // Hinglish "memories"
+  'yaad', // Hinglish "memory / remember"
+  'gnaapakaalu', // Tenglish "memories"
+  'jnaapakaalu',
+];
+
+const List<String> _lookBackBannedScript = [
+  'జ్ఞాపకాలు', // Telugu "memories"
+  'జ్ఞాపకం',
+  'యాదులు',
+  'यादें', // Hindi "memories"
+  'याद',
+];
+
+/// Keys every locale must carry for Look back (it ships in all five).
+const List<String> _lookBackKeys = [
+  'insights_lookBackTitle',
+  'insights_lookBackTileBody',
+  'insights_lookBackIntro',
+  'insights_lookBackMonth',
+  'insights_lookBackSixMonths',
+  'insights_lookBackYear',
+  'insights_lookBackWeekOf',
+  'insights_lookBackEmpty',
+  'insights_lookBackClosed',
+  'insights_lookBackShowNote',
+  'insights_lookBackShowVoice',
+  'insights_lookBackHideNote',
+  'insights_lookBackSettingsHint',
+  'insights_lookBackSetting',
+  'insights_lookBackSettingNote',
+];
+
 Map<String, dynamic> _arb(String locale) =>
     jsonDecode(File('lib/l10n/app_$locale.arb').readAsStringSync())
         as Map<String, dynamic>;
@@ -153,6 +202,44 @@ void main() {
         test('$key: words only (no number, percentage or score)', () {
           expect(RegExp(r'[0-9%٪०-९౦-౯]').hasMatch(_text(value)), isFalse);
           expect(value, isNot(contains('{count')));
+        });
+      }
+
+      test('Look back: every string is present', () {
+        for (final key in _lookBackKeys) {
+          expect(arb[key], isA<String>(), reason: key);
+        }
+        expect(keys.where(_isLookBackCopy).toSet(), _lookBackKeys.toSet());
+      });
+
+      if (locale == 'te' || locale == 'hi') {
+        test('Look back: translated into the native script', () {
+          final en = _arb('en');
+          for (final key in _lookBackKeys) {
+            expect(arb[key], isNot(en[key]), reason: key);
+          }
+        });
+      }
+
+      for (final key in keys.where(_isLookBackCopy)) {
+        final value = arb[key] as String;
+        test('$key: words only, no nostalgia or pressure words', () {
+          expect(
+            RegExp(r'[0-9%٪०-९౦-౯]').hasMatch(_text(value)),
+            isFalse,
+            reason: value,
+          );
+          final lower = _text(value).toLowerCase();
+          for (final word in _lookBackBanned) {
+            expect(
+              RegExp('\\b${RegExp.escape(word)}\\b').hasMatch(lower),
+              isFalse,
+              reason: '"$word" in $key: $value',
+            );
+          }
+          for (final word in _lookBackBannedScript) {
+            expect(value.contains(word), isFalse, reason: '"$word" in $key');
+          }
         });
       }
 

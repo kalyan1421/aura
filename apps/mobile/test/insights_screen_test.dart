@@ -9,6 +9,8 @@ import 'package:aura/src/features/insights/insights_providers.dart';
 import 'package:aura/src/features/insights/insights_screen.dart';
 import 'package:aura/src/features/insights/month_in_stars_screen.dart';
 import 'package:aura/src/features/insights/sky_calendar.dart';
+import 'package:aura/src/features/keepsakes/keepsakes_screen.dart'
+    show keepsakesRoute;
 import 'package:aura_domain/aura_domain.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
@@ -149,6 +151,10 @@ Future<AppDatabase> _pump(
         ],
       ),
       GoRoute(path: Routes.rooms, builder: (_, _) => const Text('rooms page')),
+      GoRoute(
+        path: keepsakesRoute,
+        builder: (_, _) => const Text('keepsakes page'),
+      ),
       GoRoute(
         path: Routes.checkIn,
         builder: (_, _) => const Text('checkin page'),
@@ -659,6 +665,17 @@ void main() {
       );
       await tester.pump(const Duration(seconds: 1));
       expect(tester.hasRunningAnimations, isFalse);
+    });
+
+    _testWidgets('the private keepsakes box opens from Insights (F13)', (
+      tester,
+    ) async {
+      await _pump(tester);
+      final entry = find.byKey(const ValueKey('keepsakes-entry'));
+      await _scrollTo(tester, entry);
+      await tester.tap(entry);
+      await settleIo(tester);
+      expect(find.text('keepsakes page'), findsOneWidget);
     });
 
     _testWidgets('all check-ins stays one tap away (History reachable)', (

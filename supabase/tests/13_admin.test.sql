@@ -60,7 +60,8 @@ select is_empty(
                               'safety_config','matching_config','moderation_actions','feature_flags',
                               'admin_staff','admin_grievances','admin_legal_orders','admin_pages',
                               'admin_page_deliveries','admin_mandatory_checklists',
-                              'reflections','reflection_config') -- F6: column-scoped review reads (18_reflections)
+                              'reflections','reflection_config', -- F6: column-scoped review reads (18_reflections)
+                              'room_intention_presets','room_intention_texts') -- Tonight's intention list (25_gaps_b)
         and (has_table_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
              or has_any_column_privilege('aura_admin', c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')) $$,
   'aura_admin has no privilege on any other public table (check-ins, notes, habits, capsules, keys, ledgers, profiles …)'

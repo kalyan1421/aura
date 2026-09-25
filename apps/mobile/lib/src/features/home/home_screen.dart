@@ -19,6 +19,7 @@ import '../avatar/aura_avatar.dart';
 import '../capsules/capsule_ready_card.dart';
 import '../avatar/moments_controller.dart';
 import '../habits/habits_section.dart';
+import '../keepsakes/keepsake_home_card.dart';
 import '../plus/plus_home_cards.dart';
 import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
@@ -124,6 +125,9 @@ class HomeScreen extends ConsumerWidget {
                       const CrisisFollowUpCard(),
                       // F4: a date capsule is ready (nothing when none is).
                       const CapsuleReadyCard(),
+                      // F13: a new keepsake (shows once) or the one milestone
+                      // share prompt; nothing otherwise.
+                      const KeepsakeHomeCards(),
                       _HeroFit(
                         viewport: box.maxHeight,
                         floor: compact

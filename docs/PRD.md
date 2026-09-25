@@ -6,7 +6,7 @@
 |---|---|
 | **Product** | Aura: social and gamified mood check-in app (iOS + Android) |
 | **Owner / publisher** | **AKVega** (company App Store + Play accounts; data fiduciary / controller) |
-| **Document** | PRD v1.2: v1.1 plus AK's competitor-integration and screen-plan decisions (F15 Sanctuary, F16 Quiet Together, companion response; see Decision Record CI-1…CI-14). v1.1: all open questions answered by AK |
+| **Document** | PRD v1.3: v1.2 plus the build-time decisions BD-1…BD-7 (24 Sep 2026). v1.2: AK's competitor-integration and screen-plan decisions (F15 Sanctuary, F16 Quiet Together, companion response; see Decision Record CI-1…CI-14). v1.1: all open questions answered by AK |
 | **Date** | 23 Sep 2026 |
 | **Status** | Decisions locked; ready for build planning |
 | **Sources** | Market research, competitor analysis and 1M-download blueprint (Google Docs); store and regulatory fact-check of 23 Sep 2026 (`docs/research/`); AK's two competitor documents and `docs/competitor-integration-plan.md` (23 Sep 2026) |
@@ -989,7 +989,7 @@ This takes the good part of Habitica's party quests and Tandem's accountability 
 - **Held:** only the author sees "Waiting for a quick check" (overnight: "This may take until morning"); expires unpublished if the room becomes a memory first.
 - **Rejected:** gentle copy by category ("Reflections can't include contact details. Want to try without it?"); text returns to the composer. Only harassment, hate, sexual and spam are strikes (F9).
 - **Crisis-diverted:** never published; the F9 support sheet opens at once; item enters the crisis lane; no strike.
-- **Fail closed:** omni-moderation error or > 5 s → held; nothing is released by timeout. Offline sends queue and run the pipeline on reconnect.
+- **Fail closed:** omni-moderation error or > 5 s → held; nothing is released by timeout. Offline, Send is disabled and the draft is kept on the phone (BD-7); nothing is queued.
 
 #### State machine
 
@@ -2605,6 +2605,19 @@ On the same day AK approved `docs/competitor-integration-plan.md`, accepting eve
 | CI-12 | Screen-plan questions | **Shell:** Home · Sanctuary · [Check-in] · Rooms · Insights ("Rooms" is the F5 space, the screen plan's "Universe"; Insights shows History until F10). **Safety Center:** full route `/safety` opened by "I need help now"; the sheet is for contextual/crisis interception. **Age:** stays 13+ (D2 unchanged). **Reflections:** stay in v1 as F6 at Milestone B; the screen plan's "no public UGC" note is superseded. **Intensity and body signal:** post-v1 | Rec. |
 | CI-13 | What else joins Milestone A? | App shell + Safety Center route, F15 Sanctuary v1, companion response, "A minute for you", guided prompts, native Sign in with Apple (iOS) and Google Sign-In (ID token into Supabase), platform age signals as specified, F1 7-day backfill, Journal auto-complete, F14 subset (daily reminder, date-capsule push) | Rec. |
 | CI-14 | If a milestone slips | Cut after the existing levers: Quiet Together → Look back → Keepsakes → extra Sounds stems → room lanterns. Never-cut list unchanged | Rec. |
+
+### Build-time decisions (24 Sep 2026, PRD v1.3)
+While Milestones A and B were built, AK delegated these calls to the build lead, and they are recorded here as decided.
+
+| # | Question | Decision | |
+|---|---|---|---|
+| BD-1 | A crisis report outside Lantern Hour that no one has acknowledged in 5 minutes: page the Owner at any hour? (19 and 06c F9 differed) | **Yes, at any hour.** Lantern Hour crisis reports page at once; any other crisis report still unacknowledged after 5 minutes pages too, repeating every 5 minutes until acknowledged, with no content in the page | Decided |
+| BD-2 | Should the automatic ban at the 4th active strike also ban the person's devices? | **No.** The 4th-strike ban is a social ban on the account; device bans stay an Owner decision (shared and family phones make an automatic device ban too blunt). The Owner can still ban devices from the report page | Decided |
+| BD-3 | Weekly insight card timing | Available from the first Aura day of the week (Monday 04:00) and **stays for the whole week** until hidden, describing the week that just ended ("From your past week") | Decided |
+| BD-4 | "Your month in stars" for a month with no check-ins | **Skipped**: the recap card shows only when last month had at least 1 check-in (no empty recap) | Decided |
+| BD-5 | Room lanterns and Tonight's intention details | A hold can't be undone and leaving doesn't lower the count (a falling count would reveal who left). One Breath Ripples breath cycle = 0.25 of a gesture toward the lantern, tunable in `matching_config`. Only rooms in the Lantern Hour state take light; the intention card is hidden in the memory view | Decided |
+| BD-6 | Paywall exclusion "straight after a Storm or Rain check-in" | **Within 3 hours** of a Storm or Rain check-in. "Unprompted" = the inline explainer at a limit screen, at most once a day; Settings never counts | Decided |
+| BD-7 | Reflections written offline | **Kept as a draft, not queued.** Send is disabled offline and the draft stays on the phone (the reflection id is reused on retry). This supersedes "offline sends queue" in F6: a queued post could publish hours later into a room whose moment has passed | Decided |
 
 ### Still waiting on someone else (not decisions: actions)
 | # | Action | Owner | By |

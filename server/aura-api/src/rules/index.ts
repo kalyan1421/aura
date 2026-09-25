@@ -9,3 +9,4 @@ export * from './hue';
 export * from './streak';
 export * from './nebula';
 export * from './insights';
+export * from './look-back';

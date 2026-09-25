@@ -22,6 +22,7 @@ import '../checkin/checkin_screen.dart' show checkInSaveColor;
 import '../checkin/mood_grid.dart';
 import '../checkin/quadrant_glyph.dart';
 import '../habits/habit_repository.dart' show noteCompletesJournal;
+import '../insights/look_back.dart' show markLookBackCheckInHelp;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
@@ -206,6 +207,8 @@ class _CheckInDetailScreenState extends ConsumerState<CheckInDetailScreen> {
     }
     // Saved first, then support if the edited words call for it (F1/F9).
     if (noteEdited && noteNeedsSupport(note)) {
+      // F10 Look back never shows a check-in help was opened from.
+      unawaited(markLookBackCheckInHelp(ref.read(kvStoreProvider), widget.id));
       await showSupportSheet(context, crisis: true);
     }
   }

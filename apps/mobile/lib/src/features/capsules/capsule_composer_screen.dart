@@ -19,7 +19,7 @@ import '../../core/widgets/inline_notice.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel, quadrantName;
 import '../companion/prompts.dart';
 import '../plus/paywall_gate.dart' show PaywallSurface;
-import '../plus/plus_entry.dart' show PlusOpenButton;
+import '../plus/plus_entry.dart' show PlusLimitNote, PlusOpenButton;
 import '../push/push_messaging.dart' show PushPermission;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/crisis_lexicon.dart';
@@ -498,6 +498,13 @@ class _CapsuleComposerScreenState extends ConsumerState<CapsuleComposerScreen> {
               ref.read(capsuleMediaStoreProvider).newDraftVoicePath(draft.id),
           recordHint: l.capsules_voiceHint,
           limitReachedText: l.capsules_voiceLimit,
+          // F12 "long voice" limit screen: the Plus entry under the P0
+          // paywall rules (nothing with Plus on; only "Part of Aura Plus" at
+          // an excluded moment; the day's one explainer, then a small link).
+          limitReachedExtra: PlusLimitNote(
+            surface: PaywallSurface.capsuleLongVoice,
+            explainer: l.plus_explainerVoice,
+          ),
         ),
         header(l.capsules_photosTitle),
         _Photos(

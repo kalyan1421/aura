@@ -16,6 +16,7 @@ import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../safety/helpline_list.dart';
 import '../sanctuary/habit_auto_complete.dart';
 import '../safety/safety_center_screen.dart';
+import '../insights/look_back.dart' show recordLookBackHelp;
 import '../plus/paywall_gate.dart' show markCrisisFlow;
 import 'crisis_follow_up.dart';
 
@@ -266,6 +267,14 @@ class _SupportSheetState extends ConsumerState<SupportSheet> {
     // F12 P0: no Aura Plus paywall for the rest of this Aura day after any
     // support / crisis sheet (features/plus/paywall_gate.dart).
     unawaited(markCrisisFlow(ref));
+    // F10 Look back rests for 24 h after a crisis sheet on this phone
+    // (device-only, never synced: DS-7).
+    unawaited(
+      recordLookBackHelp(
+        ref.read(kvStoreProvider),
+        ref.read(timeContextProvider).now(),
+      ),
+    );
   }
 
   Future<void> _completeBreathe() async {

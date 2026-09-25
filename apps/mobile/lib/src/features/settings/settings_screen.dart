@@ -15,9 +15,13 @@ import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/legal_links.dart';
 import '../account/deletion_pending.dart';
+import '../insights/look_back.dart' show LookBackSettingsSwitch;
+import '../keepsakes/keepsakes_screen.dart'
+    show KeepsakesEntryTile, keepsakesRoute;
 import '../onboarding/language_screen.dart';
 import '../plus/plus_settings_section.dart';
 import '../push/notifications_settings_section.dart';
+import '../widget/widget_settings_section.dart';
 
 /// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
 /// Haptics, Hide streak number F3) · Account (sign in/out, "Delete my
@@ -133,6 +137,8 @@ class SettingsScreen extends ConsumerWidget {
               value: ref.watch(guidedPromptsEnabledProvider).value ?? true,
               onChanged: (v) => setGuidedPromptsEnabled(ref, enabled: v),
             ),
+            // F10 Look back: it can be hidden here (PRD F10).
+            const LookBackSettingsSwitch(),
 
             // ---- Account --------------------------------------------------
             if (auth.isAvailable) ...[
@@ -152,6 +158,8 @@ class SettingsScreen extends ConsumerWidget {
                     style: t.bodyLarge,
                   ),
                 ),
+                // F13: the private keepsake box (server-awarded, so signed in).
+                KeepsakesEntryTile(onOpen: () => context.push(keepsakesRoute)),
                 ListTile(
                   key: const ValueKey('set-sign-out'),
                   contentPadding: EdgeInsets.zero,
@@ -173,6 +181,9 @@ class SettingsScreen extends ConsumerWidget {
             // ---- Notifications (F14: reminder, capsules, quiet hours,
             // discreet mode; features/push) ---------------------------------
             const NotificationsSection(),
+
+            // ---- Home-screen widget (F11: last mood, discreet; features/widget)
+            const WidgetSettingsSection(),
 
             // ---- Help & Safety ------------------------------------------------
             section(l.set_helpSafety, 'help'),

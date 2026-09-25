@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
+import 'package:aura/src/core/db/kv_store.dart';
 import 'package:aura/src/core/ids/ids.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/sync/outbox_repository.dart';
@@ -209,6 +210,15 @@ void main() {
       expect(find.byType(SupportSheet), findsOneWidget);
       expect(capsules.calls, isEmpty);
       expect(find.byType(MinuteForYouCard), findsNothing);
+      // F10 Look back never shows this check-in (a device-only flag).
+      final saved = (await io(
+        tester,
+        () => db.select(db.checkIns).get(),
+      )).single;
+      expect(
+        await io(tester, () => KvStore(db).get(KvKeys.lookBackHelpCheckIns)),
+        contains(saved.id),
+      );
 
       await tester.tap(find.byKey(const ValueKey('support-close')));
       await settleIo(tester);

@@ -21,9 +21,16 @@ import 'plus_format.dart';
 /// - one-time notes (trial cancelled, Plus continues) show once per event;
 /// - every card is dismissible and opens the store's own page, nothing else.
 class PlusHomeCards extends ConsumerStatefulWidget {
-  const PlusHomeCards({super.key, this.opener = openStorePage});
+  const PlusHomeCards({
+    super.key,
+    this.opener = openStorePage,
+    this.nativeSheet = showNativeManageSubscriptions,
+  });
 
   final PlusUrlOpener opener;
+
+  /// The App Store's in-app manage sheet (iOS; tests inject one).
+  final NativeManageSheet nativeSheet;
 
   @override
   ConsumerState<PlusHomeCards> createState() => _PlusHomeCardsState();
@@ -124,8 +131,11 @@ class _PlusHomeCardsState extends ConsumerState<PlusHomeCards> {
                   ? null
                   : () {
                       unawaited(_markSeen('trial_ending_day', today));
-                      widget.opener(
-                        manageSubscriptionUri(e.store!, productId: e.productId),
+                      openManageFor(
+                        e.store!,
+                        productId: e.productId,
+                        opener: widget.opener,
+                        nativeSheet: widget.nativeSheet,
                       );
                     },
             ),

@@ -1,0 +1,354 @@
+{
+  "catalogue": [
+    { "key": "capsule_sealed_first", "source": "capsuleSeals", "threshold": 1 },
+    { "key": "capsule_opened_first", "source": "capsuleOpens", "threshold": 1 },
+    { "key": "glow_days_7", "source": "glowDays", "threshold": 7 },
+    { "key": "glow_days_30", "source": "glowDays", "threshold": 30 },
+    { "key": "glow_days_100", "source": "glowDays", "threshold": 100 },
+    { "key": "glow_days_365", "source": "glowDays", "threshold": 365 },
+    { "key": "ripples_first", "source": "rippleSessions", "threshold": 1 },
+    { "key": "lantern_hours_1", "source": "lanternNights", "threshold": 1 },
+    { "key": "lantern_hours_10", "source": "lanternNights", "threshold": 10 },
+    { "key": "lantern_hours_50", "source": "lanternNights", "threshold": 50 },
+    { "key": "sanctuary_minutes_60", "source": "sanctuarySeconds", "threshold": 3600 },
+    { "key": "sanctuary_minutes_300", "source": "sanctuarySeconds", "threshold": 18000 },
+    { "key": "sanctuary_minutes_1000", "source": "sanctuarySeconds", "threshold": 60000 }
+  ],
+  "cases": [
+    {
+      "kind": "earned",
+      "name": "nothing yet earns nothing",
+      "sources": {},
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "the first capsule sealed is dated by the earliest seal, whatever the order",
+      "sources": {
+        "capsuleSeals": [
+          { "day": "2026-10-09", "amount": 1 },
+          { "day": "2026-10-05", "amount": 1 },
+          { "day": "2026-10-07", "amount": 1 }
+        ]
+      },
+      "expect": [{ "key": "capsule_sealed_first", "day": "2026-10-05" }]
+    },
+    {
+      "kind": "earned",
+      "name": "sealed and opened are separate seals",
+      "sources": {
+        "capsuleSeals": [{ "day": "2026-10-05", "amount": 1 }],
+        "capsuleOpens": [{ "day": "2026-10-12", "amount": 1 }]
+      },
+      "expect": [
+        { "key": "capsule_sealed_first", "day": "2026-10-05" },
+        { "key": "capsule_opened_first", "day": "2026-10-12" }
+      ]
+    },
+    {
+      "kind": "earned",
+      "name": "6 glow days is not yet 7",
+      "sources": {
+        "glowDays": [
+          { "day": "2026-10-01", "amount": 1 },
+          { "day": "2026-10-02", "amount": 1 },
+          { "day": "2026-10-03", "amount": 1 },
+          { "day": "2026-10-05", "amount": 1 },
+          { "day": "2026-10-06", "amount": 1 },
+          { "day": "2026-10-09", "amount": 1 }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "the 7th distinct glow day earns glow_days_7 on that day (gaps and duplicates don't matter)",
+      "sources": {
+        "glowDays": [
+          { "day": "2026-10-09", "amount": 1 },
+          { "day": "2026-10-01", "amount": 1 },
+          { "day": "2026-10-02", "amount": 1 },
+          { "day": "2026-10-02", "amount": 1 },
+          { "day": "2026-10-03", "amount": 1 },
+          { "day": "2026-10-05", "amount": 1 },
+          { "day": "2026-10-06", "amount": 1 },
+          { "day": "2026-10-20", "amount": 1 }
+        ]
+      },
+      "expect": [{ "key": "glow_days_7", "day": "2026-10-20" }]
+    },
+    {
+      "kind": "earned",
+      "name": "a glow day counts once however large its amount",
+      "sources": {
+        "glowDays": [
+          { "day": "2026-10-01", "amount": 5 },
+          { "day": "2026-10-02", "amount": 5 }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "30 glow days earns 7 and 30, each on its own day",
+      "sources": {
+        "glowDaysRange": { "from": "2026-11-01", "count": 30 }
+      },
+      "expect": [
+        { "key": "glow_days_7", "day": "2026-11-07" },
+        { "key": "glow_days_30", "day": "2026-11-30" }
+      ]
+    },
+    {
+      "kind": "earned",
+      "name": "365 glow days earns all four glow seals",
+      "sources": {
+        "glowDaysRange": { "from": "2027-01-01", "count": 365 }
+      },
+      "expect": [
+        { "key": "glow_days_7", "day": "2027-01-07" },
+        { "key": "glow_days_30", "day": "2027-01-30" },
+        { "key": "glow_days_100", "day": "2027-04-10" },
+        { "key": "glow_days_365", "day": "2027-12-31" }
+      ]
+    },
+    {
+      "kind": "earned",
+      "name": "the first Breath Ripples session",
+      "sources": {
+        "rippleSessions": [
+          { "day": "2026-10-11", "amount": 1 },
+          { "day": "2026-10-10", "amount": 1 }
+        ]
+      },
+      "expect": [{ "key": "ripples_first", "day": "2026-10-10" }]
+    },
+    {
+      "kind": "earned",
+      "name": "the first Lantern Hour",
+      "sources": {
+        "lanternNights": [{ "day": "2026-10-08", "amount": 1 }]
+      },
+      "expect": [{ "key": "lantern_hours_1", "day": "2026-10-08" }]
+    },
+    {
+      "kind": "earned",
+      "name": "Lantern Hours continue from the tally: 8 counted + 2 new earns the 10th on the second new night",
+      "sources": {
+        "lanternNights": [
+          { "day": "2026-11-02", "amount": 1 },
+          { "day": "2026-11-01", "amount": 1 }
+        ],
+        "lanternCounted": 8
+      },
+      "expect": [{ "key": "lantern_hours_10", "day": "2026-11-02" }]
+    },
+    {
+      "kind": "earned",
+      "name": "thresholds already inside the tally are not re-dated",
+      "sources": {
+        "lanternNights": [{ "day": "2026-12-01", "amount": 1 }],
+        "lanternCounted": 10
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "the tally alone (rooms purged) earns nothing new",
+      "sources": {
+        "lanternNights": [],
+        "lanternCounted": 49
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "the 50th Lantern Hour",
+      "sources": {
+        "lanternNights": [{ "day": "2027-03-03", "amount": 1 }],
+        "lanternCounted": 49
+      },
+      "expect": [{ "key": "lantern_hours_50", "day": "2027-03-03" }]
+    },
+    {
+      "kind": "earned",
+      "name": "59 Sanctuary minutes and 59 seconds is not 60",
+      "sources": {
+        "sanctuarySeconds": [
+          { "day": "2026-10-01", "amount": 1800 },
+          { "day": "2026-10-02", "amount": 1799 }
+        ]
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "exactly 60 minutes across sessions, dated by the day the total reaches it",
+      "sources": {
+        "sanctuarySeconds": [
+          { "day": "2026-10-03", "amount": 1 },
+          { "day": "2026-10-01", "amount": 1800 },
+          { "day": "2026-10-02", "amount": 1799 }
+        ]
+      },
+      "expect": [{ "key": "sanctuary_minutes_60", "day": "2026-10-03" }]
+    },
+    {
+      "kind": "earned",
+      "name": "one long session can cross several thresholds on the same day",
+      "sources": {
+        "sanctuarySeconds": [
+          { "day": "2026-10-01", "amount": 600 },
+          { "day": "2026-10-04", "amount": 43200 },
+          { "day": "2026-10-05", "amount": 17000 }
+        ]
+      },
+      "expect": [
+        { "key": "sanctuary_minutes_60", "day": "2026-10-04" },
+        { "key": "sanctuary_minutes_300", "day": "2026-10-04" },
+        { "key": "sanctuary_minutes_1000", "day": "2026-10-05" }
+      ]
+    },
+    {
+      "kind": "earned",
+      "name": "zero and negative amounts are ignored",
+      "sources": {
+        "sanctuarySeconds": [
+          { "day": "2026-10-01", "amount": -5000 },
+          { "day": "2026-10-02", "amount": 0 },
+          { "day": "2026-10-03", "amount": 3599 }
+        ],
+        "capsuleSeals": [{ "day": "2026-10-02", "amount": 0 }]
+      },
+      "expect": []
+    },
+    {
+      "kind": "earned",
+      "name": "everything at once comes back in catalogue order",
+      "sources": {
+        "sanctuarySeconds": [{ "day": "2026-10-02", "amount": 3600 }],
+        "lanternNights": [{ "day": "2026-10-03", "amount": 1 }],
+        "rippleSessions": [{ "day": "2026-10-04", "amount": 1 }],
+        "capsuleOpens": [{ "day": "2026-10-05", "amount": 1 }],
+        "capsuleSeals": [{ "day": "2026-09-01", "amount": 1 }]
+      },
+      "expect": [
+        { "key": "capsule_sealed_first", "day": "2026-09-01" },
+        { "key": "capsule_opened_first", "day": "2026-10-05" },
+        { "key": "ripples_first", "day": "2026-10-04" },
+        { "key": "lantern_hours_1", "day": "2026-10-03" },
+        { "key": "sanctuary_minutes_60", "day": "2026-10-02" }
+      ]
+    },
+    {
+      "kind": "capsule_years",
+      "name": "no capsule, no anniversary",
+      "firstSealed": null,
+      "today": "2027-10-08",
+      "expect": 0
+    },
+    {
+      "kind": "capsule_years",
+      "name": "the day before the first anniversary",
+      "firstSealed": "2026-10-08",
+      "today": "2027-10-07",
+      "expect": 0
+    },
+    {
+      "kind": "capsule_years",
+      "name": "the first anniversary itself",
+      "firstSealed": "2026-10-08",
+      "today": "2027-10-08",
+      "expect": 1
+    },
+    {
+      "kind": "capsule_years",
+      "name": "two years and a bit",
+      "firstSealed": "2026-10-08",
+      "today": "2028-12-31",
+      "expect": 2
+    },
+    {
+      "kind": "capsule_years",
+      "name": "sealed on 29 Feb: the anniversary is 28 Feb in a common year",
+      "firstSealed": "2028-02-29",
+      "today": "2029-02-28",
+      "expect": 1
+    },
+    {
+      "kind": "capsule_years",
+      "name": "a first seal dated in the future (clock skew) counts nothing",
+      "firstSealed": "2027-01-01",
+      "today": "2026-12-31",
+      "expect": 0
+    },
+    {
+      "kind": "share_prompt",
+      "name": "a new Spark has nothing to share",
+      "state": { "stage": "spark", "lifetimeGlowDays": 3, "capsuleYears": 0, "offered": [], "hideGlow": false },
+      "expect": { "prompt": null, "offer": [] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "reaching Ember offers its evolution card",
+      "state": { "stage": "ember", "lifetimeGlowDays": 6, "capsuleYears": 0, "offered": [], "hideGlow": false },
+      "expect": { "prompt": "evolution:ember", "offer": ["evolution:ember"] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "offered once: an offered milestone is never offered again",
+      "state": { "stage": "ember", "lifetimeGlowDays": 6, "capsuleYears": 0, "offered": ["evolution:ember"], "hideGlow": false },
+      "expect": { "prompt": null, "offer": [] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "the 7th glow day offers the glow card",
+      "state": { "stage": "ember", "lifetimeGlowDays": 7, "capsuleYears": 0, "offered": ["evolution:ember"], "hideGlow": false },
+      "expect": { "prompt": "glow:7", "offer": ["glow:7"] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "several at once: one prompt for the highest, all of them marked offered",
+      "state": { "stage": "radiance", "lifetimeGlowDays": 120, "capsuleYears": 1, "offered": [], "hideGlow": false },
+      "expect": {
+        "prompt": "evolution:radiance",
+        "offer": [
+          "evolution:ember",
+          "evolution:glow",
+          "evolution:radiance",
+          "glow:7",
+          "glow:30",
+          "glow:100",
+          "capsule_anniversary:1"
+        ]
+      }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "glow outranks a capsule anniversary",
+      "state": { "stage": "glow", "lifetimeGlowDays": 30, "capsuleYears": 1, "offered": ["evolution:ember", "evolution:glow", "glow:7"], "hideGlow": false },
+      "expect": { "prompt": "glow:30", "offer": ["glow:30", "capsule_anniversary:1"] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "a capsule anniversary on its own",
+      "state": { "stage": "ember", "lifetimeGlowDays": 5, "capsuleYears": 2, "offered": ["evolution:ember", "capsule_anniversary:1"], "hideGlow": false },
+      "expect": { "prompt": "capsule_anniversary:2", "offer": ["capsule_anniversary:2"] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "Comfort 'hide streak': glow milestones are never prompted, only quietly marked offered",
+      "state": { "stage": "ember", "lifetimeGlowDays": 30, "capsuleYears": 0, "offered": ["evolution:ember"], "hideGlow": true },
+      "expect": { "prompt": null, "offer": ["glow:7", "glow:30"] }
+    },
+    {
+      "kind": "share_prompt",
+      "name": "hide streak still prompts the evolution card",
+      "state": { "stage": "constellation", "lifetimeGlowDays": 400, "capsuleYears": 0, "offered": ["evolution:ember", "evolution:glow", "evolution:radiance"], "hideGlow": true },
+      "expect": {
+        "prompt": "evolution:constellation",
+        "offer": ["evolution:constellation", "glow:7", "glow:30", "glow:100", "glow:365"]
+      }
+    }
+  ]
+}

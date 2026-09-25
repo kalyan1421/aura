@@ -1419,9 +1419,14 @@ describe('Rooms + safety (e2e, live local Supabase + Realtime + Redis)', () => {
     for (const b of broadcasts) walk(b.payload, `realtime ${b.topic} ${b.event}`);
 
     expect(recorded.length).toBeGreaterThan(100);
+    // `wind_down` (F16, contracts/api/v1-quiet.md §2.4): the lifecycle tick's Lantern Hour wind-down signal,
+    // `{ state, count, at }` — a room total with no member id or pseudonym (walked above like every payload).
     expect(new Set(broadcasts.map((b) => b.event))).toEqual(
-      new Set(['member_joined', 'member_left', 'presence', 'gesture_sent', 'gesture_received', 'room_state', 'lantern_hour']),
+      new Set(['member_joined', 'member_left', 'presence', 'gesture_sent', 'gesture_received', 'room_state', 'lantern_hour', 'wind_down']),
     );
+    for (const b of broadcasts.filter((x) => x.event === 'wind_down')) {
+      expect(Object.keys(b.payload).sort()).toEqual(['at', 'count', 'id', 'state']);
+    }
     expect(violations).toEqual([]);
   });
 });

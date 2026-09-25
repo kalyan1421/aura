@@ -71,7 +71,7 @@ type RoomLantern = {
   active: boolean;         // taking light now (state === 'lantern_hour'); false afterwards: "Tonight's lantern"
 };
 type RoomIntention = {
-  key: string;             // preset key, the app localises it (e.g. "sleep_before_midnight"); unknown key → hide the card
+  key: string;             // preset key (e.g. "sleep_before_midnight"): its words come from GET /v1/intentions (§1.10), else the app's bundled string; no words → hide the card
   holds: number;           // "12 holding this tonight" — the room total; only ever rises
   open: boolean;           // holding is possible now (state === 'lantern_hour'); afterwards read-only
 };
@@ -237,7 +237,8 @@ lantern_hour`: open rooms, 21:00–23:00 on the region clock; forming and closin
   room that is already lit doesn't replay it.
 
 **Tonight's intention** — at the start of Lantern Hour each room gets one preset (a key, rotated nightly from the
-room's language-pool list `room_intention_presets`; the app localises the key). Set once per room and night.
+room's language-pool list `room_intention_presets`; the app shows the key's words from §1.10). Set once per room and
+night: a preset retired later that night stays with the rooms that already show it.
 
 `POST /v1/rooms/:roomId/intention/hold` (no body) → `200 { "intention": RoomIntention, "holding": true }`
 - One tap; **idempotent** (holding again answers `200` with the same total). There is no un-hold: it can't be taken
@@ -260,6 +261,37 @@ new joins: rooms already joined keep their lantern and intention.
 **For F7 Breath Ripples (server):** `addBreathCyclesToRoomLantern(tx, roomId, humanCycles, now?)` in
 `server/aura-api/src/rooms/lanterns.ts` — call once when a session started from a room ends, inside the transaction
 that records it, with the cycles finished by human seats only. A no-op outside that room's Lantern Hour.
+
+### 1.10 Tonight's intention list and its words (Milestone B; migration `20261005000025_gaps_b.sql`)
+PRD 19 "Configuration": "the Tonight's intention list per language". Each language pool (`en`, `te`, `hi`) has an
+ordered list of presets (`room_intention_presets`: position, then key); only enabled presets rotate. Each key has ONE
+line in all five app languages (`room_intention_texts`: en, te, te-Latn, hi, hi-Latn — a room can mix languages, so
+every preset carries every language). Nothing is ever deleted: a preset is **retired** (out of the rotation for rooms
+whose Lantern Hour starts later; rooms already showing it keep it, and its words stay served).
+
+`GET /v1/intentions` — **public** (no sign-in; nothing about the caller in or out), `ETag` + `If-None-Match` → `304`:
+```json
+{ "version": "k3J…", "intentions": [ { "key": "sleep_before_midnight",
+    "texts": { "en": "Sleep before midnight", "te": "…", "te-Latn": "…", "hi": "…", "hi-Latn": "…" } } ] }
+```
+Every key with words, retired ones included. The app shows `texts[<its locale>]` for `RoomIntention.key`, falls back to
+its bundled `rooms_intention_<key>` string (offline, older server), and hides the card when it has neither.
+
+**Console** (`/admin/intentions*`, AdminGuard: SSO + TOTP; `Cache-Control: no-store`; Owner writes, Moderator reads;
+every write audited in the same transaction — keys, pools, positions and which languages changed, never the words):
+| Route | Role | Body → answer |
+|---|---|---|
+| `GET /admin/intentions` | owner, moderator | → `{ locales, maxChars: 80, previewTimezone, pools: [{ pool, presets: [{ pool, key, position, enabled, createdAt, updatedAt, inUseTonight }], rotation: [{ date, key }] ×14 }], words: [{ key, texts, updatedAt, pools }], history }` — `rotation` is the next 14 nights with the rule rooms use (`pickIntention`); `inUseTonight` counts rooms whose night started in the last 24 h (a room count, never who) |
+| `POST /admin/intentions/presets` | owner | `{ pool, key, texts?, position?, enabled?, reasonCode }` → `201 { preset, newWords }`. A new key needs `texts` (all five); an existing key reuses its words (`409 intention_key_exists` if `texts` is sent); `409 intention_preset_exists` if the pool has it; `400 intention_words_required` |
+| `POST /admin/intentions/presets/:pool/:key` | owner | `{ enabled?, position?, reasonCode }` → `200 { preset, previous }` — retire / restore / move. `409 last_intention`: the pool's last preset in rotation can't be retired (use the `room_intention_enabled` kill switch). Restoring re-checks the words |
+| `POST /admin/intentions/words/:key` | owner | `{ texts, reasonCode }` → `200 { words, changed: [locales] }` — every pool using the key; rooms showing it tonight get the new words |
+
+**Words check** (`422 intention_words_rejected`, `details`: one line per problem, e.g. `te-Latn: has a guilt, loss or
+urgency word ("tondara*")`): every language present, ≤ 80 characters, one line, the language's own script (te: Telugu,
+hi: Devanagari, the others Latin), no link / handle / email / phone number, and none of the push copy lint's guilt,
+loss and urgency words or treatment / health-outcome words (REQ-NTF-01), quadrant or room-theme names, nor the
+Insights rules' clinical labels and scoring words (REQ-INS-03), in any language. Mood names are allowed (a room, not a
+lock screen). A Moderator's write → `403 forbidden_role`, audited (`access_denied`).
 
 ## 2. Safety
 
@@ -364,6 +396,7 @@ Shadow-mutes are never shown anywhere (no notice, `rooms` stays `available`).
 | room | `gesture_sent` | `{ gestureId, type, target, at }` — anonymous | every delivered gesture (the recipient dedupes with its `gesture_received` by `gestureId`) |
 | room | `room_state` | `{ state, readOnly, joinsCloseAt, memoryAt, purgeAt, lantern, intention, at }` — `lantern` / `intention` are the §1.9 room totals (or null); **no member id or per-member value, ever** | forming→open, open↔lantern_hour, →closing, →memory; **and** when the lantern's level rises or the intention's hold count changes (§1.9). Refetch the detail only when `state` / `readOnly` changed; otherwise apply `lantern` / `intention` as they are (never lower a level you already show) |
 | room | `lantern_hour` | `{ lanternHour, at }` | the region clock hits 21:00 (active) or 23:00 (ended); end the lantern locally at `lanternHour.endsAt` even if this arrives late |
+| room | `wind_down` | `{ state: "soon" \| "open" \| "ended", count, at }` — a room total ("N winding down"), never who | F16 Lantern Hour wind-down (Milestone C): it starts (22:30 region clock), the count changes, it ends. Routes `GET/POST/DELETE /v1/rooms/:roomId/wind-down`: `contracts/api/v1-quiet.md` §2 |
 | member | `gesture_received` | `{ gestureId, type, fromMemberId, fromPseudonym, at }` | a gesture to you was delivered ("Quiet Comet sent you Warm Tea") |
 
 ## 4. Server behaviour the app should know

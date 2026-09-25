@@ -124,3 +124,83 @@ inclusive, matched on each row's stamped `localDay` (never recomputed, so a time
 
 Copy is descriptive only ("more often"), never causal, never a number, percentage, score, label or diagnosis
 (REQ-INS-03); every quadrant uses the same template.
+
+### 10.1 Look back (`look_back.json`, F10 · Milestone C)
+The sky from the same week 1 month, 6 months and 1 year ago, **pull-only** inside Insights (never pushed, never on
+Home, the widget, a notification or a share card; REQ-INS-08). Free: Look back is on the never-paywalled list (PRD
+F12). On device only, like §10; the TypeScript copy exists only to keep the engines in step. Every case has a `kind`:
+
+- **`add_months`** — `addMonthsClamped(day, n)`: move the year/month by `n` calendar months (negative = back) and keep
+  the day of the month, clamped to the target month's length: 31 Mar − 1 → 28 Feb (29 Feb in a leap year);
+  31 Oct − 1 → 30 Sep; 31 Aug − 6 → 28 Feb; 29 Feb − 12 → 28 Feb; 29 Feb − 48 → 29 Feb.
+- **`windows`** — `today = auraDay(now, currentTz)` (§1: 04:00 rollover, so 03:59 still belongs to the day before).
+  For `m` in `[1, 6, 12]`: `anchor = addMonthsClamped(today, −m)`, `from = weekStart(anchor)` (§10 `week`,
+  `weekStartsOn` default ISO 1 = Monday), `to = from + 6`. Returns `{today, windows: [{months, anchor, from, to}]}`.
+  Entries are matched on their **stamped** `localDay` (never recomputed), so a timezone change only moves `today`.
+- **`gate`** — `lookBackGate({now, checkIns, helpAt, hidden})`, evaluated on the device, in this order:
+  1. `hidden` (Settings › Look back off) → `{status: "off", until: null}`.
+  2. `helpAt` = the last time a crisis sheet or the Safety Center opened **on this phone** (device-only, never sent
+     to the server, DS-7). `now < helpAt + 24 h` → `after_help`.
+  3. Any Storm or Rain check-in made at `t` (`deviceTs`; deleted ones and backfills count, since it is the moment
+     that matters) with `now < t + 3 h` → `after_heavy`.
+  4. Otherwise `{status: "open", until: null}`.
+  `until` = the latest end among the gates in force (so the UI knows when to look again). Instants compare as
+  instants (offsets respected); a time in the future (clock skew) keeps Look back hidden. Exactly 3 h / 24 h → open.
+  While not `open`, Look back is absent from Insights (no card, no message about why).
+- **`sky`** — `lookBackSky(from, to, entries, restDays)`. An entry `{id, localDay, quadrant, deviceTs, deleted?,
+  lexiconCrisis?, helpOpened?, noteUnreadable?}` **shows** iff none of the flags is set:
+  `lexiconCrisis` — the crisis lexicon matches its note, **re-run on the device when it is displayed**;
+  `helpOpened` — the device-only flag kept when help was opened from that check-in; `noteUnreadable` — it has a
+  note this phone can't decrypt, so the lexicon couldn't check it; `deleted` — deleted entries leave Look back.
+  For each day `from..to`: its showing entries in `deviceTs` order (then `id`), and its star = §10 `day_star` over
+  their quadrants with `rest = day ∈ restDays` (a day whose only entries were left out is plain sky, never a hint of
+  them). `visible` = at least one entry shows; a week that isn't visible is left out of the screen.
+
+Tapping a day lists its entries (mood, glyph, time); a note or voice note opens **only on a further tap** of that
+entry, and the lexicon is re-run on the note right then.
+
+## 11. Keepsakes and share milestones (`keepsakes.json`, F13 · Milestone C)
+Keepsakes are **earned-only seals** (PRD F13 "Keepsakes"). NestJS awards them from records it already holds
+(authoritative, like `avatar_state`); the app only shows them. Share milestones are evaluated on the device (the one
+Home share prompt). Contract: `contracts/api/v1-keepsakes.md`. Every case has a `kind`; the file's `catalogue` is the
+list below, in display order.
+
+| key | source | amount per event | threshold |
+|---|---|---|---|
+| `capsule_sealed_first` | `capsuleSeals`: capsules sealed (tombstones too) | 1 | 1 |
+| `capsule_opened_first` | `capsuleOpens`: capsules opened | 1 | 1 |
+| `glow_days_7` · `_30` · `_100` · `_365` | `glowDays`: lifetime glow days = distinct active days (§7) | 1 per distinct day | 7 · 30 · 100 · 365 |
+| `ripples_first` | `rippleSessions`: a human seat in a Breath Ripples session that has ended | 1 | 1 |
+| `lantern_hours_1` · `_10` · `_50` | `lanternNights`: Lantern Hour nights spent in a room (below) | 1 | 1 · 10 · 50 |
+| `sanctuary_minutes_60` · `_300` · `_1000` | `sanctuarySeconds`: Sanctuary session records (`duration_s`) | seconds | 3,600 · 18,000 · 60,000 s |
+
+- **`earned`** — `earnedKeepsakes(sources)`: each source is an unsorted list of events `{day, amount}` (Aura days).
+  Events with `amount ≤ 0` are ignored; a glow day counts **1 per distinct day** whatever its amount. `lanternCounted`
+  (default 0) is the Lantern Hour tally already counted before these events (the rooms it came from may be purged).
+  For every threshold `T` of a source with `T > counted` (`counted` = `lanternCounted` for `lanternNights`, else 0):
+  stable-sort the events by day, run a total from `counted`, and the keepsake's **day** is the day of the first event
+  at which the total reaches `≥ T`. Unreached thresholds give nothing. Result: `[{key, day}]` in catalogue order.
+  (Vector shorthand: `glowDaysRange: {from, count}` = `count` consecutive days from `from`, amount 1.)
+- **`capsule_years`** — `capsuleYears(firstSealed, today)`: the number of anniversaries of the first seal's day that
+  are `≤ today` (anniversary `y` = `addYears(firstSealed, y)`, §9: Feb 29 → Feb 28). `null` or a future first seal → 0.
+- **`share_prompt`** — `sharePrompt({stage, lifetimeGlowDays, capsuleYears, offered, hideGlow})` → `{prompt, offer}`.
+  Milestone ids, in candidate order: `evolution:<stage>` for every stage from `ember` up to `stage` (§4 order);
+  `glow:<n>` for `n ∈ [7, 30, 100, 365]`, `n ≤ lifetimeGlowDays`; `capsule_anniversary:<y>` for `y ∈ 1..capsuleYears`.
+  `offer` = the candidates not in `offered`, in candidate order — **all** of them are marked offered together, so each
+  milestone is offered once and several at once make one prompt. `prompt` = the highest of `offer`: the latest
+  evolution, else the largest glow (never when `hideGlow`, Comfort › hide streak number), else the latest capsule
+  anniversary; `null` when none.
+
+Server days (not vectors): a seal / open = `auraDay(sealed_at / opened_at, profile tz)`; a glow day = its
+`active_days.local_day`; a Breath Ripples session = `auraDay(ended_at)`; a Lantern Hour night = `auraDay(lantern_hour_at)`;
+a Sanctuary record = its `local_day`. **Lantern Hour nights:** distinct `rooms.lantern_hour_at` of rooms whose Lantern
+Hour window (`lantern_hour_at + (lantern_end − lantern_start)`) has ended and in which the person was a member during
+it (`joined_at < window end` and `coalesce(left_at, last_seen_at) ≥ lantern_hour_at`). Rooms are purged 7 days after
+they close, so NestJS keeps a per-person tally (`keepsake_tallies.lantern_nights`, `lantern_through` = the latest
+night counted): only nights after `lantern_through` are new, so nothing is counted twice and nothing counts before
+it was recorded (PRD: "Lantern Hour seals count only from when they are recorded").
+
+Stored once per (person, key) with the day computed the first time (`on conflict do nothing`); **never revoked**:
+deleting a capsule or check-in, a refund, a downgrade or a purged room never removes one, and no purchase, gift,
+Stardust or Plus perk grants one (REQ-SHR-05). Nothing (Starlight, Stardust) comes with a keepsake, and nothing comes
+with sharing (REQ-SHR-03).

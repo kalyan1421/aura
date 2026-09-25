@@ -1,0 +1,6 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!-- Storm group glyph: a lighthouse (same shape as the app's QuadrantGlyph). -->
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round"
+        android:pathData="M9.1,22 L10.6,9.1 L13.4,9.1 L14.9,22 Z M10.1,5.8 L13.9,5.8 L13.9,9.1 L10.1,9.1 Z M14.9,6.7 L22,4.3 M9.1,6.7 L2,4.3 M6,22 L18,22"/>
+</vector>

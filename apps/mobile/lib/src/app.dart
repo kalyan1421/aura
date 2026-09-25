@@ -14,6 +14,8 @@ import 'features/capsules/capsule_providers.dart';
 import 'features/onboarding/gate_controller.dart';
 import 'features/profile/timezone_sync.dart';
 import 'features/push/push_inbox.dart';
+import 'features/widget/widget_bridge.dart';
+import 'features/widget/widget_follow_up.dart';
 
 class AuraApp extends ConsumerStatefulWidget {
   const AuraApp({super.key});
@@ -62,6 +64,9 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     // Remote flags + the signed crisis lexicon (PRD 19 REQ-ADM-12): kept copy
     // at start, then polled while in the foreground.
     ref.watch(remoteConfigControllerProvider);
+    // Home-screen widget (F11): imports widget check-ins, publishes what
+    // the widget shows.
+    ref.watch(widgetBridgeProvider);
     final router = ref.watch(routerProvider);
     final comfort = ref.watch(comfortControllerProvider);
     AuraHaptics.enabled = comfort.haptics;
@@ -84,10 +89,12 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
       // `reduceMotionOf(context)` / `disableAnimations` check sees both.
       builder: (context, child) {
         final mq = MediaQuery.of(context);
-        if (!comfort.reduceMotion || mq.disableAnimations) return child!;
+        // Widget check-ins get their capsule step at this app open (F11).
+        final app = WidgetCheckInFollowUp(child: child!);
+        if (!comfort.reduceMotion || mq.disableAnimations) return app;
         return MediaQuery(
           data: mq.copyWith(disableAnimations: true),
-          child: child!,
+          child: app,
         );
       },
     );

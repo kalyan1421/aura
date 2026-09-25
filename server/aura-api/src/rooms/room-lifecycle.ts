@@ -7,12 +7,15 @@ import { ensureLanternNight } from './lanterns';
 import { loadMatchingConfig, type MatchingConfig } from './matching-config';
 import { countsView, roomInfo, roomStateView, stateOf } from './room-views';
 import { RoomsRepository, type RoomRow } from './rooms.repository';
+import { loadQuietConfig, type QuietConfig } from '../quiet/quiet-config';
+import { syncWindDownBroadcast, windDownSignalFor } from './wind-down';
 
 /**
  * Worker `room-lifecycle` queue, job `room-lifecycle-tick` (every minute at :00, so Lantern Hour transitions land within
  * seconds of 21:00 / 23:00 on each region clock). Reads always derive the state from timestamps; this tick only
  * (1) moves the cached `rooms.status` and broadcasts each transition once (`room_state`, plus `lantern_hour` when the
- * lantern starts or ends), (2) re-broadcasts "here now" when it changed (people going quiet), (3) purges rooms at
+ * lantern starts or ends), (2) re-broadcasts "here now" when it changed (people going quiet) and the F16 wind-down's
+ * room total (`wind_down`) when it starts, changes or ends, (3) purges rooms at
  * 24 h + 7 d after copying any reported item not yet in the evidence store, and (4) deletes evidence past its hold.
  * Idempotent; each room is its own transaction. Returns counts only (callers log them; never ids).
  */
@@ -37,9 +40,10 @@ export async function tickRoom(
   id: string,
   now: Date,
   cfg: MatchingConfig,
-): Promise<{ transition: boolean; presence: boolean }> {
+  quietCfg?: QuietConfig,
+): Promise<{ transition: boolean; presence: boolean; windDown?: boolean }> {
   const repo = new RoomsRepository();
-  const out = { transition: false, presence: false };
+  const out: { transition: boolean; presence: boolean; windDown?: boolean } = { transition: false, presence: false };
   await withTx(pool, async (tx) => {
     let room = await repo.lockRoom(tx, id);
     if (!room) return;
@@ -68,6 +72,12 @@ export async function tickRoom(
         out.presence = true;
       }
     }
+    // F16 Lantern Hour wind-down (Milestone C): "N winding down" as a room total, sent once per change (it starts at
+    // 22:30, people go quiet, it ends). Rooms outside Lantern Hour with nothing cached cost one small read.
+    if (derived === 'lantern_hour' || derived === 'open' || derived === 'closing') {
+      const qcfg = quietCfg ?? (await loadQuietConfig(tx));
+      if (await syncWindDownBroadcast(tx, id, await windDownSignalFor(tx, room, now, cfg, qcfg), now)) out.windDown = true;
+    }
   });
   return out;
 }
@@ -80,12 +90,13 @@ export async function runRoomLifecycle(pool: Pool, now = new Date()): Promise<Li
     if (!s.errors.includes(kind)) s.errors.push(kind);
   };
   const cfg = await loadMatchingConfig(pool);
+  const quietCfg = await loadQuietConfig(pool);
 
   // (1) + (2): rooms that aren't memories yet (plus any whose memory moment just passed).
   const active = await pool.query<{ id: string }>(`select id from public.rooms where status <> 'memory' and purge_at > now()`);
   for (const { id } of active.rows) {
     try {
-      const t = await tickRoom(pool, id, now, cfg);
+      const t = await tickRoom(pool, id, now, cfg, quietCfg);
       s.transitions += t.transition ? 1 : 0;
       s.presence += t.presence ? 1 : 0;
     } catch (err) {

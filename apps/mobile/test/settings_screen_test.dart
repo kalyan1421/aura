@@ -112,8 +112,9 @@ Future<ProviderContainer> _pump(
   _Account? account,
   double width = 390,
 }) async {
-  // Tall enough for every section (Notifications grew in Milestone B).
-  tester.view.physicalSize = Size(width * 3, 12000);
+  // Tall enough for every section (Notifications grew in Milestone B;
+  // Milestone C added Look back, the widget and the keepsakes entry).
+  tester.view.physicalSize = Size(width * 3, 15000);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
   final container = ProviderContainer(
@@ -260,6 +261,7 @@ void main() {
     expect(find.byKey(const ValueKey('set-sign-in')), findsOneWidget);
     expect(find.byKey(const ValueKey('set-sign-out')), findsNothing);
     expect(find.byKey(const ValueKey('set-delete-account')), findsNothing);
+    expect(find.byKey(const ValueKey('keepsakes-entry')), findsNothing);
     await _unmount(tester);
   });
 
@@ -268,6 +270,8 @@ void main() {
     await _pump(tester, db: memoryDb());
     expect(find.text('Signed in as a@aura.test'), findsOneWidget);
     expect(find.byKey(const ValueKey('set-sign-out')), findsOneWidget);
+    // F13: the private keepsake box (server-awarded, so signed in only).
+    expect(find.byKey(const ValueKey('keepsakes-entry')), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('set-delete-account')));
     await tester.pumpAndSettle();

@@ -36,6 +36,8 @@ export const PERSONAL_TABLES = [
   // reference the membership). Echoes hold nothing that links them to anyone, so there is nothing to delete there.
   'ripple_tickets',
   'ripple_seats',
+  // F16 Quiet Together (migration 20261005000027): memberships; the session gesture log cascades from them.
+  'quiet_members',
   // F5 rooms: memberships (pseudonyms, heartbeats, survey marks); their gestures — incl. limit-hit rows — and mutes
   // in both directions cascade from room_members.
   'room_members',
@@ -67,6 +69,12 @@ export const PERSONAL_TABLES = [
   'user_cosmetics',
   'sky_preferences',
   'stardust_ledger',
+  // PRD 12 trial-ending email (migration 20261005000025): which trial was emailed (state + reason code; no address).
+  'trial_ending_emails',
+  // F13 (migration 20261005000026): earned keepsakes (key + day) and the Lantern Hour tally. "Never lost" means never
+  // lost while the account lives: the table's guard lets them go once the deletion is due.
+  'keepsakes',
+  'keepsake_tallies',
   'profiles',
 ] as const;
 

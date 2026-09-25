@@ -1,4 +1,5 @@
 import Flutter
+import StoreKit
 import UIKit
 import UserNotifications
 
@@ -23,6 +24,9 @@ import UserNotifications
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
     AuraPlatformChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
     AuraAgeSignalsChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
+    AuraStoreChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
+    // Home-screen widget store (F11; AuraWidgetChannel.swift).
+    AuraWidgetChannel.register(messenger: engineBridge.applicationRegistrar.messenger())
   }
 }
 
@@ -130,6 +134,46 @@ private enum AuraPlatformChannel {
         }
       default:
         result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+}
+
+/// "Manage" for an App Store subscription (F12; PRD 12 "One tap to cancel":
+/// the store's own subscription page, nothing in between;
+/// lib/src/features/plus/plus_format.dart `openManageFor`). StoreKit's own
+/// sheet inside the app (`AppStore.showManageSubscriptions(in:)`, iOS 15+),
+/// shown over the active window scene. Answers `true` once the sheet was shown
+/// and closed, `false` when it couldn't be shown (no active scene, StoreKit
+/// error): the app then opens the App Store's subscriptions page instead.
+private enum AuraStoreChannel {
+  static func register(messenger: FlutterBinaryMessenger) {
+    let channel = FlutterMethodChannel(
+      name: "com.akvega.aura/store", binaryMessenger: messenger)
+    channel.setMethodCallHandler { call, result in
+      guard call.method == "showManageSubscriptions" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      guard #available(iOS 15.0, *) else {
+        result(false)
+        return
+      }
+      Task { @MainActor in
+        guard
+          let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive })
+        else {
+          result(false)
+          return
+        }
+        do {
+          try await AppStore.showManageSubscriptions(in: scene)
+          result(true)
+        } catch {
+          result(false)
+        }
       }
     }
   }

@@ -6,10 +6,12 @@ import { CapsuleUnlockModule } from './capsules/capsule-unlock.module';
 import { ConfigModule } from './config/config.module';
 import { DbModule } from './db/db.module';
 import { DbService } from './db/db.service';
+import { KeepsakesWorkerModule } from './keepsakes/keepsakes.worker';
 import { probe } from './health/health.controller';
 import { NotificationsModule } from './notifications/notifications.module';
 import { QueuesModule } from './queues/queues.module';
 import { QueuesService } from './queues/queues.service';
+import { QuietWorkerModule } from './quiet/quiet.worker';
 import { ReflectionsWorkerModule } from './reflections/reflections.worker';
 import { RipplesWorkerModule } from './ripples/ripples.worker';
 import { WorkerHostService } from './queues/worker-host.service';
@@ -45,7 +47,9 @@ class WorkerHealthController {
   // ReflectionsWorkerModule: F6 (30 s tick: stuck pending → held, memory → expired, pool auto-pause).
   // BillingWorkerModule: F12 (10 min tick: trial reminders, notification retries, rolling reconcile; daily voided purchases).
   // RipplesWorkerModule: F7 (15 s tick: session end, quiet tickets, due room invites, retention).
-  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule, ReflectionsWorkerModule, RipplesWorkerModule, BillingWorkerModule],
+  // KeepsakesWorkerModule: F13 (5 min tick: award keepsakes from recent records; everyone at start-up and daily).
+  // QuietWorkerModule: F16 (30 s tick: live counts on quiet:<id>, quiet memberships, retention).
+  imports: [ConfigModule, DbModule, QueuesModule, NotificationsModule, CapsuleUnlockModule, AdminWorkerModule, ReflectionsWorkerModule, RipplesWorkerModule, BillingWorkerModule, KeepsakesWorkerModule, QuietWorkerModule],
   controllers: [WorkerHealthController],
   providers: [WorkerHostService],
 })

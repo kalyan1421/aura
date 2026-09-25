@@ -10,5 +10,7 @@ export 'src/projection.dart';
 export 'src/rules/aura_day.dart';
 export 'src/rules/capsules.dart';
 export 'src/rules/insights.dart';
+export 'src/rules/keepsakes.dart';
+export 'src/rules/look_back.dart';
 export 'src/rules/progression.dart';
 export 'src/rules/streak.dart';

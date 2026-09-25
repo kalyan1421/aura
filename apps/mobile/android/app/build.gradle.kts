@@ -1,5 +1,7 @@
 plugins {
     id("com.android.application")
+    // Glance home-screen widget (F11, com.akvega.aura.widget).
+    id("org.jetbrains.kotlin.plugin.compose")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -32,6 +34,11 @@ android {
         versionName = flutter.versionName
     }
 
+    // Glance (Jetpack Compose) home-screen widget (F11).
+    buildFeatures {
+        compose = true
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -57,4 +64,12 @@ dependencies {
     implementation("com.google.android.play:age-signals:0.0.4")
     // flutter_local_notifications (see compileOptions above).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // F11 home-screen widget: Jetpack Glance (a 4x2 two-tap check-in via
+    // ActionCallback, 2x2 deep link). No network, no Supabase: it writes to
+    // app-private shared preferences that the Flutter app imports.
+    implementation("androidx.glance:glance-appwidget:1.2.0")
+    // Unit tests of the widget store logic (app/src/test): the JVM needs a
+    // real org.json (Android's is a stub there).
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20250517")
 }

@@ -1,0 +1,14 @@
+{
+  "name": "@aura/load",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Realtime load harness for Aura (k6 + zero-dependency Node helpers). Local stack only by default; see README.md.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "run:small": "./run.sh --scale small",
+    "run:large": "./run.sh --scale large",
+    "dry-run": "./run.sh --dry-run"
+  }
+}

@@ -844,6 +844,10 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
 
   // ---------------------------------------------------------------- account deletion (F8 REQ-ACC-11)
   describe('account deletion', () => {
+    const trialSubscriptions: string[] = [];
+    afterAll(async () => {
+      if (trialSubscriptions.length) await db.query('delete from public.subscriptions where id = any($1::uuid[])', [trialSubscriptions]);
+    });
     const as = (u: TestUser, r: request.Test) => r.set('Authorization', `Bearer ${u.token}`);
     const status = (u: TestUser) => as(u, http().get('/v1/account'));
     const requestDeletion = (u: TestUser) => as(u, http().post('/v1/account/deletion'));
@@ -938,6 +942,18 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       await db.query(`insert into public.user_cosmetics (user_id, cosmetic_id, source, redemption_id) values ($1, 'first_light', 'stardust', $2)`, [u.id, randomUUID()]);
       await db.query(`insert into public.sky_preferences (user_id, sky_theme, soundscape) values ($1, 'first_light', 'bells')`, [u.id]);
       await db.query(`insert into public.stardust_ledger (user_id, amount, reason, ref_id) values ($1, 10, 'gift_received', $2)`, [u.id, randomUUID()]);
+      // PRD 12 trial-ending email (migration 20261005000025): the per-trial ledger row. Its subscription is a purchase
+      // record (de-identified by the purge, kept), so this suite removes it afterwards.
+      const trial = await db.query<{ id: string }>(
+        `insert into public.subscriptions (owner_user_id, store, store_ref, product_id, environment, state, trial_ends_at, expires_at)
+         values ($1, 'apple', $2, 'aura_plus_monthly', 'sandbox', 'trial', now() + interval '2 days', now() + interval '2 days') returning id`,
+        [u.id, `e2e-purge-${randomBytes(6).toString('hex')}`],
+      );
+      trialSubscriptions.push(trial.rows[0].id);
+      await db.query(`insert into public.trial_ending_emails (subscription_id, user_id, state, reason) values ($1, $2, 'skipped', 'no_email')`, [
+        trial.rows[0].id,
+        u.id,
+      ]);
       // F15 + F14 Milestone B (migration 20261005000023): a Sanctuary session record (through the sync push), a planned
       // user-timed push and a gestures-received log row (notification_activity comes from the sync push's trigger).
       const session = { id: uuidv7(), entity: 'sanctuary_session', op: 'upsert', deviceTs: now(), localDay: localDate(new Date(), 'Asia/Kolkata'), tz: 'Asia/Kolkata', payload: { id: uuidv7(), activity: 'breathe', variant: 'calm', durationS: 64 } };
@@ -952,10 +968,18 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
          values ('quick', 'timeout', now(), 10000, 4000, 6000, 16, 10000, 1, now() + interval '180 seconds', now() + interval '7 days') returning id`,
       );
       await db.query(`insert into public.ripple_seats (session_id, seat, kind, user_id, pseudonym) values ($1, 1, 'human', $2, 'Quiet Comet')`, [rs.rows[0].id, u.id]);
+      // F16 Quiet Together (migration 20261005000027): a membership through the API, and a gesture in its log.
+      const quiet = await as(u, http().post('/v1/quiet/join')).send({ mode: 'rest', timezone: 'Asia/Kolkata' }).expect(200);
+      await as(u, http().post(`/v1/quiet/sessions/${quiet.body.session.sessionId as string}/gestures`)).send({ type: 'stargaze' }).expect(202);
       await db.query(`insert into public.apple_auth_tokens (user_id, client_id, wrapped_refresh_token) values ($1, 'com.akvega.aura', $2)`, [
         u.id,
         randomBytes(64).toString('base64'),
       ]);
+      // F13 (migration 20261005000026): a keepsake awarded through the API (the capsule sealed above) and the Lantern
+      // Hour tally as NestJS writes it (test/e2e/keepsakes.e2e-spec.ts covers the real flows).
+      const earned = await as(u, http().get('/v1/keepsakes')).expect(200);
+      expect(earned.body.keepsakes.map((k: { key: string }) => k.key)).toContain('capsule_sealed_first');
+      await db.query('insert into public.keepsake_tallies (user_id, lantern_nights, lantern_through) values ($1, 1, now()) on conflict (user_id) do nothing', [u.id]);
       const paths = [`${u.id}/voice/${uuidv7()}.bin`, `${u.id}/capsules/${uuidv7()}/0.bin`];
       for (const p of paths) await upload(p);
       return paths;

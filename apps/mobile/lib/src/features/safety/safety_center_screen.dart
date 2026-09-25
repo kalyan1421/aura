@@ -10,6 +10,7 @@ import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../checkin/quadrant_glyph.dart' show habitLabel;
 import '../onboarding/gate_controller.dart';
+import '../insights/look_back.dart' show recordLookBackHelp;
 import '../plus/paywall_gate.dart' show markCrisisFlow;
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/support_sheet.dart';
@@ -42,6 +43,12 @@ class _SafetyCenterScreenState extends ConsumerState<SafetyCenterScreen> {
     // F12 P0: "I need help now" is a crisis flow — no Aura Plus paywall for
     // the rest of this Aura day (features/plus/paywall_gate.dart).
     markCrisisFlow(ref);
+    // F10 Look back rests for 24 h after help opened on this phone
+    // (device-only, never synced: DS-7).
+    recordLookBackHelp(
+      ref.read(kvStoreProvider),
+      ref.read(timeContextProvider).now(),
+    );
   }
 
   Future<void> _completeBreathe() async {

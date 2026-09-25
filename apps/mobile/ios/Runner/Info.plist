@@ -39,6 +39,8 @@
 	     which never asks for library access (PRD 15-permissions). The key is
 	     here only because App Store review requires it of any binary that
 	     links image_picker (its README); the prompt is never shown. -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Only if you choose "Save Image" when sharing a card: Aura saves that one picture and never reads your photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Aura only sees the photos you choose to add to a capsule. They stay private to you.</string>
 	<key>NSAppTransportSecurity</key>

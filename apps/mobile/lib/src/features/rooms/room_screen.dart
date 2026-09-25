@@ -16,6 +16,7 @@ import '../checkin/quadrant_glyph.dart';
 import '../reflections/reflections_section.dart';
 import '../ripples/ripple_entry.dart';
 import '../support/support_sheet.dart';
+import 'intention_copy.dart';
 import 'member_sheet.dart';
 import 'report_sheet.dart';
 import 'room_controller.dart';
@@ -28,6 +29,7 @@ import 'room_realtime.dart';
 import 'room_status.dart';
 import 'room_widgets.dart';
 import 'rooms_repository.dart';
+import 'wind_down_entry.dart';
 
 /// One mood room (`/rooms/:id`, F5): who is here (silhouettes with mood
 /// chips, real counts), the warmth sent, and the 8 gestures. Help sits in
@@ -342,7 +344,15 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
     final room = s.detail!.room;
     final lantern = room.lantern;
     final intention = room.intention;
-    final text = intention == null ? null : intentionText(l, intention.key);
+    // The console's words first (GET /v1/intentions), then the bundled ones.
+    final text = intention == null
+        ? null
+        : serverIntentionText(
+                ref.watch(intentionCopyProvider).value,
+                intention.key,
+                Localizations.localeOf(context),
+              ) ??
+              intentionText(l, intention.key);
     return [
       if (lantern != null) ...[
         const SizedBox(height: AuraSpace.m),
@@ -514,6 +524,8 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
         // F7: "Breathe together" and the room's invite banner (entry only).
         const SizedBox(height: AuraSpace.m),
         RoomRippleEntry(roomId: widget.roomId, readOnly: d.room.isMemory),
+        // F16 (Milestone C): the Lantern Hour wind-down, from 22:30.
+        RoomWindDownEntry(roomId: widget.roomId, readOnly: d.room.isMemory),
         const SizedBox(height: AuraSpace.xl),
         _Members(detail: d, onOpen: (m) => unawaited(_openMember(m))),
         const SizedBox(height: AuraSpace.xl),

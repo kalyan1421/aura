@@ -170,8 +170,22 @@ on: push type `trial_ending` (opaque id = subscription id; Android channel `acco
 hours; discreet mode → the discreet line). Copy (en / te / te-Latn, PRD's lines): "Your free month of Aura Plus ends on
 {date}. After that it's {price}/month. Keep it or cancel anytime." — `{price}` is the store's localized string the
 paywall showed. Delivery re-checks: converted, lapsed, auto-renew off or moved → skipped (`trial_changed`). Tapping it
-opens the store's own subscription page (no retention screen). The in-app card comes from `notices`. Email (verified
-email only) is not wired yet: Aura has no user mail transport `[FOLLOW-UP]`.
+opens the store's own subscription page (no retention screen; on iOS StoreKit's in-app "Manage subscriptions" sheet,
+`AppStore.showManageSubscriptions(in:)`, falling back to the App Store web page). The in-app card comes from `notices`.
+
+**Email twin** (PRD 12: "Push + in-app card + email"; "only if the account has a verified email"; `src/user-mail`,
+migration `20261005000025`): the same sweep queues one `user-mail` job per claimed trial (job id
+`trial-email-<subscription>`). The worker re-reads the facts and sends through the console's SMTP transport
+(`SMTP_URL`, `MAIL_FROM`; Mailpit locally) to `auth.users.email` (never copied anywhere; Apple private-relay addresses
+are real, verified addresses) in the account's `ui_locale` (en / te / te-Latn / hi / hi-Latn,
+`src/admin/mail/copy.ts`): the push line word for word (end date in the person's zone, the store's price string and
+period), the store's own subscription page (`https://apps.apple.com/account/subscriptions` or the Play deep link) and
+a one-time note — no offers, no unsubscribe link (transactional, once). Skipped (recorded, never retried): auto-renew
+already off, trial converted / lapsed / moved, account pending deletion or gone, account closed (`account_ban`), no
+address or not verified, under an hour left. Quiet hours (the person's own window, else 23:00–08:00) delay it like
+the push unless that would leave under an hour. **At most once per trial**: the `trial_ending_emails` ledger (state +
+reason code only — no address, no copy) is claimed before sending; transport failures retry up to 5 times with
+backoff; a crash after the claim never resends. SMTP not configured → skipped `mail_not_configured`.
 
 ## 7. Store setup (AK)
 - **App Store Connect:** subscription group "Aura Plus" with `aura_plus_monthly` (₹49) and `aura_plus_annual` (₹399),

@@ -83,7 +83,9 @@ class _RecordingApi extends AuraApi {
   }) async {
     pushes.add(mutations);
     return PushResponse(
-      results: [for (final m in mutations) MutationResult(id: m.id, status: 'applied')],
+      results: [
+        for (final m in mutations) MutationResult(id: m.id, status: 'applied'),
+      ],
     );
   }
 
@@ -133,6 +135,9 @@ void main() {
       (KvKeys.pushDeleteOwed, '1'),
       (KvKeys.comfort, '{"reduceMotion":true}'),
       (KvKeys.guidedPromptsOff, 'true'),
+      (KvKeys.lookBackHelpAt, '2026-10-08T09:00:00.000Z'),
+      (KvKeys.lookBackHelpCheckIns, '["c-1"]'),
+      (KvKeys.lookBackHidden, 'true'),
     ]) {
       await kv.set(k, v);
     }
@@ -199,21 +204,23 @@ void main() {
     await expectWiped();
   });
 
-  test('a failing push unregistration or auth call never stops the wipe',
-      () async {
-    await seedAlice();
-    await SignOutService(
-      auth: _Auth(_alice)..failSignOut = true,
-      db: db,
-      secure: secure,
-      dataKeys: DataKeyRepository(secure),
-      unregisterPush: () async => throw Exception('offline'),
-      pauseSync: () async {},
-      resumeSync: () {},
-      afterWipe: () async {},
-    ).signOut();
-    await expectWiped();
-  });
+  test(
+    'a failing push unregistration or auth call never stops the wipe',
+    () async {
+      await seedAlice();
+      await SignOutService(
+        auth: _Auth(_alice)..failSignOut = true,
+        db: db,
+        secure: secure,
+        dataKeys: DataKeyRepository(secure),
+        unregisterPush: () async => throw Exception('offline'),
+        pauseSync: () async {},
+        resumeSync: () {},
+        afterWipe: () async {},
+      ).signOut();
+      await expectWiped();
+    },
+  );
 
   test("the next account never receives A's outbox, DOB or profile", () async {
     await seedAlice();
@@ -266,61 +273,64 @@ void main() {
     expect(await kv.get(KvKeys.birthDate), isNull);
   });
 
-  test('a drain still in flight at sign-out writes nothing afterwards',
-      () async {
-    final auth = _Auth(_alice);
-    final gate = Completer<void>();
-    final api = _SlowApi(gate.future);
-    final progress = ProgressRepository(db, kv);
-    await CheckInRepository(db, outbox, time).save(
-      id: const Ids().v7(),
-      mood: moodById('calm')!,
-    );
-    final online = StreamController<bool>();
-    final sync = SyncService(
-      auth: auth,
-      api: api,
-      outbox: outbox,
-      checkIns: CheckInRepository(db, outbox, time),
-      profile: ProfileService(
-        kv: kv,
-        timezone: () => time.timezone,
+  test(
+    'a drain still in flight at sign-out writes nothing afterwards',
+    () async {
+      final auth = _Auth(_alice);
+      final gate = Completer<void>();
+      final api = _SlowApi(gate.future);
+      final progress = ProgressRepository(db, kv);
+      await CheckInRepository(
+        db,
+        outbox,
+        time,
+      ).save(id: const Ids().v7(), mood: moodById('calm')!);
+      final online = StreamController<bool>();
+      final sync = SyncService(
+        auth: auth,
+        api: api,
+        outbox: outbox,
+        checkIns: CheckInRepository(db, outbox, time),
+        profile: ProfileService(
+          kv: kv,
+          timezone: () => time.timezone,
+          progress: progress,
+          country: () => 'IN',
+        ),
         progress: progress,
-        country: () => 'IN',
-      ),
-      progress: progress,
-      dataKeys: DataKeyRepository(secure),
-      kv: kv,
-      clock: time.clock,
-      ids: const Ids(),
-      connectivity: online.stream,
-      pull: (_, _) async {},
-      alreadyPulled: (_) async => true,
-      onUnder13: () async {},
-    );
-    addTearDown(() async {
-      await sync.dispose();
-      unawaited(online.close());
-    });
+        dataKeys: DataKeyRepository(secure),
+        kv: kv,
+        clock: time.clock,
+        ids: const Ids(),
+        connectivity: online.stream,
+        pull: (_, _) async {},
+        alreadyPulled: (_) async => true,
+        onUnder13: () async {},
+      );
+      addTearDown(() async {
+        await sync.dispose();
+        unawaited(online.close());
+      });
 
-    final drain = sync.kick(); // blocks inside api.push
-    await Future<void>.delayed(const Duration(milliseconds: 20));
-    final out = SignOutService(
-      auth: auth,
-      db: db,
-      secure: secure,
-      dataKeys: DataKeyRepository(secure),
-      unregisterPush: () async {},
-      pauseSync: () => sync.pause(timeout: const Duration(milliseconds: 50)),
-      resumeSync: sync.resume,
-      afterWipe: () async {},
-    ).signOut();
-    await out;
-    gate.complete(); // the server answers after the wipe
-    await drain;
-    expect(await kv.get(KvKeys.snapshot), isNull);
-    expect(await db.select(db.checkIns).get(), isEmpty);
-  });
+      final drain = sync.kick(); // blocks inside api.push
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      final out = SignOutService(
+        auth: auth,
+        db: db,
+        secure: secure,
+        dataKeys: DataKeyRepository(secure),
+        unregisterPush: () async {},
+        pauseSync: () => sync.pause(timeout: const Duration(milliseconds: 50)),
+        resumeSync: sync.resume,
+        afterWipe: () async {},
+      ).signOut();
+      await out;
+      gate.complete(); // the server answers after the wipe
+      await drain;
+      expect(await kv.get(KvKeys.snapshot), isNull);
+      expect(await db.select(db.checkIns).get(), isEmpty);
+    },
+  );
 
   test('provider wiring: sign-out lands on Welcome, the under-13 lock state '
       'is kept', () async {
@@ -359,7 +369,9 @@ class _SlowApi extends _RecordingApi {
   }) async {
     await release;
     return PushResponse(
-      results: [for (final m in mutations) MutationResult(id: m.id, status: 'applied')],
+      results: [
+        for (final m in mutations) MutationResult(id: m.id, status: 'applied'),
+      ],
       snapshot: const Snapshot(
         avatar: SnapshotAvatar(stage: 'spark', hue: 210),
         streak: SnapshotStreak(glowStreak: 1, lifetimeGlowDays: 1),

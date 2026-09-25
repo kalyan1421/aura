@@ -184,3 +184,9 @@ pre.json { font-family: var(--mono); font-size: 0.8rem; background: var(--surfac
   .me { margin-left: 0; width: 100%; }
   main { padding: 0.9rem; }
 }
+
+/* Tonight's intention list (intentions/page.tsx) */
+.intention-words { margin: 0.4rem 0; }
+.intention-words dt { min-width: 4.5rem; }
+.intention-words dd { margin: 0; }
+.rotation { columns: 2 16rem; padding-left: 1.4rem; margin: 0.4rem 0 0; }

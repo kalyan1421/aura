@@ -28,6 +28,7 @@ import '../progress/progress_view.dart';
 import '../push/push_explainer.dart';
 import '../rooms/room_offer.dart';
 import '../sanctuary/habit_auto_complete.dart';
+import '../insights/look_back.dart' show markLookBackCheckInHelp;
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
 import 'checkin_details.dart';
@@ -102,6 +103,17 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
   /// The crisis sheet opened after this save.
   bool _crisisShown = false;
+
+  /// "I need help now" was opened while making this check-in: it never
+  /// shows in Look back (F10, a device-only flag).
+  bool _helpOpened = false;
+
+  void _onHelpOpened() {
+    _helpOpened = true;
+    if (_saved) {
+      markLookBackCheckInHelp(ref.read(kvStoreProvider), _id);
+    }
+  }
 
   /// The companion line picked for this check-in.
   String? _lineKey;
@@ -195,6 +207,8 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
 
     // Order after saving (F1, PRD 06d): 1. the crisis sheet…
     final crisis = noteNeedsSupport(note);
+    // F10 Look back never shows a check-in help was opened from (device-only).
+    if (crisis || _helpOpened) unawaited(markLookBackCheckInHelp(kv, _id));
     if (crisis) await showSupportSheet(context, crisis: true);
     if (!mounted) return;
     // 2. …a mood-trigger capsule (held after the sheet; never for a
@@ -306,6 +320,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
             day: _backfillDay!,
             quadrant: mood?.quadrant ?? Quadrant.moonlight,
             onDone: _finish,
+            onHelp: _onHelpOpened,
           )
         : _SavedMoment(
             key: const ValueKey('saved'),
@@ -316,6 +331,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
             voiceDropped: _voiceDropped,
             journalLogged: _journalLogged,
             onDone: _finish,
+            onHelp: _onHelpOpened,
           );
     return PopScope(
       // The first check-in is the only route: back is always held there.
@@ -391,10 +407,10 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
               else
                 const SizedBox(width: 48),
               const SizedBox(width: AuraSpace.s),
-              const Flexible(
+              Flexible(
                 child: Align(
                   alignment: AlignmentDirectional.centerEnd,
-                  child: HelpNowButton(compact: true),
+                  child: HelpNowButton(compact: true, onOpen: _onHelpOpened),
                 ),
               ),
             ],
@@ -572,10 +588,14 @@ class _SavedMoment extends ConsumerStatefulWidget {
     required this.onDone,
     this.voiceDropped = false,
     this.journalLogged = false,
+    this.onHelp,
   });
 
   final String checkInId;
   final Quadrant quadrant;
+
+  /// "I need help now" opened from this saved check-in (F10 Look back flag).
+  final VoidCallback? onHelp;
 
   /// The companion line ([CompanionLines] key).
   final String? lineKey;
@@ -671,8 +691,8 @@ class _SavedMomentState extends ConsumerState<_SavedMoment> {
         );
         return Column(
           children: [
-            const Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AuraSpace.gutter,
                 AuraSpace.xs,
                 AuraSpace.gutter,
@@ -680,7 +700,7 @@ class _SavedMomentState extends ConsumerState<_SavedMoment> {
               ),
               child: Align(
                 alignment: AlignmentDirectional.centerEnd,
-                child: HelpNowButton(compact: true),
+                child: HelpNowButton(compact: true, onOpen: widget.onHelp),
               ),
             ),
             Expanded(
@@ -850,11 +870,15 @@ class _BackfillSaved extends ConsumerWidget {
     required this.day,
     required this.quadrant,
     required this.onDone,
+    this.onHelp,
   });
 
   final LocalDay day;
   final Quadrant quadrant;
   final VoidCallback onDone;
+
+  /// "I need help now" opened from this saved check-in (F10 Look back flag).
+  final VoidCallback? onHelp;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -863,8 +887,8 @@ class _BackfillSaved extends ConsumerWidget {
     final localeTag = ref.watch(localeControllerProvider);
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(
+        Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
             AuraSpace.gutter,
             AuraSpace.xs,
             AuraSpace.gutter,
@@ -872,7 +896,7 @@ class _BackfillSaved extends ConsumerWidget {
           ),
           child: Align(
             alignment: AlignmentDirectional.centerEnd,
-            child: HelpNowButton(compact: true),
+            child: HelpNowButton(compact: true, onOpen: onHelp),
           ),
         ),
         Expanded(

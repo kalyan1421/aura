@@ -29,6 +29,12 @@ import 'wind_down.dart';
 ///
 /// Every fade runs on one [soundsTick] ticker that also counts heard time
 /// (paused time excluded), the timer and the wind-down clock.
+///
+/// Shared soundscapes (F16 Quiet Together and the Lantern Hour wind-down):
+/// [startShared] plays fixed base stems positioned on a shared clock, so
+/// every phone hears the same moment; volume is per person
+/// ([setSharedLevel]). Nothing about a shared sound is recorded (no session
+/// log: nothing may depend on time spent together, REQ-QUIET-04).
 
 enum SoundsPhase { idle, playing, paused }
 
@@ -83,6 +89,41 @@ class SoundsLayerState {
 
 const Object _keep = Object();
 
+/// How far ahead of "now" a shared layer is positioned: it covers opening
+/// the file before playback starts, so phones line up within ±1 s.
+const Duration sharedSoundLead = Duration(milliseconds: 150);
+
+/// The per-person volume a shared soundscape starts at.
+const double sharedSoundDefaultLevel = 0.8;
+
+/// A shared soundscape (PRD F16): base stems at fixed gains, positioned on a
+/// clock every phone shares (the server's `t0`). Built by Quiet Together and
+/// the Lantern Hour wind-down; plays only after a tap.
+@immutable
+class SharedSound {
+  const SharedSound({
+    required this.key,
+    required this.layers,
+    required this.elapsed,
+    this.plan,
+  });
+
+  /// Which shared sound this is (e.g. `quiet:<sessionId>`), so a screen can
+  /// tell whether its own sound is the one playing.
+  final String key;
+
+  /// Stem ids and their gains in the mix (0…1).
+  final List<SoundsLayerState> layers;
+
+  /// Time since the shared start on the (server-corrected) clock: each
+  /// layer starts at this point of its loop.
+  final Duration Function() elapsed;
+
+  /// A volume envelope over [elapsed] (the wind-down: it thins out to
+  /// silence and ends); `null` = steady gains, open-ended.
+  final WindDownPlan? plan;
+}
+
 @immutable
 class SoundsState {
   const SoundsState({
@@ -95,6 +136,8 @@ class SoundsState {
     this.fadingOut = false,
     this.windDown,
     this.windDownLeft,
+    this.shared,
+    this.sharedLevel = sharedSoundDefaultLevel,
   });
 
   final SoundsPhase phase;
@@ -114,10 +157,19 @@ class SoundsState {
   final WindDownPlan? windDown;
   final Duration? windDownLeft;
 
+  /// The [SharedSound.key] playing (F16), or `null`.
+  final String? shared;
+
+  /// The person's own volume for a shared soundscape, 0…1.
+  final double sharedLevel;
+
   bool get isIdle => phase == SoundsPhase.idle;
   bool get isPlaying => phase == SoundsPhase.playing;
   bool get isWindDown => mode == SoundsMode.windDown && !isIdle;
   bool get isFull => layers.length >= maxLayers;
+
+  /// A shared soundscape is playing or paused.
+  bool get isShared => shared != null && !isIdle;
 
   bool isOn(String stemId) => layers.any((l) => l.stemId == stemId);
 
@@ -138,6 +190,8 @@ class SoundsState {
     bool? fadingOut,
     Object? windDown = _keep,
     Object? windDownLeft = _keep,
+    Object? shared = _keep,
+    double? sharedLevel,
   }) => SoundsState(
     phase: phase ?? this.phase,
     mode: mode ?? this.mode,
@@ -154,6 +208,8 @@ class SoundsState {
     windDownLeft: identical(windDownLeft, _keep)
         ? this.windDownLeft
         : windDownLeft as Duration?,
+    shared: identical(shared, _keep) ? this.shared : shared as String?,
+    sharedLevel: sharedLevel ?? this.sharedLevel,
   );
 }
 
@@ -198,6 +254,7 @@ class SoundsController extends Notifier<SoundsState>
   Duration _windElapsed = Duration.zero;
   LocalDay? _day;
   int _seeds = 0;
+  SharedSound? _shared;
 
   @override
   SoundsState build() {
@@ -214,7 +271,7 @@ class SoundsController extends Notifier<SoundsState>
   /// A tap on a stem: adds it (starting the sound if nothing plays) or
   /// takes it out (stopping when it was the last one).
   SoundsToggle toggle(String stemId) {
-    if (state.isWindDown) return SoundsToggle.busy;
+    if (state.isWindDown || state.isShared) return SoundsToggle.busy;
     if (state.isOn(stemId)) {
       _removeLayer(stemId);
       return SoundsToggle.removed;
@@ -247,7 +304,7 @@ class SoundsController extends Notifier<SoundsState>
 
   /// The person's volume for [stemId] (0…1).
   void setVolume(String stemId, double volume) {
-    if (!state.isOn(stemId) || state.isWindDown) return;
+    if (!state.isOn(stemId) || state.isWindDown || state.isShared) return;
     state = state.copyWith(
       layers: [
         for (final l in state.layers)
@@ -265,8 +322,19 @@ class SoundsController extends Notifier<SoundsState>
     if (state.phase != SoundsPhase.paused) return;
     _pausedByInterruption = false;
     state = state.copyWith(phase: SoundsPhase.playing);
-    for (final v in _voices.values) {
-      v.layer?.play();
+    if (_shared != null) {
+      // A shared sound resumes where everyone else is, not where it paused.
+      for (final v in _voices.values.toList()) {
+        _retire(v);
+      }
+      _voices.clear();
+      for (final l in state.layers) {
+        _openVoice(l.stemId);
+      }
+    } else {
+      for (final v in _voices.values) {
+        v.layer?.play();
+      }
     }
     _rampMaster(1, soundsFadeIn);
     if (state.fadingOut) _startTimerFade();
@@ -298,7 +366,7 @@ class SoundsController extends Notifier<SoundsState>
   /// Sets the timer (`null` = off). Setting it again during the closing
   /// fade brings the sound back up.
   void setTimer(Duration? length) {
-    if (state.isWindDown) return;
+    if (state.isWindDown || state.isShared) return;
     _timerLeft = length;
     final wasFading = state.fadingOut;
     state = state.copyWith(
@@ -363,8 +431,52 @@ class SoundsController extends Notifier<SoundsState>
     return true;
   }
 
+  /// A shared soundscape (F16): its base stems, positioned at
+  /// [SharedSound.elapsed] on the shared clock. Plus stems and stems that
+  /// can't play here are left out (it never leads to a paywall). Ends
+  /// whatever played before. Returns false when none of it can play.
+  bool startShared(SharedSound sound) {
+    final library = ref.read(soundsLibraryProvider);
+    final layers = <SoundsLayerState>[];
+    for (final l in sound.layers) {
+      final stem = library.manifest.byId(l.stemId);
+      if (stem == null || !stem.listed || stem.isPlus) continue;
+      if (!library.isPlayable(stem)) continue;
+      if (layers.any((x) => x.stemId == l.stemId)) continue;
+      if (layers.length >= state.maxLayers) break;
+      layers.add(SoundsLayerState(l.stemId, l.volume.clamp(0.0, 1.0)));
+    }
+    if (layers.isEmpty) return false;
+    if (!state.isIdle) _endSession();
+    _shared = sound;
+    state = state.copyWith(
+      mode: SoundsMode.mix,
+      layers: layers,
+      shared: sound.key,
+      fadingOut: false,
+    );
+    for (final l in layers) {
+      _openVoice(l.stemId);
+    }
+    _begin();
+    return true;
+  }
+
+  /// The person's own volume for the shared soundscape (0…1).
+  void setSharedLevel(double level) {
+    state = state.copyWith(sharedLevel: level.clamp(0.0, 1.0));
+    _applyVolumes();
+  }
+
+  /// Stops the shared soundscape [key] if it is the one playing (a screen
+  /// closing never stops someone else's sound).
+  void stopShared(String key) {
+    if (state.shared == key && !state.isIdle) _endSession();
+  }
+
   /// The current mix, to save.
-  SavedMix? get currentMix => state.isIdle || state.isWindDown
+  SavedMix? get currentMix =>
+      state.isIdle || state.isWindDown || state.isShared
       ? null
       : SavedMix([for (final l in state.layers) (l.stemId, l.volume)]);
 
@@ -375,10 +487,11 @@ class SoundsController extends Notifier<SoundsState>
     _day = ref.read(timeContextProvider).today();
     _master = 0;
     _pausedByInterruption = false;
-    _timerLeft = state.timer;
+    // A shared sound follows its own clock, never the personal timer.
+    _timerLeft = _shared == null ? state.timer : null;
     state = state.copyWith(
       phase: SoundsPhase.playing,
-      timerLeft: state.timer,
+      timerLeft: _timerLeft,
       fadingOut: false,
     );
     _rampMaster(1, soundsFadeIn);
@@ -399,7 +512,10 @@ class SoundsController extends Notifier<SoundsState>
     final plan = state.windDown;
     final heard = _heard.inSeconds;
     final day = _day;
-    if (heard >= 1 && day != null) {
+    // A shared sound (F16) leaves no record of time spent together.
+    final shared = _shared != null;
+    _shared = null;
+    if (heard >= 1 && day != null && !shared) {
       final timer = state.timer;
       unawaited(
         ref
@@ -432,7 +548,11 @@ class SoundsController extends Notifier<SoundsState>
     _pausedByInterruption = false;
     _onMasterDone = null;
     _masterTarget = _master;
-    state = SoundsState(maxLayers: state.maxLayers, timer: state.timer);
+    state = SoundsState(
+      maxLayers: state.maxLayers,
+      timer: state.timer,
+      sharedLevel: state.sharedLevel,
+    );
     _publishMedia();
     _ensureTicker();
     if (_ticker == null) unawaited(_backend.release());
@@ -454,9 +574,17 @@ class SoundsController extends Notifier<SoundsState>
           : await ref.read(stemStoreProvider).playablePath(stem);
       if (path == null) throw StateError('not playable');
       await _prepare();
-      final seed = SoundRng(
-        fnv1a32(voice.stemId) ^ (DateTime.now().microsecond + _seeds++),
-      ).nextUint32();
+      final shared = _shared;
+      // A shared layer starts at the shared moment of its loop (the backend
+      // seeks to `seed mod length`); others at a random point.
+      final seed = shared != null
+          ? (shared.elapsed() + sharedSoundLead).inMilliseconds.clamp(
+              0,
+              0x7fffffff,
+            )
+          : SoundRng(
+              fnv1a32(voice.stemId) ^ (DateTime.now().microsecond + _seeds++),
+            ).nextUint32();
       final layer = await _backend.openLayer(path, seed: seed);
       if (voice.retired || _voices[voice.stemId] != voice) {
         await layer.dispose();
@@ -578,6 +706,14 @@ class SoundsController extends Notifier<SoundsState>
 
   void _advanceClock() {
     _heard += soundsTick;
+    final shared = _shared;
+    if (shared != null) {
+      final envelope = shared.plan;
+      if (envelope != null && envelope.isOver(shared.elapsed())) {
+        _endSession();
+      }
+      return;
+    }
     final plan = state.windDown;
     if (plan != null) {
       _windElapsed += soundsTick;
@@ -618,7 +754,11 @@ class SoundsController extends Notifier<SoundsState>
 
   void _applyVolumes() {
     final plan = state.windDown;
-    final gains = plan?.gainsAt(_windElapsed);
+    final shared = _shared;
+    final gains =
+        plan?.gainsAt(_windElapsed) ??
+        shared?.plan?.gainsAt(shared.elapsed());
+    final level = shared != null ? state.sharedLevel : 1.0;
     for (final v in [..._voices.values, ..._retiring]) {
       final layer = v.layer;
       if (layer == null) continue;
@@ -626,7 +766,10 @@ class SoundsController extends Notifier<SoundsState>
           ? gains[v.stemId] ?? 0
           : state.volumeOf(v.stemId) ?? 0;
       final master = v.retiredMaster ?? _master;
-      final volume = (base * v.fade * master * _duck).clamp(0.0, 1.0);
+      final volume = (base * level * v.fade * master * _duck).clamp(
+        0.0,
+        1.0,
+      );
       if ((volume - v.sent).abs() > 0.002 || (volume == 0 && v.sent != 0)) {
         v.sent = volume;
         layer.setVolume(volume);

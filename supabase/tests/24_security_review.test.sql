@@ -112,8 +112,10 @@ select is(
 
 select is(
   (select array_agg(proname order by proname) from app_functions f where has_function_privilege('authenticated', f.oid, 'EXECUTE')),
-  array['realtime_topic_allowed', 'ripples_topic_allowed']::name[],
-  'authenticated executes only the two Realtime topic checks (each answers for the caller''s own membership only)'
+  -- quiet_topic_allowed (migration 20261005000027, F16): the `quiet:<session>` Realtime topic check — like the other
+  -- two it answers only for the caller's own current membership, and it is what the aura_quiet_receive policy calls.
+  array['quiet_topic_allowed', 'realtime_topic_allowed', 'ripples_topic_allowed']::name[],
+  'authenticated executes only the Realtime topic checks (each answers for the caller''s own membership only)'
 );
 
 select is(
@@ -173,9 +175,9 @@ select is(
   (select array_agg(polname order by 1) from pg_policy
     where polrelid = 'realtime.messages'::regclass
       and (coalesce(pg_get_expr(polqual, polrelid), '') || coalesce(pg_get_expr(polwithcheck, polrelid), ''))
-          !~ '(realtime|ripples)_topic_allowed'),
+          !~ '(realtime|ripples|quiet)_topic_allowed'),
   null,
-  'every realtime.messages policy is gated by a membership check (realtime_topic_allowed / ripples_topic_allowed)'
+  'every realtime.messages policy is gated by a membership check (realtime / ripples / quiet _topic_allowed)'
 );
 
 select is(
@@ -193,8 +195,9 @@ select is(
     where has_table_privilege('aura_admin', t.oid, 'INSERT') or has_table_privilege('aura_admin', t.oid, 'UPDATE')
        or has_table_privilege('aura_admin', t.oid, 'DELETE') or has_table_privilege('aura_admin', t.oid, 'TRUNCATE')
        or has_any_column_privilege('aura_admin', t.oid, 'INSERT') or has_any_column_privilege('aura_admin', t.oid, 'UPDATE')),
-  array['admin_grievances', 'admin_legal_orders', 'admin_mandatory_checklists', 'admin_pages', 'feature_flags', 'moderation_actions']::name[],
-  'aura_admin writes only the console tables (+ feature_flags.enabled); every other change goes through an audited SECURITY DEFINER function'
+  array['admin_grievances', 'admin_legal_orders', 'admin_mandatory_checklists', 'admin_pages', 'feature_flags', 'moderation_actions',
+        'room_intention_presets', 'room_intention_texts']::name[],
+  'aura_admin writes only the console tables (+ feature_flags.enabled and the Tonight''s intention list, both audited in the same NestJS transaction, 25_gaps_b); every other change goes through an audited SECURITY DEFINER function'
 );
 
 select * from finish();

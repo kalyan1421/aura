@@ -115,9 +115,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       if (e.store != null)
         OutlinedButton(
           key: const ValueKey('paywall-manage'),
-          onPressed: () => openStorePage(
-            manageSubscriptionUri(e.store!, productId: e.productId),
-          ),
+          onPressed: () => openManageFor(e.store!, productId: e.productId),
           child: Text(l.plus_manage),
         ),
     ];

@@ -2831,6 +2831,300 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 day in your sky} other{{count} days in your sky}}'**
   String insights_statsDays(int count);
 
+  /// Title of Look back: the person's sky from the same week a month, six months and a year ago. Pull-only, inside Insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Look back'**
+  String get insights_lookBackTitle;
+
+  /// Body of the Look back entry in Insights (the only way in). Calm, no pull or urgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky from the same week, a while back. Open it when you want to.'**
+  String get insights_lookBackTileBody;
+
+  /// Intro line at the top of Look back. Privacy: worked out on the device, never uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'The same week a month, six months and a year ago. Only you can see this. It stays on this phone.'**
+  String get insights_lookBackIntro;
+
+  /// Heading of the Look back week from one month ago. Words, not digits.
+  ///
+  /// In en, this message translates to:
+  /// **'A month ago'**
+  String get insights_lookBackMonth;
+
+  /// Heading of the Look back week from six months ago. Words, not digits.
+  ///
+  /// In en, this message translates to:
+  /// **'Six months ago'**
+  String get insights_lookBackSixMonths;
+
+  /// Heading of the Look back week from a year ago. Words, not digits.
+  ///
+  /// In en, this message translates to:
+  /// **'A year ago'**
+  String get insights_lookBackYear;
+
+  /// Under a Look back heading: the week's first day, e.g. 'Week of 7 Sep 2026'.
+  ///
+  /// In en, this message translates to:
+  /// **'Week of {date}'**
+  String insights_lookBackWeekOf(String date);
+
+  /// Look back with no week to show (new account, or no check-ins those weeks). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to look back on yet. Weeks you checked in will appear here.'**
+  String get insights_lookBackEmpty;
+
+  /// Shown in place of Look back if it closes while open (e.g. after help was opened). Never says why.
+  ///
+  /// In en, this message translates to:
+  /// **'Look back is closed for now.'**
+  String get insights_lookBackClosed;
+
+  /// Further tap on a Look back entry that opens its private note (notes never show on the first tap).
+  ///
+  /// In en, this message translates to:
+  /// **'Show note'**
+  String get insights_lookBackShowNote;
+
+  /// Further tap on a Look back entry that has only a voice note: shows its player.
+  ///
+  /// In en, this message translates to:
+  /// **'Show voice note'**
+  String get insights_lookBackShowVoice;
+
+  /// Closes the note / voice note of a Look back entry again.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get insights_lookBackHideNote;
+
+  /// Footer of Look back (PRD F10: it can be hidden in Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'You can turn Look back off in Settings.'**
+  String get insights_lookBackSettingsHint;
+
+  /// Settings › Comfort switch: show Look back inside Insights (on by default).
+  ///
+  /// In en, this message translates to:
+  /// **'Look back in Aura Sky'**
+  String get insights_lookBackSetting;
+
+  /// Under the Look back switch in Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Past weeks of your sky, only when you open them. Never sent to you as a notification.'**
+  String get insights_lookBackSettingNote;
+
+  /// Title of the private keepsake box (earned-only seals from small moments).
+  ///
+  /// In en, this message translates to:
+  /// **'Keepsakes'**
+  String get keepsakes_title;
+
+  /// Keepsake box intro. Private, calm.
+  ///
+  /// In en, this message translates to:
+  /// **'Small moments, kept. Only you can see these.'**
+  String get keepsakes_intro;
+
+  /// Keepsake box with no seals yet. No hint of what to do or what comes next.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet. Keepsakes arrive on their own, from small moments along the way.'**
+  String get keepsakes_empty;
+
+  /// Footer of the keepsake box: they are never visible to strangers.
+  ///
+  /// In en, this message translates to:
+  /// **'Keepsakes are never shown to anyone else. One leaves your phone only if you share its card.'**
+  String get keepsakes_privateNote;
+
+  /// Under a seal in the private box: the day it was earned (a localized date).
+  ///
+  /// In en, this message translates to:
+  /// **'Kept on {date}'**
+  String keepsakes_keptOn(String date);
+
+  /// Screen-reader label of one seal in the box.
+  ///
+  /// In en, this message translates to:
+  /// **'{line}, kept on {date}'**
+  String keepsakes_sealSemantic(String line, String date);
+
+  /// Button on a keepsake: open its share card.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this card'**
+  String get keepsakes_shareThis;
+
+  /// Button in the keepsake box: share a card of the avatar's current stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Share your Aura'**
+  String get keepsakes_shareAura;
+
+  /// Keepsake box while offline (the box itself still shows).
+  ///
+  /// In en, this message translates to:
+  /// **'New keepsakes arrive when you\'re back online.'**
+  String get keepsakes_offline;
+
+  /// Entry row to the private keepsake box (Settings › Account, Insights).
+  ///
+  /// In en, this message translates to:
+  /// **'Your keepsakes'**
+  String get keepsakes_entry;
+
+  /// Subtitle of the keepsake box entry row.
+  ///
+  /// In en, this message translates to:
+  /// **'Seals from small moments, private to you.'**
+  String get keepsakes_entryNote;
+
+  /// Home card title: a seal was just earned (shows once).
+  ///
+  /// In en, this message translates to:
+  /// **'A new keepsake'**
+  String get keepsakes_newTitle;
+
+  /// Home card when more than one seal arrived at once (no count).
+  ///
+  /// In en, this message translates to:
+  /// **'New keepsakes are in your box.'**
+  String get keepsakes_newSeveral;
+
+  /// Home card button: open the private box.
+  ///
+  /// In en, this message translates to:
+  /// **'See your keepsakes'**
+  String get keepsakes_newOpen;
+
+  /// Screen-reader label of the close button on a Home card.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide this card'**
+  String get keepsakes_hideCard;
+
+  /// Keepsake line: the first capsule sealed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed a note for future me'**
+  String get keepsake_capsuleSealedFirst;
+
+  /// Keepsake line: the first capsule opened (PRD example).
+  ///
+  /// In en, this message translates to:
+  /// **'Opened a capsule from past me'**
+  String get keepsake_capsuleOpenedFirst;
+
+  /// Keepsake and share-card line: lifetime glow days (7, 30, 100, 365). Never a streak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day of glow} other{{days} days of glow}}'**
+  String keepsake_glowDays(int days);
+
+  /// Keepsake line: the first Breath Ripples session.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathed together for the first time'**
+  String get keepsake_ripplesFirst;
+
+  /// Keepsake line: the first Lantern Hour spent in a room.
+  ///
+  /// In en, this message translates to:
+  /// **'My first Lantern Hour'**
+  String get keepsake_lanternFirst;
+
+  /// Keepsake line: 10 and 50 Lantern Hours spent in rooms.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 evening of Lantern Hour} other{{count} evenings of Lantern Hour}}'**
+  String keepsake_lanternHours(int count);
+
+  /// Keepsake line: 60, 300 and 1,000 minutes of Sanctuary activities.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{1 quiet minute in Sanctuary} other{{minutes} quiet minutes in Sanctuary}}'**
+  String keepsake_sanctuaryMinutes(int minutes);
+
+  /// Share-card line: an avatar evolution stage (the stage name).
+  ///
+  /// In en, this message translates to:
+  /// **'My Aura reached {stage}'**
+  String share_evolutionLine(String stage);
+
+  /// Share-card line: a capsule anniversary (PRD example). No date.
+  ///
+  /// In en, this message translates to:
+  /// **'{years, plural, =1{Sealed a capsule 1 year ago} other{Sealed a capsule {years} years ago}}'**
+  String share_anniversaryLine(int years);
+
+  /// Small store line at the foot of every share card.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura · App Store and Google Play'**
+  String get share_storeLine;
+
+  /// Text sent with the card image through the share sheet (the store link). Never about the person.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura, a quiet place to notice how you feel: {link}'**
+  String share_text(String link);
+
+  /// Title of the share-card preview sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a card'**
+  String get share_sheetTitle;
+
+  /// Under the card preview: what a card can and can't show.
+  ///
+  /// In en, this message translates to:
+  /// **'The card shows your Aura and this moment. Never your moods, notes or name.'**
+  String get share_sheetNote;
+
+  /// Button: open the system share sheet with the card.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share_button;
+
+  /// The card image could not be made (e.g. low memory). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'The card couldn\'t be made just now. Please try again.'**
+  String get share_failed;
+
+  /// Screen-reader label of the share-card preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Card to share: {line}. Your Aura at the {stage} stage.'**
+  String share_cardSemantic(String line, String stage);
+
+  /// Home share prompt (offered once per milestone): an evolution stage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Aura reached {stage}. Share a card of it?'**
+  String share_promptEvolution(String stage);
+
+  /// Home share prompt: a lifetime glow-day milestone. Never shown while 'hide streak number' is on.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day of glow.} other{{days} days of glow.}} Share a card of it?'**
+  String share_promptGlow(int days);
+
+  /// Home share prompt: a capsule anniversary.
+  ///
+  /// In en, this message translates to:
+  /// **'{years, plural, =1{You sealed your first capsule a year ago.} other{You sealed your first capsule {years} years ago.}} Share a card of it?'**
+  String share_promptAnniversary(int years);
+
   /// Room card title: the room's shared lantern (lit together during Lantern Hour).
   ///
   /// In en, this message translates to:
@@ -4090,6 +4384,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Number copied'**
   String get polish_helpNumberCopied;
+
+  /// Feature name. Rooms tab card title. Not a PRD 18 brand term: Hindi / Hinglish use their own words.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Together'**
+  String get quiet_title;
+
+  /// Rooms tab card body: what Quiet Together is. Calm, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Study, read or rest alongside others. Just a count, a shared sound and gestures.'**
+  String get quiet_cardBody;
+
+  /// Mode button: study together.
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get quiet_modeStudy;
+
+  /// Mode button: read together.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get quiet_modeRead;
+
+  /// Mode button: rest together.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get quiet_modeRest;
+
+  /// Screen title for the Study session.
+  ///
+  /// In en, this message translates to:
+  /// **'Study together'**
+  String get quiet_titleStudy;
+
+  /// Screen title for the Read session.
+  ///
+  /// In en, this message translates to:
+  /// **'Read together'**
+  String get quiet_titleRead;
+
+  /// Screen title for the Rest session.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest together'**
+  String get quiet_titleRest;
+
+  /// How many people are in this session right now. A number only, never names.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 here} other{{count} here}}'**
+  String quiet_count(int count);
+
+  /// Shown when the count is 1 (never faked). PRD 14-states copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Just you right now. Others drop in through the hour.'**
+  String get quiet_justYou;
+
+  /// While joining a session.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your quiet place…'**
+  String get quiet_joining;
+
+  /// Chip when the realtime link dropped. Never a failure; the shared sound keeps playing.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnecting…'**
+  String get quiet_reconnecting;
+
+  /// Offline state. PRD 14-states copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Together needs a connection. Sanctuary works offline.'**
+  String get quiet_offline;
+
+  /// Button from the offline / paused state to the Sanctuary tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Sanctuary'**
+  String get quiet_openSanctuary;
+
+  /// Kill switch on for this region. Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Together is resting for a bit. The Sanctuary is always open.'**
+  String get quiet_paused;
+
+  /// The join failed for another reason (not offline). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Together couldn\'t open just now. Please try again.'**
+  String get quiet_failed;
+
+  /// Retry button.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get quiet_tryAgain;
+
+  /// Near the end of a 60-minute block. A clock time, never a countdown; the next block follows by itself.
+  ///
+  /// In en, this message translates to:
+  /// **'The next session starts at {time}.'**
+  String quiet_nextBlock(String time);
+
+  /// Leave the session. Leaving costs nothing: no confirmation, no loss copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get quiet_leave;
+
+  /// Small line near Leave: leaving costs nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave whenever you like. Nothing is lost.'**
+  String get quiet_leaveNote;
+
+  /// Section title: a soundscape everyone plays on their own phone from the same start.
+  ///
+  /// In en, this message translates to:
+  /// **'The shared sound'**
+  String get quiet_soundTitle;
+
+  /// Explains the shared sound: local playback, same point in the mix, no user audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone hears the same moment, played on your own phone. No microphone, nothing recorded.'**
+  String get quiet_soundBody;
+
+  /// Button: start the shared sound. Nothing plays until this tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the shared sound'**
+  String get quiet_soundPlay;
+
+  /// Button: stop the shared sound on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop the sound'**
+  String get quiet_soundStop;
+
+  /// Slider label: this person's own volume for the shared sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get quiet_soundVolume;
+
+  /// A base recording isn't on the phone yet. The session works silently meanwhile. PRD 14-states copy.
+  ///
+  /// In en, this message translates to:
+  /// **'The shared sound needs a one-time download.'**
+  String get quiet_soundDownload;
+
+  /// Button: download the base recordings.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get quiet_soundDownloadCta;
+
+  /// No stem of the mix can play. Calm.
+  ///
+  /// In en, this message translates to:
+  /// **'The sound can\'t play on this phone right now. Being here is enough.'**
+  String get quiet_soundUnavailable;
+
+  /// Switch, off by default: follow the shared 25-minute focus / 5-minute break blocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus rhythm (25 / 5)'**
+  String get quiet_rhythm;
+
+  /// Under the rhythm switch. No pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Everyone\'s breaks line up.'**
+  String get quiet_rhythmBody;
+
+  /// Rhythm on, in a focus stretch: the next change as a clock time (never a countdown).
+  ///
+  /// In en, this message translates to:
+  /// **'Focus · break at {time}'**
+  String quiet_rhythmFocus(String time);
+
+  /// Rhythm on, in a break: the next change as a clock time.
+  ///
+  /// In en, this message translates to:
+  /// **'Break · focus again at {time}'**
+  String quiet_rhythmBreak(String time);
+
+  /// Announced (politely) when the shared break begins.
+  ///
+  /// In en, this message translates to:
+  /// **'Break time.'**
+  String get quiet_rhythmToBreak;
+
+  /// Announced (politely) when the shared focus stretch begins.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus time.'**
+  String get quiet_rhythmToFocus;
+
+  /// Gesture tray title. Gestures go to the whole session, never to a person.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a gesture to everyone here'**
+  String get quiet_gesturesTitle;
+
+  /// Your own gesture, shown only to you.
+  ///
+  /// In en, this message translates to:
+  /// **'You sent {gesture}'**
+  String quiet_gestureSent(String gesture);
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone shared warm tea'**
+  String get quiet_moment_warm_tea;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone lit a candle'**
+  String get quiet_moment_light_a_candle;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone sent a hug'**
+  String get quiet_moment_hug;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone said: me too'**
+  String get quiet_moment_me_too;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone sent soft rain'**
+  String get quiet_moment_soft_rain;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone is stargazing with you'**
+  String get quiet_moment_stargaze;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone took a deep breath'**
+  String get quiet_moment_deep_breath;
+
+  /// An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone says: you\'re not alone'**
+  String get quiet_moment_youre_not_alone;
+
+  /// Tooltip for the session's overflow menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Session menu'**
+  String get quiet_menu;
+
+  /// Session menu: report (nobody is shown, so there is no per-person block or mute).
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem here'**
+  String get quiet_report;
+
+  /// Session menu: hide gesture animations for yourself only.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide gestures'**
+  String get quiet_hideGestures;
+
+  /// Session menu: show gestures again.
+  ///
+  /// In en, this message translates to:
+  /// **'Show gestures'**
+  String get quiet_showGestures;
+
+  /// Shown while you hid gestures (only for you).
+  ///
+  /// In en, this message translates to:
+  /// **'Gestures are hidden for you.'**
+  String get quiet_gesturesHidden;
+
+  /// Report sheet intro for Quiet Together.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is shown here, so tell us what happened. A moderator looks at this session\'s recent gestures.'**
+  String get quiet_reportBody;
+
+  /// Optional note field in the report sheet (moderators only).
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else a moderator should know? (optional)'**
+  String get quiet_reportNote;
+
+  /// Report sheet button.
+  ///
+  /// In en, this message translates to:
+  /// **'Send report'**
+  String get quiet_reportSend;
+
+  /// After a report was sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you. A moderator will take a look.'**
+  String get quiet_reportThanks;
+
+  /// Report failed (connection). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Please try again.'**
+  String get quiet_reportFailed;
+
+  /// Room card title and button during Lantern Hour from 22:30: a shared 20-minute wind-down.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind down together'**
+  String get rooms_windDownTitle;
+
+  /// Room card body for the wind-down. No narration, no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Twenty quiet minutes to end the day: one shared sound, slow breathing and a few gentle words.'**
+  String get rooms_windDownBody;
+
+  /// The room total winding down now (never who).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody winding down yet} =1{1 winding down} other{{count} winding down}}'**
+  String rooms_windDownCount(int count);
+
+  /// Room card button after you joined the wind-down.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the wind-down'**
+  String get rooms_windDownBack;
+
+  /// Joining the wind-down failed (connection, or it just ended). No blame.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Please try again.'**
+  String get rooms_windDownFailed;
+
+  /// When the 20 minutes are over. Never 'finished early' or a score.
+  ///
+  /// In en, this message translates to:
+  /// **'The wind-down has ended. Rest well.'**
+  String get rooms_windDownEnded;
+
+  /// Leave the wind-down. Costs nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get rooms_windDownLeave;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrive. There\'s nothing to do now.'**
+  String get rooms_windDownCue_arrive;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Let the day get quieter.'**
+  String get rooms_windDownCue_day_quieter;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Let your shoulders soften.'**
+  String get rooms_windDownCue_shoulders;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing needs you right now.'**
+  String get rooms_windDownCue_nothing_to_do;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Let each breath be a little slower.'**
+  String get rooms_windDownCue_slower;
+
+  /// A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest well. The night can hold the rest.'**
+  String get rooms_windDownCue_rest_well;
 
   /// Room screen: heading over the reflections (short moderated posts answered only with gestures).
   ///
@@ -7252,6 +7948,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Has a voice note'**
   String get voice_hasVoice;
+
+  /// Home-screen widget heading (F11). Same warmth as the check-in title.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you feeling?'**
+  String get widget_prompt;
+
+  /// Widget button / lock-screen star label that opens the check-in (F11). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get widget_checkIn;
+
+  /// Widget line once today has a check-in. Never says which mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked in today'**
+  String get widget_doneToday;
+
+  /// Widget confirmation after a two-tap check-in that earned no Starlight (day's cap reached).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get widget_saved;
+
+  /// Widget confirmation after a two-tap check-in (F11 'Saved · +10 Starlight'). Provisional until the app imports it.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved · +{amount} Starlight'**
+  String widget_savedStarlight(int amount);
+
+  /// Widget link to the Safety Center (F9) on the larger widget sizes. Must feel safe to tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help'**
+  String get widget_needHelp;
+
+  /// Widget text while signed out or before setup (F11 edge case). Input is off.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Aura to continue'**
+  String get widget_openApp;
+
+  /// Discreet widget text while signed out: no app name (F11 Discreet widget).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app to continue'**
+  String get widget_openAppDiscreet;
+
+  /// Widget line when a time capsule is ready; it only opens in the app (F11).
+  ///
+  /// In en, this message translates to:
+  /// **'Something from past you is waiting'**
+  String get widget_capsuleWaiting;
+
+  /// Widget button: from the four moods back to the four groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get widget_back;
+
+  /// Widget line with the person's last mood. Only when 'Show my last mood' is on, home screen only.
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {mood}'**
+  String widget_lastMood(String mood);
+
+  /// Name of the home-screen widget in the OS widget gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Aura check-in'**
+  String get widget_galleryName;
+
+  /// Description of the home-screen widget in the OS widget gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in with two taps, right from your home screen.'**
+  String get widget_galleryDescription;
+
+  /// Name of the lock-screen widget (a star) in the iOS widget gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick check-in'**
+  String get widget_lockGalleryName;
+
+  /// Description of the lock-screen widget in the iOS widget gallery (F11: lock screen shows only a star).
+  ///
+  /// In en, this message translates to:
+  /// **'A star that opens your check-in. It never shows how you feel.'**
+  String get widget_lockGalleryDescription;
+
+  /// Settings section for the widget (F11).
+  ///
+  /// In en, this message translates to:
+  /// **'Home-screen widget'**
+  String get widget_settingsTitle;
+
+  /// Settings toggle (off by default): the widget shows the last mood (F11).
+  ///
+  /// In en, this message translates to:
+  /// **'Show my last mood'**
+  String get widget_showLastMood;
+
+  /// Note under 'Show my last mood' (F11 privacy: never on the lock screen or StandBy).
+  ///
+  /// In en, this message translates to:
+  /// **'On your home screen only. The lock screen never shows it.'**
+  String get widget_showLastMoodNote;
+
+  /// Settings toggle (off by default) for the plain-star widget (F11 Discreet widget).
+  ///
+  /// In en, this message translates to:
+  /// **'Discreet widget'**
+  String get widget_discreet;
+
+  /// Note under 'Discreet widget'.
+  ///
+  /// In en, this message translates to:
+  /// **'A plain star with no app name and no mood words. Tapping it opens the app.'**
+  String get widget_discreetNote;
 }
 
 class _AppLocalizationsDelegate

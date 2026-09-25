@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.Settings
 import com.google.android.play.agesignals.AgeSignalsManagerFactory
 import com.google.android.play.agesignals.AgeSignalsRequest
+import com.akvega.aura.widget.AuraWidgetBridge
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -15,6 +16,8 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : AudioServiceActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        // Home-screen widget store (F11; widget/AuraWidgetBridge.kt).
+        AuraWidgetBridge.register(this, flutterEngine.dartExecutor.binaryMessenger)
         // App ↔ OS glue (lib/src/features/voice/voice_devices.dart,
         // ChannelAuraPlatform). No plugin needed for these two calls.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.akvega.aura/platform")

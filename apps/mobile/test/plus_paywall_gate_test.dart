@@ -189,7 +189,7 @@ void main() {
       'lib/src/features/sanctuary/sounds/sounds_screen.dart':
           'extra Sounds stem',
       'lib/src/features/capsules/capsule_composer_screen.dart':
-          '4th mood-trigger capsule',
+          '4th mood-trigger capsule, long voice',
     };
     final entry = RegExp(
       r'PaywallScreen|openPlus\(|PlusLimitNote|PlusOpenButton|showPlusNoteSheet|plusRoute',
@@ -232,6 +232,14 @@ void main() {
         'lib/src/features/capsules/capsule_composer_screen.dart',
       ).readAsStringSync();
       expect(RegExp(r'PlusOpenButton\(').allMatches(composer).length, 1);
+      // The long-voice limit: one Plus note, under the voice limit note only.
+      expect(composer, contains('PaywallSurface.capsuleLongVoice'));
+      expect(RegExp(r'PlusLimitNote\(').allMatches(composer).length, 1);
+      expect(
+        File('lib/src/features/voice/voice_note_field.dart').readAsStringSync(),
+        isNot(matches(entry)),
+        reason: 'the voice field only hosts the slot (the check-in voice note is never paywalled)',
+      );
     });
 
     test('Breath Ripples, Quiet Together and the crisis sheet never offer a gift or purchase', () {

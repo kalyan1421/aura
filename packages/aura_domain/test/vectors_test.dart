@@ -186,6 +186,18 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
       test('$kind: ${c['name']}', () => _runInsightsCase(kind, c));
     }
   },
+  // RULES.md §10.1 (F10 Look back). Pure rules by `kind`.
+  'look_back.json': (json) {
+    for (final c in _cases(json)) {
+      final kind = c['kind'] as String;
+      test('$kind: ${c['name']}', () => _runLookBackCase(kind, c));
+    }
+  },
+  'keepsakes.json': (json) {
+    for (final c in _cases(json)) {
+      test(c['name'], () => _runKeepsakesCase(c['kind'] as String, c));
+    }
+  },
 };
 
 DateTime? _tsOrNull(Object? s) => s == null ? null : _ts(s);
@@ -359,6 +371,103 @@ void _runInsightsCase(String kind, Map<String, dynamic> c) {
   }
 }
 
+// ---- look_back.json (RULES.md §10.1) -------------------------------------------
+
+const Map<LookBackGateStatus, String> _lookBackGateWire = {
+  LookBackGateStatus.open: 'open',
+  LookBackGateStatus.off: 'off',
+  LookBackGateStatus.afterHelp: 'after_help',
+  LookBackGateStatus.afterHeavy: 'after_heavy',
+};
+
+void _runLookBackCase(String kind, Map<String, dynamic> c) {
+  final want = c['expect'];
+  switch (kind) {
+    case 'add_months':
+      expect(
+        addMonthsClamped(
+          LocalDay.parse(c['day'] as String),
+          c['months'] as int,
+        ).toIso(),
+        want,
+      );
+    case 'windows':
+      final today = _todayOf(c);
+      final ws = lookBackWindows(
+        today,
+        weekStartsOn: c['weekStartsOn'] as int? ?? DateTime.monday,
+      );
+      expect({
+        'today': today.toIso(),
+        'windows': [
+          for (final w in ws)
+            {
+              'months': w.months,
+              'anchor': w.anchor.toIso(),
+              'from': w.range.from.toIso(),
+              'to': w.range.to.toIso(),
+            },
+        ],
+      }, want);
+    case 'gate':
+      final g = lookBackGate(
+        now: _ts(c['now']),
+        checkIns: [
+          for (final j
+              in (c['checkIns'] as List<dynamic>).cast<Map<String, dynamic>>())
+            (
+              quadrant: quadrantByName(j['quadrant'] as String)!,
+              deviceTs: _ts(j['deviceTs']),
+            ),
+        ],
+        helpAt: _tsOrNull(c['helpAt']),
+        hidden: c['hidden'] as bool,
+      );
+      final w = want as Map<String, dynamic>;
+      expect(_lookBackGateWire[g.status], w['status']);
+      expect(g.until, _tsOrNull(w['until']));
+    case 'sky':
+      final sky = lookBackSky(
+        DayRange(
+          LocalDay.parse(c['from'] as String),
+          LocalDay.parse(c['to'] as String),
+        ),
+        [
+          for (final j
+              in (c['entries'] as List<dynamic>).cast<Map<String, dynamic>>())
+            LookBackEntry(
+              id: j['id'] as String,
+              localDay: LocalDay.parse(j['localDay'] as String),
+              quadrant: quadrantByName(j['quadrant'] as String)!,
+              deviceTs: _ts(j['deviceTs']),
+              deleted: j['deleted'] as bool? ?? false,
+              lexiconCrisis: j['lexiconCrisis'] as bool? ?? false,
+              helpOpened: j['helpOpened'] as bool? ?? false,
+              noteUnreadable: j['noteUnreadable'] as bool? ?? false,
+            ),
+        ],
+        restDays: {
+          for (final d in c['restDays'] as List<dynamic>)
+            LocalDay.parse(d as String),
+        },
+      );
+      expect({
+        'visible': sky.visible,
+        'days': [
+          for (final d in sky.days)
+            {
+              'day': d.day.toIso(),
+              'star': d.star.kind.name,
+              'quadrants': [for (final q in d.star.quadrants) q.name],
+              'entries': d.entryIds,
+            },
+        ],
+      }, want);
+    default:
+      fail('Unknown look_back.json case kind "$kind"');
+  }
+}
+
 void main() {
   final files =
       vectorsDir
@@ -384,5 +493,63 @@ void main() {
       }
       runner(_load(f));
     });
+  }
+}
+
+// RULES.md §11 (F13 keepsakes and share milestones).
+KeepsakeSource _keepsakeSource(String name) =>
+    KeepsakeSource.values.firstWhere((s) => s.name == name);
+
+void _runKeepsakesCase(String kind, Map<String, dynamic> c) {
+  switch (kind) {
+    case 'earned':
+      final raw = c['sources'] as Map<String, dynamic>;
+      final sources = <KeepsakeSource, List<KeepsakeEvent>>{};
+      var counted = 0;
+      for (final e in raw.entries) {
+        if (e.key == 'lanternCounted') {
+          counted = e.value as int;
+        } else if (e.key == 'glowDaysRange') {
+          final r = e.value as Map<String, dynamic>;
+          final from = LocalDay.parse(r['from'] as String);
+          sources[KeepsakeSource.glowDays] = [
+            for (var i = 0; i < (r['count'] as int); i++)
+              KeepsakeEvent(from.addDays(i), 1),
+          ];
+        } else {
+          sources[_keepsakeSource(e.key)] = [
+            for (final ev
+                in (e.value as List<dynamic>).cast<Map<String, dynamic>>())
+              KeepsakeEvent(
+                LocalDay.parse(ev['day'] as String),
+                ev['amount'] as int,
+              ),
+          ];
+        }
+      }
+      final got = earnedKeepsakes(sources, lanternCounted: counted);
+      expect([
+        for (final k in got) {'key': k.key, 'day': k.day.toIso()},
+      ], c['expect']);
+    case 'capsule_years':
+      expect(
+        capsuleYears(
+          LocalDay.tryParse(c['firstSealed'] as String?),
+          LocalDay.parse(c['today'] as String),
+        ),
+        c['expect'],
+      );
+    case 'share_prompt':
+      final st = c['state'] as Map<String, dynamic>;
+      final r = sharePrompt(
+        stage: AuraStage.fromName(st['stage'] as String),
+        lifetimeGlowDays: st['lifetimeGlowDays'] as int,
+        capsuleYears: st['capsuleYears'] as int,
+        offered: (st['offered'] as List<dynamic>).cast<String>().toSet(),
+        hideGlow: st['hideGlow'] as bool,
+      );
+      expect({'prompt': r.prompt, 'offer': r.offer}, c['expect']);
+    default:
+      fail('Unknown keepsakes.json case kind "$kind"');
   }
 }

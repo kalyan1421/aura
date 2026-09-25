@@ -134,7 +134,8 @@ class VoiceNoteField extends ConsumerStatefulWidget {
       maxDuration = maxVoiceDuration,
       newRecordingPath = null,
       recordHint = null,
-      limitReachedText = null;
+      limitReachedText = null,
+      limitReachedExtra = null;
 
   const VoiceNoteField.custom({
     super.key,
@@ -143,6 +144,7 @@ class VoiceNoteField extends ConsumerStatefulWidget {
     required Future<String> Function() this.newRecordingPath,
     this.recordHint,
     this.limitReachedText,
+    this.limitReachedExtra,
   }) : draft = null;
 
   /// The check-in draft (F1), or `null` for [VoiceNoteField.custom].
@@ -162,6 +164,11 @@ class VoiceNoteField extends ConsumerStatefulWidget {
 
   /// The calm note after recording stopped at [maxDuration].
   final String? limitReachedText;
+
+  /// Shown under that note (the capsule composer's Aura Plus entry for a
+  /// longer voice note, under the F12 paywall rules). Nothing else knows
+  /// about Plus here: the check-in's voice note is never paywalled.
+  final Widget? limitReachedExtra;
 
   /// How often the elapsed time advances.
   static const Duration tick = Duration(milliseconds: 250);
@@ -489,6 +496,10 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
                   ?.copyWith(color: AuraColors.textSoft),
             ),
           ),
+          if (widget.limitReachedExtra case final extra?) ...[
+            const SizedBox(height: AuraSpace.s),
+            extra,
+          ],
         ],
         if (_phase == _Phase.denied) ...[
           const SizedBox(height: AuraSpace.s),

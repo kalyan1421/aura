@@ -206,6 +206,13 @@ class RoomController extends _$RoomController {
   /// Ids only: the listener refetches.
   Stream<ReflectionEvent> get reflectionEvents => _reflectionEvents.stream;
 
+  /// F16 Lantern Hour wind-down hints (`wind_down`: a room total). The
+  /// wind-down card applies them and refetches its own view.
+  final StreamController<WindDownEvent> _windDownEvents =
+      StreamController<WindDownEvent>.broadcast();
+
+  Stream<WindDownEvent> get windDownEvents => _windDownEvents.stream;
+
   bool _disposed = false;
   bool _foreground = true;
   bool _flushing = false;
@@ -315,6 +322,7 @@ class RoomController extends _$RoomController {
   void _dispose() {
     _disposed = true;
     unawaited(_reflectionEvents.close());
+    unawaited(_windDownEvents.close());
     _stopTimers();
     for (final t in _expiry.values) {
       t.cancel();
@@ -632,6 +640,8 @@ class RoomController extends _$RoomController {
         );
         _set((s) => s.copyWith(detail: next));
         _schedule(next);
+      case WindDownEvent():
+        _windDownEvents.add(event);
     }
   }
 

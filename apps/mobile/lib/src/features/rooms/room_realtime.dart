@@ -106,6 +106,14 @@ class LanternHourEvent extends RoomEvent {
   final LanternHour lanternHour;
 }
 
+/// F16 Lantern Hour wind-down (contracts/api/v1-quiet.md §2.4): "N winding
+/// down" — a room total, never who. [state] is `soon`, `open` or `ended`.
+class WindDownEvent extends RoomEvent {
+  const WindDownEvent(this.state, this.count);
+  final String state;
+  final int count;
+}
+
 /// Parses one broadcast; `null` for an unknown event or a payload that
 /// doesn't fit (ignored: the next refetch has the truth).
 RoomEvent? parseRoomEvent(String event, Map<String, dynamic> payload) {
@@ -175,6 +183,11 @@ RoomEvent? parseRoomEvent(String event, Map<String, dynamic> payload) {
         final lantern = payload['lanternHour'];
         if (lantern is! Map<String, dynamic>) return null;
         return LanternHourEvent(LanternHour.fromJson(lantern));
+      case 'wind_down':
+        final state = payload['state'];
+        final count = payload['count'];
+        if (state is! String) return null;
+        return WindDownEvent(state, count is num ? count.toInt() : 0);
     }
   } on Object catch (e) {
     debugPrint('rooms: realtime payload skipped ($event, ${e.runtimeType})');

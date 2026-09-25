@@ -2254,6 +2254,273 @@
       }
     }
   },
+  "insights_lookBackTitle": "Look back",
+  "@insights_lookBackTitle": {
+    "description": "Title of Look back: the person's sky from the same week a month, six months and a year ago. Pull-only, inside Insights."
+  },
+  "insights_lookBackTileBody": "Your sky from the same week, a while back. Open it when you want to.",
+  "@insights_lookBackTileBody": {
+    "description": "Body of the Look back entry in Insights (the only way in). Calm, no pull or urgency."
+  },
+  "insights_lookBackIntro": "The same week a month, six months and a year ago. Only you can see this. It stays on this phone.",
+  "@insights_lookBackIntro": {
+    "description": "Intro line at the top of Look back. Privacy: worked out on the device, never uploaded."
+  },
+  "insights_lookBackMonth": "A month ago",
+  "@insights_lookBackMonth": {
+    "description": "Heading of the Look back week from one month ago. Words, not digits."
+  },
+  "insights_lookBackSixMonths": "Six months ago",
+  "@insights_lookBackSixMonths": {
+    "description": "Heading of the Look back week from six months ago. Words, not digits."
+  },
+  "insights_lookBackYear": "A year ago",
+  "@insights_lookBackYear": {
+    "description": "Heading of the Look back week from a year ago. Words, not digits."
+  },
+  "insights_lookBackWeekOf": "Week of {date}",
+  "@insights_lookBackWeekOf": {
+    "description": "Under a Look back heading: the week's first day, e.g. 'Week of 7 Sep 2026'.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_lookBackEmpty": "Nothing to look back on yet. Weeks you checked in will appear here.",
+  "@insights_lookBackEmpty": {
+    "description": "Look back with no week to show (new account, or no check-ins those weeks). Calm, no blame."
+  },
+  "insights_lookBackClosed": "Look back is closed for now.",
+  "@insights_lookBackClosed": {
+    "description": "Shown in place of Look back if it closes while open (e.g. after help was opened). Never says why."
+  },
+  "insights_lookBackShowNote": "Show note",
+  "@insights_lookBackShowNote": {
+    "description": "Further tap on a Look back entry that opens its private note (notes never show on the first tap)."
+  },
+  "insights_lookBackShowVoice": "Show voice note",
+  "@insights_lookBackShowVoice": {
+    "description": "Further tap on a Look back entry that has only a voice note: shows its player."
+  },
+  "insights_lookBackHideNote": "Hide",
+  "@insights_lookBackHideNote": {
+    "description": "Closes the note / voice note of a Look back entry again."
+  },
+  "insights_lookBackSettingsHint": "You can turn Look back off in Settings.",
+  "@insights_lookBackSettingsHint": {
+    "description": "Footer of Look back (PRD F10: it can be hidden in Settings)."
+  },
+  "insights_lookBackSetting": "Look back in Aura Sky",
+  "@insights_lookBackSetting": {
+    "description": "Settings › Comfort switch: show Look back inside Insights (on by default)."
+  },
+  "insights_lookBackSettingNote": "Past weeks of your sky, only when you open them. Never sent to you as a notification.",
+  "@insights_lookBackSettingNote": {
+    "description": "Under the Look back switch in Settings."
+  },
+  "keepsakes_title": "Keepsakes",
+  "@keepsakes_title": {
+    "description": "Title of the private keepsake box (earned-only seals from small moments)."
+  },
+  "keepsakes_intro": "Small moments, kept. Only you can see these.",
+  "@keepsakes_intro": {
+    "description": "Keepsake box intro. Private, calm."
+  },
+  "keepsakes_empty": "Nothing here yet. Keepsakes arrive on their own, from small moments along the way.",
+  "@keepsakes_empty": {
+    "description": "Keepsake box with no seals yet. No hint of what to do or what comes next."
+  },
+  "keepsakes_privateNote": "Keepsakes are never shown to anyone else. One leaves your phone only if you share its card.",
+  "@keepsakes_privateNote": {
+    "description": "Footer of the keepsake box: they are never visible to strangers."
+  },
+  "keepsakes_keptOn": "Kept on {date}",
+  "@keepsakes_keptOn": {
+    "description": "Under a seal in the private box: the day it was earned (a localized date).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "keepsakes_sealSemantic": "{line}, kept on {date}",
+  "@keepsakes_sealSemantic": {
+    "description": "Screen-reader label of one seal in the box.",
+    "placeholders": {
+      "line": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "keepsakes_shareThis": "Share this card",
+  "@keepsakes_shareThis": {
+    "description": "Button on a keepsake: open its share card."
+  },
+  "keepsakes_shareAura": "Share your Aura",
+  "@keepsakes_shareAura": {
+    "description": "Button in the keepsake box: share a card of the avatar's current stage."
+  },
+  "keepsakes_offline": "New keepsakes arrive when you're back online.",
+  "@keepsakes_offline": {
+    "description": "Keepsake box while offline (the box itself still shows)."
+  },
+  "keepsakes_entry": "Your keepsakes",
+  "@keepsakes_entry": {
+    "description": "Entry row to the private keepsake box (Settings › Account, Insights)."
+  },
+  "keepsakes_entryNote": "Seals from small moments, private to you.",
+  "@keepsakes_entryNote": {
+    "description": "Subtitle of the keepsake box entry row."
+  },
+  "keepsakes_newTitle": "A new keepsake",
+  "@keepsakes_newTitle": {
+    "description": "Home card title: a seal was just earned (shows once)."
+  },
+  "keepsakes_newSeveral": "New keepsakes are in your box.",
+  "@keepsakes_newSeveral": {
+    "description": "Home card when more than one seal arrived at once (no count)."
+  },
+  "keepsakes_newOpen": "See your keepsakes",
+  "@keepsakes_newOpen": {
+    "description": "Home card button: open the private box."
+  },
+  "keepsakes_hideCard": "Hide this card",
+  "@keepsakes_hideCard": {
+    "description": "Screen-reader label of the close button on a Home card."
+  },
+  "keepsake_capsuleSealedFirst": "Sealed a note for future me",
+  "@keepsake_capsuleSealedFirst": {
+    "description": "Keepsake line: the first capsule sealed."
+  },
+  "keepsake_capsuleOpenedFirst": "Opened a capsule from past me",
+  "@keepsake_capsuleOpenedFirst": {
+    "description": "Keepsake line: the first capsule opened (PRD example)."
+  },
+  "keepsake_glowDays": "{days, plural, =1{1 day of glow} other{{days} days of glow}}",
+  "@keepsake_glowDays": {
+    "description": "Keepsake and share-card line: lifetime glow days (7, 30, 100, 365). Never a streak.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "keepsake_ripplesFirst": "Breathed together for the first time",
+  "@keepsake_ripplesFirst": {
+    "description": "Keepsake line: the first Breath Ripples session."
+  },
+  "keepsake_lanternFirst": "My first Lantern Hour",
+  "@keepsake_lanternFirst": {
+    "description": "Keepsake line: the first Lantern Hour spent in a room."
+  },
+  "keepsake_lanternHours": "{count, plural, =1{1 evening of Lantern Hour} other{{count} evenings of Lantern Hour}}",
+  "@keepsake_lanternHours": {
+    "description": "Keepsake line: 10 and 50 Lantern Hours spent in rooms.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "keepsake_sanctuaryMinutes": "{minutes, plural, =1{1 quiet minute in Sanctuary} other{{minutes} quiet minutes in Sanctuary}}",
+  "@keepsake_sanctuaryMinutes": {
+    "description": "Keepsake line: 60, 300 and 1,000 minutes of Sanctuary activities.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "share_evolutionLine": "My Aura reached {stage}",
+  "@share_evolutionLine": {
+    "description": "Share-card line: an avatar evolution stage (the stage name).",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "share_anniversaryLine": "{years, plural, =1{Sealed a capsule 1 year ago} other{Sealed a capsule {years} years ago}}",
+  "@share_anniversaryLine": {
+    "description": "Share-card line: a capsule anniversary (PRD example). No date.",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "share_storeLine": "Aura · App Store and Google Play",
+  "@share_storeLine": {
+    "description": "Small store line at the foot of every share card."
+  },
+  "share_text": "Aura, a quiet place to notice how you feel: {link}",
+  "@share_text": {
+    "description": "Text sent with the card image through the share sheet (the store link). Never about the person.",
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "share_sheetTitle": "Share a card",
+  "@share_sheetTitle": {
+    "description": "Title of the share-card preview sheet."
+  },
+  "share_sheetNote": "The card shows your Aura and this moment. Never your moods, notes or name.",
+  "@share_sheetNote": {
+    "description": "Under the card preview: what a card can and can't show."
+  },
+  "share_button": "Share",
+  "@share_button": {
+    "description": "Button: open the system share sheet with the card."
+  },
+  "share_failed": "The card couldn't be made just now. Please try again.",
+  "@share_failed": {
+    "description": "The card image could not be made (e.g. low memory). No blame."
+  },
+  "share_cardSemantic": "Card to share: {line}. Your Aura at the {stage} stage.",
+  "@share_cardSemantic": {
+    "description": "Screen-reader label of the share-card preview.",
+    "placeholders": {
+      "line": {
+        "type": "String"
+      },
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "share_promptEvolution": "Your Aura reached {stage}. Share a card of it?",
+  "@share_promptEvolution": {
+    "description": "Home share prompt (offered once per milestone): an evolution stage.",
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "share_promptGlow": "{days, plural, =1{1 day of glow.} other{{days} days of glow.}} Share a card of it?",
+  "@share_promptGlow": {
+    "description": "Home share prompt: a lifetime glow-day milestone. Never shown while 'hide streak number' is on.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "share_promptAnniversary": "{years, plural, =1{You sealed your first capsule a year ago.} other{You sealed your first capsule {years} years ago.}} Share a card of it?",
+  "@share_promptAnniversary": {
+    "description": "Home share prompt: a capsule anniversary.",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
   "rooms_lanternTitle": "Tonight's lantern",
   "@rooms_lanternTitle": {
     "description": "Room card title: the room's shared lantern (lit together during Lantern Hour)."
@@ -3294,6 +3561,304 @@
   "polish_helpNumberCopied": "Number copied",
   "@polish_helpNumberCopied": {
     "description": "Shown and announced after the helpline number was copied."
+  },
+  "quiet_title": "Quiet Together",
+  "@quiet_title": {
+    "description": "Feature name. Rooms tab card title. Not a PRD 18 brand term: Hindi / Hinglish use their own words."
+  },
+  "quiet_cardBody": "Study, read or rest alongside others. Just a count, a shared sound and gestures.",
+  "@quiet_cardBody": {
+    "description": "Rooms tab card body: what Quiet Together is. Calm, no pressure."
+  },
+  "quiet_modeStudy": "Study",
+  "@quiet_modeStudy": {
+    "description": "Mode button: study together."
+  },
+  "quiet_modeRead": "Read",
+  "@quiet_modeRead": {
+    "description": "Mode button: read together."
+  },
+  "quiet_modeRest": "Rest",
+  "@quiet_modeRest": {
+    "description": "Mode button: rest together."
+  },
+  "quiet_titleStudy": "Study together",
+  "@quiet_titleStudy": {
+    "description": "Screen title for the Study session."
+  },
+  "quiet_titleRead": "Read together",
+  "@quiet_titleRead": {
+    "description": "Screen title for the Read session."
+  },
+  "quiet_titleRest": "Rest together",
+  "@quiet_titleRest": {
+    "description": "Screen title for the Rest session."
+  },
+  "quiet_count": "{count, plural, =1{1 here} other{{count} here}}",
+  "@quiet_count": {
+    "description": "How many people are in this session right now. A number only, never names.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quiet_justYou": "Just you right now. Others drop in through the hour.",
+  "@quiet_justYou": {
+    "description": "Shown when the count is 1 (never faked). PRD 14-states copy."
+  },
+  "quiet_joining": "Finding your quiet place…",
+  "@quiet_joining": {
+    "description": "While joining a session."
+  },
+  "quiet_reconnecting": "Reconnecting…",
+  "@quiet_reconnecting": {
+    "description": "Chip when the realtime link dropped. Never a failure; the shared sound keeps playing."
+  },
+  "quiet_offline": "Quiet Together needs a connection. Sanctuary works offline.",
+  "@quiet_offline": {
+    "description": "Offline state. PRD 14-states copy."
+  },
+  "quiet_openSanctuary": "Open Sanctuary",
+  "@quiet_openSanctuary": {
+    "description": "Button from the offline / paused state to the Sanctuary tab."
+  },
+  "quiet_paused": "Quiet Together is resting for a bit. The Sanctuary is always open.",
+  "@quiet_paused": {
+    "description": "Kill switch on for this region. Calm, no blame."
+  },
+  "quiet_failed": "Quiet Together couldn't open just now. Please try again.",
+  "@quiet_failed": {
+    "description": "The join failed for another reason (not offline). No blame."
+  },
+  "quiet_tryAgain": "Try again",
+  "@quiet_tryAgain": {
+    "description": "Retry button."
+  },
+  "quiet_nextBlock": "The next session starts at {time}.",
+  "@quiet_nextBlock": {
+    "description": "Near the end of a 60-minute block. A clock time, never a countdown; the next block follows by itself.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quiet_leave": "Leave",
+  "@quiet_leave": {
+    "description": "Leave the session. Leaving costs nothing: no confirmation, no loss copy."
+  },
+  "quiet_leaveNote": "Leave whenever you like. Nothing is lost.",
+  "@quiet_leaveNote": {
+    "description": "Small line near Leave: leaving costs nothing."
+  },
+  "quiet_soundTitle": "The shared sound",
+  "@quiet_soundTitle": {
+    "description": "Section title: a soundscape everyone plays on their own phone from the same start."
+  },
+  "quiet_soundBody": "Everyone hears the same moment, played on your own phone. No microphone, nothing recorded.",
+  "@quiet_soundBody": {
+    "description": "Explains the shared sound: local playback, same point in the mix, no user audio."
+  },
+  "quiet_soundPlay": "Play the shared sound",
+  "@quiet_soundPlay": {
+    "description": "Button: start the shared sound. Nothing plays until this tap."
+  },
+  "quiet_soundStop": "Stop the sound",
+  "@quiet_soundStop": {
+    "description": "Button: stop the shared sound on this phone."
+  },
+  "quiet_soundVolume": "Volume",
+  "@quiet_soundVolume": {
+    "description": "Slider label: this person's own volume for the shared sound."
+  },
+  "quiet_soundDownload": "The shared sound needs a one-time download.",
+  "@quiet_soundDownload": {
+    "description": "A base recording isn't on the phone yet. The session works silently meanwhile. PRD 14-states copy."
+  },
+  "quiet_soundDownloadCta": "Download",
+  "@quiet_soundDownloadCta": {
+    "description": "Button: download the base recordings."
+  },
+  "quiet_soundUnavailable": "The sound can't play on this phone right now. Being here is enough.",
+  "@quiet_soundUnavailable": {
+    "description": "No stem of the mix can play. Calm."
+  },
+  "quiet_rhythm": "Focus rhythm (25 / 5)",
+  "@quiet_rhythm": {
+    "description": "Switch, off by default: follow the shared 25-minute focus / 5-minute break blocks."
+  },
+  "quiet_rhythmBody": "Optional. Everyone's breaks line up.",
+  "@quiet_rhythmBody": {
+    "description": "Under the rhythm switch. No pressure."
+  },
+  "quiet_rhythmFocus": "Focus · break at {time}",
+  "@quiet_rhythmFocus": {
+    "description": "Rhythm on, in a focus stretch: the next change as a clock time (never a countdown).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quiet_rhythmBreak": "Break · focus again at {time}",
+  "@quiet_rhythmBreak": {
+    "description": "Rhythm on, in a break: the next change as a clock time.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "quiet_rhythmToBreak": "Break time.",
+  "@quiet_rhythmToBreak": {
+    "description": "Announced (politely) when the shared break begins."
+  },
+  "quiet_rhythmToFocus": "Focus time.",
+  "@quiet_rhythmToFocus": {
+    "description": "Announced (politely) when the shared focus stretch begins."
+  },
+  "quiet_gesturesTitle": "Send a gesture to everyone here",
+  "@quiet_gesturesTitle": {
+    "description": "Gesture tray title. Gestures go to the whole session, never to a person."
+  },
+  "quiet_gestureSent": "You sent {gesture}",
+  "@quiet_gestureSent": {
+    "description": "Your own gesture, shown only to you.",
+    "placeholders": {
+      "gesture": {
+        "type": "String"
+      }
+    }
+  },
+  "quiet_moment_warm_tea": "Someone shared warm tea",
+  "@quiet_moment_warm_tea": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_light_a_candle": "Someone lit a candle",
+  "@quiet_moment_light_a_candle": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_hug": "Someone sent a hug",
+  "@quiet_moment_hug": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_me_too": "Someone said: me too",
+  "@quiet_moment_me_too": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_soft_rain": "Someone sent soft rain",
+  "@quiet_moment_soft_rain": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_stargaze": "Someone is stargazing with you",
+  "@quiet_moment_stargaze": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_deep_breath": "Someone took a deep breath",
+  "@quiet_moment_deep_breath": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_moment_youre_not_alone": "Someone says: you're not alone",
+  "@quiet_moment_youre_not_alone": {
+    "description": "An unnamed gesture in Quiet Together (also the Reduce Motion still line). Never who sent it."
+  },
+  "quiet_menu": "Session menu",
+  "@quiet_menu": {
+    "description": "Tooltip for the session's overflow menu."
+  },
+  "quiet_report": "Report a problem here",
+  "@quiet_report": {
+    "description": "Session menu: report (nobody is shown, so there is no per-person block or mute)."
+  },
+  "quiet_hideGestures": "Hide gestures",
+  "@quiet_hideGestures": {
+    "description": "Session menu: hide gesture animations for yourself only."
+  },
+  "quiet_showGestures": "Show gestures",
+  "@quiet_showGestures": {
+    "description": "Session menu: show gestures again."
+  },
+  "quiet_gesturesHidden": "Gestures are hidden for you.",
+  "@quiet_gesturesHidden": {
+    "description": "Shown while you hid gestures (only for you)."
+  },
+  "quiet_reportBody": "Nobody is shown here, so tell us what happened. A moderator looks at this session's recent gestures.",
+  "@quiet_reportBody": {
+    "description": "Report sheet intro for Quiet Together."
+  },
+  "quiet_reportNote": "Anything else a moderator should know? (optional)",
+  "@quiet_reportNote": {
+    "description": "Optional note field in the report sheet (moderators only)."
+  },
+  "quiet_reportSend": "Send report",
+  "@quiet_reportSend": {
+    "description": "Report sheet button."
+  },
+  "quiet_reportThanks": "Thank you. A moderator will take a look.",
+  "@quiet_reportThanks": {
+    "description": "After a report was sent."
+  },
+  "quiet_reportFailed": "That didn't go through. Please try again.",
+  "@quiet_reportFailed": {
+    "description": "Report failed (connection). No blame."
+  },
+  "rooms_windDownTitle": "Wind down together",
+  "@rooms_windDownTitle": {
+    "description": "Room card title and button during Lantern Hour from 22:30: a shared 20-minute wind-down."
+  },
+  "rooms_windDownBody": "Twenty quiet minutes to end the day: one shared sound, slow breathing and a few gentle words.",
+  "@rooms_windDownBody": {
+    "description": "Room card body for the wind-down. No narration, no pressure."
+  },
+  "rooms_windDownCount": "{count, plural, =0{Nobody winding down yet} =1{1 winding down} other{{count} winding down}}",
+  "@rooms_windDownCount": {
+    "description": "The room total winding down now (never who).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rooms_windDownBack": "Back to the wind-down",
+  "@rooms_windDownBack": {
+    "description": "Room card button after you joined the wind-down."
+  },
+  "rooms_windDownFailed": "That didn't go through. Please try again.",
+  "@rooms_windDownFailed": {
+    "description": "Joining the wind-down failed (connection, or it just ended). No blame."
+  },
+  "rooms_windDownEnded": "The wind-down has ended. Rest well.",
+  "@rooms_windDownEnded": {
+    "description": "When the 20 minutes are over. Never 'finished early' or a score."
+  },
+  "rooms_windDownLeave": "Leave",
+  "@rooms_windDownLeave": {
+    "description": "Leave the wind-down. Costs nothing."
+  },
+  "rooms_windDownCue_arrive": "Arrive. There's nothing to do now.",
+  "@rooms_windDownCue_arrive": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
+  },
+  "rooms_windDownCue_day_quieter": "Let the day get quieter.",
+  "@rooms_windDownCue_day_quieter": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
+  },
+  "rooms_windDownCue_shoulders": "Let your shoulders soften.",
+  "@rooms_windDownCue_shoulders": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
+  },
+  "rooms_windDownCue_nothing_to_do": "Nothing needs you right now.",
+  "@rooms_windDownCue_nothing_to_do": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
+  },
+  "rooms_windDownCue_slower": "Let each breath be a little slower.",
+  "@rooms_windDownCue_slower": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
+  },
+  "rooms_windDownCue_rest_well": "Rest well. The night can hold the rest.",
+  "@rooms_windDownCue_rest_well": {
+    "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
   },
   "reflections_title": "Reflections",
   "@reflections_title": {
@@ -5815,5 +6380,95 @@
   "voice_hasVoice": "Has a voice note",
   "@voice_hasVoice": {
     "description": "Screen-reader label for the voice icon on a history row."
+  },
+  "widget_prompt": "How are you feeling?",
+  "@widget_prompt": {
+    "description": "Home-screen widget heading (F11). Same warmth as the check-in title."
+  },
+  "widget_checkIn": "Check in",
+  "@widget_checkIn": {
+    "description": "Widget button / lock-screen star label that opens the check-in (F11). Short."
+  },
+  "widget_doneToday": "Checked in today",
+  "@widget_doneToday": {
+    "description": "Widget line once today has a check-in. Never says which mood."
+  },
+  "widget_saved": "Saved",
+  "@widget_saved": {
+    "description": "Widget confirmation after a two-tap check-in that earned no Starlight (day's cap reached)."
+  },
+  "widget_savedStarlight": "Saved · +{amount} Starlight",
+  "@widget_savedStarlight": {
+    "description": "Widget confirmation after a two-tap check-in (F11 'Saved · +10 Starlight'). Provisional until the app imports it.",
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "widget_needHelp": "Need help",
+  "@widget_needHelp": {
+    "description": "Widget link to the Safety Center (F9) on the larger widget sizes. Must feel safe to tap."
+  },
+  "widget_openApp": "Open Aura to continue",
+  "@widget_openApp": {
+    "description": "Widget text while signed out or before setup (F11 edge case). Input is off."
+  },
+  "widget_openAppDiscreet": "Open the app to continue",
+  "@widget_openAppDiscreet": {
+    "description": "Discreet widget text while signed out: no app name (F11 Discreet widget)."
+  },
+  "widget_capsuleWaiting": "Something from past you is waiting",
+  "@widget_capsuleWaiting": {
+    "description": "Widget line when a time capsule is ready; it only opens in the app (F11)."
+  },
+  "widget_back": "Back",
+  "@widget_back": {
+    "description": "Widget button: from the four moods back to the four groups."
+  },
+  "widget_lastMood": "Last: {mood}",
+  "@widget_lastMood": {
+    "description": "Widget line with the person's last mood. Only when 'Show my last mood' is on, home screen only.",
+    "placeholders": {
+      "mood": {
+        "type": "String"
+      }
+    }
+  },
+  "widget_galleryName": "Aura check-in",
+  "@widget_galleryName": {
+    "description": "Name of the home-screen widget in the OS widget gallery."
+  },
+  "widget_galleryDescription": "Check in with two taps, right from your home screen.",
+  "@widget_galleryDescription": {
+    "description": "Description of the home-screen widget in the OS widget gallery."
+  },
+  "widget_lockGalleryName": "Quick check-in",
+  "@widget_lockGalleryName": {
+    "description": "Name of the lock-screen widget (a star) in the iOS widget gallery."
+  },
+  "widget_lockGalleryDescription": "A star that opens your check-in. It never shows how you feel.",
+  "@widget_lockGalleryDescription": {
+    "description": "Description of the lock-screen widget in the iOS widget gallery (F11: lock screen shows only a star)."
+  },
+  "widget_settingsTitle": "Home-screen widget",
+  "@widget_settingsTitle": {
+    "description": "Settings section for the widget (F11)."
+  },
+  "widget_showLastMood": "Show my last mood",
+  "@widget_showLastMood": {
+    "description": "Settings toggle (off by default): the widget shows the last mood (F11)."
+  },
+  "widget_showLastMoodNote": "On your home screen only. The lock screen never shows it.",
+  "@widget_showLastMoodNote": {
+    "description": "Note under 'Show my last mood' (F11 privacy: never on the lock screen or StandBy)."
+  },
+  "widget_discreet": "Discreet widget",
+  "@widget_discreet": {
+    "description": "Settings toggle (off by default) for the plain-star widget (F11 Discreet widget)."
+  },
+  "widget_discreetNote": "A plain star with no app name and no mood words. Tapping it opens the app.",
+  "@widget_discreetNote": {
+    "description": "Note under 'Discreet widget'."
   }
 }

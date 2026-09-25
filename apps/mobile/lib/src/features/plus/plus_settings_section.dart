@@ -17,10 +17,17 @@ import 'purchase_controller.dart';
 /// Status in plain words, the store's own manage page, Restore, and the way
 /// to the personal sky + Stardust.
 class PlusSettingsSection extends ConsumerWidget {
-  const PlusSettingsSection({super.key, this.opener = openStorePage});
+  const PlusSettingsSection({
+    super.key,
+    this.opener = openStorePage,
+    this.nativeSheet = showNativeManageSubscriptions,
+  });
 
   /// Opens the store page (tests inject one).
   final PlusUrlOpener opener;
+
+  /// The App Store's in-app manage sheet (iOS; tests inject one).
+  final NativeManageSheet nativeSheet;
 
   static const Key statusKey = ValueKey('plus-settings-status');
 
@@ -83,8 +90,12 @@ class PlusSettingsSection extends ConsumerWidget {
         if (hasSubscription)
           OutlinedButton(
             key: const ValueKey('plus-settings-manage'),
-            onPressed: () =>
-                opener(manageSubscriptionUri(e.store!, productId: e.productId)),
+            onPressed: () => openManageFor(
+              e.store!,
+              productId: e.productId,
+              opener: opener,
+              nativeSheet: nativeSheet,
+            ),
             child: Text(manageLabel),
           )
         else if (mode == PaywallMode.explainer || mode == PaywallMode.link)

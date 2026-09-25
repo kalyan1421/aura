@@ -10,6 +10,8 @@ import '../../features/history/checkin_detail_screen.dart';
 import '../../features/history/history_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/insights/insights_screen.dart';
+import '../../features/keepsakes/keepsakes_screen.dart'
+    show KeepsakesScreen, keepsakesRoute;
 import '../../features/insights/month_in_stars_screen.dart';
 import '../../features/onboarding/blocked_screen.dart';
 import '../../features/onboarding/dob_screen.dart';
@@ -154,6 +156,9 @@ GoRouter router(Ref ref) {
         ),
       ),
       route(plusSkiesRoute, (_) => const SkyThemesScreen()),
+      // F13: the private keepsake box (opened from Insights, Home's new-seal
+      // card and Settings › Account).
+      route(keepsakesRoute, (_) => const KeepsakesScreen()),
       route(Routes.deleteAccount, (_) => const DeleteAccountScreen()),
       // The history list lives in the Insights tab; older links land there.
       GoRoute(path: Routes.history, redirect: (_, _) => Routes.insightsHistory),

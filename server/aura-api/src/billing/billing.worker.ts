@@ -7,6 +7,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
 import { redisOptionsFromUrl } from '../queues/redis';
+import { UserMailWorkerHost, UserMailWorkerModule } from '../user-mail/user-mail.worker';
 import { BillingCoreModule } from './billing.module';
 import { expireOpenGifts } from './gifts';
 import { StoreSync, errCode } from './store-sync.service';
@@ -14,10 +15,10 @@ import { claimTrialReminders, releaseTrialReminder } from './trial-reminder';
 
 /**
  * Worker side of F12 (its own BullMQ queue `billing`, self-contained like the reflections worker):
- *  - `tick` every 10 min: trial-ending reminders (PRD 12), retry of failed / unhandled store notifications, a rolling
- *    reconcile of live subscriptions not confirmed with their store in 20 h (so every one is re-read at least daily —
- *    REQ-PAY-10 "reconciliation repairs a dropped notification"), entitlements whose period ran out, gift checks
- *    past their 7-day window;
+ *  - `tick` every 10 min: trial-ending reminders (PRD 12: the push, then its email twin via src/user-mail), retry
+ *    of failed / unhandled store notifications, a rolling reconcile of live subscriptions not confirmed with their
+ *    store in 20 h (so every one is re-read at least daily — REQ-PAY-10 "reconciliation repairs a dropped
+ *    notification"), entitlements whose period ran out, gift checks past their 7-day window;
  *  - `daily` 03:41 UTC: Play Voided Purchases API (refunds / chargebacks), Google one-time purchases still to be
  *    acknowledged or consumed (3-day rule), store_notifications older than 400 days pruned `[ASSUMPTION]`.
  * Logs counts and reason codes only.
@@ -39,6 +40,7 @@ export class BillingWorkerHost implements OnApplicationBootstrap, OnApplicationS
     private readonly db: DbService,
     private readonly sync: StoreSync,
     private readonly notifications: NotificationsService,
+    private readonly userMail: UserMailWorkerHost,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -75,6 +77,8 @@ export class BillingWorkerHost implements OnApplicationBootstrap, OnApplicationS
       }
     }
     out.trialReminders = queued;
+    // The email twin of the push (PRD 12: push + in-app card + email): every claimed reminder without an email yet.
+    out.trialEmails = await this.userMail.sweepTrialEmails(now).catch(() => 0);
     const n = await this.sync.retryNotifications(now);
     out.notificationsRetried = n.retried;
     const r = await this.sync.reconcileSubscriptions(now, 50);
@@ -113,5 +117,5 @@ export class BillingWorkerHost implements OnApplicationBootstrap, OnApplicationS
 }
 
 /** Imported by the worker process (src/worker.module.ts). */
-@Module({ imports: [BillingCoreModule, NotificationsModule], providers: [BillingWorkerHost] })
+@Module({ imports: [BillingCoreModule, NotificationsModule, UserMailWorkerModule], providers: [BillingWorkerHost] })
 export class BillingWorkerModule {}
