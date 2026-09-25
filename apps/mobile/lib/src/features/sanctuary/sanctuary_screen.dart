@@ -8,6 +8,7 @@ import '../../core/widgets/help_app_bar.dart';
 import '../capsules/capsules_entry.dart';
 import '../plus/sky_themes.dart';
 import '../progress/progress_view.dart';
+import '../shell/app_shell.dart' show ShellSettingsButton, isShellTabRoot;
 import 'breath_orb.dart';
 import 'sanctuary_activities.dart';
 import 'sounds/sounds_entry.dart';
@@ -45,6 +46,8 @@ class SanctuaryScreen extends ConsumerWidget {
         context,
         title: l.sanctuary_title,
         automaticallyImplyLeading: false,
+        // Settings on the right, as on every tab.
+        actions: [if (isShellTabRoot(context)) const ShellSettingsButton()],
       ),
       body: PersonalSkyBackground(
         // F12: the person's own sky theme

@@ -363,14 +363,18 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       leading: leading,
       onBack: onBack,
       trailing: help,
-      primary: FilledButton(
-        key: ValueKey(_codeSent ? 'signin-verify' : 'signin-send'),
-        onPressed: busy ? null : (_codeSent ? _verify : _send),
-        child: BusyButtonLabel(
-          _codeSent ? l.signin_verify : l.signin_sendCode,
-          busy: busy && _socialBusy == null,
-        ),
-      ),
+      // The code step keeps Verify pinned. The email step has no pinned
+      // button: "Email me a code" sits right under its field.
+      primary: _codeSent
+          ? FilledButton(
+              key: const ValueKey('signin-verify'),
+              onPressed: busy ? null : _verify,
+              child: BusyButtonLabel(
+                l.signin_verify,
+                busy: busy && _socialBusy == null,
+              ),
+            )
+          : null,
       secondary: _codeSent
           ? Padding(
               padding: const EdgeInsets.only(top: AuraSpace.s),
@@ -411,6 +415,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       children: [
         StepTitle(l.signin_title, body: l.signin_body),
         if (!_codeSent) ...[
+          // Two clear groups: Apple / Google first, then "or", then the
+          // email field with its own button directly under it.
+          if (social.isNotEmpty) ...[
+            for (final (i, provider) in social.indexed) ...[
+              if (i > 0) const SizedBox(height: AuraSpace.m),
+              _socialButton(l, provider),
+            ],
+            const SizedBox(height: AuraSpace.l),
+            const SignInOrDivider(),
+            const SizedBox(height: AuraSpace.l),
+          ],
           TextField(
             key: const ValueKey('signin-email'),
             controller: _email,
@@ -422,15 +437,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             onSubmitted: (_) => busy ? null : _send(),
             decoration: InputDecoration(labelText: l.signin_emailLabel),
           ),
-          if (social.isNotEmpty) ...[
-            const SizedBox(height: AuraSpace.xl),
-            const SignInOrDivider(),
-            const SizedBox(height: AuraSpace.l),
-            for (final (i, provider) in social.indexed) ...[
-              if (i > 0) const SizedBox(height: AuraSpace.m),
-              _socialButton(l, provider),
-            ],
-          ],
+          const SizedBox(height: AuraSpace.m),
+          FilledButton(
+            key: const ValueKey('signin-send'),
+            onPressed: busy ? null : _send,
+            child: BusyButtonLabel(
+              l.signin_sendCode,
+              busy: busy && _socialBusy == null,
+            ),
+          ),
         ] else ...[
           Text(l.signin_codeSent(_email.text.trim()), style: t.bodyLarge),
           const SizedBox(height: AuraSpace.l),

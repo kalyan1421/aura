@@ -5,10 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/haptics.dart';
+import '../../core/a11y/icon_scale.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
+import '../../core/a11y/motion.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
@@ -27,6 +29,7 @@ import 'room_moments.dart';
 import 'room_navigation.dart';
 import 'room_realtime.dart';
 import 'room_status.dart';
+import 'gesture_tray.dart';
 import 'room_widgets.dart';
 import 'rooms_repository.dart';
 import 'wind_down_entry.dart';
@@ -60,6 +63,11 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
   final List<GestureMoment> _moments = [];
   _Notice? _notice;
 
+  /// The room's list; a new notice scrolls it to the top so the notice is
+  /// seen wherever the tap that caused it was (e.g. "Hold this tonight").
+  final ScrollController _list = ScrollController();
+  _Notice? _revealed;
+
   /// The last gesture you sent, shown while the tray rests.
   String? _lastSent;
 
@@ -77,6 +85,7 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
   @override
   void dispose() {
     _roomAnnounceGate?.cancel();
+    _list.dispose();
     super.dispose();
   }
 
@@ -480,8 +489,27 @@ class _RoomScreenState extends ConsumerState<RoomScreen> {
     }
     if (d == null) return const _Opening();
     final notice = _notice;
+    if (notice != null && !identical(notice, _revealed)) {
+      _revealed = notice;
+      final reduce = reduceMotionOf(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_list.hasClients || _list.offset <= 0) return;
+        if (reduce) {
+          _list.jumpTo(0);
+        } else {
+          unawaited(
+            _list.animateTo(
+              0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+            ),
+          );
+        }
+      });
+    }
     return ListView(
       key: const ValueKey('room-list'),
+      controller: _list,
       padding: const EdgeInsets.fromLTRB(
         AuraSpace.gutter,
         AuraSpace.s,
@@ -1027,9 +1055,11 @@ class _Recent extends StatelessWidget {
   }
 }
 
-/// The 8 gestures, to everyone here, pinned under the room. One scrolling
-/// row that grows with the text (never cut); rests for 2 s after a send
-/// with the words of what was sent.
+/// The 8 gestures, to everyone here, pinned under the room: the shared
+/// [GestureTray] as one scrolling row that grows with the text (never cut);
+/// rests for 2 s after a send with the words of what was sent. Above 130%
+/// text the row would take a quarter of the screen, so it collapses to one
+/// "Send warmth" button that opens the full grid in a sheet.
 class _GestureTray extends StatelessWidget {
   const _GestureTray({
     required this.enabled,
@@ -1041,10 +1071,66 @@ class _GestureTray extends StatelessWidget {
   final ValueChanged<GestureType> onSend;
   final String? status;
 
+  /// Above this text scale the tray is one button.
+  static const double _collapseAbove = 1.3;
+
+  Future<void> _openSheet(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheet) => SingleChildScrollView(
+        key: const ValueKey('gesture-tray-sheet'),
+        padding: const EdgeInsets.fromLTRB(
+          AuraSpace.gutter,
+          0,
+          AuraSpace.gutter,
+          AuraSpace.xl,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Semantics(
+              header: true,
+              child: Text(
+                l.rooms_trayTitle,
+                style: Theme.of(sheet).textTheme.titleMedium,
+              ),
+            ),
+            const SizedBox(height: AuraSpace.m),
+            GestureTray(
+              density: GestureTrayDensity.grid,
+              items: presetGestureItems(
+                l,
+                hint: l.rooms_trayHint,
+                onSend: enabled
+                    ? (g) {
+                        Navigator.of(sheet).pop();
+                        onSend(g);
+                      }
+                    : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
+    final collapsed =
+        MediaQuery.textScalerOf(context).scale(100) / 100 > _collapseAbove;
+    final statusText = Text(
+      status ?? l.rooms_trayTitle,
+      key: const ValueKey('gesture-tray-status'),
+      style: t.labelLarge?.copyWith(
+        color: status == null ? AuraColors.textSoft : AuraColors.starlight,
+      ),
+    );
     return DecoratedBox(
       key: const ValueKey('gesture-tray'),
       decoration: BoxDecoration(
@@ -1053,43 +1139,56 @@ class _GestureTray extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.only(top: AuraSpace.m, bottom: AuraSpace.s),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AuraSpace.gutter),
-              child: Text(
-                status ?? l.rooms_trayTitle,
-                key: const ValueKey('gesture-tray-status'),
-                style: t.labelLarge?.copyWith(
-                  color: status == null
-                      ? AuraColors.textSoft
-                      : AuraColors.starlight,
+        child: collapsed
+            ? Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AuraSpace.gutter,
                 ),
-              ),
-            ),
-            const SizedBox(height: AuraSpace.s),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AuraSpace.gutter),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (final g in GestureType.values) ...[
-                    GestureButton(
-                      type: g,
-                      hint: l.rooms_trayHint,
-                      onPressed: enabled ? () => onSend(g) : null,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (status != null) ...[
+                      statusText,
+                      const SizedBox(height: AuraSpace.s),
+                    ],
+                    FilledButton.icon(
+                      key: const ValueKey('gesture-tray-open'),
+                      onPressed: enabled
+                          ? () => unawaited(_openSheet(context))
+                          : null,
+                      icon: Icon(
+                        Icons.volunteer_activism_outlined,
+                        size: scaledIconSize(context, 20),
+                      ),
+                      label: Text(l.rooms_trayOpen),
                     ),
-                    if (g != GestureType.values.last)
-                      const SizedBox(width: AuraSpace.s),
                   ],
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AuraSpace.gutter,
+                    ),
+                    child: statusText,
+                  ),
+                  const SizedBox(height: AuraSpace.s),
+                  GestureTray(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AuraSpace.gutter,
+                    ),
+                    items: presetGestureItems(
+                      l,
+                      hint: l.rooms_trayHint,
+                      onSend: enabled ? onSend : null,
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -188,16 +188,24 @@ class PersonalSkyBackground extends ConsumerWidget {
 
 /// A small preview swatch of a sky (the sky screen).
 class SkyPreview extends StatelessWidget {
-  const SkyPreview({super.key, required this.palette, this.size = 56});
+  const SkyPreview({
+    super.key,
+    required this.palette,
+    this.size = 56,
+    this.height,
+  });
 
   final SkyPalette palette;
+
+  /// Width (and height, unless [height] is given).
   final double size;
+  final double? height;
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
     child: Container(
       width: size,
-      height: size,
+      height: height ?? size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AuraRadius.m),
         gradient: LinearGradient(

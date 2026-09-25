@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/icon_scale.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
@@ -16,6 +17,8 @@ import '../../core/theme/aura_tokens.dart';
 import '../account/account_providers.dart';
 import '../account/deletion_pending.dart';
 import '../avatar/aura_avatar.dart';
+import '../capsules/capsule_providers.dart'
+    show capsuleCoordinatorProvider, readyDateCapsulesProvider;
 import '../capsules/capsule_ready_card.dart';
 import '../avatar/moments_controller.dart';
 import '../habits/habits_section.dart';
@@ -123,11 +126,11 @@ class HomeScreen extends ConsumerWidget {
                       // PRD 12 crisis follow-up: in-app only, 12–72 h after
                       // the support sheet (nothing otherwise).
                       const CrisisFollowUpCard(),
-                      // F4: a date capsule is ready (nothing when none is).
-                      const CapsuleReadyCard(),
-                      // F13: a new keepsake (shows once) or the one milestone
-                      // share prompt; nothing otherwise.
-                      const KeepsakeHomeCards(),
+                      // One "moment" slot above the avatar, so a busy day
+                      // never pushes it below the fold: a ready capsule
+                      // (F4) › a new keepsake › the milestone share prompt
+                      // (F13). The others wait for the next visit.
+                      const _MomentSlot(),
                       _HeroFit(
                         viewport: box.maxHeight,
                         floor: compact
@@ -323,6 +326,21 @@ class _RenderHeroFit extends RenderBox
       defaultHitTestChildren(result, position: position);
 }
 
+/// Home's single card slot above the avatar ([HomeScreen]).
+class _MomentSlot extends ConsumerWidget {
+  const _MomentSlot();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(capsuleCoordinatorProvider);
+    if (ref.watch(readyDateCapsulesProvider).isNotEmpty) {
+      return const CapsuleReadyCard();
+    }
+    // A new keepsake, else the share prompt, else nothing.
+    return const KeepsakeHomeCards();
+  }
+}
+
 class _TopBar extends ConsumerWidget {
   const _TopBar();
 
@@ -341,19 +359,25 @@ class _TopBar extends ConsumerWidget {
       padding: const EdgeInsetsDirectional.fromSTEB(AuraSpace.gutter, 6, 6, 0),
       child: LayoutBuilder(
         builder: (context, box) {
-          // The wordmark is decorative: it steps aside whenever "I need
-          // help now" would otherwise have to wrap next to it (small
-          // phones, large text, longer languages).
+          // The wordmark is decorative: it steps aside first whenever "I
+          // need help now" would otherwise not fit on one line beside it
+          // (small phones, large text, longer languages). Only then, or
+          // above 130% text, does help collapse to its heart-only button:
+          // it never wraps.
           final wordmark = TextPainter(
             text: TextSpan(text: 'Aura', style: wordmarkStyle),
             textDirection: Directionality.of(context),
             textScaler: MediaQuery.textScalerOf(context),
             maxLines: 1,
           )..layout();
+          final pill = HelpNowButton.oneLineWidth(context, compact: true);
+          final iconOnly =
+              HelpNowButton.iconOnlyForTextScale(context) ||
+              pill + _icons > box.maxWidth;
           final showWordmark =
               wordmark.width +
                   AuraSpace.s +
-                  HelpNowButton.oneLineWidth(context, compact: true) +
+                  (iconOnly ? HelpNowButton.iconOnlyWidth : pill) +
                   _icons <=
               box.maxWidth;
           wordmark.dispose();
@@ -369,12 +393,11 @@ class _TopBar extends ConsumerWidget {
                 ),
                 const SizedBox(width: AuraSpace.s),
               ],
-              // Within the first focus stops (REQ-A11Y-11). Flexible so
-              // large text wraps the label instead of overflowing the bar.
-              const Flexible(
+              // Within the first focus stops (REQ-A11Y-11).
+              Expanded(
                 child: Align(
                   alignment: AlignmentDirectional.centerEnd,
-                  child: HelpNowButton(compact: true),
+                  child: HelpNowButton(compact: true, iconOnly: iconOnly),
                 ),
               ),
               const SyncIndicator(),
@@ -575,9 +598,9 @@ class _StarlightRow extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.auto_awesome,
-                    size: 16,
+                    size: scaledIconSize(context, 16),
                     color: AuraColors.starlight,
                   ),
                   const SizedBox(width: 4),
@@ -727,9 +750,9 @@ class _GlowCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.star_rounded,
-                size: 20,
+                size: scaledIconSize(context, 20),
                 color: AuraColors.starlight,
               ),
               const SizedBox(width: 8),

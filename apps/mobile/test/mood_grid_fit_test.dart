@@ -308,9 +308,12 @@ void main() {
       final picked = moodCatalog.firstWhere((m) => m.id == 'overwhelmed');
       final other = moodCatalog.firstWhere((m) => m.id == 'calm');
       // Layout size and centre (the selection scale is a paint transform
-      // around the centre).
-      (Offset, Size) place(Mood m) =>
-          (tester.getCenter(tileOf(m)), tester.getSize(tileOf(m)));
+      // around the centre), relative to the grid: picking a mood scrolls
+      // the details into view, which moves the whole grid, not its tiles.
+      (Offset, Size) place(Mood m) => (
+        tester.getCenter(tileOf(m)) - tester.getTopLeft(find.byType(MoodGrid)),
+        tester.getSize(tileOf(m)),
+      );
       final before = {for (final m in moodCatalog) m.id: place(m)};
       await tester.tap(tileOf(picked));
       await tester.pumpAndSettle();

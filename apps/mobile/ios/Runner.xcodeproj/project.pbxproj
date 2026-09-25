@@ -224,6 +224,7 @@
 				F11A00000000000000000011 /* Embed Foundation Extensions */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				F4A7500000000000000000A1 /* ATS (Debug only) */,
+				F4A7500000000000000000B1 /* Release legal check */,
 			);
 			buildRules = (
 			);
@@ -334,6 +335,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		F4A7500000000000000000B1 /* Release legal check */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Release legal check";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"${SRCROOT}/scripts/release_legal_check.sh\"\n";
+		};
 		F4A7500000000000000000A1 /* ATS (Debug only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

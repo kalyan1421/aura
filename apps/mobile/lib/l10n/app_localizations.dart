@@ -2141,6 +2141,30 @@ abstract class AppLocalizations {
   /// **'Back to my capsule'**
   String get help_backToCapsule;
 
+  /// Room: at large text sizes the gesture tray is this one button; it opens all eight gestures in a sheet. Never 'chat'.
+  ///
+  /// In en, this message translates to:
+  /// **'Send warmth'**
+  String get rooms_trayOpen;
+
+  /// Rooms tab: one-line link that opens the short explanation, shown once you have joined a room.
+  ///
+  /// In en, this message translates to:
+  /// **'How rooms work'**
+  String get rooms_howRoomsWork;
+
+  /// Report sheet: helper text above 'Send report' while no reason is chosen yet (the button stays off until then). Calm, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what\'s happening'**
+  String get rooms_reportPickReason;
+
+  /// Sky themes: shown instead of a greyed 'Use Stardust' button when the balance is too low. {count} = the sky's cost, {have} = the person's balance. A count, never money; no pressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs {count} Stardust (you have {have})'**
+  String plus_skyStardustNeeds(int count, int have);
+
   /// Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame.
   ///
   /// In en, this message translates to:
@@ -2621,10 +2645,10 @@ abstract class AppLocalizations {
   /// **'No clear patterns right now. Your sky is still here.'**
   String get insights_patternsNone;
 
-  /// A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise.
+  /// A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise. One whole template: never split or concatenate.
   ///
   /// In en, this message translates to:
-  /// **'On check-ins with {tag}, {quadrant} showed up more often.'**
+  /// **'When you tagged {tag}, {quadrant} showed up more often.'**
   String insights_patternTag(String tag, String quadrant);
 
   /// A pattern (Aura Plus): on days the habit was done, check-ins were {quadrant} more often. Descriptive only, never causal.

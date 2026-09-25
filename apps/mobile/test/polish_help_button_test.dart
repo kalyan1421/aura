@@ -13,9 +13,11 @@ import 'package:go_router/go_router.dart';
 import 'helpers.dart';
 
 /// "I need help now" at 1.0 and 2.0 text scale, in English and Telugu:
-/// never clipped, still clearly a button (a pill on one line, a rounded
-/// rectangle once it wraps, never a near-circle), ≥ 48 dp, and within the
-/// first three focus stops on Home.
+/// never clipped, still clearly a button, ≥ 48 dp, and within the first
+/// three focus stops on Home. A compact (top bar) button never wraps: a pill
+/// on one line, or the heart-only button above 130% text or where the label
+/// doesn't fit. The full-size button may wrap into a rounded rectangle, never
+/// a near-circle.
 
 void _setSize(WidgetTester tester, Size logical, double scale) {
   tester.view.physicalSize = logical * 3;
@@ -45,22 +47,23 @@ Widget _home(Locale locale, String tag) => ProviderScope(
 );
 
 /// A compact top bar like Check-in's: a 48 dp close, then help in a
-/// Flexible that is [slot] dp wide.
-Widget _slot(Locale locale, double slot) => localized(
+/// Flexible that is [slot] dp wide. [compact]: false puts the full-size
+/// (wrapping) button there instead.
+Widget _slot(Locale locale, double slot, {bool compact = true}) => localized(
   Scaffold(
     body: SafeArea(
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: SizedBox(
           width: 48 + 8 + slot,
-          child: const Row(
+          child: Row(
             children: [
-              SizedBox(width: 48, height: 48),
-              SizedBox(width: 8),
+              const SizedBox(width: 48, height: 48),
+              const SizedBox(width: 8),
               Flexible(
                 child: Align(
                   alignment: AlignmentDirectional.centerEnd,
-                  child: HelpNowButton(compact: true),
+                  child: HelpNowButton(compact: compact),
                 ),
               ),
             ],
@@ -89,6 +92,30 @@ bool _expectReadableButton(
   );
   expect(target.height, greaterThanOrEqualTo(48), reason: reason);
   expect(target.width, greaterThanOrEqualTo(48), reason: reason);
+
+  // Heart only: round, its words in the tooltip and screen-reader label.
+  if (find
+      .descendant(of: button, matching: find.byKey(HelpNowButton.iconOnlyKey))
+      .evaluate()
+      .isNotEmpty) {
+    final l = AppLocalizations.of(tester.element(button));
+    expect(
+      find.descendant(of: button, matching: find.byType(Text)),
+      findsNothing,
+      reason: reason,
+    );
+    expect(
+      tester
+          .widget<Tooltip>(
+            find.descendant(of: button, matching: find.byType(Tooltip)),
+          )
+          .message,
+      l.help_button,
+      reason: reason,
+    );
+    expect(target.width / target.height, closeTo(1, 0.05), reason: reason);
+    return false;
+  }
 
   // The visible shape.
   final material = find
@@ -171,6 +198,9 @@ void main() {
           await tester.pumpWidget(_home(locale, tag));
           await settleIo(tester);
           _expectReadableButton(tester, 'Home $name $tag $scale');
+          if (scale > 1.3) {
+            expect(find.byKey(HelpNowButton.iconOnlyKey), findsOneWidget);
+          }
 
           final order = tester.semantics
               .simulatedAccessibilityTraversal()
@@ -208,14 +238,31 @@ void main() {
     }
   }
 
-  testWidgets('one line: a pill; wrapped: a rounded rectangle', (tester) async {
+  testWidgets('full size: one line a pill, wrapped a rounded rectangle', (
+    tester,
+  ) async {
+    _setSize(tester, const Size(700, 400), 1.0);
+    await tester.pumpWidget(_slot(const Locale('en'), 600, compact: false));
+    await tester.pump();
+    expect(_expectReadableButton(tester, 'wide'), isFalse);
+
+    await tester.pumpWidget(_slot(const Locale('en'), 220, compact: false));
+    await tester.pump();
+    expect(_expectReadableButton(tester, 'narrow'), isTrue);
+  });
+
+  testWidgets('compact never wraps: a pill that fits, else the heart', (
+    tester,
+  ) async {
     _setSize(tester, const Size(700, 400), 1.0);
     await tester.pumpWidget(_slot(const Locale('en'), 600));
     await tester.pump();
     expect(_expectReadableButton(tester, 'wide'), isFalse);
+    expect(find.byKey(HelpNowButton.iconOnlyKey), findsNothing);
 
     await tester.pumpWidget(_slot(const Locale('en'), 220));
     await tester.pump();
-    expect(_expectReadableButton(tester, 'narrow'), isTrue);
+    _expectReadableButton(tester, 'narrow');
+    expect(find.byKey(HelpNowButton.iconOnlyKey), findsOneWidget);
   });
 }

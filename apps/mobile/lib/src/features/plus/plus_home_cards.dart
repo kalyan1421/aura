@@ -202,7 +202,9 @@ class _PlusHomeCardsState extends ConsumerState<PlusHomeCards> {
     return Container(
       key: key,
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: AuraSpace.m),
+      // The standard 12 dp card gap above, as the Breath Ripples card
+      // before it has (they touched with no gap).
+      margin: const EdgeInsets.only(top: AuraSpace.m),
       padding: const EdgeInsets.all(AuraSpace.l),
       decoration: BoxDecoration(
         color: AuraColors.surface.withValues(alpha: 0.72),

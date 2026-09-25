@@ -56,8 +56,8 @@ class RoomsHomeScreen extends ConsumerWidget {
       appBar: helpAppBar(
         context,
         title: l.rooms_title,
-        // The tab's first screen: Settings instead of Back (app shell).
-        leading: isShellTabRoot(context) ? const ShellSettingsButton() : null,
+        // The tab's first screen: Settings on the right, as on every tab.
+        actions: [if (isShellTabRoot(context)) const ShellSettingsButton()],
       ),
       body: CosmicBackground(
         child: RefreshIndicator(
@@ -137,7 +137,9 @@ class RoomsHomeScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AuraSpace.l),
               ],
-              const _WhatRoomsAre(),
+              // Once someone has joined a room it folds to one line, so
+              // Quiet Together stays near the top.
+              _WhatRoomsAre(collapsed: list.isNotEmpty),
               // Paused rooms: no join offer (the notice above says why).
               if (ref.watch(remoteFlagsProvider).roomsEnabled) ...[
                 const SizedBox(height: AuraSpace.l),
@@ -281,13 +283,35 @@ class _RoomCard extends StatelessWidget {
 }
 
 /// Short and calm: what a room is, what it never has, and Lantern Hour.
-class _WhatRoomsAre extends StatelessWidget {
-  const _WhatRoomsAre();
+/// [collapsed] (someone who has joined a room already knows): one "How
+/// rooms work" line that opens it in place.
+class _WhatRoomsAre extends StatefulWidget {
+  const _WhatRoomsAre({required this.collapsed});
+
+  final bool collapsed;
+
+  @override
+  State<_WhatRoomsAre> createState() => _WhatRoomsAreState();
+}
+
+class _WhatRoomsAreState extends State<_WhatRoomsAre> {
+  bool _open = false;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
+    if (widget.collapsed && !_open) {
+      return Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: TextButton.icon(
+          key: const ValueKey('rooms-what-link'),
+          onPressed: () => setState(() => _open = true),
+          icon: const Icon(Icons.info_outline_rounded, size: 20),
+          label: Text(l.rooms_howRoomsWork),
+        ),
+      );
+    }
     Widget point(IconData icon, String text) => Padding(
       padding: const EdgeInsets.only(top: AuraSpace.m),
       child: Row(

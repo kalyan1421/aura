@@ -217,6 +217,10 @@ void main() {
         'new room total; it cannot be tapped again', (tester) async {
       final api = FakeRoomsApi(detail: _lit())..intentionHolds = 12;
       await pumpRooms(tester, _room, api: api, channels: FakeChannels());
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('room-intention-hold')),
+      );
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('room-intention-hold')));
       await settleRooms(tester);
       expect(api.count('holdIntention'), 1);
@@ -234,8 +238,13 @@ void main() {
         status: 409,
       );
       await pumpRooms(tester, _room, api: api, channels: FakeChannels());
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('room-intention-hold')),
+      );
+      await tester.pump();
       await tester.tap(find.byKey(const ValueKey('room-intention-hold')));
-      await settleRooms(tester);
+      // The notice scrolls the room back to the top (a 300 ms animation).
+      await settleRooms(tester, frames: 10);
       expect(
         find.byKey(const ValueKey('room-intention-holding')),
         findsNothing,

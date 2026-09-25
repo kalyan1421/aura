@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/haptics.dart';
 import '../../core/providers.dart' show idsProvider;
 import '../../core/theme/aura_tokens.dart';
+import '../../core/widgets/edge_fade_scroller.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../rooms/report_sheet.dart';
 import '../rooms/room_controller.dart';
@@ -576,9 +577,10 @@ class ReflectionCard extends StatelessWidget {
             Text(l.reflections_countPrivate, style: t.bodySmall),
           ] else ...[
             const SizedBox(height: AuraSpace.m),
-            SingleChildScrollView(
+            // Scrolls sideways; its edges fade where more gestures wait,
+            // so none looks cut off.
+            EdgeFadeScroller(
               key: ValueKey('reflection-gestures-$id'),
-              scrollDirection: Axis.horizontal,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

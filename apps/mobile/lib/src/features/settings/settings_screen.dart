@@ -159,7 +159,12 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ),
                 // F13: the private keepsake box (server-awarded, so signed in).
-                KeepsakesEntryTile(onOpen: () => context.push(keepsakesRoute)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AuraSpace.s),
+                  child: KeepsakesEntryTile(
+                    onOpen: () => context.push(keepsakesRoute),
+                  ),
+                ),
                 ListTile(
                   key: const ValueKey('set-sign-out'),
                   contentPadding: EdgeInsets.zero,

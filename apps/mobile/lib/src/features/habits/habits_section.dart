@@ -132,7 +132,16 @@ class _HabitChip extends ConsumerWidget {
         ),
         label: Text(name),
         selected: h.done,
+        // Its own check icon (the avatar) marks done: no second checkmark.
+        showCheckmark: false,
         selectedColor: AuraColors.starlight,
+        side: WidgetStateBorderSide.resolveWith(
+          (s) => BorderSide(
+            color: s.contains(WidgetState.selected)
+                ? AuraColors.starlight
+                : AuraColors.controlOutline,
+          ),
+        ),
         labelStyle: Theme.of(context).textTheme.labelLarge
             ?.copyWith(color: h.done ? AuraColors.onAccent : AuraColors.text),
         onSelected: (_) => toggle(),

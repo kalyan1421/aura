@@ -90,6 +90,16 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
   late LocalDay? _backfillDay = widget.backfillDay;
 
   bool _details = false;
+
+  /// The details area under the grid (the "Add a tag or a few words"
+  /// button, then the editor), so it can be scrolled into view.
+  final _detailsKey = GlobalKey(debugLabel: 'checkin-details');
+
+  /// What to bring into view once the details finish growing in: the
+  /// "add details" button (a mood was just picked) or the editor's top
+  /// ("What's it about?"). Null: nothing (other size changes never scroll).
+  _Reveal? _pendingReveal;
+
   bool _saving = false;
   bool _saved = false;
   bool _failed = false;
@@ -355,6 +365,39 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     );
   }
 
+  void _requestReveal(_Reveal what) {
+    _pendingReveal = what;
+    // Without the grow-in animation there is no onEnd: reveal after layout.
+    if (reduceMotionOf(context)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _runReveal());
+    }
+  }
+
+  void _runReveal() {
+    final what = _pendingReveal;
+    _pendingReveal = null;
+    final target = _detailsKey.currentContext;
+    if (what == null || target == null || !mounted) return;
+    final reduce = reduceMotionOf(context);
+    unawaited(
+      Scrollable.ensureVisible(
+        target,
+        // The editor: its heading near the top. The button: just enough
+        // to show it above Save.
+        alignment: what == _Reveal.editorTop ? 0.05 : 1,
+        alignmentPolicy: what == _Reveal.editorTop
+            ? ScrollPositionAlignmentPolicy.explicit
+            : ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+        duration: reduce
+            ? Duration.zero
+            : what == _Reveal.editorTop
+            ? AuraMotion.calm
+            : AuraMotion.quick,
+        curve: AuraMotion.ease,
+      ),
+    );
+  }
+
   Widget _buildPicker(BuildContext context, AppLocalizations l) {
     final theme = Theme.of(context);
     final localeTag = ref.watch(localeControllerProvider);
@@ -384,7 +427,10 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
         : Align(
             alignment: AlignmentDirectional.centerStart,
             child: TextButton.icon(
-              onPressed: () => setState(() => _details = true),
+              onPressed: () => setState(() {
+                _details = true;
+                _requestReveal(_Reveal.editorTop);
+              }),
               icon: const Icon(Icons.add_rounded),
               label: Text(l.checkin_addDetails),
             ),
@@ -454,19 +500,32 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
               MoodGrid(
                 selected: mood,
                 localeTag: localeTag,
-                onSelected: (m) => _draft.mood = m,
+                onSelected: (m) {
+                  final first = _draft.mood == null;
+                  _draft.mood = m;
+                  // The details open under the grid, below the fold on
+                  // most phones: bring "Add a tag or a few words" up so
+                  // nobody saves without seeing it.
+                  if (first) _requestReveal(_Reveal.addButton);
+                },
               ),
               const SizedBox(height: AuraSpace.l),
               // The details grow in; under Reduce Motion they just appear.
-              if (reduceMotionOf(context))
-                details
-              else
-                AnimatedSize(
-                  duration: AuraMotion.calm,
-                  curve: AuraMotion.ease,
-                  alignment: Alignment.topCenter,
-                  child: details,
-                ),
+              KeyedSubtree(
+                key: _detailsKey,
+                child: reduceMotionOf(context)
+                    ? details
+                    : AnimatedSize(
+                        // The one-line "add details" button comes in quickly
+                        // (it is scrolled into view right after); the editor
+                        // grows in calmly.
+                        duration: _details ? AuraMotion.calm : AuraMotion.quick,
+                        curve: AuraMotion.ease,
+                        alignment: Alignment.topCenter,
+                        onEnd: _runReveal,
+                        child: details,
+                      ),
+              ),
               if (_dayOutOfRange) ...[
                 const SizedBox(height: AuraSpace.m),
                 InlineNotice(
@@ -982,3 +1041,6 @@ class _BackfillSaved extends ConsumerWidget {
     );
   }
 }
+
+/// What [_CheckInScreenState] scrolls into view after the details grow in.
+enum _Reveal { addButton, editorTop }

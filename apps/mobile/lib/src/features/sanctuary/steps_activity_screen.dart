@@ -248,24 +248,22 @@ class _StepsActivityScreenState extends ConsumerState<StepsActivityScreen> {
                       child: Text(l.common_done),
                     ),
                   )
-                : Row(
+                // Full-width Next like every other primary action; Back is
+                // a text button above it.
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: _step > 0
-                            ? TextButton(
-                                key: const ValueKey('steps-back'),
-                                onPressed: _back,
-                                child: Text(l.common_back),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                      const SizedBox(width: AuraSpace.m),
-                      Expanded(
-                        child: FilledButton(
-                          key: const ValueKey('steps-next'),
-                          onPressed: () => _next(steps.length),
-                          child: Text(l.sanctuary_next),
+                      if (_step > 0)
+                        TextButton(
+                          key: const ValueKey('steps-back'),
+                          onPressed: _back,
+                          child: Text(l.common_back),
                         ),
+                      FilledButton(
+                        key: const ValueKey('steps-next'),
+                        onPressed: () => _next(steps.length),
+                        child: Text(l.sanctuary_next),
                       ),
                     ],
                   ),

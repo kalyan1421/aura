@@ -1,27 +1,32 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
-import '../../../l10n/app_localizations.dart';
 import '../../features/support/support_sheet.dart';
 import '../theme/aura_tokens.dart';
 
-/// The top bar of a secondary screen (Settings, History, a check-in, Delete
-/// my account): Back, the title, and "I need help now".
+/// Aura's one top bar (design critique #2): Back or close (or, on a tab's
+/// first screen, nothing), the title on one line, then "I need help now"
+/// and any [actions] (Settings on a tab root) on the right.
 ///
-/// The help button stays in the 56 dp bar only when it truly fits there on
-/// one line beside Back and the whole title, measured at the current
-/// locale, text scale and width. Otherwise (a longer language such as
-/// Tenglish, large text, a narrow phone) it moves to a row of its own under
-/// the title, end-aligned, sized for its label at any text scale, so the
-/// title keeps its row and the button keeps a proper pill (or, once its
-/// label has to wrap, rounded-rectangle) shape. Either way it comes right
-/// after Back and the title in focus order (REQ-A11Y-11).
+/// The help button never wraps and never leaves the 56 dp bar. Measured at
+/// the current locale, text scale and width, in this order:
+///
+/// 1. the whole title and the labelled pill fit: both as they are;
+/// 2. the title fits at a slightly smaller size ([HelpBarLayout.minTitle]):
+///    the title shrinks, the pill keeps its words;
+/// 3. otherwise the title moves to its own line under the bar (a large
+///    title, up to two lines, never cut) and the pill **keeps its words**:
+///    Back and "I need help now" stay where they are on every screen;
+/// 4. only when text is above 130%, or the labelled pill doesn't fit even
+///    beside Back alone, does it collapse to a heart-only round button whose
+///    label stays in the tooltip and screen-reader label.
+///
+/// Help comes right after Back and the title in focus order (REQ-A11Y-11).
 PreferredSizeWidget helpAppBar(
   BuildContext context, {
   required String title,
   Widget? leading,
   bool automaticallyImplyLeading = true,
+  List<Widget> actions = const [],
 }) {
   final layout = HelpBarLayout.resolve(
     context,
@@ -30,155 +35,193 @@ PreferredSizeWidget helpAppBar(
         leading != null ||
         (automaticallyImplyLeading &&
             (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)),
+    actionCount: actions.length,
   );
-  const help = HelpNowButton(compact: true);
+  final theme = Theme.of(context);
+  final titleStyle =
+      theme.appBarTheme.titleTextStyle ?? theme.textTheme.titleLarge;
+  final below = layout.titleBelow;
   return AppBar(
     leading: leading,
     automaticallyImplyLeading: automaticallyImplyLeading,
-    title: Semantics(header: true, container: true, child: Text(title)),
-    backgroundColor: AuraColors.sky,
-    actions: layout.inBar
-        ? const [
-            Padding(
-              key: HelpBarLayout.actionKey,
-              padding: EdgeInsetsDirectional.only(end: HelpBarLayout.endInset),
-              child: help,
-            ),
-          ]
-        : null,
-    bottom: layout.inBar
-        ? null
-        : PreferredSize(
-            preferredSize: Size.fromHeight(layout.bottomHeight),
-            child: SizedBox(
-              key: HelpBarLayout.bottomKey,
-              height: layout.bottomHeight,
-              child: const Padding(
-                padding: EdgeInsetsDirectional.only(
-                  start: HelpBarLayout.startInset,
-                  end: HelpBarLayout.endInset,
-                  bottom: HelpBarLayout.bottomInset,
-                ),
-                child: Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: help,
-                ),
-              ),
+    // A large title keeps its screen-reader stop here, between Back and help
+    // (REQ-A11Y-11); the visible words sit under the bar.
+    title: below
+        ? Semantics(
+            header: true,
+            container: true,
+            label: title,
+            // A real size: screen readers skip empty nodes.
+            child: const SizedBox(width: double.infinity, height: 24),
+          )
+        : Semantics(
+            header: true,
+            container: true,
+            child: Text(
+              title,
+              key: HelpBarLayout.titleKey,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: layout.titleSize == null
+                  ? null
+                  : titleStyle?.copyWith(fontSize: layout.titleSize),
             ),
           ),
+    bottom: below ? HelpBarLayout.largeTitle(context, title) : null,
+    backgroundColor: AuraColors.sky,
+    actions: [
+      Padding(
+        key: HelpBarLayout.actionKey,
+        padding: EdgeInsetsDirectional.only(
+          end: actions.isEmpty ? HelpBarLayout.endInset : 0,
+        ),
+        child: HelpNowButton(compact: true, iconOnly: layout.iconOnly),
+      ),
+      ...actions,
+      if (actions.isNotEmpty) const SizedBox(width: AuraSpace.xs),
+    ],
   );
 }
 
-/// Where [helpAppBar] puts "I need help now", from real text measurements.
+/// How [helpAppBar] fits the title and "I need help now", from real text
+/// measurements.
 @immutable
 class HelpBarLayout {
-  const HelpBarLayout._({required this.inBar, required this.bottomHeight});
+  const HelpBarLayout._({
+    required this.iconOnly,
+    this.titleSize,
+    this.titleBelow = false,
+  });
 
   /// The help button in the bar's actions.
   static const Key actionKey = ValueKey('help-bar-action');
 
-  /// The row under the title that holds the help button.
-  static const Key bottomKey = ValueKey('help-bar-bottom');
+  /// The bar's title text.
+  static const Key titleKey = ValueKey('help-bar-title');
 
-  /// Space after the button (in the bar and in the row under it).
+  /// Space after the button when it is the last thing in the bar.
   static const double endInset = AuraSpace.s;
 
-  /// Space before the button in the row under the title.
-  static const double startInset = AuraSpace.l;
-
-  /// Space under the row below the title.
-  static const double bottomInset = AuraSpace.s;
-
-  // HelpNowButton's own geometry (support_sheet.dart): icon size, vertical
-  // padding and visible minimum height. Its one-line width comes from
-  // [HelpNowButton.oneLineWidth].
-  static const double _helpIcon = 18;
-  static const double _helpVPad = 10;
-  static const double _helpMinHeight = 44;
+  /// The smallest title size used to keep the labelled pill (titleLarge is
+  /// 22).
+  static const double minTitle = 18;
 
   /// AppBar caps its title's text scale at this factor.
   static const double _titleMaxScale = 1.34;
 
-  /// Whether the button sits in the 56 dp bar on one line.
-  final bool inBar;
+  /// Help is the heart-only button.
+  final bool iconOnly;
 
-  /// Height of the row under the title (0 while [inBar]).
-  final double bottomHeight;
+  /// The title's font size when it had to shrink (null: the theme's).
+  final double? titleSize;
+
+  /// The title sits on its own line under the bar (a large title).
+  final bool titleBelow;
+
+  /// The large title under the bar: the screen's headline, up to two lines,
+  /// never cut, hidden from screen readers (the bar's title slot reads it).
+  static PreferredSizeWidget largeTitle(BuildContext context, String title) {
+    final style = Theme.of(context).textTheme.headlineSmall;
+    final painter =
+        TextPainter(
+          text: TextSpan(text: title, style: style),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          locale: Localizations.maybeLocaleOf(context),
+          maxLines: 2,
+        )..layout(
+          maxWidth: MediaQuery.sizeOf(context).width - 2 * AuraSpace.gutter,
+        );
+    final height = painter.height + AuraSpace.s;
+    painter.dispose();
+    return PreferredSize(
+      preferredSize: Size.fromHeight(height),
+      child: Align(
+        alignment: AlignmentDirectional.bottomStart,
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(
+            AuraSpace.gutter,
+            0,
+            AuraSpace.gutter,
+            AuraSpace.s,
+          ),
+          child: ExcludeSemantics(
+            child: Text(
+              title,
+              key: titleKey,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: style,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   /// Measures the title and the help label with their real styles at this
   /// [context]'s locale, text scale and width. [hasLeading] is whether the
-  /// bar shows a Back (or close) button before the title.
+  /// bar shows a Back (or close) button before the title; [actionCount]
+  /// the 48 dp icon buttons after help.
   static HelpBarLayout resolve(
     BuildContext context, {
     required String title,
     required bool hasLeading,
+    int actionCount = 0,
   }) {
+    if (HelpNowButton.iconOnlyForTextScale(context)) {
+      return const HelpBarLayout._(iconOnly: true);
+    }
     final theme = Theme.of(context);
     final bar = theme.appBarTheme;
     final scaler = MediaQuery.textScalerOf(context);
-    final direction = Directionality.of(context);
-    final locale = Localizations.maybeLocaleOf(context);
     final width =
         MediaQuery.sizeOf(context).width -
         MediaQuery.paddingOf(context).horizontal; // the bar's SafeArea
+    final style = bar.titleTextStyle ?? theme.textTheme.titleLarge;
 
-    TextPainter paint(
-      String text,
-      TextStyle? style,
-      TextScaler textScaler, {
-      double maxWidth = double.infinity,
-    }) => TextPainter(
-      text: TextSpan(text: text, style: style),
-      textDirection: direction,
-      textScaler: textScaler,
-      locale: locale,
-      maxLines: maxWidth.isFinite ? null : 1,
-    )..layout(maxWidth: maxWidth);
-
-    // The button on one line: label, icon, gap, side padding and border.
-    final helpWidth = HelpNowButton.oneLineWidth(context, compact: true);
-
-    // The bar: [Back] · spacing · title · spacing · help · end inset. The
-    // title is measured the way AppBar draws it (its style, scale capped).
-    final titlePainter = paint(
-      title,
-      bar.titleTextStyle ?? theme.textTheme.titleLarge,
-      scaler.clamp(maxScaleFactor: _titleMaxScale),
-    );
-    final titleWidth = titlePainter.width;
-    titlePainter.dispose();
-    final spacing = bar.titleSpacing ?? NavigationToolbar.kMiddleSpacing;
-    final used =
-        (hasLeading ? bar.leadingWidth ?? kToolbarHeight : 0) +
-        2 * spacing +
-        titleWidth +
-        helpWidth +
-        endInset;
-    if (used <= width) {
-      return const HelpBarLayout._(inBar: true, bottomHeight: 0);
+    double titleWidth(double? size) {
+      final painter = TextPainter(
+        text: TextSpan(
+          text: title,
+          style: size == null ? style : style?.copyWith(fontSize: size),
+        ),
+        textDirection: Directionality.of(context),
+        textScaler: scaler.clamp(maxScaleFactor: _titleMaxScale),
+        locale: Localizations.maybeLocaleOf(context),
+        maxLines: 1,
+      )..layout();
+      final w = painter.width;
+      painter.dispose();
+      return w;
     }
 
-    // Its own row: as tall as the button with its label laid out at the
-    // row's width (wrapping only if even the row is too narrow).
-    final l = AppLocalizations.of(context);
-    final labelStyle = theme.textTheme.labelLarge;
-    final oneLine = paint(l.help_button, labelStyle, scaler);
-    final chrome = helpWidth - oneLine.width;
-    oneLine.dispose();
-    final labelMax = math.max(0.0, width - startInset - endInset - chrome);
-    final label = paint(l.help_button, labelStyle, scaler, maxWidth: labelMax);
-    final labelHeight = label.height;
-    label.dispose();
-    final button = math.max(
-      kMinInteractiveDimension, // padded tap target
-      math.max(
-        _helpMinHeight,
-        math.max(_helpIcon, labelHeight) + 2 * _helpVPad,
-      ),
-    );
-    return HelpBarLayout._(
-      inBar: false,
-      bottomHeight: (button + bottomInset).ceilToDouble(),
-    );
+    final spacing = bar.titleSpacing ?? NavigationToolbar.kMiddleSpacing;
+    final chrome =
+        (hasLeading ? bar.leadingWidth ?? kToolbarHeight : 0) +
+        2 * spacing +
+        actionCount * kMinInteractiveDimension +
+        (actionCount > 0 ? AuraSpace.xs : endInset);
+    final room =
+        width - chrome - HelpNowButton.oneLineWidth(context, compact: true);
+    if (titleWidth(null) <= room) {
+      return const HelpBarLayout._(iconOnly: false);
+    }
+    final full = style?.fontSize ?? 22;
+    if (full > minTitle && titleWidth(minTitle) <= room) {
+      // The largest size between minTitle and full that fits.
+      var size = full;
+      while (size > minTitle && titleWidth(size) > room) {
+        size -= 0.5;
+      }
+      return HelpBarLayout._(iconOnly: false, titleSize: size);
+    }
+    // The title goes under the bar; help keeps its words if it fits beside
+    // Back (and the actions) on its own.
+    if (width - chrome - HelpNowButton.oneLineWidth(context, compact: true) >=
+        0) {
+      return const HelpBarLayout._(iconOnly: false, titleBelow: true);
+    }
+    return const HelpBarLayout._(iconOnly: true);
   }
 }

@@ -15,6 +15,7 @@ import '../../core/widgets/inline_notice.dart';
 import '../rooms/room_copy.dart';
 import '../rooms/room_guidelines.dart';
 import '../rooms/room_models.dart' show GestureType;
+import '../rooms/gesture_tray.dart';
 import '../rooms/rooms_providers.dart' show roomsRepositoryProvider;
 import '../sanctuary/calm_route.dart';
 import '../sanctuary/sounds/sounds_controller.dart';
@@ -664,18 +665,14 @@ class _GestureTray extends StatelessWidget {
           child: Text(l.quiet_gesturesTitle, style: t.titleSmall),
         ),
         const SizedBox(height: AuraSpace.s),
-        Wrap(
-          spacing: AuraSpace.s,
-          runSpacing: AuraSpace.s,
-          children: [
-            for (final g in GestureType.values)
-              ActionChip(
-                key: ValueKey('quiet-gesture-${g.wire}'),
-                avatar: Icon(gestureIcon(g), size: 18),
-                label: Text(gestureName(l, g)),
-                onPressed: enabled ? () => onSend(g) : null,
-              ),
-          ],
+        GestureTray(
+          density: GestureTrayDensity.grid,
+          items: presetGestureItems(
+            l,
+            hint: l.rooms_trayHint,
+            keyPrefix: 'quiet-gesture-',
+            onSend: enabled ? onSend : null,
+          ),
         ),
       ],
     );

@@ -153,6 +153,7 @@ MoodGridFit resolveMoodGridFit({
   required double Function(String name, double fontSize, double maxWidth)
   measureHeight,
   bool Function(double headerWidth)? headerFits,
+  MoodGridLayout minLayout = MoodGridLayout.grid,
 }) {
   final words = {
     for (final n in names)
@@ -172,6 +173,7 @@ MoodGridFit resolveMoodGridFit({
       );
 
   for (final layout in MoodGridLayout.values) {
+    if (layout.index < minLayout.index) continue;
     final labelWidth = moodLabelWidth(layout, width);
     if (labelWidth <= 0) continue;
     if (headerFits != null && !headerFits(quadrantHeaderWidth(layout, width))) {
@@ -281,9 +283,25 @@ class MoodGrid extends StatelessWidget {
       return w;
     }
 
+    // Every language gets the layout English gets on this phone, or a
+    // roomier one: short Devanagari names alone would pick the 4×4 of
+    // dot-above tiles, a different grid from every other language.
+    var floor = MoodGridLayout.grid;
+    if (localeTag != 'en') {
+      final en = labelBaseStyle(theme, 'en');
+      floor = resolveMoodGridFit(
+        width: width,
+        baseFontSize: en.fontSize!,
+        names: [for (final m in moodCatalog) m.nameFor('en')],
+        measureWord: (word, size) => measure(word, en.copyWith(fontSize: size)),
+        measureHeight: (name, size, maxWidth) => 0,
+      ).layout;
+    }
+
     final fit = resolveMoodGridFit(
       width: width,
       baseFontSize: base.fontSize!,
+      minLayout: floor,
       names: [for (final m in moodCatalog) m.nameFor(localeTag)],
       measureWord: (word, size) => measure(word, base.copyWith(fontSize: size)),
       measureHeight: (name, size, maxWidth) {

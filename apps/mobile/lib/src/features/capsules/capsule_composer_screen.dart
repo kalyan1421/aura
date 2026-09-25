@@ -716,7 +716,10 @@ class _UnlockChooser extends ConsumerWidget {
             ChoiceChip(
               key: const ValueKey('capsule-unlock-date'),
               label: Text(l.capsules_unlockDate),
-              avatar: const Icon(Icons.event_outlined, size: 18),
+              // Selected: the theme's check takes the icon's place.
+              avatar: kind == CapsuleUnlockKind.date
+                  ? null
+                  : const Icon(Icons.event_outlined, size: 18),
               selected: kind == CapsuleUnlockKind.date,
               onSelected: (_) {
                 AuraHaptics.selection();
@@ -726,7 +729,9 @@ class _UnlockChooser extends ConsumerWidget {
             ChoiceChip(
               key: const ValueKey('capsule-unlock-feeling'),
               label: Text(l.capsules_unlockFeeling),
-              avatar: const Icon(Icons.favorite_border_rounded, size: 18),
+              avatar: kind == CapsuleUnlockKind.feeling
+                  ? null
+                  : const Icon(Icons.favorite_border_rounded, size: 18),
               selected: kind == CapsuleUnlockKind.feeling,
               onSelected: (_) {
                 AuraHaptics.selection();
@@ -801,9 +806,14 @@ class _UnlockChooser extends ConsumerWidget {
                   key: ValueKey('capsule-quadrant-${q.name}'),
                   label: Text(l.capsules_anyQuadrant(quadrantName(l, q))),
                   selected: draft.quadrant == q,
-                  selectedColor: AuraColors.quadrantDeep(q),
-                  side: BorderSide(
-                    color: AuraColors.quadrant(q).withValues(alpha: 0.6),
+                  // Idle: the quadrant's own outline. Selected: the one
+                  // chip style (lavender fill and a check).
+                  side: WidgetStateBorderSide.resolveWith(
+                    (s) => BorderSide(
+                      color: s.contains(WidgetState.selected)
+                          ? AuraColors.accent
+                          : AuraColors.quadrant(q).withValues(alpha: 0.8),
+                    ),
                   ),
                   onSelected: (_) {
                     AuraHaptics.selection();
@@ -815,7 +825,6 @@ class _UnlockChooser extends ConsumerWidget {
                     key: ValueKey('capsule-mood-${m.id}'),
                     label: Text(m.nameFor(tag)),
                     selected: draft.moodId == m.id,
-                    selectedColor: AuraColors.quadrantDeep(q),
                     onSelected: (_) {
                       AuraHaptics.selection();
                       draft.pickMood(m.id);

@@ -1,3 +1,4 @@
+import java.util.Base64
 import java.util.Properties
 
 plugins {
@@ -122,6 +123,59 @@ val verifyReleaseSigning by tasks.registering {
     }
 }
 tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(verifyReleaseSigning) }
+
+// Release guard (design critique, "before release"): a release build fails
+// when the Grievance Officer, support or legal values passed with
+// --dart-define are missing or still placeholders ("example.com",
+// "(placeholder)"). Debug and profile are untouched. Same rules as
+// ios/scripts/release_legal_check.sh; tested in
+// test/release_legal_guard_test.dart. AURA_ALLOW_PLACEHOLDER_LEGAL=1 turns
+// it into a warning for an internal, never-distributed build.
+val releaseLegalKeys = listOf(
+    "AURA_GRIEVANCE_NAME",
+    "AURA_GRIEVANCE_EMAIL",
+    "AURA_SUPPORT_EMAIL",
+    "AURA_PRIVACY_URL",
+    "AURA_TERMS_URL",
+)
+val releaseLegalPlaceholders = listOf("example.com", "example.org", "example.net", "placeholder")
+val verifyReleaseLegal by tasks.registering {
+    group = "verification"
+    description = "Fails a release build whose legal/support values are missing or placeholders."
+    val encoded = (project.findProperty("dart-defines") as String?).orEmpty()
+    val allow = providers.environmentVariable("AURA_ALLOW_PLACEHOLDER_LEGAL").orNull == "1"
+    doLast {
+        val defines = encoded.split(",").filter { it.isNotBlank() }.mapNotNull { entry ->
+            val decoded = try {
+                String(Base64.getDecoder().decode(entry), Charsets.UTF_8)
+            } catch (e: IllegalArgumentException) {
+                return@mapNotNull null
+            }
+            val eq = decoded.indexOf('=')
+            if (eq <= 0) null else decoded.substring(0, eq) to decoded.substring(eq + 1)
+        }.toMap()
+        val problems = releaseLegalKeys.mapNotNull { key ->
+            val value = defines[key].orEmpty()
+            when {
+                value.isBlank() -> "$key (missing)"
+                releaseLegalPlaceholders.any { value.lowercase().contains(it) } ->
+                    "$key (placeholder: $value)"
+                else -> null
+            }
+        }
+        if (problems.isNotEmpty()) {
+            val message = "Aura release build has missing or placeholder legal/support values: " +
+                problems.joinToString() + ". Pass real values with --dart-define " +
+                "(lib/src/core/env/env.dart)."
+            if (allow) {
+                logger.warn("WARNING: AURA_ALLOW_PLACEHOLDER_LEGAL=1: $message Do not distribute this build.")
+            } else {
+                throw GradleException(message)
+            }
+        }
+    }
+}
+tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(verifyReleaseLegal) }
 
 kotlin {
     compilerOptions {

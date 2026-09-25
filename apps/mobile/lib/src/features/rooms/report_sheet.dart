@@ -203,6 +203,16 @@ class _ReportSheetState extends ConsumerState<ReportSheet> {
               ),
             ],
             const SizedBox(height: AuraSpace.l),
+            // Why Send is still off: a reason comes first.
+            if (_reason == null) ...[
+              Text(
+                l.rooms_reportPickReason,
+                key: const ValueKey('report-pick-reason'),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: AuraColors.textSoft),
+              ),
+              const SizedBox(height: AuraSpace.s),
+            ],
             FilledButton(
               key: const ValueKey('report-send'),
               onPressed: _reason == null || _busy ? null : _send,

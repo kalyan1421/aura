@@ -18,6 +18,9 @@ import '../sanctuary/breathe_session_screen.dart';
 import '../sanctuary/calm_route.dart';
 import '../sanctuary/habit_auto_complete.dart';
 import '../support/support_sheet.dart' show HelpNowButton;
+import '../rooms/gesture_tray.dart';
+import '../rooms/room_copy.dart' show gestureIcon;
+import '../rooms/room_models.dart' show GestureType;
 import 'ocean_painter.dart';
 import 'ripple_controller.dart';
 import 'ripple_engine.dart';
@@ -217,6 +220,16 @@ class _RippleScreenState extends ConsumerState<RippleScreen>
       _ => l.ripples_lightHuman(v.label ?? ''),
     };
   }
+
+  /// The short name drawn under a light, or null (other people's lights
+  /// carry no visible name).
+  String? _shortLightName(AppLocalizations l, LightView v) => v.me
+      ? l.ripples_you
+      : switch (v.mode) {
+          LightMode.echo => l.ripples_echo,
+          LightMode.guide => l.ripples_guide,
+          _ => null,
+        };
 
   static String gestureName(AppLocalizations l, RippleGesture g) => switch (g) {
     RippleGesture.hug => l.ripples_gestureHug,
@@ -462,24 +475,37 @@ class _RippleScreenState extends ConsumerState<RippleScreen>
                               size: 16,
                               color: AuraColors.starlight,
                             ),
-                          Text(
-                            v.me
-                                ? l.ripples_you
-                                : v.mode == LightMode.echo
-                                ? l.ripples_echo
-                                : v.mode == LightMode.guide
-                                ? l.ripples_guide
-                                : '',
-                            style: t.labelSmall?.copyWith(
-                              color: AuraColors.textMuted,
-                            ),
-                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
               ),
+            // "you / echo / guide" under each light (never inside its
+            // glow): 12 pt textSoft. Screen readers get it from the target.
+            for (final (i, v) in views.indexed)
+              if (_shortLightName(l, v) case final name?)
+                Positioned(
+                  left: box.maxWidth * OceanPainter.seatX(i, views.length) - 48,
+                  top: lightY + 30,
+                  width: 96,
+                  child: IgnorePointer(
+                    child: ExcludeSemantics(
+                      child: Text(
+                        name,
+                        key: ValueKey('ripple-light-label-${v.seat}'),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                        style: t.labelSmall?.copyWith(
+                          fontSize: 12,
+                          color: AuraColors.textSoft,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
           ],
         );
       },
@@ -532,24 +558,33 @@ class _RippleScreenState extends ConsumerState<RippleScreen>
   Widget _tray(AppLocalizations l) => Semantics(
     container: true,
     label: l.ripples_contactTray,
-    child: Wrap(
-      alignment: WrapAlignment.center,
-      spacing: AuraSpace.s,
-      runSpacing: AuraSpace.xs,
-      children: [
-        ActionChip(
-          key: const ValueKey('ripple-pulse'),
-          avatar: const Icon(Icons.favorite_border_rounded, size: 18),
-          label: Text(l.ripples_pulse),
-          onPressed: () => _c.sendPulse(),
-        ),
-        for (final g in RippleGesture.values)
-          ActionChip(
-            key: ValueKey('ripple-gesture-send-${g.wire}'),
-            label: Text(gestureName(l, g)),
-            onPressed: () => _c.sendGesture(g),
+    // The shared tray: a pulse, then the three Ripples gestures with the
+    // same icons (and order) as the room presets they mirror.
+    child: Center(
+      child: GestureTray(
+        // Four tiles: one full row, nothing hidden off the edge.
+        density: GestureTrayDensity.grid,
+        padding: const EdgeInsets.symmetric(horizontal: AuraSpace.gutter),
+        items: [
+          GestureTrayItem(
+            key: const ValueKey('ripple-pulse'),
+            icon: Icons.flare_rounded,
+            label: l.ripples_pulse,
+            hint: l.ripples_contactTray,
+            onPressed: () => _c.sendPulse(),
           ),
-      ],
+          for (final g in RippleGesture.values)
+            GestureTrayItem(
+              key: ValueKey('ripple-gesture-send-${g.wire}'),
+              icon: gestureIcon(
+                GestureType.fromWire(g.wire) ?? GestureType.hug,
+              ),
+              label: gestureName(l, g),
+              hint: l.ripples_contactTray,
+              onPressed: () => _c.sendGesture(g),
+            ),
+        ],
+      ),
     ),
   );
 

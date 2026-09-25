@@ -371,7 +371,7 @@ void main() {
       );
       expect(
         sentence.data,
-        'On check-ins with Study, Storm showed up more often.',
+        'When you tagged Study, Storm showed up more often.',
       );
       expect(RegExp(r'[0-9%]').hasMatch(sentence.data!), isFalse);
 

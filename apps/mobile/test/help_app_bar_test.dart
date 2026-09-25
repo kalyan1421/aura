@@ -20,10 +20,11 @@ import 'package:go_router/go_router.dart';
 import 'helpers.dart';
 
 /// "I need help now" on the secondary screens' top bars ([helpAppBar]):
-/// in the 56 dp bar on one line only when it truly fits beside Back and the
-/// whole title; otherwise in its own row under the title, never clipped,
-/// never overflowing, and always within the first three focus stops
-/// (REQ-A11Y-11).
+/// always in the 56 dp bar, never wrapping and never moving to a row of its
+/// own. The labelled pill (one line, whole label) while it fits beside Back
+/// and the title (which may shrink a little first); otherwise, and always
+/// above 130% text, the heart-only button with the label kept for screen
+/// readers. Always within the first three focus stops (REQ-A11Y-11).
 ///
 /// Drawn with real fonts, not the test font (about twice as wide): Roboto
 /// from the Flutter SDK stands in for the phone's system font under the
@@ -218,10 +219,10 @@ int _expectWholeLabel(WidgetTester tester, String reason) {
   return lineTops.length;
 }
 
-enum _Place { bar, below }
+enum _Mode { pill, heart, titleBelow }
 
-/// Checks the bar on the open screen and returns where help is.
-_Place _expectHelpBar(
+/// Checks the bar on the open screen and returns how help is shown.
+_Mode _expectHelpBar(
   WidgetTester tester, {
   required String title,
   required String reason,
@@ -235,72 +236,74 @@ _Place _expectHelpBar(
     findsOneWidget,
     reason: reason,
   );
-
-  final inBar = find.byKey(HelpBarLayout.actionKey);
-  final below = find.byKey(HelpBarLayout.bottomKey);
-  expect(
-    inBar.evaluate().length + below.evaluate().length,
-    1,
-    reason: '$reason: help is either in the bar or under it',
-  );
+  // Always in the bar's actions: there is no row under the title any more.
+  expect(find.byKey(HelpBarLayout.actionKey), findsOneWidget, reason: reason);
 
   final bar = tester.getRect(appBar);
   final toolbar = Rect.fromLTWH(bar.left, bar.top, bar.width, kToolbarHeight);
+  final titleRect = tester.getRect(find.byKey(HelpBarLayout.titleKey));
+  // A large title sits under the toolbar; otherwise the bar is one row.
+  final below = titleRect.top >= toolbar.bottom - 0.5;
+  if (!below) {
+    expect(bar.height, closeTo(kToolbarHeight, 0.01), reason: reason);
+  }
   final target = tester.getRect(
     find.descendant(of: help, matching: find.byType(OutlinedButton)),
   );
   expect(target.height, greaterThanOrEqualTo(48), reason: reason);
-  final lines = _expectWholeLabel(tester, reason);
+  expect(target.width, greaterThanOrEqualTo(48), reason: reason);
+  expect(toolbar.contains(target.center), isTrue, reason: reason);
+  expect(target.top, greaterThanOrEqualTo(toolbar.top - 0.01));
+  expect(target.bottom, lessThanOrEqualTo(toolbar.bottom + 0.01));
+
   final titleText = _title(tester, title);
-
-  if (inBar.evaluate().isNotEmpty) {
-    // One line, inside the 56 dp row, and the whole title still shows.
-    expect(lines, 1, reason: '$reason: one line in the bar');
-    expect(toolbar.contains(target.center), isTrue, reason: reason);
-    expect(target.top, greaterThanOrEqualTo(toolbar.top - 0.01));
-    expect(target.bottom, lessThanOrEqualTo(toolbar.bottom + 0.01));
-    expect(
-      titleText.getMaxIntrinsicWidth(double.infinity),
-      lessThanOrEqualTo(titleText.size.width + 0.5),
-      reason: '$reason: the title is cut short',
-    );
-    return _Place.bar;
+  if (below) {
+    // Large title: under the bar, whole (never cut), help keeps its words.
+    expect(titleText.didExceedMaxLines, isFalse, reason: '$reason: cut');
+    expect(titleRect.bottom, lessThanOrEqualTo(bar.bottom + 0.5));
+    expect(_expectWholeLabel(tester, reason), 1, reason: '$reason: one line');
+    return _Mode.titleBelow;
   }
-
-  // Its own row under the title's row, holding the whole button.
-  final row = tester.getRect(below);
-  expect(row.top, closeTo(toolbar.bottom, 0.01), reason: reason);
-  expect(row.bottom, lessThanOrEqualTo(bar.bottom + 0.01), reason: reason);
-  for (final corner in [
-    target.topLeft,
-    target.topRight,
-    target.bottomLeft,
-    target.bottomRight,
-  ]) {
-    expect(
-      row.inflate(0.01).contains(corner),
-      isTrue,
-      reason: '$reason: button $target is outside its row $row',
-    );
-  }
-  // End-aligned (directional), not stretched edge to edge.
-  expect(target.right, closeTo(row.right - HelpBarLayout.endInset, 0.5));
-  expect(target.left, greaterThanOrEqualTo(row.left + 1));
-  // Sized for the button: no clipping, no slack beyond the bottom inset.
-  expect(
-    row.height - target.height,
-    inInclusiveRange(
-      HelpBarLayout.bottomInset - 0.01,
-      HelpBarLayout.bottomInset + 1,
-    ),
-    reason: '$reason: row ${row.height} for a ${target.height} button',
-  );
-  // The title keeps its own row.
-  final titleRect = tester.getRect(
-    find.descendant(of: appBar, matching: find.text(title)),
-  );
+  // The title: one line, in the bar, left of help.
+  expect(titleText.maxLines, 1, reason: reason);
   expect(toolbar.contains(titleRect.center), isTrue, reason: reason);
-  return _Place.below;
+  expect(titleRect.right, lessThanOrEqualTo(target.left + 0.5));
+
+  final heart = find.descendant(
+    of: help,
+    matching: find.byKey(HelpNowButton.iconOnlyKey),
+  );
+  if (heart.evaluate().isNotEmpty) {
+    // Heart only: the words live in the tooltip and the screen-reader label.
+    final l = AppLocalizations.of(tester.element(help));
+    expect(
+      find.descendant(of: help, matching: find.byType(Tooltip)),
+      findsOneWidget,
+      reason: reason,
+    );
+    expect(
+      tester
+          .widget<Tooltip>(
+            find.descendant(of: help, matching: find.byType(Tooltip)),
+          )
+          .message,
+      l.help_button,
+    );
+    expect(
+      tester.getSemantics(help).label,
+      contains(l.help_button),
+      reason: reason,
+    );
+    return _Mode.heart;
+  }
+  // The pill: its whole label on one line, and the whole title shows.
+  expect(_expectWholeLabel(tester, reason), 1, reason: '$reason: one line');
+  expect(
+    titleText.didExceedMaxLines,
+    isFalse,
+    reason: '$reason: the title is cut short beside the full pill',
+  );
+  return _Mode.pill;
 }
 
 /// Help is within the first three focus stops, after Back and the title.
@@ -359,8 +362,8 @@ void main() {
       ('hi', 2.0),
       ('hi-Latn', 2.0),
     ]) {
-      testWidgets('${screen.name}, 390 dp, $tag, ${scale}x: help fits where '
-          'it sits, whole, first three focus stops', (tester) async {
+      testWidgets('${screen.name}, 390 dp, $tag, ${scale}x: help stays in '
+          'the bar, never wraps, first three focus stops', (tester) async {
         _setSize(tester, phone, scale);
         final handle = tester.ensureSemantics();
         await _open(tester, screen, tag);
@@ -369,15 +372,10 @@ void main() {
         );
         final title = screen.title(l);
         final reason = '${screen.name} $tag ${scale}x';
-        final place = _expectHelpBar(tester, title: title, reason: reason);
+        final mode = _expectHelpBar(tester, title: title, reason: reason);
         if (scale >= 2) {
-          // On a 390 dp phone, 200% text never shares the bar with Back and
-          // the title.
-          expect(place, _Place.below, reason: reason);
-        }
-        if (place == _Place.below && scale == 1) {
-          // At 100% the row under the title is wide enough for one line.
-          expect(_expectWholeLabel(tester, reason), 1, reason: reason);
+          // Above 130% text help is always the heart-only button.
+          expect(mode, _Mode.heart, reason: reason);
         }
         _expectFocusOrder(tester, title: title, reason: reason);
         handle.dispose();
@@ -386,72 +384,50 @@ void main() {
     }
   }
 
-  testWidgets('Settings, en, 1.0x: help stays in the bar on one line', (
+  testWidgets('Settings, en, 1.0x: the labelled pill in the bar', (
     tester,
   ) async {
     _setSize(tester, phone, 1);
     await _open(tester, _screens[0], 'en');
     expect(
       _expectHelpBar(tester, title: 'Settings', reason: 'Settings en'),
-      _Place.bar,
+      _Mode.pill,
     );
     await _close(tester);
   });
 
-  testWidgets('History, te-Latn, 1.0x ("Mee check-ins"): help moves under '
-      'the title on one line, no overflow', (tester) async {
+  testWidgets('History, te-Latn, 1.0x ("Mee check-ins"): still one row, '
+      'no overflow, help never wraps', (tester) async {
     _setSize(tester, phone, 1);
     await _open(tester, _screens[1], 'te-Latn');
-    expect(
-      _expectHelpBar(tester, title: 'Mee check-ins', reason: 'History te-Latn'),
-      _Place.below,
-    );
-    expect(_expectWholeLabel(tester, 'History te-Latn'), 1);
-    expect(find.text('Naaku ippude help kaavali'), findsOneWidget);
+    _expectHelpBar(tester, title: 'Mee check-ins', reason: 'History te-Latn');
+    expect(find.byKey(HelpBarLayout.actionKey), findsOneWidget);
     await _close(tester);
   });
 
-  testWidgets('it moves under the title only when the bar is truly too '
-      'narrow (History, en, 1.0x, 320–520 dp)', (tester) async {
-    _Place? last;
+  testWidgets('at normal text, help never loses its words: a title that '
+      "doesn't fit moves under the bar (History, en, 1.0x, 320–560 dp)", (
+    tester,
+  ) async {
+    _Mode? last;
     var sawBelow = false;
-    for (var width = 320.0; width <= 520; width += 10) {
+    for (var width = 320.0; width <= 560; width += 10) {
       _setSize(tester, Size(width, 844), 1);
       await _open(tester, _screens[1], 'en');
       final reason = 'History en ${width.toInt()} dp';
-      final place = _expectHelpBar(
+      final mode = _expectHelpBar(
         tester,
         title: 'Your check-ins',
         reason: reason,
       );
-      if (place == _Place.below) {
-        sawBelow = true;
-        // What the bar would need, from the drawn widgets: Back, spacing,
-        // the whole title, spacing, the one-line button and its inset.
-        final title = _title(tester, 'Your check-ins');
-        final button = tester.getSize(
-          find
-              .descendant(
-                of: find.byType(HelpNowButton),
-                matching: find.byType(Material),
-              )
-              .first,
-        );
-        final need =
-            kToolbarHeight +
-            2 * NavigationToolbar.kMiddleSpacing +
-            title.getMaxIntrinsicWidth(double.infinity) +
-            button.width +
-            HelpBarLayout.endInset;
-        // oneLineWidth keeps ~2 dp of slack for the border and icon gap.
-        expect(need, greaterThan(width - 3), reason: reason);
-      }
-      // Once it fits, it stays in the bar at every wider width.
-      if (last == _Place.bar) expect(place, _Place.bar, reason: reason);
-      last = place;
+      expect(mode, isNot(_Mode.heart), reason: reason);
+      if (mode == _Mode.titleBelow) sawBelow = true;
+      // Once the title fits in the bar, it stays there at every wider width.
+      if (last == _Mode.pill) expect(mode, _Mode.pill, reason: reason);
+      last = mode;
       await _close(tester);
     }
-    expect(sawBelow, isTrue, reason: 'too narrow at 320 dp');
-    expect(last, _Place.bar);
+    expect(sawBelow, isTrue, reason: 'too narrow for both at 320 dp');
+    expect(last, _Mode.pill);
   });
 }

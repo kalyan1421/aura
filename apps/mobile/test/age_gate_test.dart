@@ -18,8 +18,13 @@ Future<void> pick(WidgetTester tester, String field, int value) async {
   await tester.pumpAndSettle();
   final option = find.byKey(ValueKey('dob-option-$value')).hitTestable();
   final list = find.byType(ListView).last;
+  // The year sheet opens scrolled near 2008: look down, then up.
   for (var i = 0; i < 60 && option.evaluate().isEmpty; i++) {
     await tester.drag(list, const Offset(0, -80));
+    await tester.pumpAndSettle();
+  }
+  for (var i = 0; i < 2 * 60 && option.evaluate().isEmpty; i++) {
+    await tester.drag(list, const Offset(0, 80));
     await tester.pumpAndSettle();
   }
   await tester.tap(option);

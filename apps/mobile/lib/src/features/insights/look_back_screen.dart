@@ -236,7 +236,7 @@ class _WeekSection extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: AuraSpace.s),
             child: Text(
               l.insights_lookBackWeekOf(
-                dateLabel(localeTag, from, model.today),
+                shortDateLabel(localeTag, from, model.today),
               ),
               style: t.bodySmall?.copyWith(color: AuraColors.textSoft),
             ),

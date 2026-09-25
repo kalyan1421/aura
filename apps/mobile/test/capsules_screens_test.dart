@@ -177,7 +177,7 @@ void main() {
       await pump(tester, const CapsulesListScreen());
       expect(find.text(en.capsules_emptyBody), findsOneWidget);
       expect(find.text(en.capsules_emptyCta), findsOneWidget);
-      expect(find.text(en.help_button), findsOneWidget, reason: 'help stays');
+      expect(find.byType(HelpNowButton), findsOneWidget, reason: 'help stays');
     });
 
     capsuleWidgets(

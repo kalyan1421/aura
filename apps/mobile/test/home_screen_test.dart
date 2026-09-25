@@ -10,6 +10,7 @@ import 'package:aura/src/features/home/home_screen.dart';
 import 'package:aura/src/features/progress/progress_view.dart';
 import 'package:aura/src/features/shell/app_shell.dart';
 import 'package:aura_domain/aura_domain.dart';
+import 'package:aura/src/features/support/support_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -252,20 +253,35 @@ void main() {
     }
 
     testWidgets('the decorative wordmark shows when "I need help now" fits '
-        'beside it, and steps aside when the label would wrap', (tester) async {
+        'beside it, steps aside first when it would not, and help never '
+        'wraps (the heart only when even the pill alone does not fit)', (
+      tester,
+    ) async {
+      final wordmark = find.byKey(const ValueKey('home-wordmark'));
+      final heart = find.byKey(HelpNowButton.iconOnlyKey);
       // Wide enough for both on one line (the test font is wide).
       _setSize(tester, const Size(700, 900));
-      final db = memoryDb();
-      await tester.pumpWidget(_app(testOverrides(db: db)));
-      await settleIo(tester);
-      expect(find.byKey(const ValueKey('home-wordmark')), findsOneWidget);
-      await _close(tester);
-
-      _setSize(tester, const Size(375, 667));
       await tester.pumpWidget(_app(testOverrides(db: memoryDb())));
       await settleIo(tester);
-      expect(find.byKey(const ValueKey('home-wordmark')), findsNothing);
+      expect(wordmark, findsOneWidget);
       expect(find.text('I need help now'), findsOneWidget);
+      await _close(tester);
+
+      // Room for the pill but not the wordmark too: the wordmark goes.
+      _setSize(tester, const Size(420, 900));
+      await tester.pumpWidget(_app(testOverrides(db: memoryDb())));
+      await settleIo(tester);
+      expect(wordmark, findsNothing);
+      expect(find.text('I need help now'), findsOneWidget);
+      expect(heart, findsNothing);
+      await _close(tester);
+
+      // Not even the pill alone: the heart, never a wrapped label.
+      _setSize(tester, const Size(320, 667));
+      await tester.pumpWidget(_app(testOverrides(db: memoryDb())));
+      await settleIo(tester);
+      expect(find.text('I need help now'), findsNothing);
+      expect(heart, findsOneWidget);
       await _close(tester);
     });
   });

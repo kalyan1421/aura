@@ -1276,6 +1276,20 @@ class AppLocalizationsTe extends AppLocalizations {
   String get help_backToCapsule => 'నా క్యాప్సూల్‌కి తిరిగి';
 
   @override
+  String get rooms_trayOpen => 'ఆత్మీయత పంపండి';
+
+  @override
+  String get rooms_howRoomsWork => 'రూమ్‌లు ఎలా పని చేస్తాయి';
+
+  @override
+  String get rooms_reportPickReason => 'ఏం జరుగుతోందో ఎంచుకోండి';
+
+  @override
+  String plus_skyStardustNeeds(int count, int have) {
+    return '$count Stardust కావాలి (మీ దగ్గర $have ఉన్నాయి)';
+  }
+
+  @override
   String get flows_startOverTitle => 'మళ్ళీ మొదటి నుంచి మొదలుపెడదామా?';
 
   @override
@@ -1599,7 +1613,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String insights_patternTag(String tag, String quadrant) {
-    return '$tag ఉన్న చెక్-ఇన్‌లలో $quadrant ఎక్కువగా కనిపించింది.';
+    return 'మీరు $tag అని ట్యాగ్ చేసినప్పుడు $quadrant ఎక్కువగా కనిపించింది.';
   }
 
   @override
@@ -6382,6 +6396,20 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String get help_backToCapsule => 'Naa capsule ki tirigi';
 
   @override
+  String get rooms_trayOpen => 'Warmth pampandi';
+
+  @override
+  String get rooms_howRoomsWork => 'Rooms ela pani chestaayi';
+
+  @override
+  String get rooms_reportPickReason => 'Em jarugutondo enchukondi';
+
+  @override
+  String plus_skyStardustNeeds(int count, int have) {
+    return '$count Stardust kaavaali (mee daggara $have unnaayi)';
+  }
+
+  @override
   String get flows_startOverTitle => 'Malli modati nunchi modalupedadaamaa?';
 
   @override
@@ -6707,7 +6735,7 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String insights_patternTag(String tag, String quadrant) {
-    return '$tag unna check-ins lo $quadrant ekkuvaga kanipinchindi.';
+    return 'Meeru $tag ani tag chesinappudu $quadrant ekkuvaga kanipinchindi.';
   }
 
   @override

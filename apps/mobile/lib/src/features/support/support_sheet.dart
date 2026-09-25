@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/icon_scale.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/providers.dart';
 import '../../core/router/routes.dart';
@@ -75,12 +76,20 @@ void openSafetyCenter(BuildContext context) {
 /// normally appears). Warm lantern tone, never alarm red. Opens the Safety
 /// Center ([openSafetyCenter]).
 ///
-/// A pill while the label fits on one line. When it wraps (a narrow top
-/// bar, 200% text, a longer language) it becomes a rounded rectangle
-/// ([AuraRadius.m]), so a tall button never turns into a near-circle that
-/// clips its label. The label is never cut to a line count.
+/// A pill while the label fits on one line. The [compact] (top bar) button
+/// never wraps: above [largeText] text scale, or where its one-line label
+/// does not fit the space it is given (a longer language, a narrow bar), it
+/// collapses to a heart-only round button of at least 48 dp whose label
+/// stays in its tooltip and screen-reader label. The full-size button (in
+/// content) may wrap; it then becomes a rounded rectangle
+/// ([AuraRadius.m]), never a near-circle that clips its label.
 class HelpNowButton extends StatelessWidget {
-  const HelpNowButton({super.key, this.compact = false, this.onOpen});
+  const HelpNowButton({
+    super.key,
+    this.compact = false,
+    this.onOpen,
+    this.iconOnly,
+  });
 
   final bool compact;
 
@@ -88,21 +97,40 @@ class HelpNowButton extends StatelessWidget {
   /// pacer underneath (REQ-SAN-08).
   final VoidCallback? onOpen;
 
+  /// Heart only (true), the labelled pill (false), or, when null, decided
+  /// here: [compact] buttons collapse above [largeText] or when the label
+  /// does not fit on one line in the width they are given.
+  final bool? iconOnly;
+
+  /// The heart-only button's key (tests, screenshots).
+  static const Key iconOnlyKey = ValueKey('help-now-icon-only');
+
   static const double _iconSize = 18;
+  static const double _iconOnlySize = 22;
   static const double _minHeight = 44; // 48 dp tap target (padded)
   static const double _vPad = 10;
 
-  /// From this text scale the sides get more room.
-  static const double _largeText = 1.3;
+  /// Above this text scale a compact button is heart-only.
+  static const double largeText = 1.3;
+
+  static bool _isLarge(BuildContext context) =>
+      MediaQuery.textScalerOf(context).scale(100) / 100 > largeText;
 
   static double _hPad(BuildContext context, {required bool compact}) {
     final large =
-        MediaQuery.textScalerOf(context).scale(100) / 100 >= _largeText;
+        MediaQuery.textScalerOf(context).scale(100) / 100 >= largeText;
     return compact ? (large ? 16 : 12) : (large ? 20 : 16);
   }
 
   static TextStyle? _labelStyle(BuildContext context) =>
       Theme.of(context).textTheme.labelLarge;
+
+  /// The width of the heart-only button (its padded tap target).
+  static const double iconOnlyWidth = kMinInteractiveDimension;
+
+  /// Whether a [compact] button collapses to the heart at this context's
+  /// text scale, before any width check.
+  static bool iconOnlyForTextScale(BuildContext context) => _isLarge(context);
 
   /// The width this button needs to keep its label on one line, so a top
   /// bar can decide what else still fits beside it.
@@ -120,14 +148,69 @@ class HelpNowButton extends StatelessWidget {
     painter.dispose();
     // Label, icon and its gap, side padding and the 1 dp border.
     return label +
-        _iconSize +
+        scaledIconSize(context, _iconSize) +
         AuraSpace.s +
         2 * _hPad(context, compact: compact) +
         2;
   }
 
+  void _open(BuildContext context) {
+    onOpen?.call();
+    openSafetyCenter(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final forced = iconOnly;
+    if (forced != null) {
+      return forced ? _heart(context) : _pill(context);
+    }
+    if (!compact) return _pill(context);
+    if (_isLarge(context)) return _heart(context);
+    return LayoutBuilder(
+      builder: (context, box) =>
+          box.maxWidth.isFinite &&
+              box.maxWidth < oneLineWidth(context, compact: true)
+          ? _heart(context)
+          : _pill(context),
+    );
+  }
+
+  /// Heart only: the label lives in the tooltip and the screen-reader label.
+  Widget _heart(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return MergeSemantics(
+      child: Semantics(
+        sortKey: const OrdinalSortKey(1),
+        label: l.help_button,
+        button: true,
+        child: Tooltip(
+          message: l.help_button,
+          excludeFromSemantics: true,
+          child: OutlinedButton(
+            key: iconOnlyKey,
+            onPressed: () => _open(context),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AuraColors.lantern,
+              side: BorderSide(
+                color: AuraColors.lantern.withValues(alpha: 0.6),
+              ),
+              backgroundColor: AuraColors.lantern.withValues(alpha: 0.08),
+              minimumSize: const Size.square(_minHeight),
+              padding: const EdgeInsets.all(AuraSpace.s),
+              shape: const CircleBorder(),
+            ),
+            child: Icon(
+              Icons.favorite_rounded,
+              size: scaledIconSize(context, _iconOnlySize),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pill(BuildContext context) {
     final l = AppLocalizations.of(context);
     final style = _labelStyle(context);
     final line =
@@ -142,15 +225,16 @@ class HelpNowButton extends StatelessWidget {
       child: Semantics(
         sortKey: const OrdinalSortKey(1),
         child: OutlinedButton.icon(
-          onPressed: () {
-            onOpen?.call();
-            openSafetyCenter(context);
-          },
-          icon: const Icon(Icons.favorite_rounded, size: _iconSize),
+          onPressed: () => _open(context),
+          icon: Icon(
+            Icons.favorite_rounded,
+            size: scaledIconSize(context, _iconSize),
+          ),
           // Wrapped lines hug the longest one, so the button stays compact.
           label: Text(
             l.help_button,
-            softWrap: true,
+            softWrap: !compact,
+            maxLines: compact ? 1 : null,
             textWidthBasis: TextWidthBasis.longestLine,
           ),
           style: OutlinedButton.styleFrom(

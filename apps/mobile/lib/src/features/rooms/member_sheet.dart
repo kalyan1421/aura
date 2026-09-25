@@ -9,6 +9,7 @@ import '../checkin/quadrant_glyph.dart';
 import '../plus/gift_sheet.dart';
 import 'room_controller.dart';
 import 'room_models.dart';
+import 'gesture_tray.dart';
 import 'room_widgets.dart';
 
 /// What was picked in a member sheet; the room screen carries it out (it
@@ -174,31 +175,13 @@ class MemberSheet extends ConsumerWidget {
             const SizedBox(height: AuraSpace.s),
             Text(l.rooms_sendTo(m.pseudonym), style: t.titleSmall),
             const SizedBox(height: AuraSpace.s),
-            LayoutBuilder(
-              builder: (context, box) {
-                // Two to four per row; each label may wrap, never cut.
-                final scale = MediaQuery.textScalerOf(context).scale(1);
-                final perRow = (box.maxWidth / (88 * scale.clamp(1.0, 2.0)))
-                    .floor()
-                    .clamp(2, 4);
-                final width =
-                    (box.maxWidth - (perRow - 1) * AuraSpace.s) / perRow;
-                return Wrap(
-                  spacing: AuraSpace.s,
-                  runSpacing: AuraSpace.s,
-                  children: [
-                    for (final g in GestureType.values)
-                      GestureButton(
-                        type: g,
-                        width: width,
-                        hint: l.rooms_gestureHintMember(m.pseudonym),
-                        onPressed: canSend
-                            ? () => pick(MemberChoice.gesture(g))
-                            : null,
-                      ),
-                  ],
-                );
-              },
+            GestureTray(
+              density: GestureTrayDensity.grid,
+              items: presetGestureItems(
+                l,
+                hint: l.rooms_gestureHintMember(m.pseudonym),
+                onSend: canSend ? (g) => pick(MemberChoice.gesture(g)) : null,
+              ),
             ),
             // F12 gifts (REQ-ROOM-09): for every 13+ account, never for
             // yourself; blocked people are never listed, so never here.

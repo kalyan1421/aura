@@ -56,11 +56,23 @@ abstract final class Env {
   /// with `--dart-define=AURA_BETA_LOCALES=true` for review builds.
   static const bool betaLocales = bool.fromEnvironment('AURA_BETA_LOCALES');
 
-  /// Debug tools (the /debug/avatar lab) — on in debug builds by default.
-  static const bool debugTools = bool.fromEnvironment(
+  /// Debug tools (the /debug/avatar lab, Settings › About › "Avatar lab"):
+  /// on in debug builds by default, opt-in for profile builds with
+  /// `--dart-define=AURA_DEBUG_TOOLS=true`, and **never** in a release
+  /// build, whatever is defined ([debugToolsAllowed]).
+  static const bool debugTools = !kReleaseMode && _debugToolsRequested;
+
+  static const bool _debugToolsRequested = bool.fromEnvironment(
     'AURA_DEBUG_TOOLS',
     defaultValue: kDebugMode,
   );
+
+  /// The rule behind [debugTools], for tests: a [release] build never has
+  /// debug tools, even when they were [requested].
+  static bool debugToolsAllowed({
+    required bool release,
+    required bool requested,
+  }) => !release && requested;
 
   /// The CLI's fixed local-dev publishable key (supabase/LOCAL.md). Not a
   /// secret; never used in release builds.
@@ -142,6 +154,22 @@ abstract final class Env {
       _orLocal(_grievanceName, 'Grievance Officer (placeholder)');
   static String get grievanceOfficerEmail =>
       _orLocal(_grievanceEmail, 'grievance@example.com');
+
+  /// Words that mark a legal/support value as a placeholder. A release build
+  /// with one (or with a value missing) fails: android/app/build.gradle.kts
+  /// `verifyReleaseLegal`, ios/scripts/release_legal_check.sh.
+  static const List<String> placeholderMarkers = [
+    'example.com',
+    'example.org',
+    'example.net',
+    'placeholder',
+  ];
+
+  /// Whether [value] is empty or still a placeholder ([placeholderMarkers]).
+  static bool isPlaceholderLegal(String value) {
+    final v = value.trim().toLowerCase();
+    return v.isEmpty || placeholderMarkers.any(v.contains);
+  }
 
   /// Legal/support defines a release build is missing (checked in CI).
   static List<String> get missingLegalConfig => [

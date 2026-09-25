@@ -11,6 +11,7 @@ import 'package:aura/src/features/sanctuary/breath_pacer.dart';
 import 'package:aura/src/features/sanctuary/sounds/sounds_backend.dart';
 import 'package:aura/src/features/sanctuary/sounds/sounds_library.dart';
 import 'package:aura/src/features/sanctuary/sounds/sounds_session_log.dart';
+import 'package:aura/src/features/support/support_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -159,7 +160,7 @@ void main() {
     expect(find.byKey(const ValueKey('wind-down-screen')), findsOneWidget);
     expect(find.text('3 winding down'), findsOneWidget);
     expect(backend.layers, isEmpty); // nothing plays without a tap
-    expect(find.text('I need help now'), findsWidgets);
+    expect(find.byType(HelpNowButton), findsWidgets);
     final leave = find.byKey(const ValueKey('wind-down-leave'));
     await tester.ensureVisible(leave);
     await tester.tap(leave);

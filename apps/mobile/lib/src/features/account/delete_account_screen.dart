@@ -7,6 +7,7 @@ import '../capsules/capsule_providers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/net/aura_api.dart';
 import '../../core/providers.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
@@ -66,10 +67,14 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
             onPressed: () => Navigator.pop(context, false),
             child: Text(l.common_cancel),
           ),
-          TextButton(
+          // Destructive: the warm danger tone, an icon and bolder words,
+          // never the same weight as Cancel.
+          TextButton.icon(
             key: const ValueKey('acct-confirm-delete'),
             onPressed: () => Navigator.pop(context, true),
-            child: Text(l.acct_deleteTitle),
+            style: destructiveTextButtonStyle(context),
+            icon: const Icon(Icons.delete_outline_rounded, size: 20),
+            label: Text(l.acct_deleteTitle),
           ),
         ],
       ),
@@ -233,8 +238,10 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
           ),
           const SizedBox(height: AuraSpace.l),
         ],
-        FilledButton(
+        // Destructive, not primary: outlined in the warm danger tone.
+        OutlinedButton(
           key: const ValueKey('acct-delete'),
+          style: destructiveOutlinedButtonStyle(context),
           onPressed: blocked != null || requesting ? null : _confirm,
           child: BusyButtonLabel(
             l.acct_deleteTitle,

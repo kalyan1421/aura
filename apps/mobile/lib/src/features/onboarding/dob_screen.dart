@@ -67,6 +67,7 @@ class _DobScreenState extends ConsumerState<DobScreen> {
     List<(int, String)> options, {
     int? selected,
     bool typeYear = false,
+    int? scrollNear,
   }) {
     return showModalBottomSheet<int>(
       context: context,
@@ -77,6 +78,7 @@ class _DobScreenState extends ConsumerState<DobScreen> {
         options: options,
         selected: selected,
         typeYear: typeYear,
+        scrollNear: scrollNear,
       ),
     );
   }
@@ -161,6 +163,9 @@ class _DobScreenState extends ConsumerState<DobScreen> {
                     ],
                     selected: _year,
                     typeYear: true,
+                    // Opens near a typical first-run age instead of at the
+                    // youngest (not-allowed) years. Nothing is picked.
+                    scrollNear: thisYear - dobTypicalAge,
                   );
                   if (v != null) setState(() => _year = v);
                 },
@@ -176,6 +181,11 @@ class _DobScreenState extends ConsumerState<DobScreen> {
     );
   }
 }
+
+/// The year picker opens scrolled to this many years ago (2008 in 2026): a
+/// typical first-run age, so most people don't scroll past the youngest,
+/// not-allowed years first.
+const int dobTypicalAge = 18;
 
 /// One DOB picker (day, month or year) in a bottom sheet.
 ///
@@ -196,12 +206,17 @@ class DobPickerSheet extends StatefulWidget {
     required this.options,
     this.selected,
     this.typeYear = false,
+    this.scrollNear,
   });
 
   final String title;
   final List<(int, String)> options;
   final int? selected;
   final bool typeYear;
+
+  /// With nothing [selected]: the value to open scrolled to (centred),
+  /// without selecting it.
+  final int? scrollNear;
 
   @override
   State<DobPickerSheet> createState() => _DobPickerSheetState();
@@ -223,7 +238,7 @@ class _DobPickerSheetState extends State<DobPickerSheet> {
   @override
   void initState() {
     super.initState();
-    if (widget.selected != null) {
+    if ((widget.selected ?? widget.scrollNear) != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _revealSelected());
     }
   }
@@ -239,7 +254,8 @@ class _DobPickerSheetState extends State<DobPickerSheet> {
   /// row extent follows from the list's total extent.
   void _revealSelected() {
     if (!mounted || !_scroll.hasClients) return;
-    final i = widget.options.indexWhere((o) => o.$1 == widget.selected);
+    final target0 = widget.selected ?? widget.scrollNear;
+    final i = widget.options.indexWhere((o) => o.$1 == target0);
     final pos = _scroll.position;
     if (i < 0 || pos.maxScrollExtent <= 0) return;
     final row =

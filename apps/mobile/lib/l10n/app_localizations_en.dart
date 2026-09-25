@@ -1274,6 +1274,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get help_backToCapsule => 'Back to my capsule';
 
   @override
+  String get rooms_trayOpen => 'Send warmth';
+
+  @override
+  String get rooms_howRoomsWork => 'How rooms work';
+
+  @override
+  String get rooms_reportPickReason => 'Pick what\'s happening';
+
+  @override
+  String plus_skyStardustNeeds(int count, int have) {
+    return 'Needs $count Stardust (you have $have)';
+  }
+
+  @override
   String get flows_startOverTitle => 'Start over?';
 
   @override
@@ -1595,7 +1609,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String insights_patternTag(String tag, String quadrant) {
-    return 'On check-ins with $tag, $quadrant showed up more often.';
+    return 'When you tagged $tag, $quadrant showed up more often.';
   }
 
   @override

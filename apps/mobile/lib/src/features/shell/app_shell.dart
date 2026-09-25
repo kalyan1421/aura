@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/icon_scale.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
@@ -123,7 +124,10 @@ class AuraNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final compact = MediaQuery.sizeOf(context).height < _shortScreen;
-    final iconRow = compact ? _iconRowCompact : _iconRow;
+    // Icons grow with the text (up to 1.5x), so large labels never sit
+    // under tiny icons; the icon row grows with them.
+    final grow = scaledIconSize(context, 1);
+    final iconRow = (compact ? _iconRowCompact : _iconRow) * grow;
     Widget tab(ShellTab tab, String label, IconData icon, IconData active) =>
         Expanded(
           child: _Destination(
@@ -259,8 +263,8 @@ class _Destination extends StatelessWidget {
                     child: AnimatedContainer(
                       duration: change,
                       curve: AuraMotion.ease,
-                      width: 56,
-                      height: 32,
+                      width: 56 * scaledIconSize(context, 1),
+                      height: 32 * scaledIconSize(context, 1),
                       decoration: BoxDecoration(
                         color: selected
                             ? AuraColors.accent.withValues(alpha: 0.16)
@@ -274,7 +278,7 @@ class _Destination extends StatelessWidget {
                       ),
                       child: Icon(
                         selected ? activeIcon : icon,
-                        size: 22,
+                        size: scaledIconSize(context, 22),
                         color: selected
                             ? AuraColors.lavender
                             : AuraColors.textSoft,
@@ -320,9 +324,9 @@ class _CheckInAction extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(color: AuraColors.starlight.withValues(alpha: 0.5)),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.auto_awesome,
-        size: 24,
+        size: scaledIconSize(context, 24),
         color: AuraColors.onAccent,
       ),
     );

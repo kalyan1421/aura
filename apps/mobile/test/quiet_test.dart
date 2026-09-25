@@ -15,6 +15,7 @@ import 'package:aura/src/features/sanctuary/sounds/sounds_library.dart';
 import 'package:aura/src/features/sanctuary/sounds/sounds_session_log.dart';
 import 'package:aura/src/features/sanctuary/sounds/wind_down.dart';
 import 'package:aura_domain/aura_domain.dart';
+import 'package:aura/src/features/support/support_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -207,8 +208,15 @@ void main() {
     );
     // No text input anywhere.
     expect(find.byType(TextField), findsNothing);
-    // "I need help now" is in the top bar the whole session.
-    expect(find.text('I need help now'), findsOneWidget);
+    // "I need help now" is in the top bar the whole session (the pill, or
+    // the heart when the wide test font leaves no room for its words).
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byType(HelpNowButton),
+      ),
+      findsOneWidget,
+    );
     await close(tester);
   });
 

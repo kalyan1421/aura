@@ -44,8 +44,13 @@ Future<void> openSheet(WidgetTester tester, String field) async {
 Future<void> tapOption(WidgetTester tester, int value) async {
   final option = find.byKey(ValueKey('dob-option-$value')).hitTestable();
   final list = find.byType(ListView).last;
+  // The year sheet opens scrolled near 2008: look down, then up.
   for (var i = 0; i < 80 && option.evaluate().isEmpty; i++) {
     await tester.drag(list, const Offset(0, -80));
+    await tester.pumpAndSettle();
+  }
+  for (var i = 0; i < 2 * 80 && option.evaluate().isEmpty; i++) {
+    await tester.drag(list, const Offset(0, 80));
     await tester.pumpAndSettle();
   }
   await tester.tap(option);
@@ -125,6 +130,24 @@ void main() {
     expect(input.decoration?.hintText, isNull);
     expect(find.byIcon(Icons.check_rounded), findsNothing);
     handle.dispose();
+  });
+
+  testWidgets('the year list opens scrolled near a typical first-run age '
+      '(2008), not at the youngest years, with nothing picked', (tester) async {
+    await pumpDob(tester);
+    await openSheet(tester, 'year');
+    final year = testNow.toLocal().year - dobTypicalAge;
+    expect(
+      find.byKey(ValueKey('dob-option-$year')).hitTestable(),
+      findsOneWidget,
+    );
+    expect(
+      find
+          .byKey(ValueKey('dob-option-${testNow.toLocal().year}'))
+          .hitTestable(),
+      findsNothing,
+    );
+    expect(find.byIcon(Icons.check_rounded), findsNothing);
   });
 
   testWidgets('typing the year filters the list; Done picks the single match', (

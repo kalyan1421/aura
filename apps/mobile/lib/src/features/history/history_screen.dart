@@ -36,12 +36,13 @@ class HistoryScreen extends ConsumerWidget {
       appBar: helpAppBar(
         context,
         title: l.history_title,
-        // As the Insights tab's first screen there is nowhere to go back
-        // to; Settings opens from here instead (app shell). Opened on its
-        // own, Back.
+        // As a tab's first screen there is nowhere to go back to; Settings
+        // sits on the right as on every tab. Opened on its own, Back.
         leading: isShellTabRoot(context)
-            ? const ShellSettingsButton()
+            ? null
             : const HistoryBackButton(fallback: Routes.home),
+        automaticallyImplyLeading: !isShellTabRoot(context),
+        actions: [if (isShellTabRoot(context)) const ShellSettingsButton()],
       ),
       body: CosmicBackground(
         child: rows == null

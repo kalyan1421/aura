@@ -234,14 +234,59 @@ class KeepsakesEntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return ListTile(
-      key: const ValueKey('keepsakes-entry'),
-      contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.inventory_2_outlined),
-      title: Text(l.keepsakes_entry),
-      subtitle: Text(l.keepsakes_entryNote),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: onOpen,
+    final t = Theme.of(context).textTheme;
+    // A card, like the other entry cards at the end of Insights: entry
+    // points share one look.
+    return Semantics(
+      container: true,
+      button: true,
+      child: Material(
+        color: AuraColors.surface.withValues(alpha: 0.82),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AuraRadius.l),
+          side: const BorderSide(color: AuraColors.hairline),
+        ),
+        child: InkWell(
+          key: const ValueKey('keepsakes-entry'),
+          borderRadius: BorderRadius.circular(AuraRadius.l),
+          onTap: onOpen,
+          child: Padding(
+            padding: const EdgeInsets.all(AuraSpace.l),
+            child: Row(
+              children: [
+                const ExcludeSemantics(
+                  child: Icon(
+                    Icons.inventory_2_outlined,
+                    color: AuraColors.starlight,
+                  ),
+                ),
+                const SizedBox(width: AuraSpace.m),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l.keepsakes_entry, style: t.titleMedium),
+                      const SizedBox(height: AuraSpace.xs),
+                      Text(
+                        l.keepsakes_entryNote,
+                        style: t.bodyMedium?.copyWith(
+                          color: AuraColors.textSoft,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const ExcludeSemantics(
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: AuraColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

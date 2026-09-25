@@ -378,45 +378,44 @@ void main() {
     await _unmount(tester);
   });
 
-  testWidgets('"I need help now" leaves the 56 dp app bar at large text so '
-      'it is never cut off: its own row under the title', (tester) async {
+  testWidgets('"I need help now" never leaves the 56 dp app bar: the pill '
+      'when it fits, the heart-only button at large text', (tester) async {
     final help = find.byType(HelpNowButton);
     final action = find.byKey(HelpBarLayout.actionKey);
-    final below = find.byKey(HelpBarLayout.bottomKey);
+    final heart = find.byKey(HelpNowButton.iconOnlyKey);
 
     // Room beside the title (the test font is about twice as wide as real
-    // ones, so a wide phone): in the bar, on one line, bar still 56 dp.
+    // ones, so a wide phone): the labelled pill, on one line, bar 56 dp.
     await _pump(tester, db: memoryDb(), width: 600);
     expect(find.descendant(of: action, matching: help), findsOneWidget);
-    expect(below, findsNothing);
+    expect(heart, findsNothing);
     expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
     expect(tester.getSize(help).height, lessThanOrEqualTo(kToolbarHeight));
     await _unmount(tester);
 
-    // 200% text: its own row under the title, inside the app bar, whole.
+    // 200% text: still in the bar, now the heart (48 dp, label for screen
+    // readers and in the tooltip); the bar stays 56 dp.
     tester.platformDispatcher.textScaleFactorTestValue = 2;
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await _pump(tester, db: memoryDb());
     expect(tester.takeException(), isNull);
-    expect(action, findsNothing);
-    expect(find.descendant(of: below, matching: help), findsOneWidget);
+    expect(find.descendant(of: action, matching: help), findsOneWidget);
+    expect(find.descendant(of: help, matching: heart), findsOneWidget);
+    expect(tester.getSize(find.byType(AppBar)).height, kToolbarHeight);
+    final button = tester.getRect(
+      find.descendant(of: help, matching: find.byType(OutlinedButton)),
+    );
+    expect(button.width, greaterThanOrEqualTo(48));
+    expect(button.height, greaterThanOrEqualTo(48));
     expect(
-      find.descendant(of: find.byType(AppBar), matching: below),
+      button.bottom,
+      lessThanOrEqualTo(
+        kToolbarHeight + 0.01 + tester.getRect(find.byType(AppBar)).top,
+      ),
+    );
+    expect(
+      find.descendant(of: help, matching: find.byType(Tooltip)),
       findsOneWidget,
-    );
-    final title = tester.getRect(
-      find.descendant(of: find.byType(AppBar), matching: find.text('Settings')),
-    );
-    final row = tester.getRect(below);
-    final button = tester.getRect(help);
-    expect(title.bottom, lessThanOrEqualTo(row.top));
-    expect(row.top, closeTo(kToolbarHeight, 0.01));
-    expect(button.top, greaterThanOrEqualTo(row.top - 0.01));
-    expect(button.bottom, lessThanOrEqualTo(row.bottom + 0.01));
-    expect(button.right, lessThanOrEqualTo(row.right + 0.01));
-    expect(
-      tester.getRect(find.byType(AppBar)).bottom,
-      closeTo(row.bottom, 0.01),
     );
     await _unmount(tester);
   });

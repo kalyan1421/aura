@@ -268,7 +268,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(tester.widget<FilledButton>(_deleteButton).onPressed, isNull);
+    expect(tester.widget<OutlinedButton>(_deleteButton).onPressed, isNull);
     await _unmount(tester);
   });
 
@@ -322,7 +322,7 @@ void main() {
       initial: Routes.deleteAccount,
     );
     expect(find.byKey(const ValueKey('acct-blocked')), findsOneWidget);
-    expect(tester.widget<FilledButton>(_deleteButton).onPressed, isNull);
+    expect(tester.widget<OutlinedButton>(_deleteButton).onPressed, isNull);
     await _unmount(tester);
   });
 }

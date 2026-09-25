@@ -13,6 +13,12 @@ abstract final class AuraColors {
   static const Color outline = Color(0xFF2C3264);
   static const Color hairline = Color(0x1FFFFFFF);
 
+  /// Boundary of an interactive control in its idle state (unselected chip
+  /// borders, the off switch's track outline, input borders): at least 3:1
+  /// against [sky], [skyHigh] and [surface] (WCAG 1.4.11). [outline] stays
+  /// for decorative hairlines and drag handles.
+  static const Color controlOutline = Color(0xFF6268A8);
+
   // Text (all ≥ 4.5:1 on [sky]).
   static const Color text = Color(0xFFF2F0FF);
   static const Color textSoft = Color(0xFFBDB9E0);
@@ -27,6 +33,11 @@ abstract final class AuraColors {
   /// Warm lantern tone for "I need help now": visible, never alarming red.
   static const Color lantern = Color(0xFFF6C1A4);
   static const Color onLantern = Color(0xFF2A1510);
+
+  /// Warm danger tone for destructive actions (Delete my account): text and
+  /// border on the night sky, ≥ 4.5:1 on [sky] and [surface]. Never used for
+  /// feelings, missed days or personal data.
+  static const Color danger = Color(0xFFFF8A80);
 
   // Quadrant accents (bright) and their deep tile grounds.
   static const Color sunrise = Color(0xFFF3BE67);
@@ -79,5 +90,8 @@ abstract final class AuraMotion {
 }
 
 /// Colour for a hue angle, at the lightness band used for glows.
-Color glowColorForHue(double hueDeg, {double saturation = 0.62, double value = 1}) =>
-    HSVColor.fromAHSV(1, hueDeg % 360, saturation, value).toColor();
+Color glowColorForHue(
+  double hueDeg, {
+  double saturation = 0.62,
+  double value = 1,
+}) => HSVColor.fromAHSV(1, hueDeg % 360, saturation, value).toColor();

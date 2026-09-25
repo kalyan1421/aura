@@ -18,8 +18,7 @@ import '../sanctuary/breath_orb.dart';
 import '../sanctuary/breath_pacer.dart';
 import '../sanctuary/sounds/sounds_controller.dart';
 import 'room_controller.dart';
-import 'room_copy.dart';
-import 'room_models.dart' show GestureType;
+import 'gesture_tray.dart';
 import 'room_realtime.dart' show WindDownEvent;
 import 'wind_down_api.dart';
 
@@ -258,25 +257,20 @@ class _WindDownScreenState extends ConsumerState<WindDownScreen> {
                 ),
               ),
               const SizedBox(height: AuraSpace.l),
-              Wrap(
-                spacing: AuraSpace.s,
-                runSpacing: AuraSpace.s,
-                children: [
-                  for (final g in GestureType.values)
-                    ActionChip(
-                      key: ValueKey('wind-down-gesture-${g.wire}'),
-                      avatar: Icon(gestureIcon(g), size: 18),
-                      label: Text(gestureName(l, g)),
-                      onPressed: canSend
-                          ? () => ref
-                                .read(
-                                  roomControllerProvider(widget.roomId)
-                                      .notifier,
-                                )
-                                .sendGesture(g)
-                          : null,
-                    ),
-                ],
+              GestureTray(
+                density: GestureTrayDensity.grid,
+                items: presetGestureItems(
+                  l,
+                  hint: l.rooms_trayHint,
+                  keyPrefix: 'wind-down-gesture-',
+                  onSend: canSend
+                      ? (g) => ref
+                            .read(
+                              roomControllerProvider(widget.roomId).notifier,
+                            )
+                            .sendGesture(g)
+                      : null,
+                ),
               ),
               const SizedBox(height: AuraSpace.xl),
               OutlinedButton(

@@ -53,8 +53,8 @@ class InsightsScreen extends ConsumerWidget {
       appBar: helpAppBar(
         context,
         title: l.insights_title,
-        // The tab's first screen: Settings instead of Back (app shell).
-        leading: isShellTabRoot(context) ? const ShellSettingsButton() : null,
+        // The tab's first screen: Settings on the right, as on every tab.
+        actions: [if (isShellTabRoot(context)) const ShellSettingsButton()],
       ),
       body: PersonalSkyBackground(
         // F12: the person's own sky theme
@@ -206,9 +206,7 @@ class _Body extends ConsumerWidget {
         const _LookBackSlot(),
         // F13: the private keepsakes box lives in Insights (PRD F13).
         const SizedBox(height: AuraSpace.m),
-        _Padded(
-          child: KeepsakesEntryTile(onOpen: () => context.push(keepsakesRoute)),
-        ),
+        KeepsakesEntryTile(onOpen: () => context.push(keepsakesRoute)),
         const SizedBox(height: AuraSpace.l),
         Center(
           child: OutlinedButton.icon(

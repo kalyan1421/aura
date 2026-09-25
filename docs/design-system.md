@@ -22,8 +22,9 @@ Use the named constants from `AuraColors`; do not duplicate hex values in featur
 | app sky | `sky` | `#0A0C1D` | scaffold and primary canvas |
 | raised sky | `skyHigh` | `#10132A` | inputs and low containers |
 | surface | `surface` | `#151935` | cards and grouped content |
-| raised surface | `surfaceHigh` | `#1D2245` | selected/disabled controls and floating feedback |
-| structural outline | `outline` | `#2C3264` | control boundaries and drag handles |
+| raised surface | `surfaceHigh` | `#1D2245` | disabled controls and floating feedback |
+| structural outline | `outline` | `#2C3264` | decorative boundaries, disabled controls and drag handles |
+| control outline | `controlOutline` | `#6268A8` | idle control boundaries: chip borders, inputs, the off switch's track (≥ 3:1 on `sky`, `skyHigh`, `surface`) |
 | quiet divider | `hairline` | 12% white | separators on dark surfaces |
 | primary text | `text` | `#F2F0FF` | headings and essential content |
 | secondary text | `textSoft` | `#BDB9E0` | explanations and supporting content |
@@ -34,6 +35,7 @@ Use the named constants from `AuraColors`; do not duplicate hex values in featur
 | on primary action | `onAccent` | `#15112E` | text/icons on `accent` |
 | immediate support | `lantern` | `#F6C1A4` | “I need help now,” helplines and calm recovery cues |
 | on immediate support | `onLantern` | `#2A1510` | text/icons on `lantern` |
+| destructive action | `danger` | `#FF8A80` | text, icon and border of a destructive action (Delete my account), ≥ 4.5:1 on `sky`/`surface`; never for feelings or personal data |
 
 ### Emotional quadrants
 
@@ -52,7 +54,7 @@ All four pairings pass WCAG AA for normal text. Keep tile area, typography, icon
 
 ### Verified contrast
 
-WCAG 2 relative-luminance checks for the implementation values are: `text/sky` 17.25:1, `textSoft/sky` 10.32:1, `textMuted/sky` 6.52:1, `onAccent/accent` 8.95:1 and `onLantern/lantern` 10.78:1. The weakest intended quadrant pair is Storm at 6.44:1. Recheck contrast when tint washes, opacity, disabled treatments or dynamic companion hues are introduced; token-level results do not automatically validate composited pixels.
+WCAG 2 relative-luminance checks for the implementation values are: `text/sky` 17.25:1, `textSoft/sky` 10.32:1, `textMuted/sky` 6.52:1, `onAccent/accent` 8.95:1 and `onLantern/lantern` 10.78:1. Controls: `controlOutline` is 3.75:1 on `sky`, 3.54:1 on `skyHigh` and 3.33:1 on `surface`; a selected chip (`accent`) is 8.43:1 against an idle one (`surface`); `danger` text is 8.49:1 on `sky` and 7.53:1 on `surface` (checked in `apps/mobile/test/design_audit_test.dart`). The weakest intended quadrant pair is Storm at 6.44:1. Recheck contrast when tint washes, opacity, disabled treatments or dynamic companion hues are introduced; token-level results do not automatically validate composited pixels.
 
 ## Typography and localization
 
@@ -93,13 +95,17 @@ Use `Curves.easeOutCubic`. Motion must explain a relationship or confirm an acti
 |---|---|
 | Filled button | 56dp minimum height, pill shape, `accent/onAccent`. Press feedback is immediate. Disabled uses `surfaceHigh/textMuted`. For work longer than 300ms, keep the label stable and show progress without changing width. |
 | Outlined button | 52dp minimum height, pill shape, `outline` boundary. Use for secondary actions and the compact help entry. |
+| Switch | On: `accent` track, `onAccent` knob. Off: `skyHigh` track with a `controlOutline` outline and a `textMuted` knob (≥ 3:1). |
 | Text/icon button | At least 48×48dp; lavender foreground; tooltip/semantic label for icon-only use. |
-| Chips | Pill shape, 8dp vertical padding, outline when idle, `surfaceHigh` when selected. Selected state needs more than color. Wrap across lines. |
+| Chips | One selected state for every `ChoiceChip`/`FilterChip` (theme level): `accent` fill, `onAccent` label and a leading check; idle chips keep the `surface` fill with a `controlOutline` border. Screen readers get `selected`. Pill shape, 8dp vertical padding, wrap across lines. The Home habit chip keeps its `starlight` fill with its own check icon. |
 | Inputs | `skyHigh` fill, 18dp radius, 16dp vertical padding, persistent label where ambiguity is possible. Focus uses a visible 1.5dp lavender border. Preserve input on errors. |
 | Quadrant/mood tile | Equal geometry and emphasis across all quadrants; glyph + label + semantic selected state; stable ordering; minimum 48dp target. |
 | Cards | `surface` or translucent `surface` with `hairline`; 18dp or 26dp radius; no decorative elevation required. |
 | Top sheet | 26dp top radius, visible outline drag handle, safe-area aware, scrollable at large text sizes. Do not require drag-to-dismiss. |
-| Global help entry | `lantern` foreground/accent, explicit “I need help now” label, reachable within the first three focus stops on primary screens. Must work offline and without sign-in. |
+| Global help entry | `lantern` foreground/accent, explicit “I need help now” label, reachable within the first three focus stops on primary screens. Must work offline and without sign-in. In a top bar it never wraps and never leaves the bar: above 130% text, or where the label doesn't fit beside the title, it becomes a heart-only round button (≥ 48dp) with the label in its tooltip and screen-reader label. |
+| Top bar (`helpAppBar`) | Back/close, the title on one line (it shrinks to 18pt, then ellipsizes), then help and any icon actions on the right. A tab's first screen puts Settings on the right. |
+| Gesture tray (`GestureTray`) | The one component for preset gestures (room tray, member sheet, Quiet Together, wind-down, Breath Ripples): same tiles, icons and order in a compact scrolling row (edges fade where more waits) or a full grid. The room's pinned tray becomes one “Send warmth” button above 130% text. |
+| Destructive button | Outlined in `danger` with an icon and explicit words; the confirm dialog's destructive action uses `danger` and a bolder label, never the weight of Cancel. |
 | Navigation | Four peer destinations plus a distinct central Check-in action. Active state uses icon, label and container—not color alone. Settings/profile stay outside the primary five items. |
 | Feedback | Prefer inline status for saving/sync and persistent recovery actions for failure. Toasts containing information remain at least 5 seconds or until dismissed. |
 

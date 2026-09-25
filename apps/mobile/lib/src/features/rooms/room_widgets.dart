@@ -7,6 +7,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/a11y/icon_scale.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../avatar/aura_avatar.dart';
@@ -70,9 +71,10 @@ class RoomSilhouette extends ConsumerWidget {
   }
 }
 
-/// A gesture preset: its icon over its name. At least 48 dp; the label
-/// never truncates (it may wrap in the member sheet's grid). [width]: a
-/// fixed width in grids; `null` hugs the label (the tray's scrolling row).
+/// A gesture preset: its icon over its name ([GestureTile] for a room
+/// preset). At least 48 dp; the label never truncates (it may wrap in a
+/// grid). [width]: a fixed width in grids; `null` hugs the label (a
+/// scrolling row).
 class GestureButton extends StatelessWidget {
   const GestureButton({
     super.key,
@@ -80,6 +82,7 @@ class GestureButton extends StatelessWidget {
     required this.onPressed,
     required this.hint,
     this.width,
+    this.tileKey,
   });
 
   final GestureType type;
@@ -89,12 +92,49 @@ class GestureButton extends StatelessWidget {
   final String hint;
   final double? width;
 
+  /// Key of the tappable tile (default `gesture-<wire>`).
+  final Key? tileKey;
+
+  @override
+  Widget build(BuildContext context) => GestureTile(
+    tileKey: tileKey ?? ValueKey('gesture-${type.wire}'),
+    icon: gestureIcon(type),
+    label: gestureName(AppLocalizations.of(context), type),
+    hint: hint,
+    onPressed: onPressed,
+    width: width,
+  );
+}
+
+/// One tile of a [GestureTray]: an icon over its name, the same look for
+/// every gesture surface (rooms, the member sheet, Quiet Together, the
+/// wind-down and Breath Ripples).
+class GestureTile extends StatelessWidget {
+  const GestureTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.hint,
+    required this.onPressed,
+    this.width,
+    this.tileKey,
+  });
+
+  final IconData icon;
+  final String label;
+
+  /// Screen-reader hint: who it goes to.
+  final String hint;
+  final VoidCallback? onPressed;
+  final double? width;
+
+  /// Key of the tappable part (tests, screenshots).
+  final Key? tileKey;
+
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
     final enabled = onPressed != null;
-    final name = gestureName(l, type);
     final child = Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AuraSpace.m,
@@ -104,13 +144,13 @@ class GestureButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            gestureIcon(type),
-            size: 24,
+            icon,
+            size: scaledIconSize(context, 24),
             color: enabled ? AuraColors.starlight : AuraColors.textMuted,
           ),
           const SizedBox(height: AuraSpace.xs),
           Text(
-            name,
+            label,
             textAlign: TextAlign.center,
             softWrap: width != null,
             style: t.labelMedium?.copyWith(
@@ -123,7 +163,7 @@ class GestureButton extends StatelessWidget {
     return Semantics(
       button: true,
       enabled: enabled,
-      label: name,
+      label: label,
       hint: hint,
       onTap: onPressed,
       excludeSemantics: true,
@@ -138,7 +178,7 @@ class GestureButton extends StatelessWidget {
             side: const BorderSide(color: AuraColors.outline),
           ),
           child: InkWell(
-            key: ValueKey('gesture-${type.wire}'),
+            key: tileKey,
             borderRadius: BorderRadius.circular(AuraRadius.m),
             onTap: onPressed,
             child: ConstrainedBox(

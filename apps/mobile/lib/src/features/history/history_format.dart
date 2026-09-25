@@ -36,6 +36,21 @@ String dateLabel(String localeTag, LocalDay day, LocalDay today) {
   }
 }
 
+/// A short localized date without the weekday ("September 7"; with the
+/// year when it isn't [today]'s year), e.g. for "Week of September 7".
+String shortDateLabel(String localeTag, LocalDay day, LocalDay today) {
+  final date = DateTime(day.year, day.month, day.day);
+  final locale = localeFromTag(localeTag);
+  final intlLocale = locale.scriptCode == 'Latn' ? 'en' : locale.languageCode;
+  DateFormat format(String loc) =>
+      day.year == today.year ? DateFormat.MMMMd(loc) : DateFormat.yMMMMd(loc);
+  try {
+    return format(intlLocale).format(date);
+  } catch (_) {
+    return format('en').format(date);
+  }
+}
+
 /// Whether [row] was added later for a past day (F1 backfill): its Aura day
 /// isn't the one it was made on (RULES.md §2), judged in the zone it was
 /// stamped in. Rows pulled from the server carry no zone: [fallbackTz]

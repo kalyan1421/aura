@@ -55,18 +55,30 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
       body: CosmicBackground(
         child: SafeArea(
           top: false,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AuraSpace.gutter,
-              AuraSpace.s,
-              AuraSpace.gutter,
-              AuraSpace.xxl,
-            ),
-            children: switch (mode) {
-              PaywallMode.none => _plusOn(context, e),
-              PaywallMode.lockedOnly => _quiet(context),
-              PaywallMode.link || PaywallMode.explainer => _offer(context),
-            },
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(
+                    AuraSpace.gutter,
+                    AuraSpace.s,
+                    AuraSpace.gutter,
+                    AuraSpace.xl,
+                  ),
+                  children: switch (mode) {
+                    PaywallMode.none => _plusOn(context, e),
+                    PaywallMode.lockedOnly => _quiet(context),
+                    PaywallMode.link ||
+                    PaywallMode.explainer => _offer(context),
+                  },
+                ),
+              ),
+              // The offer's choice stays in reach: "Start free month" and
+              // "Not now" are pinned under the plans and legal text, which
+              // keep scrolling above them.
+              if (mode == PaywallMode.link || mode == PaywallMode.explainer)
+                _offerBar(context),
+            ],
           ),
         ),
       ),
@@ -135,9 +147,6 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
         (st.phase == PurchasePhase.idle && st.products.isEmpty);
     final now = ref.read(timeContextProvider).now();
     final trialEnd = DateTime.utc(now.year, now.month + 1, now.day, now.hour);
-    final busy =
-        st.phase == PurchasePhase.buying ||
-        st.phase == PurchasePhase.confirming;
 
     Widget perk(String text) => Padding(
       padding: const EdgeInsets.symmetric(vertical: AuraSpace.xs),
@@ -288,32 +297,71 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
           key: const ValueKey('paywall-cancel-steps'),
           style: soft,
         ),
-        const SizedBox(height: AuraSpace.l),
-        FilledButton(
-          key: const ValueKey('paywall-buy'),
-          onPressed: chosen == null || busy
-              ? null
-              : () => ref
-                    .read(purchaseControllerProvider.notifier)
-                    .buy(chosen.id),
-          child: Text(
-            chosen?.trialOffered ?? false
-                ? l.plus_startTrial
-                : l.plus_subscribe,
-          ),
-        ),
       ],
       _phaseNote(context),
       const SizedBox(height: AuraSpace.s),
-      TextButton(
-        key: const ValueKey('paywall-not-now'),
-        onPressed: () => Navigator.of(context).maybePop(),
-        child: Text(l.common_notNow),
-      ),
       _restoreButton(context),
       const SizedBox(height: AuraSpace.m),
       const LegalLinks(),
     ];
+  }
+
+  /// The pinned bar under the offer: the buy button (once prices are in)
+  /// and "Not now".
+  Widget _offerBar(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final st = ref.watch(purchaseControllerProvider);
+    final monthly = st.products[PlusProducts.monthly];
+    final annual = st.products[PlusProducts.annual];
+    final chosen = st.products[_plan] ?? monthly ?? annual;
+    final loading =
+        st.phase == PurchasePhase.loading ||
+        (st.phase == PurchasePhase.idle && st.products.isEmpty);
+    final unavailable =
+        st.phase == PurchasePhase.storeUnavailable && st.products.isEmpty;
+    final busy =
+        st.phase == PurchasePhase.buying ||
+        st.phase == PurchasePhase.confirming;
+    return DecoratedBox(
+      key: const ValueKey('paywall-bar'),
+      decoration: BoxDecoration(
+        color: AuraColors.sky.withValues(alpha: 0.96),
+        border: const Border(top: BorderSide(color: AuraColors.hairline)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AuraSpace.gutter,
+          AuraSpace.m,
+          AuraSpace.gutter,
+          AuraSpace.xs,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (!loading && !unavailable)
+              FilledButton(
+                key: const ValueKey('paywall-buy'),
+                onPressed: chosen == null || busy
+                    ? null
+                    : () => ref
+                          .read(purchaseControllerProvider.notifier)
+                          .buy(chosen.id),
+                child: Text(
+                  chosen?.trialOffered ?? false
+                      ? l.plus_startTrial
+                      : l.plus_subscribe,
+                ),
+              ),
+            TextButton(
+              key: const ValueKey('paywall-not-now'),
+              onPressed: () => Navigator.of(context).maybePop(),
+              child: Text(l.common_notNow),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _restoreButton(BuildContext context) => TextButton(

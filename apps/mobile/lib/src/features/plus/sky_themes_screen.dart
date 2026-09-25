@@ -93,7 +93,14 @@ class _SkyThemesScreenState extends ConsumerState<SkyThemesScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SkyPreview(palette: s.palette),
+              // A 3:2 strip of the real sky gradient, big enough to tell
+              // First light from Lantern festival.
+              SkyPreview(
+                key: ValueKey('sky-preview-${s.id}'),
+                palette: s.palette,
+                size: 108,
+                height: 72,
+              ),
               const SizedBox(width: AuraSpace.m),
               Expanded(
                 child: Column(
@@ -147,13 +154,28 @@ class _SkyThemesScreenState extends ConsumerState<SkyThemesScreen> {
                                         .buy(s.productId),
                               child: Text(l.plus_skyBuy(store.price)),
                             ),
-                          if (s.stardust != null)
+                          if (s.stardust != null && e.stardust < s.stardust!)
+                            // Not enough yet: say why instead of a greyed
+                            // button with no reason.
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: AuraSpace.s,
+                              ),
+                              child: Text(
+                                l.plus_skyStardustNeeds(
+                                  s.stardust!,
+                                  e.stardust,
+                                ),
+                                key: ValueKey('sky-stardust-needs-${s.id}'),
+                                style: t.bodySmall?.copyWith(
+                                  color: AuraColors.textSoft,
+                                ),
+                              ),
+                            )
+                          else if (s.stardust != null)
                             TextButton(
                               key: ValueKey('sky-stardust-${s.id}'),
-                              onPressed:
-                                  _busy ||
-                                      api == null ||
-                                      e.stardust < s.stardust!
+                              onPressed: _busy || api == null
                                   ? null
                                   : () => _run(
                                       () => api.redeem(s.id, const Uuid().v7()),

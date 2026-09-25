@@ -1598,6 +1598,30 @@
   "@help_backToCapsule": {
     "description": "Closes the support sheet and returns to the sealed capsule."
   },
+  "rooms_trayOpen": "Send warmth",
+  "@rooms_trayOpen": {
+    "description": "Room: at large text sizes the gesture tray is this one button; it opens all eight gestures in a sheet. Never 'chat'."
+  },
+  "rooms_howRoomsWork": "How rooms work",
+  "@rooms_howRoomsWork": {
+    "description": "Rooms tab: one-line link that opens the short explanation, shown once you have joined a room."
+  },
+  "rooms_reportPickReason": "Pick what's happening",
+  "@rooms_reportPickReason": {
+    "description": "Report sheet: helper text above 'Send report' while no reason is chosen yet (the button stays off until then). Calm, no blame."
+  },
+  "plus_skyStardustNeeds": "Needs {count} Stardust (you have {have})",
+  "@plus_skyStardustNeeds": {
+    "description": "Sky themes: shown instead of a greyed 'Use Stardust' button when the balance is too low. {count} = the sky's cost, {have} = the person's balance. A count, never money; no pressure.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "have": {
+        "type": "int"
+      }
+    }
+  },
   "flows_startOverTitle": "Start over?",
   "@flows_startOverTitle": {
     "description": "Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame."
@@ -2037,9 +2061,9 @@
   "@insights_patternsNone": {
     "description": "Enough check-ins, but nothing passes the thresholds (weak patterns are hidden, not caveated)."
   },
-  "insights_patternTag": "On check-ins with {tag}, {quadrant} showed up more often.",
+  "insights_patternTag": "When you tagged {tag}, {quadrant} showed up more often.",
   "@insights_patternTag": {
-    "description": "A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise.",
+    "description": "A pattern: check-ins carrying tag {tag} were {quadrant} more often than others. Descriptive only, never 'because'. {quadrant} = Storm/Rain/Moonlight/Sunrise. One whole template: never split or concatenate.",
     "placeholders": {
       "tag": {
         "type": "String"

@@ -227,6 +227,7 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
 
   @override
   void dispose() {
+    _revealTimer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     _draft
       ..attachRecorder(null)
@@ -380,6 +381,32 @@ class _VoiceNoteFieldState extends ConsumerState<VoiceNoteField>
     });
     final l = AppLocalizations.of(context);
     announceVoice(context, l.voice_recorded(voiceSeconds(elapsed)));
+    _revealActions();
+  }
+
+  Timer? _revealTimer;
+
+  /// The recorded card is taller than the recording row: once it has grown
+  /// in (and any AnimatedSize around it has settled), scroll just enough to
+  /// show "Record again / Remove" above the screen's pinned Save.
+  void _revealActions() {
+    _revealTimer?.cancel();
+    final reduce = reduceMotionOf(context);
+    _revealTimer = Timer(
+      reduce ? Duration.zero : AuraMotion.calm + AuraMotion.quick,
+      () {
+        _revealTimer = null;
+        if (!mounted) return;
+        unawaited(
+          Scrollable.ensureVisible(
+            context,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+            duration: reduce ? Duration.zero : AuraMotion.quick,
+            curve: AuraMotion.ease,
+          ),
+        );
+      },
+    );
   }
 
   void _remove() {
