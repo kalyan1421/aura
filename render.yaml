@@ -39,33 +39,19 @@ envVarGroups:
         sync: false
 
 services:
+  # Free setup (AK, 26 Sep 2026): one Render Free web service runs the API and the BullMQ worker together
+  # (scripts/start-all.mjs); Render Free Key Value (no persistence: fine before launch). Keep it awake with a
+  # free uptime ping on /health every 10 min (750 free hours/month covers one service 24x7). For launch, split into
+  # a `starter` web service (`node dist/main.js`) + a `starter` worker (`node dist/worker.js`) + `starter` Key Value.
   - type: web
     name: aura-api
     runtime: node
     region: singapore
-    plan: starter
+    plan: free
     rootDir: server/aura-api
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
-    startCommand: node dist/main.js
+    startCommand: node scripts/start-all.mjs
     healthCheckPath: /health
-    autoDeploy: true
-    branch: main
-    envVars:
-      - fromGroup: aura-shared
-      - key: REDIS_URL
-        fromService:
-          type: keyvalue
-          name: aura-redis
-          property: connectionString
-
-  - type: worker
-    name: aura-worker
-    runtime: node
-    region: singapore
-    plan: starter
-    rootDir: server/aura-api
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
-    startCommand: node dist/worker.js
     autoDeploy: true
     branch: main
     envVars:
@@ -79,6 +65,6 @@ services:
   - type: keyvalue
     name: aura-redis
     region: singapore
-    plan: starter
+    plan: free
     maxmemoryPolicy: noeviction # BullMQ must never lose jobs to eviction
     ipAllowList: [] # only Render services in this workspace

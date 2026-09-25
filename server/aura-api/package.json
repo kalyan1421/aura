@@ -1,7 +1,7 @@
 {
   "name": "@aura/aura-api",
   "version": "0.1.0",
-  "description": "Aura API — NestJS modular monolith (HTTP API :3310 + BullMQ worker :3311). Raw pg, no ORM.",
+  "description": "Aura API \u2014 NestJS modular monolith (HTTP API :3310 + BullMQ worker :3311). Raw pg, no ORM.",
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -13,7 +13,8 @@
     "test:e2e": "jest --config test/jest-e2e.config.js --runInBand",
     "lint": "tsc -p tsconfig.json --noEmit && pnpm run lint:copy",
     "lint:copy": "jest --config jest.config.js test/unit/notifications.copy-lint.spec.ts",
-    "lexicon": "ts-node-dev --transpile-only --quiet src/remote-config/cli.ts"
+    "lexicon": "ts-node-dev --transpile-only --quiet src/remote-config/cli.ts",
+    "start:all": "node scripts/start-all.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^11.2.6",
