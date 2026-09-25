@@ -10,6 +10,7 @@
 | `helplines.v1.json` | The crisis helpline directory every app build bundles (PRD 06c F9 / REQ-SAFE-02, 18 "Helplines by country"): the support sheet's offline fallback, and the baseline signed versions are compared with. |
 | `helplines.schema.json` | The directory's schema (JSON Schema 2020-12) plus the rules it can't express. |
 | `fixtures/helplines.v1.dev-signed.json` | The bundled directory as a signed `helplines` bundle (development key); both stacks' tests verify it. |
+| `candidates/crisis_lexicon.hi.draft.json` | **Draft, not active.** Candidate Hindi and Hinglish crisis terms (+ test cases) for the native and safe-messaging review (A9). Nothing reads it at runtime; `server/aura-api/test/unit/lexicon.candidates.spec.ts` only checks it is ready to adopt and has not leaked into the baseline. Adoption steps are in the file. |
 
 ## Crisis lexicon (F9 L1)
 

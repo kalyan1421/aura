@@ -128,6 +128,14 @@ private enum AuraPlatformChannel {
           "version": info?["CFBundleShortVersionString"] as? String ?? "",
           "build": info?["CFBundleVersion"] as? String ?? "",
         ])
+      case "deviceProfile":
+        // Avatar quality tier at launch (PRD F2 tiers, REQ-AVA-07;
+        // lib/src/core/perf/device_profile.dart): memory and Low Power Mode.
+        // Read on device only; never sent.
+        result([
+          "totalRamBytes": NSNumber(value: ProcessInfo.processInfo.physicalMemory),
+          "powerSave": ProcessInfo.processInfo.isLowPowerModeEnabled,
+        ])
       case "excludeFromBackup":
         // Voice files live in Application Support, which iCloud backs up by
         // default: the `voice/` directory (and so its contents) opts out.

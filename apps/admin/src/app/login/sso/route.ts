@@ -29,7 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }),
     303,
   );
-  res.cookies.set(PKCE_COOKIE, await seal(state, cfg.cookieSecret), {
+  res.cookies.set(PKCE_COOKIE, await seal(state, cfg.cookieSecret, 'pkce'), {
     httpOnly: true,
     secure: cfg.secureCookies,
     sameSite: 'lax',

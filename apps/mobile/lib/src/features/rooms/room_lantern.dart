@@ -107,7 +107,7 @@ class _LevelLights extends StatelessWidget {
     children: [
       for (var i = 0; i < max; i++)
         Padding(
-          padding: const EdgeInsets.only(right: 6),
+          padding: const EdgeInsetsDirectional.only(end: 6),
           child: AnimatedContainer(
             duration: reduceMotionOf(context)
                 ? Duration.zero

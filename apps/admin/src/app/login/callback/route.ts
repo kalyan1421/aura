@@ -39,7 +39,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (!code || url.searchParams.get('error')) return back(request, 'sso_failed');
 
   const jar = await cookies();
-  const pkce = await unseal<PkceState>(jar.get(PKCE_COOKIE)?.value, cfg.cookieSecret);
+  const pkce = await unseal<PkceState>(jar.get(PKCE_COOKIE)?.value, cfg.cookieSecret, 'pkce');
   if (!pkce || pkce.v !== 1 || Date.now() - pkce.started > 10 * 60_000) return back(request, 'sso_expired');
 
   const t = await exchangePkce(code, pkce.verifier).catch(() => null);
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/mfa"><title>Signing in</title></head>
 <body><main id="main" class="auth"><p>Signed in with Google Workspace. <a href="/mfa">Continue to two-factor verification</a>.</p></main></body></html>`;
   const res = new NextResponse(html, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
-  res.cookies.set(SESSION_COOKIE, await seal(session, cfg.cookieSecret), {
+  res.cookies.set(SESSION_COOKIE, await seal(session, cfg.cookieSecret, 'session'), {
     httpOnly: true,
     secure: cfg.secureCookies,
     sameSite: 'strict',

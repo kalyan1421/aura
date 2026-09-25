@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import { z } from 'zod';
 import { auditConsole } from '../admin/admin-audit';
 import { AdminDb } from '../admin/admin-db';
@@ -17,6 +17,7 @@ import { ModerationError, ModerationService } from '../safety/moderation.service
 import { ACTIVE_SANCTION_SQL, LANE_PRIORITY, REPORT_REASONS, type Lane, type ReportReason } from '../safety/safety-types';
 import { URGENT_PAGER, type UrgentPager } from '../safety/urgent-pager';
 import type { HoldReason, RejectReason, Scores } from './decide';
+import { corpusLabel, feedCorpus } from './corpus';
 import { tryOpen } from './reflection-cipher';
 import { COMPOSER_FLAG, REFLECTION_POOLS, type ReflectionPool } from './reflection-config';
 
@@ -196,6 +197,8 @@ const REVIEWABLE: ReadonlySet<AdminStatus> = new Set(['pending', 'held', 'reject
 
 @Injectable()
 export class AdminReflectionsService {
+  private readonly logger = new Logger('AdminReflections');
+
   constructor(
     private readonly adminDb: AdminDb,
     private readonly db: DbService,
@@ -498,6 +501,12 @@ export class AdminReflectionsService {
       });
       return d;
     });
+    // REQ-SAFE-16: the moderator's decision joins the de-identified corpus when it may. Never for crisis or Minors &
+    // grooming items; after the decision committed, so a failure here changes nothing.
+    const minorsOrCrisis = current.status === 'crisis_diverted' || openReports.some((r) => r.lane === 'crisis' || r.lane === 'minors_grooming');
+    if (res.previous_status !== res.status) {
+      await this.feedCorpus(reflectionId, res.status, b.decision === 'remove' ? (b.rejectReason ?? 'other') : null, minorsOrCrisis);
+    }
     return {
       reflectionId,
       previousStatus: res.previous_status,
@@ -508,6 +517,32 @@ export class AdminReflectionsService {
       strike,
       escalated: null,
     };
+  }
+
+  private async feedCorpus(reflectionId: string, status: AdminStatus, rejectReason: RejectReason | null, minorSafety: boolean): Promise<void> {
+    const label = corpusLabel(status, rejectReason, { minorSafety });
+    if (!label) return;
+    try {
+      // Service role, not aura_admin: the console role has no grant on the corpus or the author.
+      const row = (
+        await this.db.query<{ user_id: string; language_pool: string; body_ct: string | null; body_key: string | null }>(
+          'select user_id, language_pool, body_ct, body_key from public.reflections where id = $1',
+          [reflectionId],
+        )
+      ).rows[0];
+      const text = row ? tryOpen(this.app.masterKey, reflectionId, row.body_ct, row.body_key) : null;
+      if (!row || !text) return;
+      await feedCorpus(this.db, this.app.masterKey, {
+        authorId: row.user_id,
+        languagePool: row.language_pool,
+        text,
+        label,
+        source: 'human',
+        decidedAt: new Date(),
+      });
+    } catch (err) {
+      this.logger.warn(`corpus: not added (${(err as Error).name})`);
+    }
   }
 
   private async escalate(

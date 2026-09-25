@@ -53,6 +53,7 @@ Map<String, dynamic> _$SnapshotAvatarToJson(_SnapshotAvatar instance) =>
 _SnapshotStreak _$SnapshotStreakFromJson(Map<String, dynamic> json) =>
     _SnapshotStreak(
       glowStreak: (json['glowStreak'] as num?)?.toInt() ?? 0,
+      longestGlowStreak: (json['longestGlowStreak'] as num?)?.toInt(),
       lifetimeGlowDays: (json['lifetimeGlowDays'] as num?)?.toInt() ?? 0,
       restBank: (json['restBank'] as num?)?.toInt() ?? 1,
       earnCounter: (json['earnCounter'] as num?)?.toInt() ?? 0,
@@ -62,6 +63,7 @@ _SnapshotStreak _$SnapshotStreakFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SnapshotStreakToJson(_SnapshotStreak instance) =>
     <String, dynamic>{
       'glowStreak': instance.glowStreak,
+      'longestGlowStreak': instance.longestGlowStreak,
       'lifetimeGlowDays': instance.lifetimeGlowDays,
       'restBank': instance.restBank,
       'earnCounter': instance.earnCounter,

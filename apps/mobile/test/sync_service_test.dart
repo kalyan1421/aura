@@ -179,6 +179,47 @@ void main() {
     expect(sync.phase.value, SyncPhase.idle);
   });
 
+  test('PRD 16: after the push, a delta pull (then at most every 2 min, and '
+      'again after a resume)', () async {
+    final deltas = <String>[];
+    final clock = FixedClock(testNow);
+    final withDelta = SyncService(
+      auth: _FakeAuth(),
+      api: api,
+      outbox: outbox,
+      checkIns: checkIns,
+      profile: ProfileService(
+        kv: kv,
+        timezone: () => time.timezone,
+        progress: progress,
+        country: () => 'IN',
+      ),
+      progress: progress,
+      dataKeys: DataKeyRepository(MemorySecureStore()),
+      kv: kv,
+      clock: clock,
+      ids: const Ids(),
+      connectivity: const Stream.empty(),
+      pull: (_, _) async {},
+      alreadyPulled: (_) async => true,
+      onUnder13: () async {},
+      deltaPull: (userId, _) async => deltas.add(userId),
+    );
+    addTearDown(withDelta.dispose);
+    await checkIns.save(id: const Ids().v7(), mood: moodById('calm')!);
+    await withDelta.kick();
+    expect(api.pushes, isNotEmpty);
+    expect(deltas, ['user-1']);
+    await withDelta.kick(); // a minute-heartbeat later: throttled
+    expect(deltas, hasLength(1));
+    clock.instant = testNow.add(SyncService.deltaPullEvery);
+    await withDelta.kick();
+    expect(deltas, hasLength(2));
+    withDelta.onResume(); // foreground: always (its own kick)
+    await withDelta.drainNow();
+    expect(deltas, hasLength(3));
+  });
+
   test('notes leave the device only as AES-GCM ciphertext', () async {
     final id = const Ids().v7();
     await checkIns.save(id: id, mood: moodById('lonely')!, note: 'missing home');

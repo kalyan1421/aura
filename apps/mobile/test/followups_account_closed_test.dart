@@ -124,6 +124,14 @@ Future<void> _unmount(WidgetTester tester) async {
 }
 
 Future<void> _tap(WidgetTester tester, Finder f) async {
+  // The screen is a lazy list: build the row first if it is below the fold.
+  if (f.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      f,
+      100,
+      scrollable: find.byType(Scrollable).last,
+    );
+  }
   await tester.ensureVisible(f);
   await tester.pump();
   await tester.tap(f);

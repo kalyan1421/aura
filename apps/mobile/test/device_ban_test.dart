@@ -263,9 +263,19 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('grievance@example.com'), findsOneWidget);
+      // The in-app review (REQ-SAFE-11): a ticket id at once, no mail app.
+      expect(
+        find.byKey(const ValueKey('device-banned-review-form')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const ValueKey('device-banned-sign-out')),
         findsOneWidget,
+      );
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('device-banned-delete')),
+        100,
+        scrollable: find.byType(Scrollable).first,
       );
       expect(
         find.byKey(const ValueKey('device-banned-delete')),

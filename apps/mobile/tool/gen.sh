@@ -31,6 +31,8 @@ python3 tool/l10n_source.py
 flutter gen-l10n
 # Native home-screen widget fallback copy (F11) from the ARB files.
 if [ -f tool/gen_widget_strings.py ]; then python3 tool/gen_widget_strings.py; fi
+# Test-only pseudo-localized catalogue (PRD 18; test/pseudo_localization_test.dart).
+if [ -f tool/gen_pseudo_l10n.py ]; then python3 tool/gen_pseudo_l10n.py; fi
 if [ "${1:-}" != "l10n" ]; then
   if [ -f tool/gen_lexicon.py ]; then python3 tool/gen_lexicon.py; fi
   if [ -f tool/gen_helplines.py ]; then python3 tool/gen_helplines.py; fi

@@ -1,12 +1,19 @@
 package com.akvega.aura
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import com.google.android.play.agesignals.AgeSignalsManagerFactory
 import com.google.android.play.agesignals.AgeSignalsRequest
 import com.akvega.aura.widget.AuraWidgetBridge
+import com.google.android.gms.auth.blockstore.Blockstore
+import com.google.android.gms.auth.blockstore.DeleteBytesRequest
+import com.google.android.gms.auth.blockstore.RetrieveBytesRequest
+import com.google.android.gms.auth.blockstore.StoreBytesData
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -60,7 +67,69 @@ class MainActivity : AudioServiceActivity() {
                             result.success(null)
                         }
                     }
+                    // Avatar quality tier at launch (PRD F2 tiers, REQ-AVA-07;
+                    // lib/src/core/perf/device_profile.dart): total RAM and
+                    // battery saver. Read on device only; never sent.
+                    "deviceProfile" -> {
+                        try {
+                            val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                            val mem = ActivityManager.MemoryInfo()
+                            am.getMemoryInfo(mem)
+                            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+                            result.success(
+                                mapOf("totalRamBytes" to mem.totalMem, "powerSave" to pm.isPowerSaveMode),
+                            )
+                        } catch (e: Exception) {
+                            result.success(null)
+                        }
+                    }
                     else -> result.notImplemented()
+                }
+            }
+
+        // The under-13 device lock, Android copy (F8 REQ-ACC-03; lib/src/features/onboarding/age_gate.dart). Keystore-
+        // backed prefs are wiped on uninstall; Block Store keeps these bytes outside the app's data, so the 30-day lock
+        // can come back after a reinstall (PRD `[ASSUMPTION: confirm persistence across reinstall]`, spike A8). Only
+        // "blocked until <ISO date>" is stored: nothing identifying, device-only (no cloud backup). Never fails:
+        // `read` answers null and writes answer false when Block Store is unavailable.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.akvega.aura/device_lock")
+            .setMethodCallHandler { call, result ->
+                val key = "aura.age_block_until"
+                try {
+                    val client = Blockstore.getClient(applicationContext)
+                    when (call.method) {
+                        "read" -> client
+                            .retrieveBytes(RetrieveBytesRequest.Builder().setKeys(listOf(key)).build())
+                            .addOnSuccessListener { r ->
+                                val bytes = r.blockstoreDataMap[key]?.bytes
+                                result.success(bytes?.toString(Charsets.UTF_8))
+                            }
+                            .addOnFailureListener { result.success(null) }
+                        "write" -> {
+                            val value = call.arguments as? String
+                            if (value == null) {
+                                result.success(false)
+                            } else {
+                                client
+                                    .storeBytes(
+                                        StoreBytesData.Builder()
+                                            .setKey(key)
+                                            .setBytes(value.toByteArray(Charsets.UTF_8))
+                                            .setShouldBackupToCloud(false)
+                                            .build(),
+                                    )
+                                    .addOnSuccessListener { result.success(true) }
+                                    .addOnFailureListener { result.success(false) }
+                            }
+                        }
+                        "clear" -> client
+                            .deleteBytes(DeleteBytesRequest.Builder().setKeys(listOf(key)).build())
+                            .addOnSuccessListener { result.success(true) }
+                            .addOnFailureListener { result.success(false) }
+                        else -> result.notImplemented()
+                    }
+                } catch (e: Exception) {
+                    result.success(if (call.method == "read") null else false)
                 }
             }
 

@@ -95,6 +95,9 @@ class FakeDb {
       if (this.prefs && this.prefs.sent_day === day) this.prefs.sent_types = this.prefs.sent_types.filter((t) => t !== type);
       return { rows: [], rowCount: 1 };
     }
+    // Rule 7 smart timing (policy.ts smartTimingSkip): no reminder history here — its own spec covers it.
+    if (s.startsWith('select a.reminder_last_sent_at, a.reminder_ignored')) return ok();
+    if (s.startsWith('update public.notification_activity set reminder_last_sent_at')) return { rows: [], rowCount: 1 };
     if (s.startsWith('delete from public.device_tokens')) {
       const dead = params[1] as string[];
       const before = this.tokens.length;

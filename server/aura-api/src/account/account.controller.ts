@@ -3,6 +3,7 @@ import { AllowAccountClosed } from '../auth/account-closed.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { AuthUser } from '../auth/jwt-verifier';
 import { AllowPendingDeletion } from '../auth/pending-deletion.guard';
+import { AccountExportService, type ServerExport } from './account-export';
 import type { AccountStatus } from './account.schema';
 import { AccountService } from './account.service';
 
@@ -14,7 +15,10 @@ import { AccountService } from './account.service';
 @AllowAccountClosed()
 @Controller('v1/account')
 export class AccountController {
-  constructor(private readonly account: AccountService) {}
+  constructor(
+    private readonly account: AccountService,
+    private readonly exports: AccountExportService,
+  ) {}
 
   @Get()
   @Header('Cache-Control', 'no-store')
@@ -34,6 +38,16 @@ export class AccountController {
   @HttpCode(200)
   cancelDeletion(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<{ deletionScheduledFor: null }> {
     return this.account.cancelDeletion(user.id, body);
+  }
+
+  /**
+   * F8 REQ-ACC-12: what only the server holds, for the export the app builds on the phone (contracts/api/v1.md
+   * "Data export"). Also for a closed account, like deletion.
+   */
+  @Get('export')
+  @Header('Cache-Control', 'no-store')
+  export(@CurrentUser() user: AuthUser): Promise<ServerExport> {
+    return this.exports.export(user.id);
   }
 
   /** Native Sign in with Apple: keep the refresh token so the deletion can revoke it (App Review 5.1.1(v)) → 204. */

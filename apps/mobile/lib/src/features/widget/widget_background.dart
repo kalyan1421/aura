@@ -182,7 +182,10 @@ Future<void> runWidgetBackgroundEntry() async {
       outcome = WidgetBackgroundOutcome.skipped;
     } else {
       final kv = KvStore(db);
-      final gate = await loadGateState(kv, AgeGate(secure, const Clock()));
+      final gate = await loadGateState(
+        kv,
+        AgeGate(secure, const Clock(), platformDeviceLockMirror()),
+      );
       await Supabase.initialize(
         url: Env.supabaseUrl,
         publishableKey: Env.supabaseKey,

@@ -26,7 +26,7 @@ describe('computeSnapshot', () => {
         constellationStars: 0,
         equippedCosmetics: [],
       },
-      streak: { glowStreak: 0, lifetimeGlowDays: 0, restBank: 1, earnCounter: 0, lastActiveDay: null },
+      streak: { glowStreak: 0, longestGlowStreak: 0, lifetimeGlowDays: 0, restBank: 1, earnCounter: 0, lastActiveDay: null },
       starlight: { total: 0, today: 0 },
       serverTime: '2026-10-08T10:00:00.000Z',
       auraDay: '2026-10-08',
@@ -50,7 +50,7 @@ describe('computeSnapshot', () => {
     expect(s.avatar).toMatchObject({ stage: 'constellation', constellationStars: 1, ringCount: 2, glowLevel: 1 });
     expect(s.avatar.hue).toBeCloseTo(15.559, 2);
     expect(s.avatar.equippedCosmetics).toEqual(['halo']);
-    expect(s.streak).toEqual({ glowStreak: 2, lifetimeGlowDays: 2, restBank: 1, earnCounter: 2, lastActiveDay: '2026-10-05' });
+    expect(s.streak).toEqual({ glowStreak: 2, longestGlowStreak: 2, lifetimeGlowDays: 2, restBank: 1, earnCounter: 2, lastActiveDay: '2026-10-05' });
     expect(s.avatar.isResting).toBe(true); // 10-05 → 10-08 is 3 days
   });
 

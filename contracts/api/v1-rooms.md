@@ -85,7 +85,7 @@ type Silhouette = {        // snapshot taken when the member joined; never updat
   cosmetic: string | null; // at most one standard cosmetic; always null until F12 ships
 };
 type Member = {
-  memberId: string; pseudonym: string;   // e.g. "Quiet Comet" — fresh per room, unique within the room
+  memberId: string; pseudonym: string;   // e.g. "Quiet Comet" — fresh per room, unique within the room; never one the Owner blocked (console → Pseudonyms)
   silhouette: Silhouette;
   moodChip: string;        // mood id at join (catalogue id, e.g. "anxious"); the app localises it
   live: boolean;           // seen in the last 2 min

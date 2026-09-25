@@ -27,20 +27,20 @@ $StreakStateCopyWith<StreakState> get copyWith => _$StreakStateCopyWithImpl<Stre
 @override
 bool operator ==(Object other) {
   final _this = this as StreakState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is StreakState&&(identical(other.glowStreak, _this.glowStreak) || other.glowStreak == _this.glowStreak)&&(identical(other.lifetimeGlowDays, _this.lifetimeGlowDays) || other.lifetimeGlowDays == _this.lifetimeGlowDays)&&(identical(other.restBank, _this.restBank) || other.restBank == _this.restBank)&&(identical(other.earnCounter, _this.earnCounter) || other.earnCounter == _this.earnCounter)&&(identical(other.lastActiveDay, _this.lastActiveDay) || other.lastActiveDay == _this.lastActiveDay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is StreakState&&(identical(other.glowStreak, _this.glowStreak) || other.glowStreak == _this.glowStreak)&&(identical(other.longestGlowStreak, _this.longestGlowStreak) || other.longestGlowStreak == _this.longestGlowStreak)&&(identical(other.lifetimeGlowDays, _this.lifetimeGlowDays) || other.lifetimeGlowDays == _this.lifetimeGlowDays)&&(identical(other.restBank, _this.restBank) || other.restBank == _this.restBank)&&(identical(other.earnCounter, _this.earnCounter) || other.earnCounter == _this.earnCounter)&&(identical(other.lastActiveDay, _this.lastActiveDay) || other.lastActiveDay == _this.lastActiveDay));
 }
 
 
 @override
 int get hashCode {
   final _this = this as StreakState;
-  return Object.hash(runtimeType,_this.glowStreak,_this.lifetimeGlowDays,_this.restBank,_this.earnCounter,_this.lastActiveDay);
+  return Object.hash(runtimeType,_this.glowStreak,_this.longestGlowStreak,_this.lifetimeGlowDays,_this.restBank,_this.earnCounter,_this.lastActiveDay);
 }
 
 @override
 String toString() {
   final _this = this as StreakState;
-  return 'StreakState(glowStreak: ${_this.glowStreak}, lifetimeGlowDays: ${_this.lifetimeGlowDays}, restBank: ${_this.restBank}, earnCounter: ${_this.earnCounter}, lastActiveDay: ${_this.lastActiveDay})';
+  return 'StreakState(glowStreak: ${_this.glowStreak}, longestGlowStreak: ${_this.longestGlowStreak}, lifetimeGlowDays: ${_this.lifetimeGlowDays}, restBank: ${_this.restBank}, earnCounter: ${_this.earnCounter}, lastActiveDay: ${_this.lastActiveDay})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $StreakStateCopyWith<$Res>  {
   factory $StreakStateCopyWith(StreakState value, $Res Function(StreakState) _then) = _$StreakStateCopyWithImpl;
 @useResult
 $Res call({
- int glowStreak, int lifetimeGlowDays, int restBank, int earnCounter, LocalDay? lastActiveDay
+ int glowStreak, int longestGlowStreak, int lifetimeGlowDays, int restBank, int earnCounter, LocalDay? lastActiveDay
 });
 
 
@@ -68,9 +68,10 @@ class _$StreakStateCopyWithImpl<$Res>
 
 /// Create a copy of StreakState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? glowStreak = null,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? glowStreak = null,Object? longestGlowStreak = null,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
   return _then(StreakState(
 glowStreak: null == glowStreak ? _self.glowStreak : glowStreak // ignore: cast_nullable_to_non_nullable
+as int,longestGlowStreak: null == longestGlowStreak ? _self.longestGlowStreak : longestGlowStreak // ignore: cast_nullable_to_non_nullable
 as int,lifetimeGlowDays: null == lifetimeGlowDays ? _self.lifetimeGlowDays : lifetimeGlowDays // ignore: cast_nullable_to_non_nullable
 as int,restBank: null == restBank ? _self.restBank : restBank // ignore: cast_nullable_to_non_nullable
 as int,earnCounter: null == earnCounter ? _self.earnCounter : earnCounter // ignore: cast_nullable_to_non_nullable

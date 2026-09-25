@@ -106,3 +106,12 @@ s("insights_lookBackHideNote", "Hide", "Closes the note / voice note of a Look b
 s("insights_lookBackSettingsHint", "You can turn Look back off in Settings.", "Footer of Look back (PRD F10: it can be hidden in Settings).", "సెట్టింగ్స్‌లో వెనక్కి చూడండిని ఆపేయవచ్చు.", "Settings lo Venakki chudandi ni aapeyavachu.", hi="सेटिंग्स में 'पीछे देखें' बंद कर सकते हैं।", hl="Settings mein 'Peeche dekhein' band kar sakte hain.")
 s("insights_lookBackSetting", "Look back in Aura Sky", "Settings › Comfort switch: show Look back inside Insights (on by default).", "Aura Skyలో వెనక్కి చూడండి", "Aura Sky lo venakki chudandi", hi="Aura Sky में पीछे देखें", hl="Aura Sky mein peeche dekhein")
 s("insights_lookBackSettingNote", "Past weeks of your sky, only when you open them. Never sent to you as a notification.", "Under the Look back switch in Settings.", "మీ ఆకాశంలోని గత వారాలు, మీరు తెరిచినప్పుడే. ఎప్పుడూ నోటిఫికేషన్‌గా రావు.", "Mee sky lo gatha vaaraalu, meeru open chesinappude. Eppudu notification ga raavu.", hi="आपके आसमान के पिछले हफ़्ते, सिर्फ़ जब आप खोलें। कभी नोटिफ़िकेशन बनकर नहीं आते।", hl="Aapke aasmaan ke pichhle hafte, sirf jab aap kholein. Kabhi notification bankar nahi aate.")
+
+# F3 "Longest streak lives only in Insights" (RULES.md §7 longestGlowStreak). Never on Home, a push or a share card;
+# hidden with the other streak numbers when "Hide streak number" is on. A fact, never a target ("beat it").
+s("insights_statsLongest", "{count, plural, =1{Longest glow streak · 1 day} other{Longest glow streak · {count} days}}",
+  "Lifetime stat in Insights only: the longest glow streak so far. Never framed as a record to beat.",
+  "{count, plural, =1{అత్యంత పొడవైన వెలుగు వరుస · 1 రోజు} other{అత్యంత పొడవైన వెలుగు వరుస · {count} రోజులు}}",
+  "{count, plural, =1{Longest glow streak · 1 roju} other{Longest glow streak · {count} rojulu}}", INT("count"),
+  hi="{count, plural, =1{चमक का सबसे लंबा सिलसिला · 1 दिन} other{चमक का सबसे लंबा सिलसिला · {count} दिन}}",
+  hl="{count, plural, =1{Sabse lamba glow streak · 1 din} other{Sabse lamba glow streak · {count} din}}")

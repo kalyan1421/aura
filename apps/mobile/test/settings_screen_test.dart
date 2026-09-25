@@ -189,6 +189,27 @@ void main() {
     await _unmount(tester);
   });
 
+  testWidgets('switching language says which rooms new rooms use (PRD 14)', (
+    tester,
+  ) async {
+    await _pump(tester, db: memoryDb());
+    expect(find.byKey(const ValueKey('set-pool-notice')), findsNothing);
+    await tester.tap(find.byKey(const ValueKey('lang-te-Latn')));
+    await settleIo(tester);
+    expect(
+      find.text(
+        'New rooms will match you with Telugu and Tenglish speakers. '
+        "A room you're in now keeps its language.",
+      ),
+      findsOneWidget,
+    );
+    // Back to the language Settings opened with: nothing to say.
+    await tester.tap(find.byKey(const ValueKey('lang-en')));
+    await settleIo(tester);
+    expect(find.byKey(const ValueKey('set-pool-notice')), findsNothing);
+    await _unmount(tester);
+  });
+
   testWidgets('Comfort switches write the device preferences', (tester) async {
     final db = memoryDb();
     final c = await _pump(tester, db: db);

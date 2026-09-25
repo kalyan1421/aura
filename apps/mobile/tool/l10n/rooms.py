@@ -184,3 +184,30 @@ s("rooms_surveyTitle", "Did you feel less alone?", "Exit micro-survey (≥ 30 s 
 s("rooms_surveyYes", "Yes", "Survey answer.", "అవును", "Avunu", hi="हाँ", hl="Haan")
 s("rooms_surveyNo", "Not really", "Survey answer.", "అంతగా లేదు", "Antaga ledu", hi="कुछ खास नहीं", hl="Kuch khaas nahi")
 s("rooms_surveySkip", "Skip", "Skip the survey.", "వదిలేయండి", "Skip", hi="छोड़ें", hl="Skip karein")
+
+# PRD 14 "Language · switch mid-session (Settings)": the room pool follows the app language for NEW rooms only; a room
+# the person is in keeps its pool until they leave [ASSUMPTION]. Shown under the picker after a change in Settings.
+s("settings_poolNoticeEn", "New rooms will match you with English speakers. A room you're in now keeps its language.",
+  "Settings, after switching to English: which room pool new rooms use.",
+  "కొత్త రూమ్‌లు మిమ్మల్ని English మాట్లాడేవారితో కలుపుతాయి. మీరు ఇప్పుడు ఉన్న రూమ్ భాష మారదు.",
+  "Kotta rooms mimmalni English maatlaadevaaritho kaluputaayi. Meeru ippudu unna room bhaasha maaradu.",
+  hi="नए रूम आपको English बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।",
+  hl="Naye rooms aapko English bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.")
+s("settings_poolNoticeTe", "New rooms will match you with Telugu and Tenglish speakers. A room you're in now keeps its language.",
+  "Settings, after switching to Telugu or Tenglish: which room pool new rooms use.",
+  "కొత్త రూమ్‌లు మిమ్మల్ని తెలుగు, Tenglish మాట్లాడేవారితో కలుపుతాయి. మీరు ఇప్పుడు ఉన్న రూమ్ భాష మారదు.",
+  "Kotta rooms mimmalni Telugu, Tenglish maatlaadevaaritho kaluputaayi. Meeru ippudu unna room bhaasha maaradu.",
+  hi="नए रूम आपको तेलुगु और Tenglish बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।",
+  hl="Naye rooms aapko Telugu aur Tenglish bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.")
+s("settings_poolNoticeHi", "New rooms will match you with Hindi and Hinglish speakers. A room you're in now keeps its language.",
+  "Settings, after switching to Hindi or Hinglish while that room pool is open.",
+  "కొత్త రూమ్‌లు మిమ్మల్ని హిందీ, Hinglish మాట్లాడేవారితో కలుపుతాయి. మీరు ఇప్పుడు ఉన్న రూమ్ భాష మారదు.",
+  "Kotta rooms mimmalni Hindi, Hinglish maatlaadevaaritho kaluputaayi. Meeru ippudu unna room bhaasha maaradu.",
+  hi="नए रूम आपको हिंदी और Hinglish बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।",
+  hl="Naye rooms aapko Hindi aur Hinglish bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.")
+s("settings_poolNoticeHiSoon", "Hindi and Hinglish rooms are opening soon, so new rooms will match you with English speakers for now.",
+  "Settings, after switching to Hindi or Hinglish while that pool is still closed (F5: they join English meanwhile).",
+  "హిందీ, Hinglish రూమ్‌లు త్వరలో మొదలవుతాయి, అందుకే ఇప్పటికి కొత్త రూమ్‌లు మిమ్మల్ని English మాట్లాడేవారితో కలుపుతాయి.",
+  "Hindi, Hinglish rooms tvaralo modalavutaayi, andukey ippatiki kotta rooms mimmalni English maatlaadevaaritho kaluputaayi.",
+  hi="हिंदी और Hinglish रूम जल्द खुलेंगे, इसलिए अभी नए रूम आपको English बोलने वालों के साथ जोड़ेंगे।",
+  hl="Hindi aur Hinglish rooms jald khulenge, isliye abhi naye rooms aapko English bolne walon ke saath jodenge.")

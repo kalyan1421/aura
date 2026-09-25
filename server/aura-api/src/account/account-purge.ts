@@ -76,6 +76,9 @@ export const PERSONAL_TABLES = [
   'keepsakes',
   'keepsake_tallies',
   'profiles',
+  // PRD 16 delta pull (migration 20261005000032): ids of deleted check-ins / habits / logs. Last: deleting the rows
+  // above writes their tombstones (the account still exists then).
+  'sync_tombstones',
 ] as const;
 
 /** Revoked at Apple before its row goes (step 1b of `purgeAccount`), so step 1 leaves it alone. */

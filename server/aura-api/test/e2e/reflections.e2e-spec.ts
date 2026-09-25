@@ -14,6 +14,7 @@ import { PrivateMediaStore } from '../../src/account/private-media';
 import { uuidv7 } from '../../src/common/uuid';
 import { RemoteConfigService } from '../../src/remote-config/remote-config.service';
 import { StaticModerationProvider, UnavailableModerationProvider } from '../../src/reflections/moderation-provider';
+import { openCorpusText } from '../../src/reflections/corpus';
 import { openReflection } from '../../src/reflections/reflection-cipher';
 import { ReflectionsService } from '../../src/reflections/reflections.service';
 import { runReflectionsTick } from '../../src/reflections/reflections.worker';
@@ -53,7 +54,7 @@ function totp(secret: string, at = Date.now()): string {
   return String((h.readUInt32BE(o) & 0x7fffffff) % 1_000_000).padStart(6, '0');
 }
 
-type Method = 'get' | 'post' | 'delete';
+type Method = 'get' | 'post' | 'put' | 'delete';
 
 describe('Reflections (e2e, live local Supabase + Realtime + Redis)', () => {
   let app: INestApplication;
@@ -592,6 +593,56 @@ describe('Reflections (e2e, live local Supabase + Realtime + Redis)', () => {
   });
 
   // ================================================================== admin console
+  it('REQ-SAFE-16: final decisions feed a de-identified corpus; opt-out, under-18 authors, crisis and contact details never do', async () => {
+    type CorpusRow = { id: string; language: string; label: string; source: string; week: string; text_ct: string; text_key: string };
+    const seen = new Set((await db.query<{ id: string }>('select id from public.moderation_corpus')).rows.map((x) => x.id));
+    /** Rows added since the last call, opened (the corpus links to no one, so new ids are the only way to find them). */
+    const added = async (): Promise<Array<CorpusRow & { text: string }>> => {
+      const rows = (await db.query<CorpusRow>(`select id, language, label, source, to_char(week, 'YYYY-MM-DD') as week, text_ct, text_key from public.moderation_corpus`)).rows;
+      const fresh = rows.filter((x) => !seen.has(x.id));
+      for (const x of fresh) seen.add(x.id);
+      return fresh.map((x) => ({ ...x, text: openCorpusText(masterKey, x.id, { textCt: x.text_ct, textKey: x.text_key }) }));
+    };
+    // Letters only: digits would read as contact details under the stricter under-18 rules.
+    const tag = randomUUID().replace(/[^a-f]/g, '').padEnd(8, 'q').slice(0, 8);
+
+    // Consent: on by default, a privacy choice the person can change (and read back).
+    expect((await call(a, 'get', '/v1/safety/corpus-consent')).body).toEqual({ enabled: true });
+    expect((await call(a, 'put', '/v1/safety/corpus-consent', { enabled: 'no' })).status).toBe(400);
+
+    // Published (adult author, consent on) → one row: text, language, label, week. Nothing else.
+    const clean = `corpus clean ${tag}`;
+    expect((await send(a, room1, clean)).body.status).toBe('published');
+    const [allow, ...more] = await added();
+    expect(more).toEqual([]);
+    expect(allow).toMatchObject({ language: 'en', label: 'allow', source: 'auto', text: clean });
+    expect(new Date(`${allow.week}T00:00:00Z`).getUTCDay()).toBe(1); // an ISO week's Monday, never a timestamp
+    expect(allow.text_ct).not.toContain(tag);
+
+    // A violation → its label; contact details (nothing stored at all) and crisis text → nothing.
+    expect((await send(b, room1, `meanword corpus ${tag}`)).body).toMatchObject({ status: 'rejected', rejectReason: 'hurtful' });
+    expect((await added()).map((x) => [x.label, x.text])).toEqual([['reject_hurtful', `meanword corpus ${tag}`]]);
+    expect((await send(c, room1, `call me on 98765 43210 ${tag}`)).body.status).toBe('rejected');
+    expect((await send(c, room1, `I want to kill myself ${tag}`)).body.status).toBe('crisis_diverted');
+    expect(await added()).toEqual([]);
+
+    // Under-18 author → never; an adult in the same room → yes.
+    expect((await send(m, room2, `minor corpus ${tag}`)).body.status).toBe('published');
+    expect(await added()).toEqual([]);
+    expect((await send(d, room2, `adult corpus ${tag}`)).body.status).toBe('published');
+    expect((await added()).map((x) => x.text)).toEqual([`adult corpus ${tag}`]);
+
+    // Opted out → later items never enter it; opting back in resumes.
+    expect((await call(a, 'put', '/v1/safety/corpus-consent', { enabled: false })).body).toEqual({ enabled: false });
+    expect((await call(a, 'get', '/v1/safety/corpus-consent')).body).toEqual({ enabled: false });
+    expect((await send(a, room1, `opted out ${tag}`)).body.status).toBe('published');
+    expect(await added()).toEqual([]);
+    expect((await call(a, 'put', '/v1/safety/corpus-consent', { enabled: true })).body).toEqual({ enabled: true });
+    expect((await one<{ n: number }>(`select count(*)::int as n from public.user_consents where user_id = $1 and purpose = 'moderation_corpus'`, [a.id])).n).toBe(2);
+    expect((await send(a, room1, `back in ${tag}`)).body.status).toBe('published');
+    expect((await added()).map((x) => x.text)).toEqual([`back in ${tag}`]);
+  });
+
   describe('admin console (/admin/reflections*, real staff sessions)', () => {
     let heldId = '';
     it('lists held items with decrypted text and pools; the item view has no account id or DOB', async () => {

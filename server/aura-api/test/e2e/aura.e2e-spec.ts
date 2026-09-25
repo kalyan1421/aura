@@ -187,7 +187,7 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
         timezone: TZ,
         country: 'IN',
       });
-      expect(r.body.snapshot.streak).toEqual({ glowStreak: 0, lifetimeGlowDays: 0, restBank: 1, earnCounter: 0, lastActiveDay: null });
+      expect(r.body.snapshot.streak).toEqual({ glowStreak: 0, longestGlowStreak: 0, lifetimeGlowDays: 0, restBank: 1, earnCounter: 0, lastActiveDay: null });
       expect(r.body.snapshot.avatar).toMatchObject({ stage: 'spark', hue: null, isResting: false });
       const s = await db.query('select rest_bank, glow_streak from public.streak_state where user_id = $1', [u.id]);
       expect(s.rows[0]).toEqual({ rest_bank: 1, glow_streak: 0 });
@@ -229,7 +229,7 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
     expect(Object.keys(s.avatar).sort()).toEqual(
       ['constellationStars', 'equippedCosmetics', 'glowLevel', 'hue', 'isResting', 'ringCount', 'stage'].sort(),
     );
-    expect(Object.keys(s.streak).sort()).toEqual(['earnCounter', 'glowStreak', 'lastActiveDay', 'lifetimeGlowDays', 'restBank']);
+    expect(Object.keys(s.streak).sort()).toEqual(['earnCounter', 'glowStreak', 'lastActiveDay', 'lifetimeGlowDays', 'longestGlowStreak', 'restBank']);
     expect(s.starlight).toEqual({ total: 0, today: 0 });
     expect(s.auraDay).toBe(today());
     expect(Math.abs(Date.parse(s.serverTime) - Date.now())).toBeLessThan(60_000);
@@ -980,6 +980,10 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       const earned = await as(u, http().get('/v1/keepsakes')).expect(200);
       expect(earned.body.keepsakes.map((k: { key: string }) => k.key)).toContain('capsule_sealed_first');
       await db.query('insert into public.keepsake_tallies (user_id, lantern_nights, lantern_through) values ($1, 1, now()) on conflict (user_id) do nothing', [u.id]);
+      // PRD 16 delta pull (migration 20261005000032): a check-in deleted through the sync push leaves a tombstone.
+      const gone = checkIn('calm');
+      await pushAs(u, [gone]).expect(200);
+      await pushAs(u, [del('check_in', (gone.payload as { id: string }).id)]).expect(200);
       const paths = [`${u.id}/voice/${uuidv7()}.bin`, `${u.id}/capsules/${uuidv7()}/0.bin`];
       for (const p of paths) await upload(p);
       return paths;

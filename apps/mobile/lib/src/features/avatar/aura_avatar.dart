@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/perf/device_profile.dart';
 import 'aura_avatar_painter.dart';
 import 'avatar_assets.dart';
 
@@ -92,6 +93,7 @@ class _AuraAvatarViewState extends State<AuraAvatarView>
     super.initState();
     FrameBudget.instance.ensureStarted();
     FrameBudget.instance.overBudget.addListener(_onBudget);
+    DeviceProfile.instance.prefersLowTier.addListener(_onBudget);
   }
 
   @override
@@ -120,7 +122,11 @@ class _AuraAvatarViewState extends State<AuraAvatarView>
     } else if (forced != null) {
       next = forced;
     } else {
-      next = FrameBudget.instance.overBudget.value
+      // Low: frames over budget, or (at launch / on resume) a ≤ 3 GB Android
+      // or battery saver (PRD F2 tiers, REQ-AVA-07).
+      next =
+          FrameBudget.instance.overBudget.value ||
+              DeviceProfile.instance.prefersLowTier.value
           ? AvatarTier.low
           : AvatarTier.high;
     }
@@ -151,6 +157,7 @@ class _AuraAvatarViewState extends State<AuraAvatarView>
   @override
   void dispose() {
     FrameBudget.instance.overBudget.removeListener(_onBudget);
+    DeviceProfile.instance.prefersLowTier.removeListener(_onBudget);
     _ticker?.dispose();
     _time.dispose();
     super.dispose();
@@ -255,10 +262,8 @@ String hueName(AppLocalizations l, double hue) {
 }
 
 /// Watches frame timings; if frames run over budget for ~2 s the avatar
-/// drops to the Low tier for the rest of the session (PRD F2 tiers).
-///
-/// TODO(perf): also pick Low at launch on Android devices with ≤ 3 GB RAM or
-/// battery saver on (needs device_info_plus / battery_plus).
+/// drops to the Low tier for the rest of the session (PRD F2 tiers). The
+/// launch-time rule (≤ 3 GB Android, battery saver) is [DeviceProfile].
 class FrameBudget {
   FrameBudget._();
 

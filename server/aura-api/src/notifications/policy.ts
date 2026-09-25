@@ -155,7 +155,11 @@ export type SkipReason =
   /** habit_nudge: every nudged habit is done today (or none is due yet). */
   | 'nothing_due'
   /** trial_ending (F12): converted, lapsed, auto-renew turned off, or moved to another account. */
-  | 'trial_changed';
+  | 'trial_changed'
+  /** daily_reminder, rule 7: 5+ ignored in a row → every other day (sent the previous Aura day). */
+  | 'reminder_backoff'
+  /** daily_reminder, rule 7: 14+ ignored in a row → stopped until a check-in (welcome-back takes over). */
+  | 'reminder_paused';
 
 export type Decision = { action: 'send' } | { action: 'skip'; reason: SkipReason } | { action: 'defer'; until: Date };
 
@@ -177,6 +181,12 @@ export interface DeliveryFacts {
   expectedLater: readonly string[];
   /** daily_reminder: a live check-in exists for the current Aura day. */
   checkedInToday?: boolean;
+  /**
+   * daily_reminder, rule 7: reminders in a row with no check-in after them, counting the last one sent (0 once a
+   * check-in arrived after it), and whether the last one went out on the previous Aura day.
+   */
+  reminderIgnored?: number;
+  reminderSentYesterday?: boolean;
   /** capsule_unlocked: the capsule is still sealed (exists, not opened, not deleted). */
   capsuleSealed?: boolean;
   /** rooms_pool_open: the pool's flag is still on. */
@@ -249,6 +259,8 @@ export function decide(f: DeliveryFacts): Decision {
   if (!typeEnabled(f.type, f.prefs)) return skip('type_disabled');
   if (f.now.getTime() - f.createdAt.getTime() > rules.maxAgeMs) return skip('expired');
   if (f.type === 'daily_reminder' && f.checkedInToday) return skip('checked_in');
+  const smart = smartTimingSkip(f);
+  if (smart) return skip(smart);
   if (f.type === 'capsule_unlocked' && !f.capsuleSealed) return skip('not_sealed');
   if (f.type === 'rooms_pool_open' && !f.poolOpen) return skip('pool_closed');
   const b = milestoneBSkip(f);
@@ -302,4 +314,26 @@ export function cappedDecision(f: Pick<DeliveryFacts, 'type' | 'now' | 'createdA
   const until = endOfAuraDay(f.now, f.tz);
   if (until.getTime() - f.createdAt.getTime() > rules.maxAgeMs) return { action: 'skip', reason: 'capped' };
   return { action: 'defer', until };
+}
+
+/**
+ * PRD 12 rule 7 "Smart timing": reminder ignored 5 days in a row → every other day; 14 ignored → stop and leave it to
+ * welcome-back; any check-in restores the schedule (contracts/api/v1-notifications.md "Smart timing"). Pure.
+ */
+export const SMART_TIMING = { everyOtherDayFrom: 5, stopFrom: 14 } as const;
+
+export function smartTimingSkip(f: Pick<DeliveryFacts, 'type' | 'reminderIgnored' | 'reminderSentYesterday'>): SkipReason | null {
+  if (f.type !== 'daily_reminder' || f.reminderIgnored === undefined) return null;
+  if (f.reminderIgnored >= SMART_TIMING.stopFrom) return 'reminder_paused';
+  if (f.reminderIgnored >= SMART_TIMING.everyOtherDayFrom && f.reminderSentYesterday) return 'reminder_backoff';
+  return null;
+}
+
+/**
+ * The ignored count before a reminder: 0 when nothing was sent yet or a check-in reached the server after the last
+ * one; otherwise the stored count + 1 (the last one was ignored too).
+ */
+export function ignoredSoFar(stored: number, lastSentAt: Date | null, checkedInSince: boolean): number {
+  if (lastSentAt === null || checkedInSince) return 0;
+  return stored + 1;
 }

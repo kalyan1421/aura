@@ -17,7 +17,8 @@ import { auraDayOf, nextReminderAt } from './policy';
  *   - `reminder-reconcile` (every 10 min, like the capsule sweep): re-plans rows whose profile timezone changed since
  *     they were planned (the app re-sends `POST /v1/profile` when the device zone changes, so a move takes effect
  *     within ~10 min) and repairs rows whose plan is missing or no longer wanted.
- * Smart timing (rule 7: back off after ignored reminders) is P1 and not built.
+ * Smart timing (rule 7: back off after ignored reminders) is decided at delivery (policy.ts `smartTimingSkip`): the
+ * sweep keeps planning one a day; delivery skips it while the person is ignoring them.
  */
 export const REMINDER_SWEEP_JOB = 'reminder-sweep';
 export const REMINDER_RECONCILE_JOB = 'reminder-reconcile';

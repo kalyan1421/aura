@@ -52,7 +52,7 @@ class World {
   }
 
   sql(text: string): { rows: unknown[]; rowCount: number } {
-    if (/pg_advisory_xact_lock|realtime\.send|here_now_broadcast|from public\.matching_config|from public\.sanctions|from public\.feature_flags/.test(text)) {
+    if (/pg_advisory_xact_lock|realtime\.send|here_now_broadcast|from public\.matching_config|from public\.sanctions|from public\.feature_flags|from public\.pseudonym_blocklist/.test(text)) {
       return { rows: [], rowCount: 0 };
     }
     if (/from public\.guidelines_acceptances/.test(text)) {

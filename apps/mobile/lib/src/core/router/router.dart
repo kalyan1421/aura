@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/sign_in_screen.dart';
 import '../../features/avatar/avatar_debug_screen.dart';
+import '../../features/account/data_export_screen.dart';
 import '../../features/account/delete_account_screen.dart';
 import '../../features/checkin/checkin_screen.dart';
 import '../../features/history/checkin_detail_screen.dart';
@@ -174,6 +175,7 @@ GoRouter router(Ref ref) {
       // card and Settings › Account).
       route(keepsakesRoute, (_) => const KeepsakesScreen()),
       route(Routes.deleteAccount, (_) => const DeleteAccountScreen()),
+      route(Routes.dataExport, (_) => const DataExportScreen()),
       // The history list lives in the Insights tab; older links land there.
       GoRoute(path: Routes.history, redirect: (_, _) => Routes.insightsHistory),
       route(

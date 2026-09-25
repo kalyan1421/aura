@@ -14,6 +14,7 @@ import { URGENT_PAGER, type UrgentPager } from '../safety/urgent-pager';
 import { decide, isOvernight, type Decision, type DecisionInput, type ForcedHold, type ProviderResult } from './decide';
 import { checkReflectionText, type FilterResult } from './filter/reflection-filter';
 import { ReflectionBroadcast } from './reflection-broadcast';
+import { corpusLabel, feedCorpus } from './corpus';
 import { sealReflection, textHash } from './reflection-cipher';
 import { ReflectionCrisisLexicon, composerPaused, flagsFrom, loadReflectionConfig, type ReflectionConfig, type ReflectionFlags } from './reflection-config';
 import { queueReflection } from './reflection-queue';
@@ -328,6 +329,7 @@ export class ReflectionsService {
       const applied = await this.apply(work.row, decision, result);
       if (!applied) return { outcome: 'pending', rejectReason: null }; // withdrawn or already decided meanwhile
       this.logDecision(decision, work.cfg, work.row.language_pool, result.ok ? 'provider' : result.reason, result.latencyMs);
+      await this.feedCorpus(work.row, decision, work.text);
       return { outcome: decision.outcome, rejectReason: decision.rejectReason };
     } catch (err) {
       this.logger.warn(`reflection decision failed (${(err as Error).name}); holding for review`);
@@ -358,6 +360,25 @@ export class ReflectionsService {
     });
     if (pages) this.pager?.reportFiled(pages);
     return ok;
+  }
+
+  /**
+   * REQ-SAFE-16: a final automatic decision joins the de-identified corpus when it may (src/reflections/corpus.ts).
+   * After the decision committed, on its own statement: a failure here never changes the outcome.
+   */
+  private async feedCorpus(row: ReflectionRow, decision: Decision, text: string): Promise<void> {
+    try {
+      await feedCorpus(this.db, this.app.masterKey, {
+        authorId: row.user_id,
+        languagePool: row.language_pool,
+        text,
+        label: corpusLabel(decision.outcome, decision.rejectReason, { minorSafety: decision.minorSafety }),
+        source: 'auto',
+        decidedAt: this.clock(),
+      });
+    } catch (err) {
+      this.logger.warn(`corpus: not added (${(err as Error).name})`);
+    }
   }
 
   /** Fail closed: a pending reflection that could not be decided is held for a human (also used by the worker). */

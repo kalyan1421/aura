@@ -4,6 +4,7 @@
       "name": "4 consecutive days earn a rest day",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 1,
         "earnCounter": 0,
@@ -17,6 +18,7 @@
       ],
       "expect": {
         "glowStreak": 4,
+        "longestGlowStreak": 4,
         "lifetimeGlowDays": 4,
         "restBank": 2,
         "earnCounter": 0,
@@ -27,6 +29,7 @@
       "name": "REQ-STK-02 gap of 2 covered by bank 2",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 2,
         "earnCounter": 0,
@@ -38,6 +41,7 @@
       ],
       "expect": {
         "glowStreak": 2,
+        "longestGlowStreak": 2,
         "lifetimeGlowDays": 2,
         "restBank": 0,
         "earnCounter": 2,
@@ -48,6 +52,7 @@
       "name": "gap larger than bank resets, nothing spent",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 1,
         "earnCounter": 0,
@@ -59,6 +64,7 @@
       ],
       "expect": {
         "glowStreak": 1,
+        "longestGlowStreak": 1,
         "lifetimeGlowDays": 2,
         "restBank": 1,
         "earnCounter": 2,
@@ -69,6 +75,7 @@
       "name": "REQ-STK-01 counter 3 + active day fills bank to 3",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 2,
         "earnCounter": 3,
@@ -79,6 +86,7 @@
       ],
       "expect": {
         "glowStreak": 1,
+        "longestGlowStreak": 1,
         "lifetimeGlowDays": 1,
         "restBank": 3,
         "earnCounter": 0,
@@ -89,6 +97,7 @@
       "name": "full bank pauses the counter",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 3,
         "earnCounter": 0,
@@ -102,6 +111,7 @@
       ],
       "expect": {
         "glowStreak": 4,
+        "longestGlowStreak": 4,
         "lifetimeGlowDays": 4,
         "restBank": 3,
         "earnCounter": 0,
@@ -112,6 +122,7 @@
       "name": "duplicate day is a no-op",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 1,
         "earnCounter": 0,
@@ -123,6 +134,7 @@
       ],
       "expect": {
         "glowStreak": 1,
+        "longestGlowStreak": 1,
         "lifetimeGlowDays": 1,
         "restBank": 1,
         "earnCounter": 1,
@@ -133,6 +145,7 @@
       "name": "unsorted input folds in date order",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 1,
         "earnCounter": 0,
@@ -145,6 +158,7 @@
       ],
       "expect": {
         "glowStreak": 3,
+        "longestGlowStreak": 3,
         "lifetimeGlowDays": 3,
         "restBank": 1,
         "earnCounter": 3,
@@ -155,6 +169,7 @@
       "name": "welcome rest day bridges one missed day",
       "initial": {
         "glowStreak": 0,
+        "longestGlowStreak": 0,
         "lifetimeGlowDays": 0,
         "restBank": 1,
         "earnCounter": 0,
@@ -166,10 +181,85 @@
       ],
       "expect": {
         "glowStreak": 2,
+        "longestGlowStreak": 2,
         "lifetimeGlowDays": 2,
         "restBank": 0,
         "earnCounter": 2,
         "lastActiveDay": "2026-10-07"
+      }
+    },
+    {
+      "name": "longest streak survives a reset (F3: shown only in Insights)",
+      "initial": {
+        "glowStreak": 0,
+        "longestGlowStreak": 0,
+        "lifetimeGlowDays": 0,
+        "restBank": 1,
+        "earnCounter": 0,
+        "lastActiveDay": null
+      },
+      "days": [
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04",
+        "2026-10-05",
+        "2026-10-09",
+        "2026-10-10"
+      ],
+      "expect": {
+        "glowStreak": 2,
+        "longestGlowStreak": 5,
+        "lifetimeGlowDays": 7,
+        "restBank": 2,
+        "earnCounter": 3,
+        "lastActiveDay": "2026-10-10"
+      }
+    },
+    {
+      "name": "longest streak from an earlier state is kept when the new run is shorter",
+      "initial": {
+        "glowStreak": 2,
+        "longestGlowStreak": 9,
+        "lifetimeGlowDays": 30,
+        "restBank": 0,
+        "earnCounter": 1,
+        "lastActiveDay": "2026-10-05"
+      },
+      "days": [
+        "2026-10-06",
+        "2026-10-09"
+      ],
+      "expect": {
+        "glowStreak": 1,
+        "longestGlowStreak": 9,
+        "lifetimeGlowDays": 32,
+        "restBank": 0,
+        "earnCounter": 3,
+        "lastActiveDay": "2026-10-09"
+      }
+    },
+    {
+      "name": "longest streak grows with the current run, rest days bridging it",
+      "initial": {
+        "glowStreak": 3,
+        "longestGlowStreak": 3,
+        "lifetimeGlowDays": 3,
+        "restBank": 2,
+        "earnCounter": 3,
+        "lastActiveDay": "2026-10-03"
+      },
+      "days": [
+        "2026-10-05",
+        "2026-10-06"
+      ],
+      "expect": {
+        "glowStreak": 5,
+        "longestGlowStreak": 5,
+        "lifetimeGlowDays": 5,
+        "restBank": 2,
+        "earnCounter": 1,
+        "lastActiveDay": "2026-10-06"
       }
     }
   ]

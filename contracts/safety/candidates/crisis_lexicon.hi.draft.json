@@ -1,0 +1,344 @@
+{
+  "name": "aura.crisis_lexicon.candidates",
+  "draft_for": "aura.crisis_lexicon",
+  "languages": [
+    "hi",
+    "hi-Latn"
+  ],
+  "updated": "2026-09-26",
+  "status": "DRAFT FOR REVIEW. NOT ACTIVE.",
+  "review": {
+    "note": "Candidate Hindi (Devanagari) and Hinglish (romanized) crisis-lexicon terms, written by the dev team as a starting point for the native-speaker and safe-messaging review (PRD 21 A9, REQ-SAFE-03, REQ-SAFE-15). Nothing here is read by the app or the server: the active, signed lexicon is contracts/safety/crisis_lexicon.v1.json, whose hi / hi-Latn languages stay `placeholder` and whose UI stays hidden (AURA_BETA_LOCALES) until reviewed terms move there.",
+    "how_to_adopt": [
+      "A native Hindi reader reviews every entry and variant (keep, change, drop, add), especially spellings people actually type.",
+      "AK checks each entry against the WHO / AFSP / Samaritans safe-messaging checklist (A9).",
+      "Move the kept entries into crisis_lexicon.v1.json, set hi / hi-Latn to `alpha`, bump `version`, add the kept cases below to crisis_lexicon.vectors.json, run `python3 apps/mobile/tool/gen_lexicon.py`, and re-sign the fixture (contracts/safety/README.md 'Changing the lexicon').",
+      "Build a 200-phrase recall set per language (REQ-SAFE-03) before un-hiding Hindi / Hinglish."
+    ],
+    "open": [
+      "Devanagari forms match as substrings, so 'मरना चाह' also catches 'मरना चाहिए' (should die): intended (a gentle sheet beats a miss), but review.",
+      "'मर गए यार' / 'mar gaye yaar' is usually hyperbole; kept `soft` so it never opens the crisis sheet. Confirm with the reviewer.",
+      "'khud ko mar d' is a stem for 'khud ko mar dunga / mar dalunga / mar du'; check it does not over-match 'khud ko mar dekh' style phrasing.",
+      "'nas kaat' (cutting veins) names a method: detection only, it is never shown to anyone (REQ-SAFE-15 concerns shown copy).",
+      "No gendered verb forms are needed in Devanagari (stems stop before the gendered ending); Hinglish uses `stem` for the same reason."
+    ]
+  },
+  "entries": [
+    {
+      "id": "hi.want_to_die",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "मरना चाह",
+      "variants": [
+        "मर जाना चाह",
+        "मरने का मन",
+        "मर जाने का मन"
+      ]
+    },
+    {
+      "id": "hi.dont_want_to_live",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "जीना नहीं चाह",
+      "variants": [
+        "जीने का मन नहीं",
+        "जीने की इच्छा नहीं",
+        "ज़िंदा नहीं रहना",
+        "जिंदा नहीं रहना"
+      ]
+    },
+    {
+      "id": "hi.suicide",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "आत्महत्या",
+      "variants": [
+        "खुदकुशी",
+        "ख़ुदकुशी",
+        "आत्म हत्या"
+      ]
+    },
+    {
+      "id": "hi.kill_myself",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "खुद को मार",
+      "variants": [
+        "ख़ुद को मार",
+        "अपने आप को मार",
+        "खुद को ख़त्म",
+        "खुद को खत्म"
+      ]
+    },
+    {
+      "id": "hi.end_my_life",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "ज़िंदगी ख़त्म कर",
+      "variants": [
+        "जिंदगी खत्म कर",
+        "ज़िंदगी खत्म कर",
+        "जिंदगी ख़त्म कर",
+        "जान दे दू",
+        "जान दे दूँ",
+        "अपनी जान ले"
+      ]
+    },
+    {
+      "id": "hi.better_without_me",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "मेरे बिना सब बेहतर",
+      "variants": [
+        "मेरे बिना सबका भला",
+        "मैं न रहूँ तो अच्छा"
+      ]
+    },
+    {
+      "id": "hi.self_harm",
+      "language": "hi",
+      "kind": "crisis",
+      "phrase": "नस काट",
+      "variants": [
+        "खुद को चोट पहुँचा",
+        "ख़ुद को चोट पहुँचा",
+        "खुद को नुकसान पहुँचा"
+      ]
+    },
+    {
+      "id": "hi.idiom_dying_laughing",
+      "language": "hi",
+      "kind": "soft",
+      "phrase": "हँस हँस के मर",
+      "variants": [
+        "हंस हंस के मर",
+        "हँसते हँसते मर",
+        "हंसते हंसते मर"
+      ]
+    },
+    {
+      "id": "hi.idiom_mar_gaye_yaar",
+      "language": "hi",
+      "kind": "soft",
+      "phrase": "मर गए यार",
+      "variants": [
+        "मर गया यार",
+        "मर गई यार",
+        "मर गयी यार"
+      ]
+    },
+    {
+      "id": "hi.idiom_boredom_hunger",
+      "language": "hi",
+      "kind": "soft",
+      "phrase": "बोरियत से मर",
+      "variants": [
+        "भूख से मर",
+        "गर्मी से मर",
+        "थकान से मर"
+      ]
+    },
+    {
+      "id": "hi-Latn.want_to_die",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "marna chah",
+      "stem": true,
+      "variants": [
+        "marnaa chah",
+        "mrna chah",
+        "mar jana chah",
+        "mar jaana chah",
+        "marne ka man",
+        "marne ka mann"
+      ]
+    },
+    {
+      "id": "hi-Latn.dont_want_to_live",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "jeena nahi chah",
+      "stem": true,
+      "variants": [
+        "jina nahi chah",
+        "jeena nhi chah",
+        "jina nhi chah",
+        "jeene ka man nahi",
+        "jine ka mann nahi",
+        "zinda nahi rehna"
+      ]
+    },
+    {
+      "id": "hi-Latn.suicide",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "khudkushi",
+      "variants": [
+        "khud kushi",
+        "khudkhushi",
+        "aatmahatya",
+        "atmahatya",
+        "aatmhatya",
+        "atmhatya"
+      ]
+    },
+    {
+      "id": "hi-Latn.kill_myself",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "khud ko maar",
+      "stem": true,
+      "variants": [
+        "khud ko mar d",
+        "apne aap ko maar",
+        "khud ko khatam kar",
+        "khud ko khatm kar"
+      ]
+    },
+    {
+      "id": "hi-Latn.end_my_life",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "zindagi khatam kar",
+      "stem": true,
+      "variants": [
+        "zindagi khatm kar",
+        "jindagi khatam kar",
+        "zindgi khatam kar",
+        "jaan de du",
+        "jaan de doon",
+        "apni jaan le"
+      ]
+    },
+    {
+      "id": "hi-Latn.better_without_me",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "mere bina sab behtar",
+      "variants": [
+        "mere bina sab better",
+        "main na rahu to acha",
+        "main na rahoon to accha"
+      ]
+    },
+    {
+      "id": "hi-Latn.self_harm",
+      "language": "hi-Latn",
+      "kind": "crisis",
+      "phrase": "nas kaat",
+      "stem": true,
+      "variants": [
+        "nas kat",
+        "khud ko hurt kar"
+      ]
+    },
+    {
+      "id": "hi-Latn.idiom_dying_laughing",
+      "language": "hi-Latn",
+      "kind": "soft",
+      "phrase": "hass hass ke mar",
+      "stem": true,
+      "variants": [
+        "has has ke mar",
+        "hans hans ke mar",
+        "haste haste mar",
+        "hanste hanste mar"
+      ]
+    },
+    {
+      "id": "hi-Latn.idiom_mar_gaye_yaar",
+      "language": "hi-Latn",
+      "kind": "soft",
+      "phrase": "mar gaye yaar",
+      "variants": [
+        "mar gaya yaar",
+        "mar gayi yaar",
+        "mar gaye yar",
+        "mar gya yaar"
+      ]
+    },
+    {
+      "id": "hi-Latn.idiom_boredom_hunger",
+      "language": "hi-Latn",
+      "kind": "soft",
+      "phrase": "boriyat se mar",
+      "stem": true,
+      "variants": [
+        "bore ho ke mar",
+        "bhookh se mar",
+        "bhuk se mar",
+        "garmi se mar"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "text": "मैं मरना चाहती हूँ",
+      "verdict": "crisis"
+    },
+    {
+      "text": "अब जीना नहीं चाहता",
+      "verdict": "crisis"
+    },
+    {
+      "text": "आत्महत्या के बारे में सोच रहा हूँ",
+      "verdict": "crisis"
+    },
+    {
+      "text": "सब मेरे बिना सब बेहतर रहेंगे",
+      "verdict": "crisis"
+    },
+    {
+      "text": "आज तो हँस हँस के मर गए",
+      "verdict": "soft"
+    },
+    {
+      "text": "एग्ज़ाम में मर गए यार",
+      "verdict": "soft"
+    },
+    {
+      "text": "बहुत थका हुआ हूँ पर ठीक हूँ",
+      "verdict": "none"
+    },
+    {
+      "text": "sach mein marna chahti hoon",
+      "verdict": "crisis"
+    },
+    {
+      "text": "ab jeena nahi chahta yaar",
+      "verdict": "crisis"
+    },
+    {
+      "text": "khudkushi ka khayal aata hai",
+      "verdict": "crisis"
+    },
+    {
+      "text": "kabhi kabhi lagta hai zindagi khatam kar du",
+      "verdict": "crisis"
+    },
+    {
+      "text": "mere bina sab behtar honge",
+      "verdict": "crisis"
+    },
+    {
+      "text": "exam mein mar gaye yaar",
+      "verdict": "soft"
+    },
+    {
+      "text": "hass hass ke mar gaya",
+      "verdict": "soft"
+    },
+    {
+      "text": "boriyat se mar raha hoon",
+      "verdict": "soft"
+    },
+    {
+      "text": "thoda tired hoon par theek hoon",
+      "verdict": "none"
+    },
+    {
+      "text": "mrna chahta hu",
+      "verdict": "crisis"
+    }
+  ]
+}

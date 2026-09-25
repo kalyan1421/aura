@@ -2165,6 +2165,138 @@ abstract class AppLocalizations {
   /// **'Needs {count} Stardust (you have {have})'**
   String plus_skyStardustNeeds(int count, int have);
 
+  /// Settings › Account row that opens the data export (REQ-ACC-12).
+  ///
+  /// In en, this message translates to:
+  /// **'Download a copy of my data'**
+  String get export_settingsRow;
+
+  /// Title of the export screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A copy of your data'**
+  String get export_title;
+
+  /// What the export holds (REQ-ACC-12: own check-ins, habits, capsules, purchases). Sealed capsules are never opened by it.
+  ///
+  /// In en, this message translates to:
+  /// **'A copy of what\'s in your Aura: check-ins and notes, habits, capsules you\'ve opened, your account details, purchases, Stardust and keepsakes. Sealed capsules stay sealed: only their titles and dates are listed.'**
+  String get export_body;
+
+  /// Where the copy goes (nothing is uploaded or linked).
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s made on this phone and goes only where you choose to save or send it.'**
+  String get export_where;
+
+  /// Media are not part of the copy (they stay playable in the app).
+  ///
+  /// In en, this message translates to:
+  /// **'Voice notes and photos stay in the app; the copy lists when you made them.'**
+  String get export_media;
+
+  /// Privacy warning before making the copy (mood notes are sensitive).
+  ///
+  /// In en, this message translates to:
+  /// **'The files aren\'t encrypted. Keep them somewhere private.'**
+  String get export_private;
+
+  /// Button that builds the export and opens the share sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Make my copy'**
+  String get export_make;
+
+  /// While the export is built (PRD 14 'Loading export').
+  ///
+  /// In en, this message translates to:
+  /// **'Packing up your data…'**
+  String get export_busy;
+
+  /// After the share sheet opened with the files.
+  ///
+  /// In en, this message translates to:
+  /// **'Your copy is ready.'**
+  String get export_done;
+
+  /// PRD 14 'Error: export failed or offline'. Nothing is lost.
+  ///
+  /// In en, this message translates to:
+  /// **'The export didn\'t finish. It needs a connection to add your account details. Try again when you\'re connected.'**
+  String get export_failed;
+
+  /// Subject / text the share sheet gets with the files.
+  ///
+  /// In en, this message translates to:
+  /// **'My Aura data'**
+  String get export_shareText;
+
+  /// HTML export: page title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Aura data'**
+  String get export_hTitle;
+
+  /// HTML export: when the copy was made.
+  ///
+  /// In en, this message translates to:
+  /// **'Made on {date}'**
+  String export_hExported(String date);
+
+  /// HTML export: section heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-ins'**
+  String get export_hCheckIns;
+
+  /// HTML export: section heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits'**
+  String get export_hHabits;
+
+  /// HTML export: section heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Capsules'**
+  String get export_hCapsules;
+
+  /// HTML export: section heading (profile, Plus, purchases, Stardust, keepsakes).
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get export_hAccount;
+
+  /// HTML export: the person's own reflections still stored.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reflections'**
+  String get export_hReflections;
+
+  /// HTML export: content-free Sanctuary session records (same words as the Sanctuary tab).
+  ///
+  /// In en, this message translates to:
+  /// **'Sanctuary'**
+  String get export_hSanctuary;
+
+  /// HTML export: a capsule that is still sealed (no content).
+  ///
+  /// In en, this message translates to:
+  /// **'Sealed'**
+  String get export_sealed;
+
+  /// HTML export: a check-in or capsule had a voice note (kept in the app).
+  ///
+  /// In en, this message translates to:
+  /// **'voice note'**
+  String get export_voiceNote;
+
+  /// HTML export: an empty section.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet.'**
+  String get export_nothing;
+
   /// Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame.
   ///
   /// In en, this message translates to:
@@ -2248,6 +2380,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lantern Hour, warmth from your room, and rooms you asked about.'**
   String get notif_channelRoomsDescription;
+
+  /// Title of the in-app grievance form (Settings › Help & Safety, the closed-account and banned-device screens).
+  ///
+  /// In en, this message translates to:
+  /// **'Contact the Grievance Officer'**
+  String get grievance_title;
+
+  /// Intro of the grievance form when no officer name is configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about a complaint, content that worries you, your data, or a decision about your account. You get a ticket number right away.'**
+  String get grievance_intro;
+
+  /// Intro of the grievance form with the officer's name (from the build's AURA_GRIEVANCE_NAME).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is Aura\'s Grievance Officer. Tell us about a complaint, content that worries you, your data, or a decision about your account. You get a ticket number right away.'**
+  String grievance_introNamed(String name);
+
+  /// Heading over the category choices of the grievance form.
+  ///
+  /// In en, this message translates to:
+  /// **'What is it about?'**
+  String get grievance_categoryTitle;
+
+  /// Grievance category `general` (complaint about content or conduct; resolved within 7 days).
+  ///
+  /// In en, this message translates to:
+  /// **'Something someone posted or did'**
+  String get grievance_catGeneral;
+
+  /// Grievance category `unlawful_content` (36 h).
+  ///
+  /// In en, this message translates to:
+  /// **'Content that may be unlawful'**
+  String get grievance_catUnlawful;
+
+  /// Grievance category `nudity_csam` (2 h, pages the officer 24x7). Plain, factual wording.
+  ///
+  /// In en, this message translates to:
+  /// **'Nudity, sexual content or child sexual abuse material'**
+  String get grievance_catNudity;
+
+  /// Grievance category `ncii` (2 h, pages the officer 24x7).
+  ///
+  /// In en, this message translates to:
+  /// **'Intimate images shared without consent'**
+  String get grievance_catNcii;
+
+  /// Grievance category `data_request` (7 days).
+  ///
+  /// In en, this message translates to:
+  /// **'My data or my account'**
+  String get grievance_catData;
+
+  /// Grievance category `moderation_appeal` (7 days): the in-app appeal (one appeal per action, PRD F9).
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a review of a decision'**
+  String get grievance_catAppeal;
+
+  /// Label of the grievance description field (10 to 5,000 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'What happened'**
+  String get grievance_descriptionLabel;
+
+  /// Hint in the empty grievance description field.
+  ///
+  /// In en, this message translates to:
+  /// **'A few sentences are enough.'**
+  String get grievance_descriptionHint;
+
+  /// Hint in the description field when asking for a review. Never asks the person to explain what they did.
+  ///
+  /// In en, this message translates to:
+  /// **'Which decision, and why it should be looked at again.'**
+  String get grievance_appealHint;
+
+  /// Optional field: where the content was.
+  ///
+  /// In en, this message translates to:
+  /// **'Where was it? (optional)'**
+  String get grievance_whereLabel;
+
+  /// Hint in the optional 'where' field.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: a room, a reflection, or roughly when'**
+  String get grievance_whereHint;
+
+  /// Label of the email field (pre-filled with the account's address when signed in).
+  ///
+  /// In en, this message translates to:
+  /// **'Your email'**
+  String get grievance_emailLabel;
+
+  /// Helper under the email field.
+  ///
+  /// In en, this message translates to:
+  /// **'We send the acknowledgement and our reply here. Nobody else sees it.'**
+  String get grievance_emailHelp;
+
+  /// Optional name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name (optional)'**
+  String get grievance_nameLabel;
+
+  /// Button that sends the grievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get grievance_send;
+
+  /// Statutory timelines under the Send button (IT Rules 2021). Facts only.
+  ///
+  /// In en, this message translates to:
+  /// **'We acknowledge within 24 hours and resolve within 7 days. Nudity, sexual content involving a child, and intimate images shared without consent are handled within 2 hours.'**
+  String get grievance_timelines;
+
+  /// Sending failed with no connection. The form keeps everything.
+  ///
+  /// In en, this message translates to:
+  /// **'This needs a connection. Your words are still here.'**
+  String get grievance_offline;
+
+  /// 429 from the grievance form (per-client or global hourly limit).
+  ///
+  /// In en, this message translates to:
+  /// **'A lot of messages came from here in the last hour. Your words are still here; please try again later.'**
+  String get grievance_rateLimited;
+
+  /// 400 from the grievance form.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check the email address and add a little more detail (at least 10 characters).'**
+  String get grievance_checkFields;
+
+  /// Any other failure of the grievance form.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t go through. Your words are still here. Try again?'**
+  String get grievance_failed;
+
+  /// Shown on a build without an API (the email row in Settings still works).
+  ///
+  /// In en, this message translates to:
+  /// **'The form isn\'t available in this version. You can still write to the Grievance Officer by email.'**
+  String get grievance_noApi;
+
+  /// Title after the grievance was filed (this screen is the acknowledgement).
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get grievance_sentTitle;
+
+  /// The ticket id (e.g. GRV-7K2M9Q4D), selectable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket: {ticket}'**
+  String grievance_ticket(String ticket);
+
+  /// Under the ticket: the resolve-by date (from the server, by category) and where the emailed copy goes.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll reply by {date} at the latest. A copy of this acknowledgement is on its way to {email}.'**
+  String grievance_sentBody(String date, String email);
+
+  /// The statutory appeal route (IT Rules 2021, Rule 3A) [LEGAL wording to confirm].
+  ///
+  /// In en, this message translates to:
+  /// **'If you\'re not satisfied with the reply, you can appeal to the Grievance Appellate Committee at gac.gov.in within 30 days.'**
+  String get grievance_gac;
+
+  /// Settings › Help & Safety row that opens the in-app grievance form.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to the Grievance Officer'**
+  String get set_grievanceForm;
+
+  /// Subtitle of the Settings row that opens the grievance form.
+  ///
+  /// In en, this message translates to:
+  /// **'In the app, with a ticket number right away'**
+  String get set_grievanceFormNote;
+
+  /// Row on the closed-account and banned-device screens that opens the grievance form as an appeal.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for a review in the app'**
+  String get closed_askReviewInApp;
+
+  /// Subtitle of the in-app review row.
+  ///
+  /// In en, this message translates to:
+  /// **'You get a ticket number right away.'**
+  String get closed_askReviewInAppNote;
 
   /// Screen-reader label for the thin progress bar toward the next avatar stage. Calm, no countdown or pressure.
   ///
@@ -2944,6 +3274,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Past weeks of your sky, only when you open them. Never sent to you as a notification.'**
   String get insights_lookBackSettingNote;
+
+  /// Lifetime stat in Insights only: the longest glow streak so far. Never framed as a record to beat.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Longest glow streak · 1 day} other{Longest glow streak · {count} days}}'**
+  String insights_statsLongest(int count);
 
   /// Title of the private keepsake box (earned-only seals from small moments).
   ///
@@ -5117,6 +5453,24 @@ abstract class AppLocalizations {
   /// **'Back to the room'**
   String get reflections_backToRoom;
 
+  /// Settings › Help & Safety switch (REQ-SAFE-16). On by default per the privacy notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my reflections to improve safety filters'**
+  String get set_corpusTitle;
+
+  /// Explanation under the corpus switch: what is kept (text + decision, no identity) and what turning it off does.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflections you post in rooms, and the decisions about them, can be kept without your name, room or pseudonym to train Aura\'s own safety filters. Turning this off keeps anything you post from now on out.'**
+  String get set_corpusNote;
+
+  /// Under the corpus switch when it couldn't load or save (offline, server).
+  ///
+  /// In en, this message translates to:
+  /// **'This choice needs a connection. Nothing has changed.'**
+  String get set_corpusOffline;
+
   /// Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off).
   ///
   /// In en, this message translates to:
@@ -6382,6 +6736,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get rooms_surveySkip;
+
+  /// Settings, after switching to English: which room pool new rooms use.
+  ///
+  /// In en, this message translates to:
+  /// **'New rooms will match you with English speakers. A room you\'re in now keeps its language.'**
+  String get settings_poolNoticeEn;
+
+  /// Settings, after switching to Telugu or Tenglish: which room pool new rooms use.
+  ///
+  /// In en, this message translates to:
+  /// **'New rooms will match you with Telugu and Tenglish speakers. A room you\'re in now keeps its language.'**
+  String get settings_poolNoticeTe;
+
+  /// Settings, after switching to Hindi or Hinglish while that room pool is open.
+  ///
+  /// In en, this message translates to:
+  /// **'New rooms will match you with Hindi and Hinglish speakers. A room you\'re in now keeps its language.'**
+  String get settings_poolNoticeHi;
+
+  /// Settings, after switching to Hindi or Hinglish while that pool is still closed (F5: they join English meanwhile).
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi and Hinglish rooms are opening soon, so new rooms will match you with English speakers for now.'**
+  String get settings_poolNoticeHiSoon;
 
   /// Title of the Sanctuary tab: a private, calm space (breathing, grounding).
   ///

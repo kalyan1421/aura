@@ -241,6 +241,14 @@ audited as `config_region_pause` / `config_region_resume` with the key and regio
 read-only (`GET /admin/config/regions`; the Moderator's nav has Kill switches for it). The flag itself turned off still
 pauses every region. `matching_config` / `safety_config` are read-only in v0.
 
+**Pseudonyms** (console → Pseudonyms; PRD 19 "Configuration: pseudonym word lists … plus an offensive-combination
+blocklist"; migration 20261005000034): the curated adjective / noun lists and the code blocklist, read-only (they change
+by review, like copy; the same Latin-letter names serve every language, never translated), and the Owner's live
+blocklist. *Block a name* (Owner, reason code) takes one generated combination out of use on the next room or Breath
+Ripples seat, everywhere; nobody already in a room is renamed (rooms last ≤ 24 h). *Unblock* hands it out again.
+Audited as `config_pseudonym_block` / `config_pseudonym_unblock` with the reason and the list size only (audit details
+never hold pseudonyms; the table keeps who blocked it and when). A Moderator sees the page read-only.
+
 **Crisis lexicon** (console → Lexicon; contracts/api/v1.md "Crisis lexicon versions"): overview of the live signed
 version, signing key status and stored versions; *Test on samples* (Owner and Moderator; samples are not stored or
 logged); Owner: *Store the bundled baseline*, *Store a new version* (JSON; checked against contracts/safety and its own
@@ -285,6 +293,7 @@ account survive until their `hold_until`. Every step is audited with the ticket 
 | `GET /admin/paging/status`, `GET /admin/pages`, `GET /admin/pages/:id`, `POST /admin/pages/:id/ack`, `POST /admin/pages/test` | Owner |
 | `GET /admin/config`, `POST /admin/config/flags/:key` `{ enabled, reasonCode }`, `GET /admin/audit`, `GET /admin/audit/verify`, `GET/POST /admin/audit/exports` | Owner |
 | `GET /admin/config/regions` · `POST /admin/config/regions/:key/:region/pause`, `…/resume` `{ reasonCode }` (`key` ∈ `quiet_enabled` · `lantern_wind_down_enabled`) | Owner + Moderator · Owner |
+| `GET /admin/config/pseudonyms` · `POST /admin/config/pseudonyms/block`, `…/unblock` `{ pseudonym, reasonCode }` | Owner + Moderator · Owner |
 | `GET /admin/staff`, `POST /admin/staff` `{ email, role, displayName }`, `POST /admin/staff/:staffId` `{ role?, displayName?, disabled? }` | Owner |
 | `GET /admin/deletion-cases?status`, `POST /admin/deletion-cases` `{ email, channel, receivedAt, grievanceId? }`, `GET …/:id`, `POST …/:id/resend`, `POST …/:id/delete` `{ mode: grace \| immediate, reasonCode? }`, `POST …/:id/close` `{ outcome }` | Owner |
 | `GET /v1/deletion-requests/:token`, `POST …/:token/confirm`, `POST …/:token/decline` (the account holder's link; public, rate-limited) | — |
@@ -318,8 +327,8 @@ account survive until their `hold_until`. Every step is audited with the ticket 
 
 Console PWA Web Push and FCM paging to AK's device (use ntfy / PagerDuty webhooks) · reduced-mode and hold-all
 *effects* beyond reflections and the sign-up throttle (both wired in Milestone B) ·
-DeviceCheck / Play Integrity attestation for device bans · config editing beyond flags (matching / safety values stay
-read-only) · reflections items and omni-moderation scores (F6, Milestone B) · grievance retention and localized
+DeviceCheck / Play Integrity attestation for device bans · config editing beyond flags, regions and the pseudonym
+blocklist (matching / safety values and the pseudonym word lists stay read-only) · reflections items and omni-moderation scores (F6, Milestone B) · grievance retention and localized
 (te / hi) grievance and deletion-verification email copy · inbound email parsing (orders and deletion requests arrive
 through the intake API or the console) · the analyst dashboard beyond aggregate counts · per-staff quality review
 (PRD 19 post-v0).

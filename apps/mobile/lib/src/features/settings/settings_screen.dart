@@ -1,3 +1,4 @@
+import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,12 +8,15 @@ import '../companion/prompts.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
 import '../../core/env/env.dart';
+import '../../core/l10n/locale_controller.dart';
 import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/router/router.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
+import '../../core/widgets/inline_notice.dart';
 import '../../core/widgets/legal_links.dart';
 import '../account/deletion_pending.dart';
 import '../insights/look_back.dart' show LookBackSettingsSwitch;
@@ -21,7 +25,10 @@ import '../keepsakes/keepsakes_screen.dart'
 import '../onboarding/language_screen.dart';
 import '../plus/plus_settings_section.dart';
 import '../push/notifications_settings_section.dart';
+import '../support/grievance_api.dart';
+import '../support/grievance_screen.dart';
 import '../widget/widget_settings_section.dart';
+import 'corpus_consent.dart';
 
 /// Settings, in this order: Language · Comfort (Reduce motion REQ-A11Y-08,
 /// Haptics, Hide streak number F3) · Account (sign in/out, "Delete my
@@ -100,6 +107,7 @@ class SettingsScreen extends ConsumerWidget {
             // ---- Language -------------------------------------------------
             section(l.settings_language, 'language'),
             const LanguagePicker(),
+            const LanguagePoolNotice(),
 
             // ---- Comfort --------------------------------------------------
             section(l.set_comfort, 'comfort'),
@@ -173,6 +181,14 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () => _signOut(context, ref),
                 ),
                 ListTile(
+                  key: const ValueKey('set-export'),
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.download_rounded),
+                  title: Text(l.export_settingsRow),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(Routes.dataExport),
+                ),
+                ListTile(
                   key: const ValueKey('set-delete-account'),
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.delete_outline_rounded),
@@ -199,6 +215,8 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: AuraSpace.s),
             const LegalLinks(),
+            // REQ-SAFE-16: the moderation-corpus opt-out (signed in only).
+            if (auth.isAvailable && user != null) const CorpusConsentTile(),
             if (grievanceName.isNotEmpty || grievanceEmail.isNotEmpty)
               _EmailRow(
                 key: const ValueKey('set-grievance'),
@@ -210,6 +228,18 @@ class SettingsScreen extends ConsumerWidget {
                 ],
                 email: grievanceEmail,
                 subject: l.set_grievanceSubject,
+              ),
+            // The in-app form (REQ-SAFE-11): a ticket id at once, no email
+            // app needed; the email row above stays as the other route.
+            if (ref.watch(grievanceApiProvider) != null)
+              ListTile(
+                key: const ValueKey('set-grievance-form'),
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.edit_note_rounded),
+                title: Text(l.set_grievanceForm),
+                subtitle: Text(l.set_grievanceFormNote),
+                onTap: () =>
+                    Navigator.of(context).push(GrievanceFormScreen.route()),
               ),
             if (supportEmail.isNotEmpty)
               _EmailRow(
@@ -341,6 +371,42 @@ class _EmailRow extends StatelessWidget {
         subtitle: Text(lines.join('\n')),
         isThreeLine: lines.length > 1,
         onTap: email.isEmpty ? null : () => _open(context),
+      ),
+    );
+  }
+}
+
+/// PRD 14 "Language · switch mid-session": after a switch in Settings, which
+/// room pool new rooms use (the pool follows the app language; a room the
+/// person is in keeps its own until they leave). Nothing before a change.
+class LanguagePoolNotice extends ConsumerStatefulWidget {
+  const LanguagePoolNotice({super.key});
+
+  @override
+  ConsumerState<LanguagePoolNotice> createState() => _LanguagePoolNoticeState();
+}
+
+class _LanguagePoolNoticeState extends ConsumerState<LanguagePoolNotice> {
+  late final String _opened = ref.read(localeControllerProvider);
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final tag = ref.watch(localeControllerProvider);
+    if (tag == _opened) return const SizedBox.shrink();
+    final hiOpen = ref.watch(remoteFlagsProvider.select((f) => f.roomsPoolHi));
+    final text = switch (tag) {
+      AuraLocales.te || AuraLocales.teLatn => l.settings_poolNoticeTe,
+      AuraLocales.hi || AuraLocales.hiLatn =>
+        hiOpen ? l.settings_poolNoticeHi : l.settings_poolNoticeHiSoon,
+      _ => l.settings_poolNoticeEn,
+    };
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(top: AuraSpace.xs),
+      child: InlineNotice(
+        text,
+        key: const ValueKey('set-pool-notice'),
+        icon: Icons.forum_outlined,
       ),
     );
   }

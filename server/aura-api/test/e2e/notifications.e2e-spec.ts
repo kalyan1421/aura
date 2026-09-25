@@ -278,6 +278,49 @@ describe('F14 notifications (e2e, live local Supabase + Redis, fake transport)',
     expect(transport.to(t)).toHaveLength(1);
   });
 
+  it('rule 7 smart timing in the real SQL: ignored reminders back off to every other day, then stop; a check-in restores them', async () => {
+    const u = await newUser('smart');
+    const t = await register(u);
+    const time = reminderTime();
+    const planned = plannedFor(time);
+    expect(await push(u, [prefsMutation({ reminderEnabled: true, reminderTime: time })])).toEqual(['applied']);
+    const delivery = app.get(NotificationDelivery);
+    const clearLog = () => db.query(`update public.notification_prefs set sent_types = '{}' where user_id = $1`, [u.id]);
+    const history = async () =>
+      (await db.query<{ reminder_ignored: number }>('select reminder_ignored from public.notification_activity where user_id = $1', [u.id])).rows[0];
+
+    // The first reminder goes out and becomes the one the next is measured against.
+    expect(await delivery.deliver({ userId: u.id, type: 'daily_reminder', id: null }, planned)).toMatchObject({ status: 'sent' });
+    expect(await history()).toEqual({ reminder_ignored: 0 });
+
+    // Four ignored in a row, the last one yesterday → 5 now: every other day, so today waits.
+    const yesterday = new Date(planned.getTime() - 24 * 3_600_000);
+    await db.query('update public.notification_activity set reminder_ignored = 4, reminder_last_sent_at = $2 where user_id = $1', [u.id, yesterday]);
+    await clearLog();
+    expect(await delivery.deliver({ userId: u.id, type: 'daily_reminder', id: null }, planned)).toEqual({ status: 'skipped', reason: 'reminder_backoff' });
+
+    // 13 ignored before this one → stopped (welcome-back takes over).
+    await db.query('update public.notification_activity set reminder_ignored = 13 where user_id = $1', [u.id]);
+    expect(await delivery.deliver({ userId: u.id, type: 'daily_reminder', id: null }, planned)).toEqual({ status: 'skipped', reason: 'reminder_paused' });
+
+    // Any check-in after the last reminder restores the daily schedule (a backfill for an earlier day counts too).
+    const earlier = new Date(Date.now() - 2 * 24 * 3_600_000);
+    const backfill = {
+      id: uuidv7(),
+      entity: 'check_in',
+      op: 'upsert',
+      deviceTs: earlier.toISOString(),
+      localDay: auraDayOf(earlier, TZ),
+      tz: TZ,
+      payload: { id: uuidv7(), moodId: 'calm', tags: [] },
+    };
+    expect(await push(u, [backfill])).toEqual(['applied']);
+    const before = transport.to(t).length;
+    expect(await delivery.deliver({ userId: u.id, type: 'daily_reminder', id: null }, planned)).toMatchObject({ status: 'sent' });
+    expect(transport.to(t)).toHaveLength(before + 1);
+    expect(await history()).toEqual({ reminder_ignored: 0 });
+  });
+
   it('prunes tokens FCM reports UNREGISTERED; never sends during a scheduled deletion', async () => {
     const u = await newUser('prune', 'en');
     const dead = await register(u);

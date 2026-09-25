@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DbService } from '../db/db.service';
+import { addDays } from '../rules';
 import { CAP_EXEMPT, collapseKeyFor, DAILY_PUSH_CAP, TYPE_RULES } from './catalogue';
 import { prefsFromRow } from './notification-prefs';
 import {
@@ -10,7 +11,7 @@ import {
   type NotificationTransport,
   type PushMessage,
 } from './notification-types';
-import { auraDayOf, cappedDecision, decide, endOfAuraDay, reservedSlots, type DeliveryFacts, type SkipReason } from './policy';
+import { auraDayOf, cappedDecision, decide, endOfAuraDay, ignoredSoFar, reservedSlots, type DeliveryFacts, type SkipReason } from './policy';
 import { fillMilestoneBFacts } from './kind-facts';
 import { POOL_FLAGS } from './pool-waitlist';
 import { milestoneBPrefsSql } from './prefs-milestone-b';
@@ -114,6 +115,10 @@ export class NotificationDelivery {
     if (tz && day) {
       if (n.type === 'daily_reminder') {
         facts.checkedInToday = await this.checkedIn(n.userId, day);
+        // Rule 7 smart timing: how many reminders in a row went unanswered (policy.ts smartTimingSkip).
+        const smart = await this.reminderHistory(n.userId);
+        facts.reminderIgnored = ignoredSoFar(smart.ignored, smart.lastSentAt, smart.checkedInSince);
+        facts.reminderSentYesterday = smart.lastSentAt !== null && auraDayOf(smart.lastSentAt, tz) === addDays(day, -1);
         if (prefs.capsuleUnlocked && (await this.capsuleDueLater(n.userId, now, endOfAuraDay(now, tz)))) {
           facts.expectedLater = ['capsule_unlocked'];
         }
@@ -180,11 +185,35 @@ export class NotificationDelivery {
       this.logger.warn(`push ${n.type}: not delivered (${results.join(',')})`);
       return { status: 'undelivered', pruned };
     }
+    if (n.type === 'daily_reminder') await this.noteReminderSent(n.userId, now, facts.reminderIgnored ?? 0);
     // TODO(analytics, F14): emit `notification_sent { type }` here for 18+ accounts only
     // (public.user_is_minor(uid) = false); under-18 accounts are counted in aggregate only (PRD 12 rule 9,
     // 13-analytics). Wired by the analytics work; nothing is sent to analytics today.
     this.logger.log(`push ${n.type}: sent to ${sent}/${devices.length} device(s)${pruned ? `, pruned ${pruned}` : ''}`);
     return { status: 'sent', devices: sent, pruned };
+  }
+
+  /** Rule 7: the last reminder delivered, the stored ignored count, and whether any check-in arrived since. */
+  private async reminderHistory(userId: string): Promise<{ lastSentAt: Date | null; ignored: number; checkedInSince: boolean }> {
+    const r = await this.db.query<{ reminder_last_sent_at: Date | null; reminder_ignored: number; checked_since: boolean }>(
+      `select a.reminder_last_sent_at, a.reminder_ignored,
+              exists (select 1 from public.check_ins c
+                       where c.user_id = a.user_id and c.server_ts > a.reminder_last_sent_at) as checked_since
+         from public.notification_activity a where a.user_id = $1`,
+      [userId],
+    );
+    const row = r.rows[0];
+    return { lastSentAt: row?.reminder_last_sent_at ?? null, ignored: row?.reminder_ignored ?? 0, checkedInSince: row?.checked_since ?? false };
+  }
+
+  /** Rule 7: a delivered reminder becomes the one the next is measured against. Update only (the row exists once the
+   *  account has written anything; creating it here would look like activity to the welcome-back sweep). */
+  private async noteReminderSent(userId: string, at: Date, ignored: number): Promise<void> {
+    await this.db.query('update public.notification_activity set reminder_last_sent_at = $2, reminder_ignored = $3 where user_id = $1', [
+      userId,
+      at,
+      ignored,
+    ]);
   }
 
   private async checkedIn(userId: string, day: string): Promise<boolean> {

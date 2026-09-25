@@ -365,7 +365,7 @@ class _TopBar extends ConsumerWidget {
           // above 130% text, does help collapse to its heart-only button:
           // it never wraps.
           final wordmark = TextPainter(
-            text: TextSpan(text: 'Aura', style: wordmarkStyle),
+            text: TextSpan(text: l.appTitle, style: wordmarkStyle),
             textDirection: Directionality.of(context),
             textScaler: MediaQuery.textScalerOf(context),
             maxLines: 1,
@@ -386,7 +386,8 @@ class _TopBar extends ConsumerWidget {
               if (showWordmark) ...[
                 ExcludeSemantics(
                   child: Text(
-                    'Aura',
+                    // The brand stays in Latin script in every language.
+                    l.appTitle,
                     key: const ValueKey('home-wordmark'),
                     style: wordmarkStyle,
                   ),

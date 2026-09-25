@@ -78,7 +78,18 @@ class SyncService implements SyncTrigger {
     this._onDeletionPending,
     this._media,
     this._capsules,
+    this._deltaPull,
   });
+
+  /// PRD 16 "Pull: per-entity delta since a server cursor, after each push
+  /// and on foreground" (PullService.pullDelta): after a push, at most every
+  /// [deltaPullEvery], and always after a resume or a sign-in.
+  final Future<void> Function(String userId, bool Function() isCurrent)?
+  _deltaPull;
+
+  static const Duration deltaPullEvery = Duration(minutes: 2);
+  DateTime? _lastDeltaPull;
+  bool _deltaPullDue = true;
 
   /// Voice uploads (F1). Without it, a check-in waiting for media is sent
   /// without `voicePath`.
@@ -152,6 +163,7 @@ class SyncService implements SyncTrigger {
           _auth.isAvailable ? SyncPhase.signedOut : SyncPhase.unavailable,
         );
       } else {
+        _deltaPullDue = true;
         unawaited(kick());
       }
     });
@@ -179,6 +191,7 @@ class SyncService implements SyncTrigger {
   /// capsule meanwhile: pull them too).
   void onResume() {
     _capsules?.requestPull();
+    _deltaPullDue = true;
     unawaited(kick());
   }
 
@@ -570,6 +583,25 @@ class SyncService implements SyncTrigger {
         debugPrint('sync: capsules ${e.runtimeType}');
       }
       if (!current()) return;
+    }
+
+    // 5. What other phones changed or deleted (PRD 16 delta pull).
+    final delta = _deltaPull;
+    if (delta != null && current()) {
+      final now = _clock.now();
+      final last = _lastDeltaPull;
+      if (_deltaPullDue ||
+          last == null ||
+          now.difference(last) >= deltaPullEvery) {
+        _deltaPullDue = false;
+        _lastDeltaPull = now;
+        try {
+          await delta(user.id, current);
+        } catch (e) {
+          debugPrint('sync: delta pull ${e.runtimeType}');
+        }
+        if (!current()) return;
+      }
     }
 
     final remaining = await _outbox.count();

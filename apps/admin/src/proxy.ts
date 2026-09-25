@@ -47,7 +47,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   let clear = false;
   if (cfg) {
     const raw = request.cookies.get(SESSION_COOKIE)?.value;
-    session = await unseal<ConsoleSession>(raw, cfg.cookieSecret);
+    session = await unseal<ConsoleSession>(raw, cfg.cookieSecret, 'session');
     if (session && session.started + cfg.sessionMaxHours * 3_600_000 <= Date.now()) {
       session = null;
       clear = !!raw;
@@ -56,7 +56,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
       const fresh = await refreshSession(session.rt).catch(() => null);
       if (fresh) {
         session = { ...session, at: fresh.access_token, rt: fresh.refresh_token, exp: fresh.expires_at };
-        resealed = await seal(session, cfg.cookieSecret);
+        resealed = await seal(session, cfg.cookieSecret, 'session');
         request.cookies.set(SESSION_COOKIE, resealed); // so this request's server components see the fresh token
       } else {
         session = null;

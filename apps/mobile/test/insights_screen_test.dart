@@ -1,5 +1,6 @@
 import 'package:aura/l10n/app_localizations.dart';
 import 'package:aura/src/core/db/database.dart';
+import 'package:aura/src/core/db/kv_store.dart';
 import 'package:aura/src/core/entitlements/plus.dart';
 import 'package:aura/src/core/l10n/locale_controller.dart';
 import 'package:aura/src/core/router/routes.dart';
@@ -708,6 +709,28 @@ void main() {
       expect(find.byKey(const ValueKey('insights-range')), findsNothing);
       await _scrollTo(tester, find.byKey(const ValueKey('insights-lifetime')));
       expect(find.text('14 check-ins'), findsOneWidget);
+      expect(find.text('7 days in your sky'), findsOneWidget);
+    });
+
+    _testWidgets('F3: the longest glow streak lives here, and follows "Hide '
+        'streak number"', (tester) async {
+      await _pump(tester, seed: (db) => _seedLastWeek(tester, db));
+      await _scrollTo(tester, find.byKey(const ValueKey('insights-lifetime')));
+      expect(find.text('Longest glow streak · 7 days'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(seconds: 1));
+
+      await _pump(
+        tester,
+        seed: (db) async {
+          await _seedLastWeek(tester, db);
+          await tester.runAsync(
+            () => KvStore(db).setJson(KvKeys.comfort, {'hideStreak': true}),
+          );
+        },
+      );
+      await _scrollTo(tester, find.byKey(const ValueKey('insights-lifetime')));
+      expect(find.byKey(const ValueKey('insights-longest')), findsNothing);
       expect(find.text('7 days in your sky'), findsOneWidget);
     });
 

@@ -88,6 +88,7 @@ class GateController extends _$GateController {
   AgeGate get _age => AgeGate(
     ref.read(secureStoreProvider),
     ref.read(timeContextProvider).clock,
+    ref.read(deviceLockMirrorProvider),
   );
 
   Future<void> goTo(OnboardingStage stage) async {

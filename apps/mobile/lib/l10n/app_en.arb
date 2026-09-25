@@ -1622,6 +1622,99 @@
       }
     }
   },
+  "export_settingsRow": "Download a copy of my data",
+  "@export_settingsRow": {
+    "description": "Settings › Account row that opens the data export (REQ-ACC-12)."
+  },
+  "export_title": "A copy of your data",
+  "@export_title": {
+    "description": "Title of the export screen."
+  },
+  "export_body": "A copy of what's in your Aura: check-ins and notes, habits, capsules you've opened, your account details, purchases, Stardust and keepsakes. Sealed capsules stay sealed: only their titles and dates are listed.",
+  "@export_body": {
+    "description": "What the export holds (REQ-ACC-12: own check-ins, habits, capsules, purchases). Sealed capsules are never opened by it."
+  },
+  "export_where": "It's made on this phone and goes only where you choose to save or send it.",
+  "@export_where": {
+    "description": "Where the copy goes (nothing is uploaded or linked)."
+  },
+  "export_media": "Voice notes and photos stay in the app; the copy lists when you made them.",
+  "@export_media": {
+    "description": "Media are not part of the copy (they stay playable in the app)."
+  },
+  "export_private": "The files aren't encrypted. Keep them somewhere private.",
+  "@export_private": {
+    "description": "Privacy warning before making the copy (mood notes are sensitive)."
+  },
+  "export_make": "Make my copy",
+  "@export_make": {
+    "description": "Button that builds the export and opens the share sheet."
+  },
+  "export_busy": "Packing up your data…",
+  "@export_busy": {
+    "description": "While the export is built (PRD 14 'Loading export')."
+  },
+  "export_done": "Your copy is ready.",
+  "@export_done": {
+    "description": "After the share sheet opened with the files."
+  },
+  "export_failed": "The export didn't finish. It needs a connection to add your account details. Try again when you're connected.",
+  "@export_failed": {
+    "description": "PRD 14 'Error: export failed or offline'. Nothing is lost."
+  },
+  "export_shareText": "My Aura data",
+  "@export_shareText": {
+    "description": "Subject / text the share sheet gets with the files."
+  },
+  "export_hTitle": "Your Aura data",
+  "@export_hTitle": {
+    "description": "HTML export: page title."
+  },
+  "export_hExported": "Made on {date}",
+  "@export_hExported": {
+    "description": "HTML export: when the copy was made.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "export_hCheckIns": "Check-ins",
+  "@export_hCheckIns": {
+    "description": "HTML export: section heading."
+  },
+  "export_hHabits": "Habits",
+  "@export_hHabits": {
+    "description": "HTML export: section heading."
+  },
+  "export_hCapsules": "Capsules",
+  "@export_hCapsules": {
+    "description": "HTML export: section heading."
+  },
+  "export_hAccount": "Account",
+  "@export_hAccount": {
+    "description": "HTML export: section heading (profile, Plus, purchases, Stardust, keepsakes)."
+  },
+  "export_hReflections": "Your reflections",
+  "@export_hReflections": {
+    "description": "HTML export: the person's own reflections still stored."
+  },
+  "export_hSanctuary": "Sanctuary",
+  "@export_hSanctuary": {
+    "description": "HTML export: content-free Sanctuary session records (same words as the Sanctuary tab)."
+  },
+  "export_sealed": "Sealed",
+  "@export_sealed": {
+    "description": "HTML export: a capsule that is still sealed (no content)."
+  },
+  "export_voiceNote": "voice note",
+  "@export_voiceNote": {
+    "description": "HTML export: a check-in or capsule had a voice note (kept in the app)."
+  },
+  "export_nothing": "Nothing here yet.",
+  "@export_nothing": {
+    "description": "HTML export: an empty section."
+  },
   "flows_startOverTitle": "Start over?",
   "@flows_startOverTitle": {
     "description": "Asked when the Android back gesture is used on the first (onboarding) check-in after picking a mood, tags or words. Back never leaves this screen; this only offers to clear it. Calm, no blame."
@@ -1677,6 +1770,156 @@
   "notif_channelRoomsDescription": "Lantern Hour, warmth from your room, and rooms you asked about.",
   "@notif_channelRoomsDescription": {
     "description": "Android notification channel description (phone Settings)."
+  },
+  "grievance_title": "Contact the Grievance Officer",
+  "@grievance_title": {
+    "description": "Title of the in-app grievance form (Settings › Help & Safety, the closed-account and banned-device screens)."
+  },
+  "grievance_intro": "Tell us about a complaint, content that worries you, your data, or a decision about your account. You get a ticket number right away.",
+  "@grievance_intro": {
+    "description": "Intro of the grievance form when no officer name is configured."
+  },
+  "grievance_introNamed": "{name} is Aura's Grievance Officer. Tell us about a complaint, content that worries you, your data, or a decision about your account. You get a ticket number right away.",
+  "@grievance_introNamed": {
+    "description": "Intro of the grievance form with the officer's name (from the build's AURA_GRIEVANCE_NAME).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "grievance_categoryTitle": "What is it about?",
+  "@grievance_categoryTitle": {
+    "description": "Heading over the category choices of the grievance form."
+  },
+  "grievance_catGeneral": "Something someone posted or did",
+  "@grievance_catGeneral": {
+    "description": "Grievance category `general` (complaint about content or conduct; resolved within 7 days)."
+  },
+  "grievance_catUnlawful": "Content that may be unlawful",
+  "@grievance_catUnlawful": {
+    "description": "Grievance category `unlawful_content` (36 h)."
+  },
+  "grievance_catNudity": "Nudity, sexual content or child sexual abuse material",
+  "@grievance_catNudity": {
+    "description": "Grievance category `nudity_csam` (2 h, pages the officer 24x7). Plain, factual wording."
+  },
+  "grievance_catNcii": "Intimate images shared without consent",
+  "@grievance_catNcii": {
+    "description": "Grievance category `ncii` (2 h, pages the officer 24x7)."
+  },
+  "grievance_catData": "My data or my account",
+  "@grievance_catData": {
+    "description": "Grievance category `data_request` (7 days)."
+  },
+  "grievance_catAppeal": "Ask for a review of a decision",
+  "@grievance_catAppeal": {
+    "description": "Grievance category `moderation_appeal` (7 days): the in-app appeal (one appeal per action, PRD F9)."
+  },
+  "grievance_descriptionLabel": "What happened",
+  "@grievance_descriptionLabel": {
+    "description": "Label of the grievance description field (10 to 5,000 characters)."
+  },
+  "grievance_descriptionHint": "A few sentences are enough.",
+  "@grievance_descriptionHint": {
+    "description": "Hint in the empty grievance description field."
+  },
+  "grievance_appealHint": "Which decision, and why it should be looked at again.",
+  "@grievance_appealHint": {
+    "description": "Hint in the description field when asking for a review. Never asks the person to explain what they did."
+  },
+  "grievance_whereLabel": "Where was it? (optional)",
+  "@grievance_whereLabel": {
+    "description": "Optional field: where the content was."
+  },
+  "grievance_whereHint": "For example: a room, a reflection, or roughly when",
+  "@grievance_whereHint": {
+    "description": "Hint in the optional 'where' field."
+  },
+  "grievance_emailLabel": "Your email",
+  "@grievance_emailLabel": {
+    "description": "Label of the email field (pre-filled with the account's address when signed in)."
+  },
+  "grievance_emailHelp": "We send the acknowledgement and our reply here. Nobody else sees it.",
+  "@grievance_emailHelp": {
+    "description": "Helper under the email field."
+  },
+  "grievance_nameLabel": "Your name (optional)",
+  "@grievance_nameLabel": {
+    "description": "Optional name field."
+  },
+  "grievance_send": "Send",
+  "@grievance_send": {
+    "description": "Button that sends the grievance."
+  },
+  "grievance_timelines": "We acknowledge within 24 hours and resolve within 7 days. Nudity, sexual content involving a child, and intimate images shared without consent are handled within 2 hours.",
+  "@grievance_timelines": {
+    "description": "Statutory timelines under the Send button (IT Rules 2021). Facts only."
+  },
+  "grievance_offline": "This needs a connection. Your words are still here.",
+  "@grievance_offline": {
+    "description": "Sending failed with no connection. The form keeps everything."
+  },
+  "grievance_rateLimited": "A lot of messages came from here in the last hour. Your words are still here; please try again later.",
+  "@grievance_rateLimited": {
+    "description": "429 from the grievance form (per-client or global hourly limit)."
+  },
+  "grievance_checkFields": "Please check the email address and add a little more detail (at least 10 characters).",
+  "@grievance_checkFields": {
+    "description": "400 from the grievance form."
+  },
+  "grievance_failed": "That didn't go through. Your words are still here. Try again?",
+  "@grievance_failed": {
+    "description": "Any other failure of the grievance form."
+  },
+  "grievance_noApi": "The form isn't available in this version. You can still write to the Grievance Officer by email.",
+  "@grievance_noApi": {
+    "description": "Shown on a build without an API (the email row in Settings still works)."
+  },
+  "grievance_sentTitle": "Received",
+  "@grievance_sentTitle": {
+    "description": "Title after the grievance was filed (this screen is the acknowledgement)."
+  },
+  "grievance_ticket": "Your ticket: {ticket}",
+  "@grievance_ticket": {
+    "description": "The ticket id (e.g. GRV-7K2M9Q4D), selectable.",
+    "placeholders": {
+      "ticket": {
+        "type": "String"
+      }
+    }
+  },
+  "grievance_sentBody": "We'll reply by {date} at the latest. A copy of this acknowledgement is on its way to {email}.",
+  "@grievance_sentBody": {
+    "description": "Under the ticket: the resolve-by date (from the server, by category) and where the emailed copy goes.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "grievance_gac": "If you're not satisfied with the reply, you can appeal to the Grievance Appellate Committee at gac.gov.in within 30 days.",
+  "@grievance_gac": {
+    "description": "The statutory appeal route (IT Rules 2021, Rule 3A) [LEGAL wording to confirm]."
+  },
+  "set_grievanceForm": "Write to the Grievance Officer",
+  "@set_grievanceForm": {
+    "description": "Settings › Help & Safety row that opens the in-app grievance form."
+  },
+  "set_grievanceFormNote": "In the app, with a ticket number right away",
+  "@set_grievanceFormNote": {
+    "description": "Subtitle of the Settings row that opens the grievance form."
+  },
+  "closed_askReviewInApp": "Ask for a review in the app",
+  "@closed_askReviewInApp": {
+    "description": "Row on the closed-account and banned-device screens that opens the grievance form as an appeal."
+  },
+  "closed_askReviewInAppNote": "You get a ticket number right away.",
+  "@closed_askReviewInAppNote": {
+    "description": "Subtitle of the in-app review row."
   },
   "home_stageProgress": "{stage}, {count} of {target} Starlight toward {next}",
   "@home_stageProgress": {
@@ -2342,6 +2585,15 @@
   "insights_lookBackSettingNote": "Past weeks of your sky, only when you open them. Never sent to you as a notification.",
   "@insights_lookBackSettingNote": {
     "description": "Under the Look back switch in Settings."
+  },
+  "insights_statsLongest": "{count, plural, =1{Longest glow streak · 1 day} other{Longest glow streak · {count} days}}",
+  "@insights_statsLongest": {
+    "description": "Lifetime stat in Insights only: the longest glow streak so far. Never framed as a record to beat.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "keepsakes_title": "Keepsakes",
   "@keepsakes_title": {
@@ -4145,6 +4397,18 @@
   "@reflections_backToRoom": {
     "description": "Support sheet button after a crisis-diverted reflection."
   },
+  "set_corpusTitle": "Use my reflections to improve safety filters",
+  "@set_corpusTitle": {
+    "description": "Settings › Help & Safety switch (REQ-SAFE-16). On by default per the privacy notice."
+  },
+  "set_corpusNote": "Reflections you post in rooms, and the decisions about them, can be kept without your name, room or pseudonym to train Aura's own safety filters. Turning this off keeps anything you post from now on out.",
+  "@set_corpusNote": {
+    "description": "Explanation under the corpus switch: what is kept (text + decision, no identity) and what turning it off does."
+  },
+  "set_corpusOffline": "This choice needs a connection. Nothing has changed.",
+  "@set_corpusOffline": {
+    "description": "Under the corpus switch when it couldn't load or save (offline, server)."
+  },
   "device_bannedTitle": "This device can't use Aura",
   "@device_bannedTitle": {
     "description": "Title of the full-screen page shown when this phone is banned (403 device_banned, PRD 19 REQ-ADM-14). Calm; never says why (no tipping off)."
@@ -5199,6 +5463,22 @@
   "rooms_surveySkip": "Skip",
   "@rooms_surveySkip": {
     "description": "Skip the survey."
+  },
+  "settings_poolNoticeEn": "New rooms will match you with English speakers. A room you're in now keeps its language.",
+  "@settings_poolNoticeEn": {
+    "description": "Settings, after switching to English: which room pool new rooms use."
+  },
+  "settings_poolNoticeTe": "New rooms will match you with Telugu and Tenglish speakers. A room you're in now keeps its language.",
+  "@settings_poolNoticeTe": {
+    "description": "Settings, after switching to Telugu or Tenglish: which room pool new rooms use."
+  },
+  "settings_poolNoticeHi": "New rooms will match you with Hindi and Hinglish speakers. A room you're in now keeps its language.",
+  "@settings_poolNoticeHi": {
+    "description": "Settings, after switching to Hindi or Hinglish while that room pool is open."
+  },
+  "settings_poolNoticeHiSoon": "Hindi and Hinglish rooms are opening soon, so new rooms will match you with English speakers for now.",
+  "@settings_poolNoticeHiSoon": {
+    "description": "Settings, after switching to Hindi or Hinglish while that pool is still closed (F5: they join English meanwhile)."
   },
   "sanctuary_title": "Sanctuary",
   "@sanctuary_title": {

@@ -41,6 +41,9 @@ abstract final class Routes {
   static const String safety = '/safety';
   static const String settings = '/settings';
   static const String deleteAccount = '/settings/delete-account';
+
+  /// "Download a copy of my data" (F8 REQ-ACC-12).
+  static const String dataExport = '/settings/export';
   static const String history = '/history';
   static String historyEntry(String checkInId) => '/history/$checkInId';
   static const String signIn = '/sign-in';

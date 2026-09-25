@@ -93,7 +93,16 @@ yields the last slot when a higher one is still due later that day; dropped item
   every 10 min re-plans after a profile timezone change (the app re-sends `POST /v1/profile` when the device zone
   changes) and repairs missing plans. Offline check-ins the server hasn't seen yet can't suppress that day's reminder
   (accepted: the reminder is gentle and the app ignores it in the foreground when already checked in).
-- Smart timing (rule 7) is P1 — not built. The capsule push "at reminder time" option is a follow-up (10:00 now).
+- **Smart timing (rule 7, migration 20261005000033):** a daily reminder is *ignored* when no check-in (any: live,
+  backfill, widget) reached the server after it was sent. `notification_activity.reminder_ignored` counts the ignored
+  reminders in a row and `reminder_last_sent_at` holds the last one sent; both are server-only and change only when a
+  reminder is actually delivered. Before each reminder: ignored so far = 0 if a check-in arrived after the last one,
+  else the stored count + 1. **≥ 5 → every other day** (skip `reminder_backoff` when the last one went out the previous
+  Aura day); **≥ 14 → stop** (skip `reminder_paused`; the welcome-back pushes at 7 and 21 days take over). **Any check-in
+  restores the daily schedule** at once (the count is 0 again at the next reminder). The skip happens before the day's
+  slot is taken, so it frees the slot for other kinds.
+- The capsule push "at reminder time" option is not offered: date capsules open at 10:00 local (PRD F4 "10:00 local";
+  the catalogue says "at reminder time **or** 10 am local").
 - Analytics (`notification_sent`, 18+ only) is a TODO hook in `NotificationDelivery`; nothing is sent today.
 
 **Configuration (worker):** `FCM_SERVICE_ACCOUNT_JSON` (the service-account JSON, or base64 of it) or

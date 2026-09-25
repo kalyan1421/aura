@@ -175,8 +175,9 @@ describe('contract guards', () => {
     }
   });
 
-  it('REQ-SHR-05 / REQ-SHR-06 / DS-10: only the keepsakes module, the purge and the module wiring mention keepsakes', () => {
-    const allowed = new Set(['keepsakes', 'account/account-purge.ts', 'app.module.ts', 'worker.module.ts']);
+  it('REQ-SHR-05 / REQ-SHR-06 / DS-10: only the keepsakes module, the purge, the owner’s own data export and the module wiring mention keepsakes', () => {
+    // account-export.ts: the person's own export (F8 REQ-ACC-12) lists their own keepsakes; it answers only its caller.
+    const allowed = new Set(['keepsakes', 'account/account-purge.ts', 'account/account-export.ts', 'app.module.ts', 'worker.module.ts']);
     const offenders = walk(SRC)
       .map((p) => relative(SRC, p))
       .filter((rel) => !allowed.has(rel) && !allowed.has(rel.split('/')[0]))

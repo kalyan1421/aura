@@ -64,6 +64,33 @@ void main() {
       expect(await gate.blockedUntil(), isNull);
       expect(store.values, isEmpty);
     });
+
+    test('Android: mirrored into Block Store, so a reinstall (secure storage '
+        'wiped) still shows the block screen; expiry clears both', () async {
+      final mirror = _MemoryMirror();
+      final clock = FixedClock(testNow);
+      final until = await AgeGate(MemorySecureStore(), clock, mirror).block();
+      expect(mirror.value, until.toIso8601String());
+
+      // Reinstall: Keystore-backed storage is empty, Block Store is not.
+      final fresh = MemorySecureStore();
+      final again = AgeGate(fresh, clock, mirror);
+      clock.instant = testNow.add(const Duration(days: 10));
+      expect(await again.blockedUntil(), until);
+      expect(fresh.values[SecureKeys.ageBlockUntil], until.toIso8601String());
+
+      clock.instant = testNow.add(const Duration(days: 31));
+      expect(await again.blockedUntil(), isNull);
+      expect(fresh.values, isEmpty);
+      expect(mirror.value, isNull);
+    });
+
+    test('an unavailable mirror never breaks the lock', () async {
+      final store = MemorySecureStore();
+      final gate = AgeGate(store, FixedClock(testNow), _FailingMirror());
+      final until = await gate.block();
+      expect(await gate.blockedUntil(), until);
+    });
   });
 
   group('gateRedirect', () {
@@ -183,4 +210,26 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(seconds: 1));
   });
+}
+
+class _MemoryMirror implements DeviceLockMirror {
+  String? value;
+
+  @override
+  Future<String?> read() async => value;
+  @override
+  Future<void> write(String v) async => value = v;
+  @override
+  Future<void> clear() async => value = null;
+}
+
+/// Like the Block Store bridge when Play services are missing: nothing
+/// stored, nothing read, never a throw.
+class _FailingMirror implements DeviceLockMirror {
+  @override
+  Future<String?> read() async => null;
+  @override
+  Future<void> write(String v) async {}
+  @override
+  Future<void> clear() async {}
 }

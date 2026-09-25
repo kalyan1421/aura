@@ -28,9 +28,10 @@ class FlutterSecureStore implements SecureStore {
         // iOS: Keychain items survive app reinstall, which the 30-day
         // under-13 device lock relies on (REQ-ACC-03).
         iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-        // TODO(android): Keystore-backed prefs are wiped on uninstall. Move the
-        // under-13 lock to Android Block Store (persists across reinstall) —
-        // PRD F8 marks this [ASSUMPTION: confirm persistence].
+        // Android: Keystore-backed prefs are wiped on uninstall, so the
+        // under-13 lock is also mirrored into Block Store (AgeGate,
+        // BlockStoreDeviceLockMirror). Whether Block Store survives a
+        // reinstall on every device is spike A8 (PRD F8 [ASSUMPTION]).
         aOptions: AndroidOptions(),
       );
 

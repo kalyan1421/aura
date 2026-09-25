@@ -4,7 +4,9 @@ import { randomInt } from 'node:crypto';
  * Room pseudonyms (DS-2): adjective + celestial noun ("Quiet Comet"), fresh per membership, unique within a room,
  * different from the person's pseudonyms in their other rooms. Built only from these curated lists, so a pseudonym
  * can never carry digits, handles, contact details or free text. Words avoid bodies, looks, age, gender, faith,
- * caste and moods (nothing can mock how a room feels). The admin console will own per-language lists later.
+ * caste and moods (nothing can mock how a room feels). The same names serve every language pool: a name is never
+ * translated (like the brand terms). The Owner can take any combination out of use from the console
+ * (pseudonym-blocklist.ts, PRD 19 "Configuration").
  */
 export const ADJECTIVES = [
   'Quiet', 'Gentle', 'Soft', 'Calm', 'Still', 'Warm', 'Kind', 'Bright',
@@ -24,7 +26,7 @@ export const NOUNS = [
   'Starfall', 'Moonrise', 'Skylight', 'Daybreak', 'Nightfall', 'Lightyear', 'Parallax', 'Borealis',
 ] as const;
 
-/** Offensive, awkward or redundant combinations that must never be generated (admin-configurable later). */
+/** Offensive, awkward or redundant combinations that must never be generated (the console adds more: pseudonym-blocklist.ts). */
 export const BLOCKED_PSEUDONYMS: ReadonlySet<string> = new Set([
   'Lunar Moon',
   'Lunar Moonbeam',

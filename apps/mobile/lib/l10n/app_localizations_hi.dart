@@ -1293,6 +1293,79 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String get export_settingsRow => 'मेरे डेटा की कॉपी डाउनलोड करें';
+
+  @override
+  String get export_title => 'आपके डेटा की कॉपी';
+
+  @override
+  String get export_body =>
+      'आपके Aura में जो कुछ है, उसकी कॉपी: चेक-इन और नोट्स, आदतें, आपके खोले हुए कैप्सूल, आपके अकाउंट की जानकारी, खरीदारी, Stardust और कीपसेक। सील किए गए कैप्सूल सील ही रहते हैं: सिर्फ़ उनके शीर्षक और तारीखें होती हैं।';
+
+  @override
+  String get export_where =>
+      'यह इसी फ़ोन पर बनती है और सिर्फ़ वहीं जाती है जहाँ आप इसे सेव करना या भेजना चुनते हैं।';
+
+  @override
+  String get export_media =>
+      'वॉइस नोट और फ़ोटो ऐप में ही रहते हैं; कॉपी में लिखा होता है कि वे कब बनाए गए।';
+
+  @override
+  String get export_private =>
+      'ये फ़ाइलें एन्क्रिप्टेड नहीं होतीं। इन्हें किसी निजी जगह पर रखें।';
+
+  @override
+  String get export_make => 'मेरी कॉपी बनाएँ';
+
+  @override
+  String get export_busy => 'आपका डेटा तैयार हो रहा है…';
+
+  @override
+  String get export_done => 'आपकी कॉपी तैयार है।';
+
+  @override
+  String get export_failed =>
+      'एक्सपोर्ट पूरा नहीं हुआ। आपके अकाउंट की जानकारी जोड़ने के लिए कनेक्शन चाहिए। कनेक्ट होने पर फिर से कोशिश करें।';
+
+  @override
+  String get export_shareText => 'मेरा Aura डेटा';
+
+  @override
+  String get export_hTitle => 'आपका Aura डेटा';
+
+  @override
+  String export_hExported(String date) {
+    return '$date को बनाई गई';
+  }
+
+  @override
+  String get export_hCheckIns => 'चेक-इन';
+
+  @override
+  String get export_hHabits => 'आदतें';
+
+  @override
+  String get export_hCapsules => 'कैप्सूल';
+
+  @override
+  String get export_hAccount => 'अकाउंट';
+
+  @override
+  String get export_hReflections => 'आपकी दिल की बातें';
+
+  @override
+  String get export_hSanctuary => 'सुकून';
+
+  @override
+  String get export_sealed => 'सील है';
+
+  @override
+  String get export_voiceNote => 'वॉइस नोट';
+
+  @override
+  String get export_nothing => 'यहाँ अभी कुछ नहीं है।';
+
+  @override
   String get flows_startOverTitle => 'फिर से शुरू करें?';
 
   @override
@@ -1338,6 +1411,122 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get notif_channelRoomsDescription =>
       'Lantern Hour, आपके रूम से अपनापन, और वे रूम जिनके बारे में आपने पूछा।';
+
+  @override
+  String get grievance_title => 'शिकायत अधिकारी से संपर्क करें';
+
+  @override
+  String get grievance_intro =>
+      'किसी शिकायत, परेशान करने वाले कंटेंट, आपके डेटा, या आपके अकाउंट पर लिए गए किसी फ़ैसले के बारे में हमें बताएँ। आपको तुरंत एक टिकट नंबर मिलेगा।';
+
+  @override
+  String grievance_introNamed(String name) {
+    return '$name Aura के शिकायत अधिकारी हैं। किसी शिकायत, परेशान करने वाले कंटेंट, आपके डेटा, या आपके अकाउंट पर लिए गए किसी फ़ैसले के बारे में हमें बताएँ। आपको तुरंत एक टिकट नंबर मिलेगा।';
+  }
+
+  @override
+  String get grievance_categoryTitle => 'यह किस बारे में है?';
+
+  @override
+  String get grievance_catGeneral => 'किसी की पोस्ट या बर्ताव';
+
+  @override
+  String get grievance_catUnlawful => 'ऐसा कंटेंट जो गैरकानूनी हो सकता है';
+
+  @override
+  String get grievance_catNudity =>
+      'नग्नता, यौन कंटेंट या बच्चों के यौन शोषण से जुड़ा कंटेंट';
+
+  @override
+  String get grievance_catNcii => 'बिना सहमति के शेयर की गई निजी तस्वीरें';
+
+  @override
+  String get grievance_catData => 'मेरा डेटा या मेरा अकाउंट';
+
+  @override
+  String get grievance_catAppeal => 'किसी फ़ैसले पर दोबारा विचार का अनुरोध';
+
+  @override
+  String get grievance_descriptionLabel => 'क्या हुआ';
+
+  @override
+  String get grievance_descriptionHint => 'कुछ वाक्य काफ़ी हैं।';
+
+  @override
+  String get grievance_appealHint =>
+      'कौन-सा फ़ैसला, और उसे दोबारा क्यों देखा जाए।';
+
+  @override
+  String get grievance_whereLabel => 'कहाँ? (वैकल्पिक)';
+
+  @override
+  String get grievance_whereHint => 'जैसे: कोई रूम, कोई दिल की बात, या लगभग कब';
+
+  @override
+  String get grievance_emailLabel => 'आपका ईमेल';
+
+  @override
+  String get grievance_emailHelp =>
+      'पावती और हमारा जवाब यहीं भेजा जाएगा। इसे कोई और नहीं देखता।';
+
+  @override
+  String get grievance_nameLabel => 'आपका नाम (वैकल्पिक)';
+
+  @override
+  String get grievance_send => 'भेजें';
+
+  @override
+  String get grievance_timelines =>
+      'हम 24 घंटे के अंदर पावती देते हैं और 7 दिनों के अंदर समाधान करते हैं। नग्नता, बच्चों से जुड़े यौन कंटेंट और बिना सहमति शेयर की गई निजी तस्वीरों पर 2 घंटे के अंदर कार्रवाई होती है।';
+
+  @override
+  String get grievance_offline =>
+      'इसके लिए कनेक्शन चाहिए। आपने जो लिखा है, वह यहीं है।';
+
+  @override
+  String get grievance_rateLimited =>
+      'पिछले एक घंटे में यहाँ से बहुत सारे संदेश आए हैं। आपने जो लिखा है, वह यहीं है; कृपया थोड़ी देर बाद फिर कोशिश करें।';
+
+  @override
+  String get grievance_checkFields =>
+      'कृपया ईमेल पता जाँचें और थोड़ा और विवरण लिखें (कम से कम 10 अक्षर)।';
+
+  @override
+  String get grievance_failed =>
+      'यह नहीं जा पाया। आपने जो लिखा है, वह यहीं है। फिर से कोशिश करें?';
+
+  @override
+  String get grievance_noApi =>
+      'इस वर्ज़न में यह फ़ॉर्म उपलब्ध नहीं है। शिकायत अधिकारी को ईमेल से लिखा जा सकता है।';
+
+  @override
+  String get grievance_sentTitle => 'मिल गया';
+
+  @override
+  String grievance_ticket(String ticket) {
+    return 'आपका टिकट: $ticket';
+  }
+
+  @override
+  String grievance_sentBody(String date, String email) {
+    return 'हम $date तक जवाब देंगे। इस पावती की एक कॉपी $email पर भेजी जा रही है।';
+  }
+
+  @override
+  String get grievance_gac =>
+      'अगर जवाब से संतुष्टि न हो, तो 30 दिनों के अंदर gac.gov.in पर Grievance Appellate Committee में अपील की जा सकती है।';
+
+  @override
+  String get set_grievanceForm => 'शिकायत अधिकारी को लिखें';
+
+  @override
+  String get set_grievanceFormNote => 'ऐप में ही, तुरंत टिकट नंबर के साथ';
+
+  @override
+  String get closed_askReviewInApp => 'ऐप में ही रिव्यू माँगें';
+
+  @override
+  String get closed_askReviewInAppNote => 'आपको तुरंत एक टिकट नंबर मिलेगा।';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -1825,6 +2014,17 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get insights_lookBackSettingNote =>
       'आपके आसमान के पिछले हफ़्ते, सिर्फ़ जब आप खोलें। कभी नोटिफ़िकेशन बनकर नहीं आते।';
+
+  @override
+  String insights_statsLongest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'चमक का सबसे लंबा सिलसिला · $count दिन',
+      one: 'चमक का सबसे लंबा सिलसिला · 1 दिन',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get keepsakes_title => 'यादगारें';
@@ -3221,6 +3421,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get reflections_backToRoom => 'रूम में वापस जाएँ';
 
   @override
+  String get set_corpusTitle =>
+      'सेफ़्टी फ़िल्टर बेहतर करने के लिए मेरी दिल की बातें इस्तेमाल करें';
+
+  @override
+  String get set_corpusNote =>
+      'रूम में पोस्ट की गई आपकी दिल की बातें और उन पर लिए गए फ़ैसले, आपके नाम, रूम या छद्म नाम के बिना, Aura के अपने सेफ़्टी फ़िल्टर सिखाने के लिए रखे जा सकते हैं। इसे बंद करने पर अब से पोस्ट की गई कोई भी चीज़ नहीं रखी जाएगी।';
+
+  @override
+  String get set_corpusOffline =>
+      'इस विकल्प के लिए कनेक्शन चाहिए। कुछ नहीं बदला।';
+
+  @override
   String get device_bannedTitle =>
       'इस डिवाइस पर Aura इस्तेमाल नहीं किया जा सकता';
 
@@ -4047,6 +4259,22 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get rooms_surveySkip => 'छोड़ें';
+
+  @override
+  String get settings_poolNoticeEn =>
+      'नए रूम आपको English बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।';
+
+  @override
+  String get settings_poolNoticeTe =>
+      'नए रूम आपको तेलुगु और Tenglish बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।';
+
+  @override
+  String get settings_poolNoticeHi =>
+      'नए रूम आपको हिंदी और Hinglish बोलने वालों के साथ जोड़ेंगे। आप अभी जिस रूम में हैं, उसकी भाषा नहीं बदलेगी।';
+
+  @override
+  String get settings_poolNoticeHiSoon =>
+      'हिंदी और Hinglish रूम जल्द खुलेंगे, इसलिए अभी नए रूम आपको English बोलने वालों के साथ जोड़ेंगे।';
 
   @override
   String get sanctuary_title => 'सुकून';
@@ -6384,6 +6612,79 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   }
 
   @override
+  String get export_settingsRow => 'Mere data ki copy download karein';
+
+  @override
+  String get export_title => 'Aapke data ki copy';
+
+  @override
+  String get export_body =>
+      'Aapke Aura mein jo kuch hai, uski copy: check-ins aur notes, habits, aapke khole hue capsules, aapke account ki details, purchases, Stardust aur keepsakes. Seal kiye gaye capsules seal hi rehte hain: sirf unke titles aur dates hote hain.';
+
+  @override
+  String get export_where =>
+      'Yeh isi phone par banti hai aur sirf wahin jaati hai jahan aap ise save karna ya bhejna chunte hain.';
+
+  @override
+  String get export_media =>
+      'Voice notes aur photos app mein hi rehte hain; copy mein likha hota hai ki woh kab banaye gaye.';
+
+  @override
+  String get export_private =>
+      'Yeh files encrypted nahi hoti. Inhein kisi private jagah par rakhein.';
+
+  @override
+  String get export_make => 'Meri copy banayein';
+
+  @override
+  String get export_busy => 'Aapka data taiyaar ho raha hai…';
+
+  @override
+  String get export_done => 'Aapki copy taiyaar hai.';
+
+  @override
+  String get export_failed =>
+      'Export poora nahi hua. Aapke account ki details jodne ke liye connection chahiye. Connect hone par phir se try karein.';
+
+  @override
+  String get export_shareText => 'Mera Aura data';
+
+  @override
+  String get export_hTitle => 'Aapka Aura data';
+
+  @override
+  String export_hExported(String date) {
+    return '$date ko banayi gayi';
+  }
+
+  @override
+  String get export_hCheckIns => 'Check-ins';
+
+  @override
+  String get export_hHabits => 'Habits';
+
+  @override
+  String get export_hCapsules => 'Capsules';
+
+  @override
+  String get export_hAccount => 'Account';
+
+  @override
+  String get export_hReflections => 'Aapki reflections';
+
+  @override
+  String get export_hSanctuary => 'Sanctuary';
+
+  @override
+  String get export_sealed => 'Seal hai';
+
+  @override
+  String get export_voiceNote => 'voice note';
+
+  @override
+  String get export_nothing => 'Yahan abhi kuch nahi hai.';
+
+  @override
   String get flows_startOverTitle => 'Phir se shuru karein?';
 
   @override
@@ -6431,6 +6732,126 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   @override
   String get notif_channelRoomsDescription =>
       'Lantern Hour, aapke room se warmth, aur woh rooms jinke baare mein aapne poochha.';
+
+  @override
+  String get grievance_title => 'Grievance Officer se contact karein';
+
+  @override
+  String get grievance_intro =>
+      'Kisi shikayat, pareshan karne wale content, aapke data, ya aapke account par liye gaye kisi faisle ke baare mein humein batayein. Aapko turant ek ticket number milega.';
+
+  @override
+  String grievance_introNamed(String name) {
+    return '$name Aura ke Grievance Officer hain. Kisi shikayat, pareshan karne wale content, aapke data, ya aapke account par liye gaye kisi faisle ke baare mein humein batayein. Aapko turant ek ticket number milega.';
+  }
+
+  @override
+  String get grievance_categoryTitle => 'Yeh kis baare mein hai?';
+
+  @override
+  String get grievance_catGeneral => 'Kisi ki post ya bartaav';
+
+  @override
+  String get grievance_catUnlawful => 'Aisa content jo illegal ho sakta hai';
+
+  @override
+  String get grievance_catNudity =>
+      'Nudity, sexual content ya bachchon ke sexual abuse se juda content';
+
+  @override
+  String get grievance_catNcii =>
+      'Bina consent ke share ki gayi private photos';
+
+  @override
+  String get grievance_catData => 'Mera data ya mera account';
+
+  @override
+  String get grievance_catAppeal => 'Kisi faisle ka review maangna';
+
+  @override
+  String get grievance_descriptionLabel => 'Kya hua';
+
+  @override
+  String get grievance_descriptionHint => 'Kuch sentences kaafi hain.';
+
+  @override
+  String get grievance_appealHint =>
+      'Kaunsa faisla, aur use dobara kyun dekha jaye.';
+
+  @override
+  String get grievance_whereLabel => 'Kahan? (optional)';
+
+  @override
+  String get grievance_whereHint =>
+      'Jaise: koi room, koi reflection, ya lagbhag kab';
+
+  @override
+  String get grievance_emailLabel => 'Aapka email';
+
+  @override
+  String get grievance_emailHelp =>
+      'Acknowledgement aur hamara jawaab yahin bheja jayega. Ise koi aur nahi dekhta.';
+
+  @override
+  String get grievance_nameLabel => 'Aapka naam (optional)';
+
+  @override
+  String get grievance_send => 'Bhejein';
+
+  @override
+  String get grievance_timelines =>
+      'Hum 24 ghante ke andar acknowledge karte hain aur 7 din ke andar resolve karte hain. Nudity, bachchon se jude sexual content aur bina consent share ki gayi private photos par 2 ghante ke andar action hota hai.';
+
+  @override
+  String get grievance_offline =>
+      'Iske liye connection chahiye. Aapne jo likha hai, woh yahin hai.';
+
+  @override
+  String get grievance_rateLimited =>
+      'Pichhle ek ghante mein yahan se bahut saare messages aaye hain. Aapne jo likha hai, woh yahin hai; please thodi der baad phir try karein.';
+
+  @override
+  String get grievance_checkFields =>
+      'Please email address check karein aur thoda aur detail likhein (kam se kam 10 characters).';
+
+  @override
+  String get grievance_failed =>
+      'Yeh nahi ja paaya. Aapne jo likha hai, woh yahin hai. Phir se try karein?';
+
+  @override
+  String get grievance_noApi =>
+      'Is version mein yeh form available nahi hai. Grievance Officer ko email se likha ja sakta hai.';
+
+  @override
+  String get grievance_sentTitle => 'Mil gaya';
+
+  @override
+  String grievance_ticket(String ticket) {
+    return 'Aapka ticket: $ticket';
+  }
+
+  @override
+  String grievance_sentBody(String date, String email) {
+    return 'Hum $date tak jawaab denge. Is acknowledgement ki ek copy $email par bheji ja rahi hai.';
+  }
+
+  @override
+  String get grievance_gac =>
+      'Agar jawaab se santushti na ho, to 30 din ke andar gac.gov.in par Grievance Appellate Committee mein appeal ki ja sakti hai.';
+
+  @override
+  String get set_grievanceForm => 'Grievance Officer ko likhein';
+
+  @override
+  String get set_grievanceFormNote =>
+      'App mein hi, turant ticket number ke saath';
+
+  @override
+  String get closed_askReviewInApp => 'App mein hi review maangein';
+
+  @override
+  String get closed_askReviewInAppNote =>
+      'Aapko turant ek ticket number milega.';
 
   @override
   String home_stageProgress(String stage, String next, int count, int target) {
@@ -6920,6 +7341,17 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   @override
   String get insights_lookBackSettingNote =>
       'Aapke aasmaan ke pichhle hafte, sirf jab aap kholein. Kabhi notification bankar nahi aate.';
+
+  @override
+  String insights_statsLongest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sabse lamba glow streak · $count din',
+      one: 'Sabse lamba glow streak · 1 din',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get keepsakes_title => 'Yaadgaarein';
@@ -8339,6 +8771,18 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String get reflections_backToRoom => 'Room mein wapas jayein';
 
   @override
+  String get set_corpusTitle =>
+      'Safety filters behtar karne ke liye meri reflections use karein';
+
+  @override
+  String get set_corpusNote =>
+      'Rooms mein post ki gayi aapki reflections aur un par liye gaye faisle, aapke naam, room ya pseudonym ke bina, Aura ke apne safety filters sikhane ke liye rakhe ja sakte hain. Ise band karne par ab se post ki gayi koi bhi cheez nahi rakhi jayegi.';
+
+  @override
+  String get set_corpusOffline =>
+      'Is choice ke liye connection chahiye. Kuch nahi badla.';
+
+  @override
   String get device_bannedTitle => 'Is device par Aura use nahi kiya ja sakta';
 
   @override
@@ -9169,6 +9613,22 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get rooms_surveySkip => 'Skip karein';
+
+  @override
+  String get settings_poolNoticeEn =>
+      'Naye rooms aapko English bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.';
+
+  @override
+  String get settings_poolNoticeTe =>
+      'Naye rooms aapko Telugu aur Tenglish bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.';
+
+  @override
+  String get settings_poolNoticeHi =>
+      'Naye rooms aapko Hindi aur Hinglish bolne walon ke saath jodenge. Aap abhi jis room mein hain, uski bhasha nahi badlegi.';
+
+  @override
+  String get settings_poolNoticeHiSoon =>
+      'Hindi aur Hinglish rooms jald khulenge, isliye abhi naye rooms aapko English bolne walon ke saath jodenge.';
 
   @override
   String get sanctuary_title => 'Sanctuary';

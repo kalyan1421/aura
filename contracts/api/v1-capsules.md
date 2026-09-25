@@ -68,8 +68,8 @@ Rules, in order:
    - `date`: RULES.md §9.1 window — `unlockLocalDate` from **7 days to 5 years** after the seal's calendar date
      (`localDate(deviceTs, tz)`, no 04:00 shift) → else `invalid_unlock_date`. Server-only guard against broken
      clocks: also ≤ 5 years + 2 days after the server's own date in that zone.
-   - `mood`: at most **3 active trigger capsules** (active = not deleted and not opened in its current cycle; Plus
-     "unlimited" is not built, so everyone is Free) → the 4th → **`trigger_capsule_limit`, nothing stored**. The app
+   - `mood`: at most **3 active trigger capsules** on Free (active = not deleted and not opened in its current cycle;
+     an active Aura Plus entitlement makes it unlimited, F12) → the 4th → **`trigger_capsule_limit`, nothing stored**. The app
      keeps it locally and shows the Plus explainer / "make it a date capsule": re-seal the **same capsule id** as
      `date` under a new mutation id (uploaded media stay valid). Date capsules never hit this limit.
    - `date`: fair-use cap **200 pending** date capsules (not deleted, not opened) → `date_capsule_limit`.
@@ -226,7 +226,8 @@ Same routes, auth, `Cache-Control: no-store`, `503 media_unavailable` and signed
   5 min). A tombstoned capsule's paths → `404 not_found`. Download media lazily when the capsule is opened
   (PRD: "Capsule media downloads when opened").
 - Deleting a capsule deletes its objects after the push commits (best-effort). Uploads for a capsule that is never
-  stored stay until the account purge (no sweeper yet, same as voice).
+  stored (no capsule row of that id at all) are removed by the daily maintenance sweep once 30 days old, like voice
+  (`src/media/orphan-sweep.ts`).
 
 ## 6. Push: "Date capsule unlocked" (PRD Notifications)
 

@@ -1,4 +1,5 @@
 import type { Queryable, Tx } from '../db/db';
+import { blockedPseudonyms } from '../rooms/pseudonym-blocklist';
 import { generatePseudonym } from '../rooms/pseudonyms';
 import { eligibleEchoCount, pickEchoes } from './echoes';
 import { blockSet, fillPlan, planInviteGroups, planQuickMatch, type PlannedGroup, type WaitingTicket } from './matcher';
@@ -215,7 +216,8 @@ export async function createSession(tx: Tx, spec: SessionSpec, tickets: TicketRo
   );
   const session = s.rows[0];
 
-  const taken = new Set<string>();
+  // PRD 19: names the Owner took out of use are never handed out.
+  const taken = await blockedPseudonyms(tx);
   let seat = 0;
   for (const t of tickets) {
     seat += 1;

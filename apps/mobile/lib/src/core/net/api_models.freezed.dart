@@ -646,7 +646,8 @@ as List<String>,
 /// @nodoc
 mixin _$SnapshotStreak {
 
- int get glowStreak; int get lifetimeGlowDays; int get restBank; int get earnCounter; String? get lastActiveDay;
+ int get glowStreak;/// RULES.md §7; `null` from an older server (then: the current run).
+ int? get longestGlowStreak; int get lifetimeGlowDays; int get restBank; int get earnCounter; String? get lastActiveDay;
 /// Create a copy of SnapshotStreak
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -660,20 +661,20 @@ $SnapshotStreakCopyWith<SnapshotStreak> get copyWith => _$SnapshotStreakCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as SnapshotStreak;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnapshotStreak&&(identical(other.glowStreak, _this.glowStreak) || other.glowStreak == _this.glowStreak)&&(identical(other.lifetimeGlowDays, _this.lifetimeGlowDays) || other.lifetimeGlowDays == _this.lifetimeGlowDays)&&(identical(other.restBank, _this.restBank) || other.restBank == _this.restBank)&&(identical(other.earnCounter, _this.earnCounter) || other.earnCounter == _this.earnCounter)&&(identical(other.lastActiveDay, _this.lastActiveDay) || other.lastActiveDay == _this.lastActiveDay));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SnapshotStreak&&(identical(other.glowStreak, _this.glowStreak) || other.glowStreak == _this.glowStreak)&&(identical(other.longestGlowStreak, _this.longestGlowStreak) || other.longestGlowStreak == _this.longestGlowStreak)&&(identical(other.lifetimeGlowDays, _this.lifetimeGlowDays) || other.lifetimeGlowDays == _this.lifetimeGlowDays)&&(identical(other.restBank, _this.restBank) || other.restBank == _this.restBank)&&(identical(other.earnCounter, _this.earnCounter) || other.earnCounter == _this.earnCounter)&&(identical(other.lastActiveDay, _this.lastActiveDay) || other.lastActiveDay == _this.lastActiveDay));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as SnapshotStreak;
-  return Object.hash(runtimeType,_this.glowStreak,_this.lifetimeGlowDays,_this.restBank,_this.earnCounter,_this.lastActiveDay);
+  return Object.hash(runtimeType,_this.glowStreak,_this.longestGlowStreak,_this.lifetimeGlowDays,_this.restBank,_this.earnCounter,_this.lastActiveDay);
 }
 
 @override
 String toString() {
   final _this = this as SnapshotStreak;
-  return 'SnapshotStreak(glowStreak: ${_this.glowStreak}, lifetimeGlowDays: ${_this.lifetimeGlowDays}, restBank: ${_this.restBank}, earnCounter: ${_this.earnCounter}, lastActiveDay: ${_this.lastActiveDay})';
+  return 'SnapshotStreak(glowStreak: ${_this.glowStreak}, longestGlowStreak: ${_this.longestGlowStreak}, lifetimeGlowDays: ${_this.lifetimeGlowDays}, restBank: ${_this.restBank}, earnCounter: ${_this.earnCounter}, lastActiveDay: ${_this.lastActiveDay})';
 }
 
 
@@ -684,7 +685,7 @@ abstract mixin class $SnapshotStreakCopyWith<$Res>  {
   factory $SnapshotStreakCopyWith(SnapshotStreak value, $Res Function(SnapshotStreak) _then) = _$SnapshotStreakCopyWithImpl;
 @useResult
 $Res call({
- int glowStreak, int lifetimeGlowDays, int restBank, int earnCounter, String? lastActiveDay
+ int glowStreak, int? longestGlowStreak, int lifetimeGlowDays, int restBank, int earnCounter, String? lastActiveDay
 });
 
 
@@ -701,10 +702,11 @@ class _$SnapshotStreakCopyWithImpl<$Res>
 
 /// Create a copy of SnapshotStreak
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? glowStreak = null,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? glowStreak = null,Object? longestGlowStreak = freezed,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
   return _then(SnapshotStreak(
 glowStreak: null == glowStreak ? _self.glowStreak : glowStreak // ignore: cast_nullable_to_non_nullable
-as int,lifetimeGlowDays: null == lifetimeGlowDays ? _self.lifetimeGlowDays : lifetimeGlowDays // ignore: cast_nullable_to_non_nullable
+as int,longestGlowStreak: freezed == longestGlowStreak ? _self.longestGlowStreak : longestGlowStreak // ignore: cast_nullable_to_non_nullable
+as int?,lifetimeGlowDays: null == lifetimeGlowDays ? _self.lifetimeGlowDays : lifetimeGlowDays // ignore: cast_nullable_to_non_nullable
 as int,restBank: null == restBank ? _self.restBank : restBank // ignore: cast_nullable_to_non_nullable
 as int,earnCounter: null == earnCounter ? _self.earnCounter : earnCounter // ignore: cast_nullable_to_non_nullable
 as int,lastActiveDay: freezed == lastActiveDay ? _self.lastActiveDay : lastActiveDay // ignore: cast_nullable_to_non_nullable
@@ -793,10 +795,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int glowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int glowStreak,  int? longestGlowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SnapshotStreak() when $default != null:
-return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
+return $default(_that.glowStreak,_that.longestGlowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
   return orElse();
 
 }
@@ -814,10 +816,10 @@ return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.ear
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int glowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int glowStreak,  int? longestGlowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)  $default,) {final _that = this;
 switch (_that) {
 case _SnapshotStreak():
-return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
+return $default(_that.glowStreak,_that.longestGlowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -834,10 +836,10 @@ return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.ear
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int glowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int glowStreak,  int? longestGlowStreak,  int lifetimeGlowDays,  int restBank,  int earnCounter,  String? lastActiveDay)?  $default,) {final _that = this;
 switch (_that) {
 case _SnapshotStreak() when $default != null:
-return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
+return $default(_that.glowStreak,_that.longestGlowStreak,_that.lifetimeGlowDays,_that.restBank,_that.earnCounter,_that.lastActiveDay);case _:
   return null;
 
 }
@@ -849,10 +851,12 @@ return $default(_that.glowStreak,_that.lifetimeGlowDays,_that.restBank,_that.ear
 @JsonSerializable()
 
 class _SnapshotStreak implements SnapshotStreak {
-  const _SnapshotStreak({this.glowStreak = 0, this.lifetimeGlowDays = 0, this.restBank = 1, this.earnCounter = 0, this.lastActiveDay});
+  const _SnapshotStreak({this.glowStreak = 0, this.longestGlowStreak, this.lifetimeGlowDays = 0, this.restBank = 1, this.earnCounter = 0, this.lastActiveDay});
   factory _SnapshotStreak.fromJson(Map<String, dynamic> json) => _$SnapshotStreakFromJson(json);
 
 @override@JsonKey() final  int glowStreak;
+/// RULES.md §7; `null` from an older server (then: the current run).
+@override final  int? longestGlowStreak;
 @override@JsonKey() final  int lifetimeGlowDays;
 @override@JsonKey() final  int restBank;
 @override@JsonKey() final  int earnCounter;
@@ -871,18 +875,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnapshotStreak&&(identical(other.glowStreak, glowStreak) || other.glowStreak == glowStreak)&&(identical(other.lifetimeGlowDays, lifetimeGlowDays) || other.lifetimeGlowDays == lifetimeGlowDays)&&(identical(other.restBank, restBank) || other.restBank == restBank)&&(identical(other.earnCounter, earnCounter) || other.earnCounter == earnCounter)&&(identical(other.lastActiveDay, lastActiveDay) || other.lastActiveDay == lastActiveDay));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SnapshotStreak&&(identical(other.glowStreak, glowStreak) || other.glowStreak == glowStreak)&&(identical(other.longestGlowStreak, longestGlowStreak) || other.longestGlowStreak == longestGlowStreak)&&(identical(other.lifetimeGlowDays, lifetimeGlowDays) || other.lifetimeGlowDays == lifetimeGlowDays)&&(identical(other.restBank, restBank) || other.restBank == restBank)&&(identical(other.earnCounter, earnCounter) || other.earnCounter == earnCounter)&&(identical(other.lastActiveDay, lastActiveDay) || other.lastActiveDay == lastActiveDay));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,glowStreak,lifetimeGlowDays,restBank,earnCounter,lastActiveDay);
+    return Object.hash(runtimeType,glowStreak,longestGlowStreak,lifetimeGlowDays,restBank,earnCounter,lastActiveDay);
 }
 
 @override
 String toString() {
-    return 'SnapshotStreak(glowStreak: $glowStreak, lifetimeGlowDays: $lifetimeGlowDays, restBank: $restBank, earnCounter: $earnCounter, lastActiveDay: $lastActiveDay)';
+    return 'SnapshotStreak(glowStreak: $glowStreak, longestGlowStreak: $longestGlowStreak, lifetimeGlowDays: $lifetimeGlowDays, restBank: $restBank, earnCounter: $earnCounter, lastActiveDay: $lastActiveDay)';
 }
 
 
@@ -893,7 +897,7 @@ abstract mixin class _$SnapshotStreakCopyWith<$Res> implements $SnapshotStreakCo
   factory _$SnapshotStreakCopyWith(_SnapshotStreak value, $Res Function(_SnapshotStreak) _then) = __$SnapshotStreakCopyWithImpl;
 @override @useResult
 $Res call({
- int glowStreak, int lifetimeGlowDays, int restBank, int earnCounter, String? lastActiveDay
+ int glowStreak, int? longestGlowStreak, int lifetimeGlowDays, int restBank, int earnCounter, String? lastActiveDay
 });
 
 
@@ -910,10 +914,11 @@ class __$SnapshotStreakCopyWithImpl<$Res>
 
 /// Create a copy of SnapshotStreak
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? glowStreak = null,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? glowStreak = null,Object? longestGlowStreak = freezed,Object? lifetimeGlowDays = null,Object? restBank = null,Object? earnCounter = null,Object? lastActiveDay = freezed,}) {
   return _then(_SnapshotStreak(
 glowStreak: null == glowStreak ? _self.glowStreak : glowStreak // ignore: cast_nullable_to_non_nullable
-as int,lifetimeGlowDays: null == lifetimeGlowDays ? _self.lifetimeGlowDays : lifetimeGlowDays // ignore: cast_nullable_to_non_nullable
+as int,longestGlowStreak: freezed == longestGlowStreak ? _self.longestGlowStreak : longestGlowStreak // ignore: cast_nullable_to_non_nullable
+as int?,lifetimeGlowDays: null == lifetimeGlowDays ? _self.lifetimeGlowDays : lifetimeGlowDays // ignore: cast_nullable_to_non_nullable
 as int,restBank: null == restBank ? _self.restBank : restBank // ignore: cast_nullable_to_non_nullable
 as int,earnCounter: null == earnCounter ? _self.earnCounter : earnCounter // ignore: cast_nullable_to_non_nullable
 as int,lastActiveDay: freezed == lastActiveDay ? _self.lastActiveDay : lastActiveDay // ignore: cast_nullable_to_non_nullable

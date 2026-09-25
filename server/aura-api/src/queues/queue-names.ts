@@ -1,5 +1,9 @@
-/** BullMQ queue registry. Producers live in the API, processors in the worker (src/worker.ts). */
-export const QUEUE_NAMES = ['capsule-unlock', 'room-lifecycle', 'moderation', 'notifications'] as const;
+/**
+ * BullMQ queue registry. Producers live in the API, processors in the worker (src/worker.ts). Reflection moderation
+ * runs in the API and its own `reflections` worker queue (src/reflections/reflections.worker.ts), so the early
+ * `moderation` skeleton queue is gone.
+ */
+export const QUEUE_NAMES = ['capsule-unlock', 'room-lifecycle', 'notifications'] as const;
 export type QueueName = (typeof QUEUE_NAMES)[number];
 
 /** Internal queue carrying the repeatable no-op heartbeat (proves the worker is consuming). */

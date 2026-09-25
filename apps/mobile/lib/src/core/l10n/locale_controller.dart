@@ -18,6 +18,15 @@ Locale localeFromTag(String tag) {
       : Locale(parts[0]);
 }
 
+/// The locale screen readers speak the app in (REQ-A11Y-13): Telugu script
+/// as `te` and Devanagari as `hi`, so VoiceOver / TalkBack pick a matching
+/// voice where the phone has one. Tenglish and Hinglish are Latin script and
+/// are read by the English voice (an accepted limitation, PRD 17). Flutter's
+/// app-level `Localizations` doesn't tag the semantics tree itself, so the
+/// app root sets this with `Semantics(localeForSubtree:)`.
+Locale speechLocaleFor(Locale app) =>
+    app.scriptCode == 'Latn' ? const Locale('en') : Locale(app.languageCode);
+
 String tagFromLocale(Locale l) =>
     l.scriptCode == null ? l.languageCode : '${l.languageCode}-${l.scriptCode}';
 

@@ -330,6 +330,15 @@ SyncController syncController(Ref ref) {
         isCurrent: isCurrent,
       );
     },
+    deltaPull: (userId, isCurrent) async {
+      if (api == null || !Env.hasSupabase) return;
+      await pull.pullDelta(
+        client: sb.Supabase.instance.client,
+        userId: userId,
+        api: api,
+        isCurrent: isCurrent,
+      );
+    },
     reconcileHabits: () async {
       if (!Env.hasSupabase) return;
       await pull.reconcilePresetHabits(sb.Supabase.instance.client);

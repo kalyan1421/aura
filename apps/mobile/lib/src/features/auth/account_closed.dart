@@ -17,6 +17,8 @@ import '../../core/widgets/inline_notice.dart';
 import '../account/delete_account_screen.dart';
 import '../onboarding/onboarding_frame.dart';
 import '../support/support_sheet.dart';
+import '../support/grievance_api.dart';
+import '../support/grievance_screen.dart';
 
 part 'account_closed.g.dart';
 
@@ -262,6 +264,23 @@ class _AccountClosedScreenState extends ConsumerState<AccountClosedScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(l.closed_review, style: t.bodyLarge),
+                  // The in-app appeal (REQ-SAFE-11): a ticket id at once. The
+                  // route is public, so it works on this screen too.
+                  if (ref.watch(grievanceApiProvider) != null) ...[
+                    const SizedBox(height: AuraSpace.s),
+                    ListTile(
+                      key: const ValueKey('closed-review-form'),
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.edit_note_rounded),
+                      title: Text(l.closed_askReviewInApp),
+                      subtitle: Text(l.closed_askReviewInAppNote),
+                      onTap: () => Navigator.of(context).push(
+                        GrievanceFormScreen.route(
+                          category: GrievanceCategory.moderationAppeal,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (email.isNotEmpty) ...[
                     const SizedBox(height: AuraSpace.s),
                     Semantics(

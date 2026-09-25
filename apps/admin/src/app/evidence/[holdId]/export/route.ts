@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { ApiFailure, apiPost } from '@/lib/api';
+import { isSameOrigin } from '@/lib/origin';
 import { readSession } from '@/lib/session';
 
 /**
@@ -11,8 +12,7 @@ const PURPOSES = new Set(['mandatory_report', 'law_enforcement_request', 'court_
 
 export async function POST(request: NextRequest, ctx: { params: Promise<{ holdId: string }> }): Promise<Response> {
   // Route handlers don't get the Server Action origin check: only same-origin form posts may export.
-  const origin = request.headers.get('origin');
-  if (!origin || new URL(origin).host !== request.headers.get('host')) return new NextResponse('Forbidden', { status: 403 });
+  if (!isSameOrigin(request.headers.get('origin'), request.headers.get('host'))) return new NextResponse('Forbidden', { status: 403 });
   const s = await readSession();
   if (!s?.at || s.stage !== 'aal2') return NextResponse.redirect(new URL('/login', request.url), 303);
   const { holdId } = await ctx.params;

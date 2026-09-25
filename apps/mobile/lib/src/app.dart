@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../l10n/app_localizations.dart';
 import 'core/a11y/haptics.dart';
 import 'core/l10n/locale_controller.dart';
+import 'core/perf/device_profile.dart';
 import 'core/prefs/comfort_prefs.dart';
 import 'core/providers.dart';
 import 'core/remote_config/remote_config_providers.dart';
@@ -33,6 +34,9 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => refreshDeviceTimezone(ref),
     );
+    // Avatar quality tier at launch (REQ-AVA-07): ≤ 3 GB Android or battery
+    // saver → Low.
+    DeviceProfile.instance.refresh();
   }
 
   @override
@@ -45,6 +49,8 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       ref.read(gateControllerProvider.notifier).refreshLock();
+      // Battery saver may have changed while away (tiers are re-checked).
+      DeviceProfile.instance.refresh();
       refreshDeviceTimezone(ref)
           .whenComplete(() => ref.read(syncControllerProvider).onResume());
     }
@@ -90,7 +96,11 @@ class _AuraAppState extends ConsumerState<AuraApp> with WidgetsBindingObserver {
       builder: (context, child) {
         final mq = MediaQuery.of(context);
         // Widget check-ins get their capsule step at this app open (F11).
-        final app = WidgetCheckInFollowUp(child: child!);
+        // Screen readers speak the app language, not the phone's (REQ-A11Y-13).
+        final app = Semantics(
+          localeForSubtree: speechLocaleFor(locale),
+          child: WidgetCheckInFollowUp(child: child!),
+        );
         if (!comfort.reduceMotion || mq.disableAnimations) return app;
         return MediaQuery(
           data: mq.copyWith(disableAnimations: true),

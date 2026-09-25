@@ -66,3 +66,22 @@ s("reflections_rejectedPersonal", "Questions about someone's personal details ca
 s("reflections_rejectedGeneral", "This one can't go up here. It may hurt someone or share personal details. Your words are still here to edit.", "Rejected by the server (hurtful, sexual, other). 14-states wording; no blame.", "ఇది ఇక్కడ పెట్టలేం. ఇది ఎవరినైనా బాధపెట్టొచ్చు లేదా వ్యక్తిగత వివరాలు పంచుకోవచ్చు. మీ మాటలు మార్చుకోవడానికి ఇక్కడే ఉన్నాయి.", "Idi ikkada pettalemu. Idi evarinaina baadha pettochu leda personal details share cheyochu. Mee maatalu edit cheyyadaniki ikkade unnaayi.", hi="यह यहाँ पोस्ट नहीं होगी। इससे किसी को ठेस पहुँचना या निजी जानकारी शेयर होना मुमकिन है। आपके शब्द एडिट करने के लिए यहीं हैं।", hl="Yeh yahan post nahi hogi. Isse kisi ko thes pahunchna ya personal details share hona mumkin hai. Aapke shabd edit karne ke liye yahin hain.")
 s("reflections_supportSubtitle", "You don't have to carry it alone.", "Support sheet subtitle after a reflection was crisis-diverted (no rejection wording). Safe messaging.", "మీరు దీన్ని ఒంటరిగా మోయాల్సిన అవసరం లేదు.", "Meeru deenni okkare moyaalsina avasaram ledu.", hi="यह बोझ आपको अकेले नहीं उठाना है।", hl="Yeh bojh aapko akele nahi uthana hai.")
 s("reflections_backToRoom", "Back to the room", "Support sheet button after a crisis-diverted reflection.", "రూమ్‌కి తిరిగి వెళ్ళండి", "Room ki tirigi vellandi", hi="रूम में वापस जाएँ", hl="Room mein wapas jayein")
+
+# REQ-SAFE-16 opt-out (PRD 06c F9 "Training corpus": privacy-notice disclosure plus Settings opt-out; on by default).
+# Plain about what is kept and what isn't; no pressure either way.
+s("set_corpusTitle", "Use my reflections to improve safety filters",
+  "Settings › Help & Safety switch (REQ-SAFE-16). On by default per the privacy notice.",
+  "సేఫ్టీ ఫిల్టర్లను మెరుగుపరచడానికి నా రిఫ్లెక్షన్లను వాడండి",
+  "Safety filters improve cheyadaniki naa reflections vaadandi",
+  hi="सेफ़्टी फ़िल्टर बेहतर करने के लिए मेरी दिल की बातें इस्तेमाल करें",
+  hl="Safety filters behtar karne ke liye meri reflections use karein")
+s("set_corpusNote", "Reflections you post in rooms, and the decisions about them, can be kept without your name, room or pseudonym to train Aura's own safety filters. Turning this off keeps anything you post from now on out.",
+  "Explanation under the corpus switch: what is kept (text + decision, no identity) and what turning it off does.",
+  "మీరు రూమ్‌లలో పోస్ట్ చేసే రిఫ్లెక్షన్లు, వాటిపై తీసుకున్న నిర్ణయాలు మీ పేరు, రూమ్ లేదా మారుపేరు లేకుండా Aura సొంత సేఫ్టీ ఫిల్టర్లకు శిక్షణ ఇవ్వడానికి ఉంచవచ్చు. ఇది ఆఫ్ చేస్తే, ఇకపై మీరు పోస్ట్ చేసేవి ఏవీ ఉంచబడవు.",
+  "Meeru rooms lo post chese reflections, vaati meeda teesukunna decisions mee peru, room leda pseudonym lekunda Aura own safety filters ki training ivvadaniki unchochu. Idi off cheste, ikapai meeru post chesevi evi unchabadavu.",
+  hi="रूम में पोस्ट की गई आपकी दिल की बातें और उन पर लिए गए फ़ैसले, आपके नाम, रूम या छद्म नाम के बिना, Aura के अपने सेफ़्टी फ़िल्टर सिखाने के लिए रखे जा सकते हैं। इसे बंद करने पर अब से पोस्ट की गई कोई भी चीज़ नहीं रखी जाएगी।",
+  hl="Rooms mein post ki gayi aapki reflections aur un par liye gaye faisle, aapke naam, room ya pseudonym ke bina, Aura ke apne safety filters sikhane ke liye rakhe ja sakte hain. Ise band karne par ab se post ki gayi koi bhi cheez nahi rakhi jayegi.")
+s("set_corpusOffline", "This choice needs a connection. Nothing has changed.",
+  "Under the corpus switch when it couldn't load or save (offline, server).",
+  "ఈ ఎంపికకు కనెక్షన్ కావాలి. ఏమీ మారలేదు.", "Ee choice ki connection kaavali. Emi maaraledu.",
+  hi="इस विकल्प के लिए कनेक्शन चाहिए। कुछ नहीं बदला।", hl="Is choice ke liye connection chahiye. Kuch nahi badla.")

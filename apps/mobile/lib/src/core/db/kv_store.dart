@@ -23,6 +23,10 @@ abstract final class KvKeys {
   static const String lastHue = 'avatar.last_hue';
   static const String playedMoments = 'avatar.played_moments';
   static const String pulledFor = 'sync.pulled_for';
+
+  /// Delta-pull cursors (PRD 16 "Pull: per-entity delta since a server
+  /// cursor"): `{userId, checkIns, habits, habitLogs, tombstones, at}`.
+  static const String pullCursor = 'sync.pull_cursor';
   static const String carriesOnShownFor = 'streak.carries_on_shown_for';
 
   /// Push soft ask answered: `{answer: allow|notNow, at}`. Nothing is asked

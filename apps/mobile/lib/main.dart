@@ -41,7 +41,10 @@ Future<void> main() async {
   final timezone = await resolveDeviceTimezone();
 
   // Read before the first frame, so a locked device never sees DOB flash.
-  final gate = await loadGateState(kv, AgeGate(secure, const Clock()));
+  final gate = await loadGateState(
+    kv,
+    AgeGate(secure, const Clock(), platformDeviceLockMirror()),
+  );
   final locale =
       await kv.get(KvKeys.locale) ??
       defaultLocaleTag(PlatformDispatcher.instance.locales);

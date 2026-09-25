@@ -12,6 +12,7 @@ import { Broadcast } from './broadcast';
 import { ensureLanternNight } from './lanterns';
 import { loadMatchingConfig, type MatchingConfig } from './matching-config';
 import { planLadder, resolvePartition, type LadderStep } from './matching';
+import { blockedPseudonyms } from './pseudonym-blocklist';
 import { generatePseudonym } from './pseudonyms';
 import { isLanternHour, regionForTimeZone, type TzRegion } from './regions';
 import { ADJACENT_QUADRANT, bucketHue, HI_POOL_FLAG, THEME_BY_QUADRANT, type LanguagePool } from './room-types';
@@ -190,7 +191,11 @@ export class RoomsService {
 
   /** Seat with a fresh pseudonym (unique in the room, unlike the joiner's other rooms). null = the DB guard refused. */
   private async insertMember(tx: Tx, room: RoomRow, step: LadderStep, ctx: JoinContext): Promise<MemberRow | null> {
-    const taken = new Set([...(await this.repo.roomPseudonyms(tx, room.id)), ...(await this.repo.activePseudonymsOf(tx, ctx.userId))]);
+    const taken = new Set([
+      ...(await this.repo.roomPseudonyms(tx, room.id)),
+      ...(await this.repo.activePseudonymsOf(tx, ctx.userId)),
+      ...(await blockedPseudonyms(tx)), // PRD 19: the Owner's blocklist
+    ]);
     const avatar = await this.repo.avatarOf(tx, ctx.userId);
     for (let attempt = 0; attempt < 5; attempt++) {
       const pseudonym = generatePseudonym(taken);

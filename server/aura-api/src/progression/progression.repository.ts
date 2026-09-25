@@ -57,13 +57,14 @@ export class ProgressionRepository {
     const k = s.streak;
     await q.query(
       `insert into public.streak_state
-         (user_id, glow_streak, lifetime_glow_days, rest_bank, earn_counter, last_active_day, updated_at)
-       values ($1, $2, $3, $4, $5, $6, now())
+         (user_id, glow_streak, longest_glow_streak, lifetime_glow_days, rest_bank, earn_counter, last_active_day, updated_at)
+       values ($1, $2, $3, $4, $5, $6, $7, now())
        on conflict (user_id) do update set
-         glow_streak = excluded.glow_streak, lifetime_glow_days = excluded.lifetime_glow_days,
+         glow_streak = excluded.glow_streak, longest_glow_streak = excluded.longest_glow_streak,
+         lifetime_glow_days = excluded.lifetime_glow_days,
          rest_bank = excluded.rest_bank, earn_counter = excluded.earn_counter,
          last_active_day = excluded.last_active_day, updated_at = now()`,
-      [userId, k.glowStreak, k.lifetimeGlowDays, k.restBank, k.earnCounter, k.lastActiveDay],
+      [userId, k.glowStreak, k.longestGlowStreak, k.lifetimeGlowDays, k.restBank, k.earnCounter, k.lastActiveDay],
     );
   }
 }

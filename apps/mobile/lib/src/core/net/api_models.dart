@@ -23,6 +23,7 @@ abstract class Snapshot with _$Snapshot {
 
   StreakState get streakState => StreakState(
     glowStreak: streak.glowStreak,
+    longestGlowStreak: streak.longestGlowStreak ?? streak.glowStreak,
     lifetimeGlowDays: streak.lifetimeGlowDays,
     restBank: streak.restBank,
     earnCounter: streak.earnCounter,
@@ -61,6 +62,9 @@ abstract class SnapshotAvatar with _$SnapshotAvatar {
 abstract class SnapshotStreak with _$SnapshotStreak {
   const factory SnapshotStreak({
     @Default(0) int glowStreak,
+
+    /// RULES.md §7; `null` from an older server (then: the current run).
+    int? longestGlowStreak,
     @Default(0) int lifetimeGlowDays,
     @Default(1) int restBank,
     @Default(0) int earnCounter,

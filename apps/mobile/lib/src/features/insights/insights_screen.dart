@@ -7,6 +7,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../core/db/database.dart';
 import '../../core/entitlements/plus.dart';
 import '../../core/l10n/locale_controller.dart';
+import '../../core/prefs/comfort_prefs.dart';
 import '../../core/providers.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
@@ -413,6 +414,14 @@ class _Lifetime extends ConsumerWidget {
     final glow = ref.watch(
       progressViewProvider.select((v) => v.streak.lifetimeGlowDays),
     );
+    // F3: the longest streak lives only here, and follows "Hide streak
+    // number" like the Home streak.
+    final longest = ref.watch(
+      progressViewProvider.select((v) => v.streak.longestGlowStreak),
+    );
+    final hideStreak = ref.watch(
+      comfortControllerProvider.select((p) => p.hideStreak),
+    );
     final style = t.bodyMedium?.copyWith(color: AuraColors.textSoft);
     return Column(
       key: const ValueKey('insights-lifetime'),
@@ -426,6 +435,12 @@ class _Lifetime extends ConsumerWidget {
         Text(l.insights_statsCheckIns(model.checkIns.length), style: style),
         Text(l.insights_statsDays(model.byDay.length), style: style),
         Text(l.home_lifetimeGlow(glow), style: style),
+        if (!hideStreak && longest > 0)
+          Text(
+            l.insights_statsLongest(longest),
+            key: const ValueKey('insights-longest'),
+            style: style,
+          ),
       ],
     );
   }

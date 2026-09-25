@@ -213,13 +213,14 @@ describe('the real wiring', () => {
     expect(guards).toEqual([AuthGuard, PendingDeletionGuard, AccountClosedGuard]);
   });
 
-  it('exempt: the whole AccountController and only the GET routes of SafetyController', () => {
+  it('exempt: the whole AccountController, the GET routes of SafetyController and the corpus opt-out (a privacy choice)', () => {
     expect(Reflect.getMetadata(ALLOW_ACCOUNT_CLOSED, AccountController)).toBe(true);
     const proto = SafetyController.prototype as unknown as Record<string, object>;
     const exempt = Object.getOwnPropertyNames(proto)
       .filter((m) => m !== 'constructor' && Reflect.getMetadata(ALLOW_ACCOUNT_CLOSED, proto[m]) === true)
       .sort();
-    expect(exempt).toEqual(['me', 'myBlocks', 'myReports']);
+    // REQ-SAFE-16: opting out of the de-identified corpus is never locked, like deletion and export.
+    expect(exempt).toEqual(['corpusConsent', 'me', 'myBlocks', 'myReports', 'setCorpusConsent']);
     expect(Reflect.getMetadata(ALLOW_ACCOUNT_CLOSED, SafetyController)).toBeUndefined();
   });
 });

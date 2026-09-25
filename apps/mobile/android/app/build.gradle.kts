@@ -191,6 +191,10 @@ dependencies {
     // Play Age Signals (beta), read before sign-in (F8 REQ-ACC-04;
     // MainActivity "com.akvega.aura/age_signals"). Shows no UI.
     implementation("com.google.android.play:age-signals:0.0.4")
+    // The under-13 device lock's Android copy (F8 REQ-ACC-03, A8): Block Store keeps a few bytes outside the app's
+    // data ("blocked until <date>", nothing identifying), device-only (no cloud backup). MainActivity
+    // "com.akvega.aura/device_lock"; lib/src/features/onboarding/age_gate.dart.
+    implementation("com.google.android.gms:play-services-auth-blockstore:16.4.0")
     // flutter_local_notifications (see compileOptions above).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     // F11 home-screen widget: Jetpack Glance (a 4x2 two-tap check-in via

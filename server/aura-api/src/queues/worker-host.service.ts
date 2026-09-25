@@ -8,8 +8,8 @@ import { AppConfig } from '../config/app-config';
 import { DbService } from '../db/db.service';
 import { NotificationDispatcher } from '../notifications/notification-dispatcher';
 import { runRoomLifecycle } from '../rooms/room-lifecycle';
-import { purgeOldSyncMutations } from './maintenance';
-import { PROCESSORS, type Processor } from './processors';
+import { sweepOrphanMedia } from '../media/orphan-sweep';
+import { purgeOldSyncMutations, purgeOldSyncTombstones } from './maintenance';
 import { runRetention } from './retention';
 import {
   ACCOUNT_PURGE_CRON,
@@ -54,13 +54,16 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
     private readonly apple: AppleTokenVault,
   ) {}
 
-  /** Real processors for the queues that have one; the rest keep their skeleton (processors.ts). */
+  /** The processor of each queue (every queue has a real one). */
   private processorFor(name: QueueName): (job: Job, token?: string) => Promise<void> {
-    if (name === 'capsule-unlock') return (job: Job, token?: string) => this.capsuleUnlock.handle(job, token);
-    if (name === 'notifications') return (job: Job, token?: string) => this.notifications.handle(job, token);
-    if (name === 'room-lifecycle') return (job: Job) => this.roomLifecycle(job);
-    const skeleton: Processor = PROCESSORS[name];
-    return skeleton;
+    switch (name) {
+      case 'capsule-unlock':
+        return (job: Job, token?: string) => this.capsuleUnlock.handle(job, token);
+      case 'notifications':
+        return (job: Job, token?: string) => this.notifications.handle(job, token);
+      case 'room-lifecycle':
+        return (job: Job) => this.roomLifecycle(job);
+    }
   }
 
   get queueNames(): string[] {
@@ -165,7 +168,16 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
       return;
     }
     const removed = await purgeOldSyncMutations(this.db);
-    this.logger.log(`maintenance: purged ${removed} expired sync_mutations`);
+    const tombstones = await purgeOldSyncTombstones(this.db);
+    // Uploads whose record never reached the server (contracts/api/v1.md "Media"): best effort, counts only.
+    let orphans = 'skipped (no SUPABASE_SERVICE_ROLE_KEY)';
+    try {
+      const o = await sweepOrphanMedia(this.db, this.media);
+      if (this.media.configured) orphans = `${o.removed}`;
+    } catch (err) {
+      orphans = `failed (${(err as Error).name})`;
+    }
+    this.logger.log(`maintenance: purged ${removed} expired sync_mutations, ${tombstones} expired sync_tombstones, orphan media ${orphans}`);
   }
 
   /** F5 `room-lifecycle` queue (src/rooms/room-lifecycle.ts). Logs counts only — never room ids or pseudonyms. */

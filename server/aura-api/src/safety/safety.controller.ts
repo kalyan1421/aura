@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, HttpCode, Param, Post, Put, Res, UseFilters } from '@nestjs/common';
 import type { Response } from 'express';
 import { AllowAccountClosed } from '../auth/account-closed.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -79,5 +79,20 @@ export class SafetyController {
   @Header('Cache-Control', 'no-store')
   me(@CurrentUser() user: AuthUser): Promise<SafetyStanding> {
     return this.safety.me(user.id);
+  }
+
+  /** REQ-SAFE-16: the moderation-corpus opt-out (v1-reflections.md §7). A privacy choice: never locked. */
+  @Get('corpus-consent')
+  @AllowAccountClosed()
+  @Header('Cache-Control', 'no-store')
+  corpusConsent(@CurrentUser() user: AuthUser): Promise<{ enabled: boolean }> {
+    return this.safety.corpusConsent(user.id);
+  }
+
+  @Put('corpus-consent')
+  @AllowAccountClosed()
+  @Header('Cache-Control', 'no-store')
+  setCorpusConsent(@CurrentUser() user: AuthUser, @Body() body: unknown): Promise<{ enabled: boolean }> {
+    return this.safety.setCorpusConsent(user.id, body);
   }
 }

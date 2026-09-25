@@ -26,7 +26,7 @@ export function remainingSeconds(s: ConsoleSession): number {
 }
 
 export async function openSession(raw: string | undefined): Promise<ConsoleSession | null> {
-  const s = await unseal<ConsoleSession>(raw, env().cookieSecret);
+  const s = await unseal<ConsoleSession>(raw, env().cookieSecret, 'session');
   if (!s || s.v !== 1 || remainingSeconds(s) <= 0) return null;
   return s;
 }
@@ -37,7 +37,7 @@ export async function readSession(): Promise<ConsoleSession | null> {
 
 /** Server actions / route handlers only (server components cannot set cookies). */
 export async function writeSession(s: ConsoleSession): Promise<void> {
-  (await cookies()).set(SESSION_COOKIE, await seal(s, env().cookieSecret), cookieOptions(remainingSeconds(s)));
+  (await cookies()).set(SESSION_COOKIE, await seal(s, env().cookieSecret, 'session'), cookieOptions(remainingSeconds(s)));
 }
 
 export async function clearSession(): Promise<void> {

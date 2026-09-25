@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { z } from 'zod';
+import { parseOrThrow } from '../common/zod';
+import { lockUser } from '../db/locks';
+import { corpusConsent, setCorpusConsent } from '../reflections/corpus';
 import { DbService } from '../db/db.service';
 import { guidelinesStatus, type GuidelinesStatus } from './guidelines';
 import { roomAccess } from './safety.queries';
@@ -64,4 +68,23 @@ export class SafetyService {
       guidelines: await guidelinesStatus(this.db, userId),
     };
   }
+
+  /**
+   * REQ-SAFE-16 opt-out (`GET|PUT /v1/safety/corpus-consent`, contracts/api/v1-reflections.md §7): whether the caller's
+   * reflections may join the de-identified moderation corpus. On by default (privacy notice); turning it off keeps
+   * every later decision out. Past rows can't be found again (they link to no one), like echoes.
+   */
+  async corpusConsent(userId: string): Promise<{ enabled: boolean }> {
+    return { enabled: await corpusConsent(this.db, userId) };
+  }
+
+  async setCorpusConsent(userId: string, body: unknown): Promise<{ enabled: boolean }> {
+    const { enabled } = parseOrThrow(corpusConsentSchema, body);
+    return this.db.withTx(async (tx) => {
+      await lockUser(tx, userId);
+      return { enabled: await setCorpusConsent(tx, userId, enabled) };
+    });
+  }
 }
+
+const corpusConsentSchema = z.object({ enabled: z.boolean() }).strict();

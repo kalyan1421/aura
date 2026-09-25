@@ -21,6 +21,7 @@ LocalDay? _day(Object? s) => s == null ? null : LocalDay.parse(s as String);
 
 StreakState _streak(Map<String, dynamic> j) => StreakState(
   glowStreak: j['glowStreak'] as int,
+  longestGlowStreak: j['longestGlowStreak'] as int,
   lifetimeGlowDays: j['lifetimeGlowDays'] as int,
   restBank: j['restBank'] as int,
   earnCounter: j['earnCounter'] as int,

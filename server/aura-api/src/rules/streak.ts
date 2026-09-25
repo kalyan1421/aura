@@ -3,6 +3,8 @@ import { daysBetween } from './dates';
 /** RULES.md §7 — glow streak & rest days. */
 export interface StreakState {
   glowStreak: number;
+  /** The longest run so far; never decreases. Shown only in Insights (F3). */
+  longestGlowStreak: number;
   lifetimeGlowDays: number;
   restBank: number;
   earnCounter: number;
@@ -15,6 +17,7 @@ export const EARN_EVERY = 4;
 /** New users start with 1 welcome rest day. */
 export const initialStreak = (): StreakState => ({
   glowStreak: 0,
+  longestGlowStreak: 0,
   lifetimeGlowDays: 0,
   restBank: 1,
   earnCounter: 0,
@@ -43,7 +46,14 @@ function step(s: StreakState, day: string): StreakState {
       earnCounter = 0;
     }
   } // else: bank full → counter paused
-  return { glowStreak, lifetimeGlowDays: s.lifetimeGlowDays + 1, restBank, earnCounter, lastActiveDay: day };
+  return {
+    glowStreak,
+    longestGlowStreak: Math.max(s.longestGlowStreak, glowStreak),
+    lifetimeGlowDays: s.lifetimeGlowDays + 1,
+    restBank,
+    earnCounter,
+    lastActiveDay: day,
+  };
 }
 
 /** Fold distinct active aura days (any order, duplicates allowed) in ascending order. */

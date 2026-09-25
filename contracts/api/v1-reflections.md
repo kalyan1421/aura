@@ -290,3 +290,28 @@ type DecisionResult = { reflectionId: string; previousStatus: AdminStatus; statu
 
 The app hides the composer when `reflections_composer` is off, `reduced_mode` is on or its pool is paused, but the
 `composer.state` from §1.1 is the answer that counts.
+
+## 7. De-identified moderation corpus (REQ-SAFE-16 · PRD 06c F9 "Training corpus" · migration 20261005000031)
+
+Final decisions on reflections are kept for a future in-house classifier as **text + language + label + ISO week, and
+nothing else** (`public.moderation_corpus`; server-only: RLS on, no policies, no client or `aura_admin` grant).
+
+- **When:** after the pipeline publishes or rejects (§3, `source: auto`), and after a moderator's approve / remove in the
+  console (§4, `source: human`), on its own statement after the decision committed: a failure never changes an outcome.
+- **Labels:** `allow` · `reject_hurtful` · `reject_sexual` · `reject_other` · `removed_hurtful` · `removed_sexual` ·
+  `removed_other`. **Language:** the pool's language in the script the text is written in (`en`, `te`, `te-Latn`,
+  `hi`, `hi-Latn`).
+- **De-identified:** no user, member, pseudonym, room, reflection or report id, no FK; a random id (no order); the only
+  time is the ISO week's Monday. The text is sealed like reflection text (DS-1 envelope under `AURA_MASTER_KEY`, bound to
+  the row id). Kept past the room and account purges (it links to no one) `[LEGAL: whether it is still personal data]`.
+- **Never enters it:** under-18 authors (`user_is_minor`: stored DOB or the platform signal); authors who opted out (at
+  the moment of the decision); crisis-diverted text (DS-7); Minors & grooming items (they stay in the evidence store);
+  contact details, links and personal questions (the text itself carries personal data or a grooming ask); held items
+  until a human decides.
+- **Opt-out** (on by default, per the privacy notice; a privacy choice, so it also works on a closed account):
+  - `GET /v1/safety/corpus-consent` → `200 { "enabled": boolean }`
+  - `PUT /v1/safety/corpus-consent` `{ "enabled": boolean }` → `200 { "enabled" }` (`400 invalid_request` otherwise).
+    Stored as events in `user_consents` (purpose `moderation_corpus`), like the echo opt-out. Turning it off keeps every
+    later decision out; earlier rows can't be found again (they link to no one), as with echoes.
+- **App:** Settings › Help & Safety › "Use my reflections to improve safety filters" (signed-in accounts), with the
+  one-line explanation. Online only; the switch shows the server's answer.

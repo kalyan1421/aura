@@ -301,6 +301,21 @@ class AuraApi {
     }
   }
 
+  /// `GET /v1/account/export` → what only the server holds, for the data
+  /// export the app builds on the phone (F8 REQ-ACC-12; contracts/api/v1.md
+  /// "Data export"). Never logged.
+  Future<Map<String, dynamic>> accountExport() async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>(
+        '/v1/account/export',
+        options: await _auth(),
+      );
+      return res.data ?? const <String, dynamic>{};
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
   /// `GET /v1/account` → `accountClosed: true` when the account was closed
   /// for breaking the rules (the key is absent otherwise; contracts/api/v1.md
   /// "Account closed").

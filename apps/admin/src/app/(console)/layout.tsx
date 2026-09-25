@@ -22,6 +22,7 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
       { href: '/lexicons', label: 'Lexicon' },
       { href: '/helplines', label: 'Helplines' },
       { href: '/intentions', label: 'Intentions' },
+      { href: '/pseudonyms', label: 'Pseudonyms' },
       // Read-only for a Moderator: the per-region pauses (PRD 19 Roles: no config changes).
       { href: '/config', label: 'Kill switches' },
       { href: '/stats', label: 'Stats' },
@@ -39,6 +40,7 @@ function navFor(role: StaffRole): Array<{ href: string; label: string }> {
     { href: '/lexicons', label: 'Lexicon' },
     { href: '/helplines', label: 'Helplines' },
     { href: '/intentions', label: 'Intentions' },
+    { href: '/pseudonyms', label: 'Pseudonyms' },
     { href: '/devices', label: 'Device bans' },
     { href: '/staff', label: 'Staff' },
     { href: '/stats', label: 'Stats' },

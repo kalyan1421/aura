@@ -35,7 +35,7 @@ Sunrise **45°**, Rain **175°**, Moonlight **210°**, Storm **275°**.
 `x = Σ w·cos θ`, `y = Σ w·sin θ`; `hue = atan2(y, x)` in [0, 360). If there are no check-ins, or `hypot(x, y) < 1e-9`, return `null` (renderer holds the previous hue). Tolerance in vectors: ±0.5°.
 
 ## 7. Glow streak & rest days (`streak.json`)
-State: `{glowStreak, lifetimeGlowDays, restBank, earnCounter, lastActiveDay}`; new users start `{0, 0, 1, 0, null}` (1 welcome rest day).
+State: `{glowStreak, longestGlowStreak, lifetimeGlowDays, restBank, earnCounter, lastActiveDay}`; new users start `{0, 0, 0, 1, 0, null}` (1 welcome rest day).
 Fold over **distinct active aura days in ascending order** (input may be unsorted or contain duplicates):
 1. If `lastActiveDay == null` → `glowStreak = 1`.
    Else `gap = days(day − lastActiveDay) − 1`:
@@ -44,7 +44,10 @@ Fold over **distinct active aura days in ascending order** (input may be unsorte
    - `gap > restBank` → `glowStreak = 1`; **nothing is spent**
 2. `lifetimeGlowDays += 1`
 3. Earning: if `restBank < 3` → `earnCounter += 1`; when it reaches 4 → `restBank += 1`, `earnCounter = 0`. While `restBank == 3` the counter is paused (unchanged).
-4. `lastActiveDay = day`
+4. `longestGlowStreak = max(longestGlowStreak, glowStreak)` (F3 "Longest streak lives only in Insights": never on Home, never in a push or share card; it never decreases)
+5. `lastActiveDay = day`
+
+A state read without `longestGlowStreak` (older snapshots) takes `longestGlowStreak = glowStreak`.
 
 ## 8. Resting Nebula (`nebula.json`)
 `isResting = lastActiveDay != null && days(currentAuraDay − lastActiveDay) ≥ 3`

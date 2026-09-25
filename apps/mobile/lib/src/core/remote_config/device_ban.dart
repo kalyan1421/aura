@@ -9,6 +9,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../features/account/delete_account_screen.dart';
 import '../../features/onboarding/onboarding_frame.dart';
 import '../../features/support/support_sheet.dart';
+import '../../features/support/grievance_api.dart';
+import '../../features/support/grievance_screen.dart';
 import '../env/env.dart';
 import '../providers.dart';
 import '../router/router.dart';
@@ -193,6 +195,23 @@ class _DeviceBannedScreenState extends ConsumerState<DeviceBannedScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(l.closed_review, style: t.bodyLarge),
+                  // The in-app appeal (REQ-SAFE-11): a ticket id at once. The
+                  // route is public, so it works on this screen too.
+                  if (ref.watch(grievanceApiProvider) != null) ...[
+                    const SizedBox(height: AuraSpace.s),
+                    ListTile(
+                      key: const ValueKey('device-banned-review-form'),
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.edit_note_rounded),
+                      title: Text(l.closed_askReviewInApp),
+                      subtitle: Text(l.closed_askReviewInAppNote),
+                      onTap: () => Navigator.of(context).push(
+                        GrievanceFormScreen.route(
+                          category: GrievanceCategory.moderationAppeal,
+                        ),
+                      ),
+                    ),
+                  ],
                   if (email.isNotEmpty) ...[
                     const SizedBox(height: AuraSpace.s),
                     Semantics(

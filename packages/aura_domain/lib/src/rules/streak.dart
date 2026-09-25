@@ -10,6 +10,7 @@ part 'streak.freezed.dart';
 class StreakState with _$StreakState {
   const StreakState({
     this.glowStreak = 0,
+    this.longestGlowStreak = 0,
     this.lifetimeGlowDays = 0,
     this.restBank = 1,
     this.earnCounter = 0,
@@ -20,16 +21,25 @@ class StreakState with _$StreakState {
   static const StreakState initial = StreakState();
 
   /// Parses the API `Snapshot.streak` shape.
-  factory StreakState.fromWire(Map<String, Object?> json) => StreakState(
-    glowStreak: (json['glowStreak'] as num?)?.toInt() ?? 0,
-    lifetimeGlowDays: (json['lifetimeGlowDays'] as num?)?.toInt() ?? 0,
-    restBank: (json['restBank'] as num?)?.toInt() ?? 1,
-    earnCounter: (json['earnCounter'] as num?)?.toInt() ?? 0,
-    lastActiveDay: LocalDay.tryParse(json['lastActiveDay'] as String?),
-  );
+  factory StreakState.fromWire(Map<String, Object?> json) {
+    final glow = (json['glowStreak'] as num?)?.toInt() ?? 0;
+    return StreakState(
+      glowStreak: glow,
+      // Older snapshots have no longest: at least the current run.
+      longestGlowStreak: (json['longestGlowStreak'] as num?)?.toInt() ?? glow,
+      lifetimeGlowDays: (json['lifetimeGlowDays'] as num?)?.toInt() ?? 0,
+      restBank: (json['restBank'] as num?)?.toInt() ?? 1,
+      earnCounter: (json['earnCounter'] as num?)?.toInt() ?? 0,
+      lastActiveDay: LocalDay.tryParse(json['lastActiveDay'] as String?),
+    );
+  }
 
   /// Active days in the current run (rest days bridge it but add nothing).
   final int glowStreak;
+
+  /// The longest run so far; never decreases. Shown only in Insights (F3
+  /// "Longest streak lives only in Insights").
+  final int longestGlowStreak;
 
   /// Distinct active days ever; never decreases.
   final int lifetimeGlowDays;
@@ -44,6 +54,7 @@ class StreakState with _$StreakState {
 
   Map<String, Object?> toWire() => {
     'glowStreak': glowStreak,
+    'longestGlowStreak': longestGlowStreak,
     'lifetimeGlowDays': lifetimeGlowDays,
     'restBank': restBank,
     'earnCounter': earnCounter,
@@ -63,6 +74,7 @@ const int activeDaysPerRestDay = 4;
 StreakState foldStreak(StreakState state, Iterable<LocalDay> days) {
   final sorted = days.toSet().toList()..sort();
   var glowStreak = state.glowStreak;
+  var longest = state.longestGlowStreak;
   var lifetime = state.lifetimeGlowDays;
   var bank = state.restBank;
   var counter = state.earnCounter;
@@ -91,11 +103,13 @@ StreakState foldStreak(StreakState state, Iterable<LocalDay> days) {
         counter = 0;
       }
     }
+    if (glowStreak > longest) longest = glowStreak;
     last = day;
   }
 
   return StreakState(
     glowStreak: glowStreak,
+    longestGlowStreak: longest,
     lifetimeGlowDays: lifetime,
     restBank: bank,
     earnCounter: counter,

@@ -8,7 +8,7 @@ export type CapsuleOp = (typeof CAPSULE_OPS)[number];
 
 /** `payloadCt`: base64/base64url ciphertext (title, text ≤ 2,000 chars, media refs, hard-moment flag) ≤ 128 KiB. */
 export const MAX_CAPSULE_CT_CHARS = 131_072;
-/** PRD F4 limits. Plus ("unlimited triggers") is not built yet, so everyone is Free. */
+/** PRD F4 limits: Free keeps 3 active trigger capsules; Plus is unlimited (capsule-sync.ts: an active Plus entitlement lifts it). */
 export const MAX_ACTIVE_TRIGGER_CAPSULES = 3;
 /** Fair-use cap on pending (sealed, unopened) date capsules `[ASSUMPTION]`. */
 export const MAX_PENDING_DATE_CAPSULES = 200;

@@ -125,6 +125,11 @@ ProgressView computeProgressView({
   final server = snapshot.avatarState(fallbackHue: local.hue ?? lastHue);
   final serverStreak = snapshot.streakState;
   final snapshotIsToday = snapshot.auraDay == today.toIso();
+  // The longest run never decreases on screen, whichever side knows more.
+  final longest = math.max(
+    local.streak.longestGlowStreak,
+    serverStreak.longestGlowStreak,
+  );
 
   if (pending > 0) {
     final total = math.max(local.totalStarlight, snapshot.starlight.total);
@@ -141,9 +146,11 @@ ProgressView computeProgressView({
       ),
       todayStarlight: local.todayStarlight,
       totalStarlight: total,
-      streak: local.streak.lifetimeGlowDays >= serverStreak.lifetimeGlowDays
-          ? local.streak
-          : serverStreak,
+      streak:
+          (local.streak.lifetimeGlowDays >= serverStreak.lifetimeGlowDays
+                  ? local.streak
+                  : serverStreak)
+              .copyWith(longestGlowStreak: longest),
       glow: glowStatus(local.streak, today),
       provisional: true,
       hasActivity: true,
@@ -163,7 +170,7 @@ ProgressView computeProgressView({
         ? snapshot.starlight.today
         : local.todayStarlight,
     totalStarlight: snapshot.starlight.total,
-    streak: serverStreak,
+    streak: serverStreak.copyWith(longestGlowStreak: longest),
     glow: glowStatus(serverStreak, today),
     provisional: false,
     hasActivity: events.isNotEmpty || serverStreak.lifetimeGlowDays > 0,
