@@ -12,11 +12,11 @@ const REASONS: Record<string, string> = {
   mfa_required: 'Two-factor verification is needed again.',
   not_staff: 'That account is not on the console’s staff list. Ask the Owner to add it (Staff).',
   staff_account_is_app_account: 'Staff accounts must be separate from Aura app accounts.',
-  sso_required: 'Staff sign in with Google Workspace. The email-code sign-in is for development only.',
+  sso_required: 'This Google account is not a console account. Staff sign in with their approved Google account.',
   sso_failed: 'Google sign-in did not complete. Try again.',
   sso_expired: 'The sign-in took too long. Start again.',
-  sso_not_configured: 'Google Workspace sign-in is not configured for this console.',
-  email_login_disabled: 'The email-code sign-in is switched off here. Use Google Workspace.',
+  sso_not_configured: 'Google sign-in is not configured for this console.',
+  email_login_disabled: 'The email-code sign-in is switched off here. Sign in with Google.',
   unauthorized: 'Please sign in.',
 };
 
@@ -61,7 +61,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         {sso && s?.stage !== 'otp' ? (
           <form action="/login/sso" method="get">
             <button type="submit" className="btn">
-              Sign in with Google Workspace{sso.domain ? ` (${sso.domain})` : ''}
+              {sso.domain ? `Sign in with Google Workspace (${sso.domain})` : 'Sign in with Google'}
             </button>
           </form>
         ) : null}

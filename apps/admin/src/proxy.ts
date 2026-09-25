@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { csp } from './lib/csp';
 import { env } from './lib/env';
 import { refreshSession } from './lib/gotrue';
 import { seal, unseal } from './lib/seal';
@@ -13,25 +14,8 @@ import { SESSION_COOKIE, type ConsoleSession } from './lib/session-shape';
  */
 const PUBLIC_PATHS = ['/login', '/mfa'];
 
-function csp(nonce: string): string {
-  const dev = process.env.NODE_ENV === 'development';
-  return [
-    "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ''}`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data:",
-    "font-src 'self'",
-    "connect-src 'self'",
-    "object-src 'none'",
-    "base-uri 'none'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-  ].join('; ');
-}
-
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   const nonce = btoa(crypto.randomUUID());
-  const policy = csp(nonce);
   const path = request.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
 
@@ -41,6 +25,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   } catch {
     cfg = null; // unconfigured: pages render the configuration message
   }
+  const policy = csp(nonce, process.env.SUPABASE_URL ?? null);
 
   let session: ConsoleSession | null = null;
   let resealed: string | null = null;
