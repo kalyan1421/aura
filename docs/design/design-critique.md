@@ -181,3 +181,17 @@ Screen numbers refer to `docs/design/screens/`.
 7. **One `GestureTray`** component across the room, member sheet, Quiet Together, wind-down and Ripples.
 8. **Before release:** real Grievance Officer and support details, "Avatar lab" hidden, and the Hindi mood grid
    matching the other languages.
+
+## Status (commit `0b0ac15`)
+
+Every finding above is fixed, except where noted:
+- **Top bar:** "I need help now" keeps its words on every screen at normal text size. A title that doesn't fit moves
+  under the bar as a large title (whole, up to two lines). The pill turns heart-only only above 130% text.
+- **Partly done:** icons scale with text only for help, the tabs, the check-in orb, Home and gestures (clamped at
+  1.5x). The Telugu size boost is +6% on body and title text only; headings and labels would push the Telugu mood grid
+  past Save on a 390×844 phone.
+- **Found while fixing:** room notices (for example a failed "Hold this tonight") sat at the top of the list, out of
+  view. The room now scrolls to them.
+- **Still needs AK:** real Grievance Officer, support, privacy and terms values. Release builds now fail until they're
+  set (`--dart-define`); `AURA_ALLOW_PLACEHOLDER_LEGAL=1` downgrades the failure to a warning for internal builds only.
+- **Native review:** the Telugu, Tenglish, Hindi and Hinglish drafts of the new copy.
