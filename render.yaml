@@ -1,0 +1,84 @@
+# Render Blueprint for Aura's backend (docs/setup/deploy.md).
+# API + BullMQ worker (same code, two entry points) + Redis-compatible Key Value, in Singapore
+# (nearest Render region to Mumbai, where the Supabase project `cdktvtaflqifnzatrmyr` lives).
+# Secrets are `sync: false` (entered once in the Render dashboard, never committed).
+envVarGroups:
+  - name: aura-shared
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SUPABASE_URL
+        value: https://cdktvtaflqifnzatrmyr.supabase.co
+      - key: PUBLIC_API_URL
+        value: https://aura-api.onrender.com
+      - key: ADMIN_CONSOLE_URL
+        value: https://aura-admin.vercel.app
+      - key: SMTP_URL
+        sync: false # smtps://resend:<RESEND_API_KEY>@smtp.resend.com:465
+      - key: MAIL_FROM
+        value: "Aura <no-reply@akvega.com>"
+      - key: GRIEVANCE_OFFICER_NAME
+        value: Kalyan Kumar Bedugam
+      - key: GRIEVANCE_OFFICER_EMAIL
+        value: akprojects1431@gmail.com
+      - key: DATABASE_URL
+        sync: false # Supabase session pooler URL, with the database password
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      # 32 random bytes, base64. Protects every user's data key: BACK IT UP OFFLINE.
+      # Losing it makes all encrypted notes, voice and capsules unreadable.
+      - key: AURA_MASTER_KEY
+        sync: false
+      - key: LEXICON_SIGNING_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+
+services:
+  - type: web
+    name: aura-api
+    runtime: node
+    region: singapore
+    plan: starter
+    rootDir: server/aura-api
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: node dist/main.js
+    healthCheckPath: /health
+    autoDeploy: true
+    branch: main
+    envVars:
+      - fromGroup: aura-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: aura-redis
+          property: connectionString
+
+  - type: worker
+    name: aura-worker
+    runtime: node
+    region: singapore
+    plan: starter
+    rootDir: server/aura-api
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    startCommand: node dist/worker.js
+    autoDeploy: true
+    branch: main
+    envVars:
+      - fromGroup: aura-shared
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: aura-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: aura-redis
+    region: singapore
+    plan: starter
+    maxmemoryPolicy: noeviction # BullMQ must never lose jobs to eviction
+    ipAllowList: [] # only Render services in this workspace

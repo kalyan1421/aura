@@ -29,3 +29,6 @@ key.properties
 
 # Design captures (regenerate: cd apps/mobile && flutter test --tags capture --run-skipped test/design_capture)
 docs/design/screens/*.png
+
+# Vercel project link (per machine)
+.vercel
