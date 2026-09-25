@@ -220,8 +220,8 @@ void main() {
       expect(env, contains('static const bool debugTools = !kReleaseMode &&'));
     });
 
-    test('the local placeholders are what the release guard rejects', () {
-      // Debug / test builds show obvious placeholders on purpose.
+    test('local builds show the published values, which the release guard '
+        'accepts; config/public.json carries the same values', () {
       for (final v in [
         Env.grievanceOfficerName,
         Env.grievanceOfficerEmail,
@@ -229,11 +229,21 @@ void main() {
         Env.privacyPolicyUrl,
         Env.termsUrl,
       ]) {
-        expect(Env.isPlaceholderLegal(v), isTrue, reason: v);
+        expect(Env.isPlaceholderLegal(v), isFalse, reason: v);
       }
       expect(Env.isPlaceholderLegal(''), isTrue);
-      expect(Env.isPlaceholderLegal('grievance@akvega.in'), isFalse);
-      expect(Env.isPlaceholderLegal('A. Kalyan'), isFalse);
+      expect(Env.isPlaceholderLegal('support@example.com'), isTrue);
+      expect(Env.isPlaceholderLegal('Grievance Officer (placeholder)'), isTrue);
+      final release = jsonDecode(
+        File('config/public.json').readAsStringSync(),
+      ) as Map<String, dynamic>;
+      expect(release, {
+        'AURA_PRIVACY_URL': Env.publishedPrivacyUrl,
+        'AURA_TERMS_URL': Env.publishedTermsUrl,
+        'AURA_SUPPORT_EMAIL': Env.publishedSupportEmail,
+        'AURA_GRIEVANCE_NAME': Env.publishedGrievanceName,
+        'AURA_GRIEVANCE_EMAIL': Env.publishedGrievanceEmail,
+      });
     });
 
     group('ios/scripts/release_legal_check.sh', () {

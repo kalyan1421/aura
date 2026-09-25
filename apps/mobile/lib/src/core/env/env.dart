@@ -123,10 +123,13 @@ abstract final class Env {
   static bool get hasApi => apiUrl.isNotEmpty;
 
   // ---- Legal & support (onboarding trust step, Settings → Help & Safety) --
-  // Release builds MUST pass real values (lawyer-approved pages, the
-  // Grievance Officer named in the privacy notice; F9, IT Rules). Local
-  // builds get obvious placeholders so the rows can be exercised; release
-  // builds hide a row whose value is missing (see [missingLegalConfig]).
+  // The published pages (apps/site, https://aura-akvega.web.app) and the
+  // Grievance Officer named in the privacy notice (F9, IT Rules). Release
+  // builds MUST pass these explicitly (`--dart-define-from-file=
+  // config/public.json`); the native release checks fail otherwise
+  // (android/app/build.gradle.kts `verifyReleaseLegal`,
+  // ios/scripts/release_legal_check.sh). Local builds fall back to the same
+  // published values so every row works while developing.
   static const String _privacyUrl = String.fromEnvironment('AURA_PRIVACY_URL');
   static const String _termsUrl = String.fromEnvironment('AURA_TERMS_URL');
   static const String _supportEmail = String.fromEnvironment(
@@ -139,21 +142,28 @@ abstract final class Env {
     'AURA_GRIEVANCE_EMAIL',
   );
 
-  static String _orLocal(String value, String placeholder) =>
-      value.isNotEmpty ? value : (_isLocalBuild ? placeholder : '');
+  /// The published values (config/public.json, apps/site/site.json).
+  static const String publishedPrivacyUrl =
+      'https://aura-akvega.web.app/privacy/';
+  static const String publishedTermsUrl = 'https://aura-akvega.web.app/terms/';
+  static const String publishedSupportEmail = 'akprojects1431@gmail.com';
+  static const String publishedGrievanceName = 'Kalyan Kumar Bedugam';
+  static const String publishedGrievanceEmail = 'akprojects1431@gmail.com';
+
+  static String _orLocal(String value, String published) =>
+      value.isNotEmpty ? value : (_isLocalBuild ? published : '');
 
   static String get privacyPolicyUrl =>
-      _orLocal(_privacyUrl, 'https://example.com/aura/privacy');
-  static String get termsUrl =>
-      _orLocal(_termsUrl, 'https://example.com/aura/terms');
+      _orLocal(_privacyUrl, publishedPrivacyUrl);
+  static String get termsUrl => _orLocal(_termsUrl, publishedTermsUrl);
 
   /// Support inbox (wrong date of birth, account questions).
   static String get supportEmail =>
-      _orLocal(_supportEmail, 'support@example.com');
+      _orLocal(_supportEmail, publishedSupportEmail);
   static String get grievanceOfficerName =>
-      _orLocal(_grievanceName, 'Grievance Officer (placeholder)');
+      _orLocal(_grievanceName, publishedGrievanceName);
   static String get grievanceOfficerEmail =>
-      _orLocal(_grievanceEmail, 'grievance@example.com');
+      _orLocal(_grievanceEmail, publishedGrievanceEmail);
 
   /// Words that mark a legal/support value as a placeholder. A release build
   /// with one (or with a value missing) fails: android/app/build.gradle.kts

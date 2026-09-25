@@ -19,6 +19,7 @@ import 'package:aura/src/features/checkin/checkin_repository.dart';
 import 'package:aura/src/features/onboarding/gate_controller.dart';
 import 'package:aura/src/features/settings/settings_screen.dart';
 import 'package:aura_domain/aura_domain.dart';
+import 'package:aura/src/core/env/env.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -297,14 +298,14 @@ void main() {
     expect(
       find.descendant(
         of: grievance,
-        matching: find.textContaining('grievance@example.com'),
+        matching: find.textContaining(Env.grievanceOfficerEmail),
       ),
       findsOneWidget,
     );
     expect(
       find.descendant(
         of: find.byKey(const ValueKey('set-support')),
-        matching: find.text('support@example.com'),
+        matching: find.text(Env.supportEmail),
       ),
       findsOneWidget,
     );
