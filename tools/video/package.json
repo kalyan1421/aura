@@ -1,0 +1,37 @@
+{
+  "name": "aura-video",
+  "version": "1.0.0",
+  "description": "Aura product videos (Remotion)",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.529",
+    "@remotion/google-fonts": "4.0.529",
+    "@remotion/transitions": "4.0.529",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.529",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.19.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "screens": "./scripts/copy-screens.sh",
+    "dev": "remotion studio",
+    "render:tour": "remotion render AuraFullTour out/aura-full-tour-16x9.mp4 --codec=h264 --crf=21 --x264-preset=slow --pixel-format=yuv420p --color-space=bt709",
+    "render:reel": "remotion render Aura60sVertical out/aura-60s-vertical-9x16.mp4 --codec=h264 --crf=21 --x264-preset=slow --pixel-format=yuv420p --color-space=bt709",
+    "render": "npm run render:tour && npm run render:reel",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

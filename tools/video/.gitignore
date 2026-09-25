@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.DS_Store
+.env
+
+# Rendered videos and stills
+out/
+
+# Copied app captures and avatar art (35 MB); regenerate with ./scripts/copy-screens.sh
+public/screens/
+public/art/
