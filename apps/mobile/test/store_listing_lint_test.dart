@@ -21,10 +21,17 @@ String _text(File f) => f.readAsStringSync().replaceAll(RegExp(r'\n+$'), '');
 /// Characters as the consoles count them (UTF-16 code units).
 int _chars(String s) => s.length;
 
+const _assetDirs = {'screenshots', 'graphics'};
+
 List<Directory> _localeDirs(String store) {
   final dir = Directory('$_root/$store');
   if (!dir.existsSync()) return [];
-  return dir.listSync().whereType<Directory>().toList()
+  // `screenshots/` and `graphics/` hold store images, not a locale's text.
+  return dir
+      .listSync()
+      .whereType<Directory>()
+      .where((d) => !_assetDirs.contains(_name(d)))
+      .toList()
     ..sort((a, b) => a.path.compareTo(b.path));
 }
 

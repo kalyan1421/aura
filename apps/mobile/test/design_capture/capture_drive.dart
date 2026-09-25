@@ -31,7 +31,9 @@ World world({
   RemoteFlags flags = const RemoteFlags(),
   ProgressView? progress,
   bool sharePrompt = false,
+  bool plusEnabled = true,
 }) => World(
+  plusEnabled: plusEnabled,
   locale: locale,
   gate: gate,
   assets: captureAssets,

@@ -78,3 +78,15 @@ This matches PRD 18-localization ("Tenglish and Hinglish … in India screenshot
 3. **Terms of Use link (Apple 3.1.2).** Auto-renewing subscriptions need a Terms of Use (EULA) link in the App Store metadata. Put the lawyer-approved terms URL in App Store Connect's License Agreement field, or add a "Terms of Use: <url>" line to every `ios/*/description.txt`. Add the privacy policy URL in both consoles.
 4. **Native review.** A native Telugu reviewer and a native Hindi reviewer each read all their files, including the extras, checking tone, gender-neutral forms and safe messaging. Then flip `status.json` to `approved`.
 5. **Upload.** `fastlane deliver --metadata_path store/ios --skip_binary_upload --skip_screenshots` and `fastlane supply --metadata_path store/android --skip_upload_apk --skip_upload_aab`. There is no Fastfile in the repo yet. The folder layout and file names are fastlane's defaults (`deliver` metadata keys, `supply` listing keys). `extras/` sits outside both paths on purpose.
+
+## Screenshots (v1.0, English)
+
+`ios/screenshots/en-US/` (App Store 6.9" display, **1320×2868**) and `android/screenshots/en-US/` (Play phone, 9:16,
+**1080×1920**): the same 8 screens in story order — Home after the check-in, the mood grid, the saved moment with "A
+minute for you", Sanctuary Breathe, a room in Lantern Hour, Aura Sky (the year), a Future-you capsule opening, the
+Safety Center. Opaque RGB PNGs (no alpha), Aura Plus off as v1.0 ships, no status bar drawn. The app is iPhone-only,
+so no iPad set is needed. Regenerate with
+`cd apps/mobile && flutter test --tags capture --run-skipped test/design_capture/store_capture_test.dart`
+(`test/design_capture/store_capture.dart` holds the sizes). Upload them by hand or with fastlane `deliver` / `supply`
+(`--screenshots_path`); the lint skips these folders.
+

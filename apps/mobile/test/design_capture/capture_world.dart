@@ -348,7 +348,12 @@ class World {
     this.keepsakeList,
     this.sharePrompt = false,
     this.authRepo,
+    this.plusEnabled = true,
   }) : entitlement = entitlement ?? freeAccount();
+
+  /// The `plus_enabled` remote flag (the design captures show Plus on; the
+  /// store screenshots show v1.0 as it ships: off).
+  final bool plusEnabled;
 
   final String locale;
   final GateState gate;
@@ -476,6 +481,7 @@ class World {
       entitlement: entitlement,
       api: FakeBillingApi(current: entitlement),
       store: FakeStore(platform: StorePlatform.apple),
+      plusEnabled: plusEnabled,
     ),
     // Capsules (F4) and voice notes (F1).
     ...caps.capsuleOverrides(store: capsuleStore),
