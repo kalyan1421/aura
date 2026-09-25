@@ -58,6 +58,12 @@ abstract final class KvKeys {
   static const String lookBackHelpCheckIns = 'lookback.help_checkins';
   static const String lookBackHidden = 'lookback.hidden';
 
+  /// Set once this install keeps the Supabase session in secure storage
+  /// (core/security/secure_session_storage.dart). Device-scoped: it
+  /// describes the phone, and a sign-out must not make the next launch drop
+  /// a fresh session.
+  static const String sessionStore = 'auth.session_store';
+
   /// The only keys kept when an account signs out. Everything else in the
   /// table belongs to the signed-in person and is wiped (shared phones).
   /// The under-13 lock and the DB key live in secure storage and stay too.
@@ -70,6 +76,7 @@ abstract final class KvKeys {
     lookBackHelpAt,
     lookBackHelpCheckIns,
     lookBackHidden,
+    sessionStore,
   };
 }
 

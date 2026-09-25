@@ -14,6 +14,7 @@ import '../../core/db/kv_store.dart';
 import '../../core/env/env.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/providers.dart';
+import '../../core/security/secure_session_storage.dart';
 import '../../core/security/secure_store.dart';
 import '../../core/time/clock.dart';
 import '../../core/time/device_timezone.dart';
@@ -184,6 +185,7 @@ Future<void> runWidgetBackgroundEntry() async {
       await Supabase.initialize(
         url: Env.supabaseUrl,
         publishableKey: Env.supabaseKey,
+        authOptions: secureAuthOptions(supabaseUrl: Env.supabaseUrl, kv: kv),
       );
       final timezone = await resolveDeviceTimezone();
       final locale =

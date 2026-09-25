@@ -33,6 +33,18 @@ class FlutterSecureStore implements SecureStore {
         aOptions: AndroidOptions(),
       );
 
+  /// Keychain items that must never move to another phone through a backup
+  /// (`first_unlock_this_device`), e.g. the Supabase session
+  /// (SecureSessionStorage). Readable after the first unlock, so background
+  /// work (widget refresh) still can.
+  FlutterSecureStore.thisDeviceOnly()
+    : _storage = const FlutterSecureStorage(
+        iOptions: IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock_this_device,
+        ),
+        aOptions: AndroidOptions(),
+      );
+
   final FlutterSecureStorage _storage;
 
   @override

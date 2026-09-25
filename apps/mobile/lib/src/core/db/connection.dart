@@ -20,11 +20,24 @@ const String _dbName = 'aura';
 /// reset but the file survived), the file is replaced: the server is the
 /// restore path (PRD Offline "Local store").
 ///
-/// TODO(backup): exclude the database file from iCloud backup
-/// (NSURLIsExcludedFromBackupKey); Android sets allowBackup=false.
-Future<AppDatabase> openAppDatabase(SecureStore secure) async {
+/// [excludeFromBackup] (iOS: `isExcludedFromBackup` through the platform
+/// channel) is applied to the database's directory on every launch, so the
+/// file, its journal and anything else there stay out of iCloud backup
+/// (PRD 09 "DB file excluded from iCloud backup", Apple 5.1.3; MASVS-STORAGE).
+/// Android needs nothing: backup and device transfer are off for the whole
+/// app (AndroidManifest.xml).
+Future<AppDatabase> openAppDatabase(
+  SecureStore secure, {
+  Future<void> Function(String dirPath)? excludeFromBackup,
+}) async {
   final key = await _databaseKey(secure);
   var db = _open(key);
+  if (excludeFromBackup != null) {
+    await excludeDatabaseDirFromBackup(
+      getApplicationSupportDirectory,
+      excludeFromBackup,
+    );
+  }
   try {
     await db.customSelect('SELECT count(*) FROM sqlite_master').get();
     return db;
@@ -41,6 +54,21 @@ Future<AppDatabase> openAppDatabase(SecureStore secure) async {
     db = _open(key);
     await db.customSelect('SELECT 1').get();
     return db;
+  }
+}
+
+/// Marks the database directory ([dir], Application Support) as excluded
+/// from backup. Idempotent and never fatal: a failure is logged by type only
+/// and the app starts anyway (the flag is set again on the next launch).
+Future<void> excludeDatabaseDirFromBackup(
+  Future<Directory> Function() dir,
+  Future<void> Function(String dirPath) excludeFromBackup,
+) async {
+  try {
+    final d = await dir();
+    await excludeFromBackup(d.path);
+  } catch (e) {
+    debugPrint('db: backup exclusion failed (${e.runtimeType})');
   }
 }
 

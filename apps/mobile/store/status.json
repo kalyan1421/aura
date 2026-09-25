@@ -1,0 +1,13 @@
+{
+  "_about": "Review state of every listing locale. 'draft-native-review': machine-assisted draft, must be reviewed by a native speaker (and self-reviewed against safe-messaging guidelines) before upload. 'ready-for-ak-review': AK signs off on tone and claims, then it can be uploaded. store_listing_lint_test.dart fails if a locale folder has no entry here.",
+  "ios/en-GB": "ready-for-ak-review",
+  "ios/en-US": "ready-for-ak-review",
+  "ios/te": "draft-native-review",
+  "ios/hi": "draft-native-review",
+  "android/en-US": "ready-for-ak-review",
+  "android/en-IN": "ready-for-ak-review",
+  "android/te-IN": "draft-native-review",
+  "android/hi-IN": "draft-native-review",
+  "extras/te-Latn": "draft-native-review",
+  "extras/hi-Latn": "draft-native-review"
+}

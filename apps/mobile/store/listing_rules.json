@@ -1,0 +1,77 @@
+{
+  "_about": "Rules for apps/mobile/store, enforced by apps/mobile/test/store_listing_lint_test.dart. Limits verified 25 Sep 2026 (store/README.md). Lengths count UTF-16 code units (App Store Connect and Play Console count characters; for Telugu and Devanagari every vowel sign and virama is its own character, so this matches what the consoles show). Apple keywords are limited to 100 UTF-8 bytes as a conservative reading of the 100-character field.",
+  "limits": {
+    "ios": {
+      "name": 30,
+      "subtitle": 30,
+      "promotional_text": 170,
+      "description": 4000,
+      "release_notes": 4000
+    },
+    "ios_keyword_bytes": 100,
+    "android": {
+      "title": 30,
+      "short_description": 80,
+      "full_description": 4000
+    },
+    "extras": {
+      "promotional_text": 170,
+      "screenshot_captions_line": 40
+    },
+    "extras_keyword_bytes": 100
+  },
+  "required_files": {
+    "ios": ["name", "subtitle", "promotional_text", "description", "keywords", "release_notes"],
+    "android": ["title", "short_description", "full_description"],
+    "extras": ["keywords", "promotional_text", "screenshot_captions", "disclaimer"]
+  },
+  "disclaimer": {
+    "_about": "Every description must carry the locale's 'not a medical device or an emergency service' line (PRD F9, REQ-SAFE-12). The same phrase is the only place the medical words below may appear.",
+    "en": "Aura is not a medical device or an emergency service",
+    "te": "Aura వైద్య పరికరం కాదు, అత్యవసర సేవ కూడా కాదు",
+    "hi": "Aura कोई मेडिकल डिवाइस या इमरजेंसी सेवा नहीं है",
+    "te-Latn": "Aura medical device kaadu, emergency service kooda kaadu",
+    "hi-Latn": "Aura koi medical device ya emergency service nahi hai"
+  },
+  "banned_latin": {
+    "_about": "Whole words, case-insensitive, all locales (Latin script appears in every listing). Health or treatment claims (PRD 06d 'calm, not treatment', Apple 1.4.1, Play health policy, Mental Healthcare Act / ASCI), App Review positioning (F9: never 'chat', 'anonymous', 'strangers'), and out-of-scope promises (22-out-of-scope: no therapy, AI, meditation videos, sleep stories, binaural beats).",
+    "words": [
+      "therapy", "therapies", "therapist", "therapists", "therapeutic",
+      "cure", "cures", "cured", "curing",
+      "heal", "heals", "healing", "healed",
+      "treat", "treats", "treatment", "treatments",
+      "diagnose", "diagnosis", "diagnostic",
+      "clinical", "clinically", "clinician",
+      "medical", "medicine", "medication", "doctor", "doctors",
+      "psychologist", "psychiatrist", "counselling", "counseling", "counsellor", "counselor",
+      "anxiety", "depression", "depressed", "disorder", "disorders", "illness", "insomnia", "ptsd", "adhd",
+      "sleep", "sleeping", "relief", "relieve", "relieves", "reduce", "reduces", "improve", "improves",
+      "mental health", "stress relief", "proven", "scientifically", "guaranteed",
+      "binaural", "frequency", "frequencies", "hz",
+      "meditation", "meditations", "meditate", "hypnosis",
+      "ai", "chatbot", "chat", "chats", "chatting", "anonymous", "anonymously",
+      "stranger", "strangers", "dating", "match with",
+      "ilaaj", "ilaj", "upchaar", "chikitsa", "nayam", "dawai", "davai", "neend", "nidra", "ajnabi", "aparichitulu"
+    ]
+  },
+  "banned_script": {
+    "_about": "Substrings in Telugu and Devanagari (all locales): treatment/therapy/cure, medical, doctor, depression, anxiety, mental illness/health, sleep, meditation, chat, anonymous, strangers.",
+    "te": ["చికిత్స", "థెరపీ", "నయం", "వైద్య", "డాక్టర్", "వైద్యుడు", "డిప్రెషన్", "ఆందోళన", "మానసిక ఆరోగ్య", "మానసిక వ్యాధి", "నిద్ర", "ధ్యానం", "చాట్", "అనామక", "అపరిచిత"],
+    "hi": ["इलाज", "उपचार", "थेरेपी", "चिकित्सा", "मेडिकल", "डॉक्टर", "डिप्रेशन", "अवसाद", "चिंता", "मानसिक स्वास्थ्य", "मानसिक रोग", "बीमारी", "नींद", "मेडिटेशन", "राहत", "चैट", "गुमनाम", "अजनबी"]
+  },
+  "banned_title_words": {
+    "_about": "App name / Play title only (Play metadata policy; Apple 2.3.7): no ranking, price or promotion words.",
+    "words": ["free", "best", "top", "#1", "no.1", "number one", "new", "sale", "discount", "offer", "download"]
+  },
+  "cross_store": {
+    "_about": "An App Store listing never names Android or Google Play, and a Play listing never names Apple, iPhone or the App Store (Apple 2.3.10; Play metadata policy).",
+    "ios": ["android", "google play", "play store"],
+    "android": ["iphone", "ipad", "ios", "app store", "apple"]
+  },
+  "placeholders": ["TODO", "TBD", "XXX", "{{", "}}", "lorem"],
+  "mirrors": {
+    "_about": "Locales that must stay byte-identical (one English, Indian/British spelling; PRD 18-localization).",
+    "ios/en-US": "ios/en-GB",
+    "android/en-IN": "android/en-US"
+  }
+}

@@ -138,6 +138,7 @@ void main() {
       (KvKeys.lookBackHelpAt, '2026-10-08T09:00:00.000Z'),
       (KvKeys.lookBackHelpCheckIns, '["c-1"]'),
       (KvKeys.lookBackHidden, 'true'),
+      (KvKeys.sessionStore, 'secure.v1'),
     ]) {
       await kv.set(k, v);
     }

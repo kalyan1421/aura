@@ -21,13 +21,23 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <!-- No advertising id (PRD 13-analytics principle 8, 15-permissions
+         "Tracking"): Aura has no ad SDKs. Some Google libraries merge AD_ID
+         in; removing it keeps the Data safety form and the binary in step.
+         MASVS-PRIVACY (docs/security/masvs-l1.md). -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
     <!-- Nothing leaves the phone through OS backup (PRD 16-offline: the
          encrypted DB and voice files are restored from the server, never from
          a backup). allowBackup=false stops cloud backup, but on Android 12+
          it no longer stops device-to-device transfer; the data-extraction
-         rules exclude every domain from both. -->
+         rules exclude every domain from both.
+         usesCleartextTraffic=false: release traffic is HTTPS only. Android 9+
+         already refuses cleartext by default, but minSdk is 24, and 7.x/8.x
+         allow it unless the app says no (MASVS-NETWORK-1). Debug and profile
+         builds override this for the local dev stack (src/debug, src/profile). -->
     <application
         android:label="Aura"
+        android:usesCleartextTraffic="false"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"

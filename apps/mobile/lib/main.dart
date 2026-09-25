@@ -13,12 +13,14 @@ import 'src/core/db/kv_store.dart';
 import 'src/core/env/env.dart';
 import 'src/core/l10n/locale_controller.dart';
 import 'src/core/providers.dart';
+import 'src/core/security/secure_session_storage.dart';
 import 'src/core/security/secure_store.dart';
 import 'src/core/time/clock.dart';
 import 'src/core/time/device_timezone.dart';
 import 'src/features/onboarding/age_gate.dart';
 import 'src/features/onboarding/gate_controller.dart';
 import 'src/features/push/push_messaging.dart';
+import 'src/features/voice/voice_devices.dart';
 import 'src/features/widget/widget_background.dart';
 
 Future<void> main() async {
@@ -26,7 +28,11 @@ Future<void> main() async {
   ensureTimeZonesLoaded();
 
   final secure = FlutterSecureStore();
-  final db = await openAppDatabase(secure);
+  // iOS: keep the database directory out of iCloud backup (Apple 5.1.3).
+  final db = await openAppDatabase(
+    secure,
+    excludeFromBackup: const ChannelAuraPlatform().excludeFromBackup,
+  );
   final kv = KvStore(db);
   // Unknown device zones resolve to a fixed-offset zone (never silent UTC);
   // the same id goes into the profile and every mutation.
@@ -43,6 +49,8 @@ Future<void> main() async {
       await Supabase.initialize(
         url: Env.supabaseUrl,
         publishableKey: Env.supabaseKey,
+        // Session in Keychain / Keystore, not SharedPreferences (MASVS).
+        authOptions: secureAuthOptions(supabaseUrl: Env.supabaseUrl, kv: kv),
       );
     } catch (e) {
       // The app still works fully on this phone without auth.

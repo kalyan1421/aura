@@ -74,16 +74,32 @@ abstract final class Env {
     return '127.0.0.1';
   }
 
-  /// NestJS base URL (no trailing slash).
+  /// NestJS base URL (no trailing slash). Release builds accept `https`
+  /// only (see [releaseSafeBaseUrl]).
   static String get apiUrl {
-    if (_apiUrl.isNotEmpty) return _stripSlash(_apiUrl);
+    if (_apiUrl.isNotEmpty) {
+      return releaseSafeBaseUrl(_apiUrl, release: !_isLocalBuild);
+    }
     return _isLocalBuild ? 'http://$_hostLoopback:3310' : '';
   }
 
   static String get supabaseUrl {
-    if (_supabaseUrl.isNotEmpty) return _stripSlash(_supabaseUrl);
+    if (_supabaseUrl.isNotEmpty) {
+      return releaseSafeBaseUrl(_supabaseUrl, release: !_isLocalBuild);
+    }
     return _isLocalBuild ? 'http://$_hostLoopback:55521' : '';
   }
+
+  /// Base URLs a release build was given that it refuses (not `https`).
+  /// Part of the release checklist, like [missingLegalConfig].
+  static List<String> get insecureReleaseConfig => [
+    if (_apiUrl.isNotEmpty &&
+        releaseSafeBaseUrl(_apiUrl, release: true).isEmpty)
+      'AURA_API_URL',
+    if (_supabaseUrl.isNotEmpty &&
+        releaseSafeBaseUrl(_supabaseUrl, release: true).isEmpty)
+      'SUPABASE_URL',
+  ];
 
   static String get supabaseKey {
     if (_supabaseKey.isNotEmpty) return _supabaseKey;
@@ -142,7 +158,20 @@ abstract final class Env {
   /// Supabase redirect for magic links and browser OAuth (Apple on Android);
   /// allow-listed in supabase/config.toml.
   static const String authRedirect = 'aura://auth-callback';
+}
 
-  static String _stripSlash(String s) =>
-      s.endsWith('/') ? s.substring(0, s.length - 1) : s;
+/// [url] without a trailing slash, or `''` when a [release] build was given
+/// anything but an `https` URL with a host. Fails closed: the app then runs
+/// offline-only (no API, no Supabase) instead of sending tokens, notes or the
+/// date of birth in cleartext (MASVS-NETWORK-1, docs/security/masvs-l1.md).
+/// Debug and profile builds accept `http` for the local dev stack.
+String releaseSafeBaseUrl(String url, {required bool release}) {
+  final trimmed = url.trim();
+  final stripped = trimmed.endsWith('/')
+      ? trimmed.substring(0, trimmed.length - 1)
+      : trimmed;
+  if (!release) return stripped;
+  final uri = Uri.tryParse(stripped);
+  if (uri == null || uri.scheme != 'https' || uri.host.isEmpty) return '';
+  return stripped;
 }
