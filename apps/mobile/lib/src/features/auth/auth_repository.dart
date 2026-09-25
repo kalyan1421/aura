@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
@@ -78,10 +79,73 @@ abstract interface class SocialSessionExchange {
   Future<void> signInWithBrowser(SocialProvider provider);
 }
 
+/// A session minted by `POST /v1/auth/review-sign-in`.
+@immutable
+class ReviewSession {
+  const ReviewSession({required this.accessToken, required this.refreshToken});
+
+  final String accessToken;
+  final String refreshToken;
+}
+
+/// The store-review account's fixed code (docs/setup/app-review.md). App
+/// Review can't receive an emailed code, so NestJS lets that ONE account sign
+/// in with a code from the review notes. Nothing in the UI mentions it: the
+/// app only asks after Supabase refused a typed code, with the same email and
+/// code, and a refusal is indistinguishable from a wrong code.
+abstract interface class ReviewSignInApi {
+  /// The review account's session, or `null` for anything else (a wrong
+  /// code, not the review account, the route off, rate-limited, offline).
+  /// Never throws.
+  Future<ReviewSession?> signIn(String email, String code);
+}
+
+class HttpReviewSignInApi implements ReviewSignInApi {
+  HttpReviewSignInApi({required String baseUrl, Dio? dio})
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              baseUrl: baseUrl,
+              connectTimeout: const Duration(seconds: 8),
+              receiveTimeout: const Duration(seconds: 20),
+              responseType: ResponseType.json,
+              validateStatus: (_) => true,
+            ),
+          );
+
+  final Dio _dio;
+
+  @override
+  Future<ReviewSession?> signIn(String email, String code) async {
+    try {
+      final res = await _dio.post<Object?>(
+        '/v1/auth/review-sign-in',
+        data: {'email': email.trim(), 'code': code.trim()},
+      );
+      if (res.statusCode != 200) return null;
+      if (res.data case {
+        'access_token': final String access,
+        'refresh_token': final String refresh,
+      }) {
+        return ReviewSession(accessToken: access, refreshToken: refresh);
+      }
+      return null;
+    } on Object catch (e) {
+      debugPrint('auth: review sign-in ${e.runtimeType}');
+      return null;
+    }
+  }
+}
+
 class SupabaseAuthRepository implements AuthRepository, SocialSessionExchange {
-  SupabaseAuthRepository(this._client);
+  SupabaseAuthRepository(this._client, {ReviewSignInApi? reviewSignIn})
+    : _review = reviewSignIn;
 
   final sb.SupabaseClient _client;
+
+  /// `null` in builds without the API (no review fallback).
+  final ReviewSignInApi? _review;
 
   sb.GoTrueClient get _auth => _client.auth;
 
@@ -128,16 +192,45 @@ class SupabaseAuthRepository implements AuthRepository, SocialSessionExchange {
 
   @override
   Future<void> verifyEmailCode(String email, String code) async {
+    final AuthFailure failure;
     try {
       await _auth.verifyOTP(
         type: sb.OtpType.email,
         email: email.trim(),
         token: code.trim(),
       );
+      return;
     } on sb.AuthException catch (e) {
-      throw AuthFailure(_kind(e));
+      failure = AuthFailure(_kind(e));
     } catch (_) {
       throw const AuthFailure(AuthFailureKind.network);
+    }
+    // Supabase refused the code: the store-review account's fixed code is
+    // the only other way in. Any refusal there leaves the original failure,
+    // so a person's wrong or expired code reads exactly as before.
+    if (failure.kind != AuthFailureKind.network &&
+        await _reviewSignIn(email, code)) {
+      return;
+    }
+    throw failure;
+  }
+
+  /// `POST /v1/auth/review-sign-in`, then the session it minted becomes this
+  /// app's Supabase session (fires `signedIn`, like verifyOTP).
+  Future<bool> _reviewSignIn(String email, String code) async {
+    final review = _review;
+    if (review == null) return false;
+    final session = await review.signIn(email, code);
+    if (session == null) return false;
+    try {
+      await _auth.setSession(
+        session.refreshToken,
+        accessToken: session.accessToken,
+      );
+      return true;
+    } on Object catch (e) {
+      debugPrint('auth: review session ${e.runtimeType}');
+      return false;
     }
   }
 

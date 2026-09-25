@@ -83,7 +83,13 @@ TimeContext timeContext(Ref ref) => TimeContext(
 AuthRepository authRepository(Ref ref) {
   if (!Env.hasSupabase) return const UnavailableAuthRepository();
   try {
-    return SupabaseAuthRepository(sb.Supabase.instance.client);
+    return SupabaseAuthRepository(
+      sb.Supabase.instance.client,
+      // App Review's fixed-code account (docs/setup/app-review.md).
+      reviewSignIn: Env.hasApi
+          ? HttpReviewSignInApi(baseUrl: Env.apiUrl)
+          : null,
+    );
   } on Object {
     return const UnavailableAuthRepository();
   }

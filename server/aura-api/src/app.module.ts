@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AccountModule } from './account/account.module';
 import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
+import { ReviewSignInModule } from './auth/review-sign-in';
 import { BillingModule } from './billing/billing.module';
 import { CatalogueModule } from './catalogue/catalogue.module';
 import { ConfigModule } from './config/config.module';
@@ -49,6 +50,7 @@ import { SyncModule } from './sync/sync.module';
     BillingModule, // F12 Monetization: /v1/billing/*, store webhooks — contracts/api/v1-billing.md
     IntentionsModule, // F5 Tonight's intention list: /admin/intentions*, GET /v1/intentions — contracts/api/v1-rooms.md §1.10
     KeepsakesModule, // F13 Keepsakes: GET /v1/keepsakes (the caller's own only) — contracts/api/v1-keepsakes.md
+    ReviewSignInModule, // POST /v1/auth/review-sign-in: the App Review account's fixed code (off unless configured) — docs/setup/app-review.md
   ],
 })
 export class AppModule {}
