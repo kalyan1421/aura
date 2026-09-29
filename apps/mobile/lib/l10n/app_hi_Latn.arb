@@ -1452,5 +1452,12 @@
   "universe_welcomeTitle": "Aapki duniya yahin hai",
   "universe_welcomeBody": "Sab kuch wahin hai jahan aapne chhoda tha. Jab mann ho, jis tarah aasaan lage, waise laut aaiye.",
   "universe_welcomeCheckIn": "Check-in karein",
-  "universe_welcomeExplore": "Bas aaspaas dekhein"
+  "universe_welcomeExplore": "Bas aaspaas dekhein",
+  "universe_freeRoam": "Khula ghoomein",
+  "universe_tapToTravel": "Tap karke chalein",
+  "universe_roamHint": "Chalne ke liye pad kheenchein ya teer ko dabaye rakhein. Kisi jagah ke paas pahunchte hi woh chun li jaati hai.",
+  "universe_walkForward": "Aage chalein",
+  "universe_walkBack": "Peeche chalein",
+  "universe_walkLeft": "Baayein chalein",
+  "universe_walkRight": "Daayein chalein"
 }

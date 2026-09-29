@@ -8824,6 +8824,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Just look around'**
   String get universe_welcomeExplore;
+
+  /// Label of the mode that lets you walk the companion around the island with a pad or arrows. Optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Free roam'**
+  String get universe_freeRoam;
+
+  /// Label of the default mode: tap a place and the companion walks there.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to travel'**
+  String get universe_tapToTravel;
+
+  /// Hint shown under the free-roam controls.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the pad or hold an arrow to walk. Get close to a place to choose it.'**
+  String get universe_roamHint;
+
+  /// Screen-reader label of the free-roam up arrow. One activation takes one small step.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk forward'**
+  String get universe_walkForward;
+
+  /// Screen-reader label of the free-roam down arrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk back'**
+  String get universe_walkBack;
+
+  /// Screen-reader label of the free-roam left arrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk left'**
+  String get universe_walkLeft;
+
+  /// Screen-reader label of the free-roam right arrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk right'**
+  String get universe_walkRight;
 }
 
 class _AppLocalizationsDelegate

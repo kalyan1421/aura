@@ -3139,4 +3139,18 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   String get universe_welcomeCheckIn => pseudo(super.universe_welcomeCheckIn);
   @override
   String get universe_welcomeExplore => pseudo(super.universe_welcomeExplore);
+  @override
+  String get universe_freeRoam => pseudo(super.universe_freeRoam);
+  @override
+  String get universe_tapToTravel => pseudo(super.universe_tapToTravel);
+  @override
+  String get universe_roamHint => pseudo(super.universe_roamHint);
+  @override
+  String get universe_walkForward => pseudo(super.universe_walkForward);
+  @override
+  String get universe_walkBack => pseudo(super.universe_walkBack);
+  @override
+  String get universe_walkLeft => pseudo(super.universe_walkLeft);
+  @override
+  String get universe_walkRight => pseudo(super.universe_walkRight);
 }

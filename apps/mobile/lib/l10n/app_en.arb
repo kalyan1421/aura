@@ -7049,5 +7049,33 @@
   "universe_welcomeExplore": "Just look around",
   "@universe_welcomeExplore": {
     "description": "Welcome-back card button that dismisses the card; nothing is required."
+  },
+  "universe_freeRoam": "Free roam",
+  "@universe_freeRoam": {
+    "description": "Label of the mode that lets you walk the companion around the island with a pad or arrows. Optional."
+  },
+  "universe_tapToTravel": "Tap to travel",
+  "@universe_tapToTravel": {
+    "description": "Label of the default mode: tap a place and the companion walks there."
+  },
+  "universe_roamHint": "Drag the pad or hold an arrow to walk. Get close to a place to choose it.",
+  "@universe_roamHint": {
+    "description": "Hint shown under the free-roam controls."
+  },
+  "universe_walkForward": "Walk forward",
+  "@universe_walkForward": {
+    "description": "Screen-reader label of the free-roam up arrow. One activation takes one small step."
+  },
+  "universe_walkBack": "Walk back",
+  "@universe_walkBack": {
+    "description": "Screen-reader label of the free-roam down arrow."
+  },
+  "universe_walkLeft": "Walk left",
+  "@universe_walkLeft": {
+    "description": "Screen-reader label of the free-roam left arrow."
+  },
+  "universe_walkRight": "Walk right",
+  "@universe_walkRight": {
+    "description": "Screen-reader label of the free-roam right arrow."
   }
 }

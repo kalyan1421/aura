@@ -29,6 +29,11 @@ const _allowlist = <String, String>{
       'the OceanPainter draws them at (a picture, not reading order).',
   'lib/src/features/avatar/avatar_debug_screen.dart':
       'The "Avatar lab" developer screen (debug builds only).',
+  'lib/src/features/universe/roam_controls.dart':
+      'The free-roam walking pad: an arrow\'s direction is physical (the left '
+      'arrow walks left on screen), so its four arrows keep fixed sides in '
+      'right-to-left layouts too. The pad and arrows as a group still follow '
+      'reading order.',
 };
 
 const _fixedAlignments = {

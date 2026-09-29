@@ -5535,6 +5535,28 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get universe_welcomeExplore => 'ఊరికే చూడండి';
+
+  @override
+  String get universe_freeRoam => 'స్వేచ్ఛగా తిరగండి';
+
+  @override
+  String get universe_tapToTravel => 'టాప్ చేసి వెళ్ళండి';
+
+  @override
+  String get universe_roamHint =>
+      'నడవడానికి ప్యాడ్‌ను లాగండి లేదా బాణాన్ని నొక్కి ఉంచండి. ఒక చోటుకు దగ్గరగా వెళితే అది ఎంపికవుతుంది.';
+
+  @override
+  String get universe_walkForward => 'ముందుకు నడవండి';
+
+  @override
+  String get universe_walkBack => 'వెనక్కి నడవండి';
+
+  @override
+  String get universe_walkLeft => 'ఎడమకు నడవండి';
+
+  @override
+  String get universe_walkRight => 'కుడికి నడవండి';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -11127,4 +11149,26 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get universe_welcomeExplore => 'Oorike choodandi';
+
+  @override
+  String get universe_freeRoam => 'Swechchaga tiragandi';
+
+  @override
+  String get universe_tapToTravel => 'Tap chesi vellandi';
+
+  @override
+  String get universe_roamHint =>
+      'Nadavadaniki pad ni laagandi leda baanaanni nokki unchandi. Oka chotuki daggaraga velite adi empikavutundi.';
+
+  @override
+  String get universe_walkForward => 'Munduku nadavandi';
+
+  @override
+  String get universe_walkBack => 'Venakki nadavandi';
+
+  @override
+  String get universe_walkLeft => 'Edamaku nadavandi';
+
+  @override
+  String get universe_walkRight => 'Kudiki nadavandi';
 }

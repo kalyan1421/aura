@@ -1452,5 +1452,12 @@
   "universe_welcomeTitle": "आपकी दुनिया यहीं है",
   "universe_welcomeBody": "सब कुछ वहीं है जहाँ आपने छोड़ा था। जब मन हो, जिस तरह आसान लगे, वैसे लौट आइए।",
   "universe_welcomeCheckIn": "चेक-इन करें",
-  "universe_welcomeExplore": "बस आसपास देखें"
+  "universe_welcomeExplore": "बस आसपास देखें",
+  "universe_freeRoam": "खुला घूमें",
+  "universe_tapToTravel": "टैप करके चलें",
+  "universe_roamHint": "चलने के लिए पैड खींचें या तीर को दबाए रखें। किसी जगह के पास पहुँचते ही वह चुन ली जाती है।",
+  "universe_walkForward": "आगे चलें",
+  "universe_walkBack": "पीछे चलें",
+  "universe_walkLeft": "बाएँ चलें",
+  "universe_walkRight": "दाएँ चलें"
 }

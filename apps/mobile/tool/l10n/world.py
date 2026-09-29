@@ -43,3 +43,13 @@ s("universe_welcomeBody", "Everything is right where you left it. Come back to i
 s("universe_welcomeCheckIn", "Check in", "Welcome-back card button that opens the ordinary quick check-in.", "చెక్-ఇన్ చేయండి", "Check-in cheyandi", hi="चेक-इन करें", hl="Check-in karein")
 s("universe_welcomeExplore", "Just look around", "Welcome-back card button that dismisses the card; nothing is required.", "ఊరికే చూడండి", "Oorike choodandi", hi="बस आसपास देखें", hl="Bas aaspaas dekhein")
 
+# ---- Personal universe: free roam (W05) ----------------------------------
+# An optional mode beside tap-to-travel; every place stays reachable without it.
+s("universe_freeRoam", "Free roam", "Label of the mode that lets you walk the companion around the island with a pad or arrows. Optional.", "స్వేచ్ఛగా తిరగండి", "Swechchaga tiragandi", hi="खुला घूमें", hl="Khula ghoomein")
+s("universe_tapToTravel", "Tap to travel", "Label of the default mode: tap a place and the companion walks there.", "టాప్ చేసి వెళ్ళండి", "Tap chesi vellandi", hi="टैप करके चलें", hl="Tap karke chalein")
+s("universe_roamHint", "Drag the pad or hold an arrow to walk. Get close to a place to choose it.", "Hint shown under the free-roam controls.", "నడవడానికి ప్యాడ్‌ను లాగండి లేదా బాణాన్ని నొక్కి ఉంచండి. ఒక చోటుకు దగ్గరగా వెళితే అది ఎంపికవుతుంది.", "Nadavadaniki pad ni laagandi leda baanaanni nokki unchandi. Oka chotuki daggaraga velite adi empikavutundi.", hi="चलने के लिए पैड खींचें या तीर को दबाए रखें। किसी जगह के पास पहुँचते ही वह चुन ली जाती है।", hl="Chalne ke liye pad kheenchein ya teer ko dabaye rakhein. Kisi jagah ke paas pahunchte hi woh chun li jaati hai.")
+s("universe_walkForward", "Walk forward", "Screen-reader label of the free-roam up arrow. One activation takes one small step.", "ముందుకు నడవండి", "Munduku nadavandi", hi="आगे चलें", hl="Aage chalein")
+s("universe_walkBack", "Walk back", "Screen-reader label of the free-roam down arrow.", "వెనక్కి నడవండి", "Venakki nadavandi", hi="पीछे चलें", hl="Peeche chalein")
+s("universe_walkLeft", "Walk left", "Screen-reader label of the free-roam left arrow.", "ఎడమకు నడవండి", "Edamaku nadavandi", hi="बाएँ चलें", hl="Baayein chalein")
+s("universe_walkRight", "Walk right", "Screen-reader label of the free-roam right arrow.", "కుడికి నడవండి", "Kudiki nadavandi", hi="दाएँ चलें", hl="Daayein chalein")
+

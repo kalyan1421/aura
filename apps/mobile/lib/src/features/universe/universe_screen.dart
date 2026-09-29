@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:aura_domain/aura_domain.dart' show GrowthStage, Vitality;
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +17,8 @@ import '../capsules/capsules_list_screen.dart';
 import '../habits/habits_section.dart';
 import '../progress/progress_view.dart';
 import '../sanctuary/sanctuary_activities.dart';
+import 'roam.dart';
+import 'roam_controls.dart';
 import 'universe_scene.dart';
 import 'universe_scene_view.dart';
 import 'welcome_back.dart';
@@ -78,10 +81,17 @@ class UniverseScreen extends ConsumerStatefulWidget {
 }
 
 class _UniverseScreenState extends ConsumerState<UniverseScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   UniverseCamera _camera = const UniverseCamera();
   UniverseDestination _selected = UniverseDestination.grove;
   bool _listOnly = false;
+
+  /// W05: optional free-roam mode. Tap-to-travel and the list stay available.
+  bool _freeRoam = false;
+  RoamInput _roamInput = RoamInput.zero;
+  Ticker? _roamTicker;
+  Duration _lastRoamTick = Duration.zero;
+  bool _disposed = false;
   WorldPoint _from = const WorldPoint(0, 0.16, 0);
   WorldPoint _to = const WorldPoint(0, 0.16, 0);
   late final AnimationController _walk;
@@ -100,6 +110,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
+    _roamTicker = createTicker(_onRoamTick);
   }
 
   @override
@@ -110,14 +121,66 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed) _walk.value = 1;
+    if (state != AppLifecycleState.resumed) {
+      _walk.value = 1;
+      _setRoamInput(RoamInput.zero);
+    }
   }
 
   @override
   void dispose() {
+    _disposed = true;
     WidgetsBinding.instance.removeObserver(this);
+    _roamTicker?.dispose();
     _walk.dispose();
     super.dispose();
+  }
+
+  // ---- free roam (W05) -----------------------------------------------------
+  // The ticker runs only while a direction is held: no idle loop, nothing in
+  // the background, and a stalled frame never moves the companion far.
+
+  void _setRoamInput(RoamInput input) {
+    if (_disposed) return;
+    _roamInput = input;
+    final ticker = _roamTicker;
+    if (ticker == null) return;
+    if (input.isZero) {
+      if (ticker.isActive) ticker.stop();
+    } else if (!ticker.isActive) {
+      _lastRoamTick = Duration.zero;
+      ticker.start();
+    }
+  }
+
+  void _onRoamTick(Duration elapsed) {
+    final dt = (elapsed - _lastRoamTick).inMicroseconds / 1e6;
+    _lastRoamTick = elapsed;
+    _moveTo(stepRoam(_position, _roamInput, _camera, dt));
+  }
+
+  void _nudge(RoamInput input) =>
+      _moveTo(nudgeRoam(_position, input, _camera));
+
+  /// Puts the companion at [point] and, near a place, selects it so the care
+  /// card (a live region) names it and its button acts on it.
+  void _moveTo(WorldPoint point) {
+    if (_disposed) return;
+    final here = _position;
+    if (point.x == here.x && point.z == here.z) return;
+    _walk.stop();
+    setState(() {
+      _from = point;
+      _to = point;
+      _walk.value = 1;
+      final near = nearestPlace(point);
+      if (near != null) _selected = near;
+    });
+  }
+
+  void _setFreeRoam(bool on) {
+    _setRoamInput(RoamInput.zero);
+    setState(() => _freeRoam = on);
   }
 
   void _select(UniverseDestination destination) {
@@ -201,11 +264,34 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                     ),
                     onPressed: () {
                       _walk.value = 1;
-                      setState(() => _listOnly = !_listOnly);
+                      _setRoamInput(RoamInput.zero);
+                      setState(() {
+                        _listOnly = !_listOnly;
+                        _freeRoam = false;
+                      });
                     },
                   ),
                 ),
                 if (!_listOnly) ...[
+                  SegmentedButton<bool>(
+                    key: const ValueKey('universe-mode'),
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: false,
+                        icon: const Icon(Icons.touch_app_outlined),
+                        label: Text(l.universe_tapToTravel),
+                      ),
+                      ButtonSegment(
+                        value: true,
+                        icon: const Icon(Icons.directions_walk_rounded),
+                        label: Text(l.universe_freeRoam),
+                      ),
+                    ],
+                    selected: {_freeRoam},
+                    onSelectionChanged: (v) => _setFreeRoam(v.first),
+                  ),
+                  const SizedBox(height: 12),
                   ValueListenableBuilder<bool>(
                     valueListenable: DeviceProfile.instance.prefersLowTier,
                     builder: (context, lowDetail, _) {
@@ -275,10 +361,18 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                     ],
                   ),
                   Text(
-                    l.universe_hint,
+                    _freeRoam ? l.universe_roamHint : l.universe_hint,
                     style: t.bodySmall,
                     textAlign: TextAlign.center,
                   ),
+                  if (_freeRoam) ...[
+                    const SizedBox(height: 12),
+                    RoamControls(
+                      key: const ValueKey('universe-roam-controls'),
+                      onInput: _setRoamInput,
+                      onNudge: _nudge,
+                    ),
+                  ],
                   const SizedBox(height: 16),
                 ],
                 Wrap(

@@ -1452,5 +1452,12 @@
   "universe_welcomeTitle": "Mee prapancham ikkade undi",
   "universe_welcomeBody": "Anthaa meeru vadilina chote undi. Meeku veelainappudu, meeku sulabhanga anipinche vidhamga tirigi randi.",
   "universe_welcomeCheckIn": "Check-in cheyandi",
-  "universe_welcomeExplore": "Oorike choodandi"
+  "universe_welcomeExplore": "Oorike choodandi",
+  "universe_freeRoam": "Swechchaga tiragandi",
+  "universe_tapToTravel": "Tap chesi vellandi",
+  "universe_roamHint": "Nadavadaniki pad ni laagandi leda baanaanni nokki unchandi. Oka chotuki daggaraga velite adi empikavutundi.",
+  "universe_walkForward": "Munduku nadavandi",
+  "universe_walkBack": "Venakki nadavandi",
+  "universe_walkLeft": "Edamaku nadavandi",
+  "universe_walkRight": "Kudiki nadavandi"
 }

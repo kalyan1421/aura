@@ -5506,4 +5506,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get universe_welcomeExplore => 'Just look around';
+
+  @override
+  String get universe_freeRoam => 'Free roam';
+
+  @override
+  String get universe_tapToTravel => 'Tap to travel';
+
+  @override
+  String get universe_roamHint =>
+      'Drag the pad or hold an arrow to walk. Get close to a place to choose it.';
+
+  @override
+  String get universe_walkForward => 'Walk forward';
+
+  @override
+  String get universe_walkBack => 'Walk back';
+
+  @override
+  String get universe_walkLeft => 'Walk left';
+
+  @override
+  String get universe_walkRight => 'Walk right';
 }

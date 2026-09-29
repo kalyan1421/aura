@@ -5509,6 +5509,28 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get universe_welcomeExplore => 'बस आसपास देखें';
+
+  @override
+  String get universe_freeRoam => 'खुला घूमें';
+
+  @override
+  String get universe_tapToTravel => 'टैप करके चलें';
+
+  @override
+  String get universe_roamHint =>
+      'चलने के लिए पैड खींचें या तीर को दबाए रखें। किसी जगह के पास पहुँचते ही वह चुन ली जाती है।';
+
+  @override
+  String get universe_walkForward => 'आगे चलें';
+
+  @override
+  String get universe_walkBack => 'पीछे चलें';
+
+  @override
+  String get universe_walkLeft => 'बाएँ चलें';
+
+  @override
+  String get universe_walkRight => 'दाएँ चलें';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -11081,4 +11103,26 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get universe_welcomeExplore => 'Bas aaspaas dekhein';
+
+  @override
+  String get universe_freeRoam => 'Khula ghoomein';
+
+  @override
+  String get universe_tapToTravel => 'Tap karke chalein';
+
+  @override
+  String get universe_roamHint =>
+      'Chalne ke liye pad kheenchein ya teer ko dabaye rakhein. Kisi jagah ke paas pahunchte hi woh chun li jaati hai.';
+
+  @override
+  String get universe_walkForward => 'Aage chalein';
+
+  @override
+  String get universe_walkBack => 'Peeche chalein';
+
+  @override
+  String get universe_walkLeft => 'Baayein chalein';
+
+  @override
+  String get universe_walkRight => 'Daayein chalein';
 }
