@@ -1,0 +1,203 @@
+Resolving dependencies in `/Users/kalyan/Client-project/aura`...
+Downloading packages...
+  _fe_analyzer_shared 103.0.0 (108.0.0 available)
+  analyzer 13.3.0 (14.4.0 available)
+  cli_util 0.5.2 (0.6.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  dbus 0.7.15 (0.8.0 available)
+  equatable 2.1.0 (3.0.0 available)
+  freezed 4.0.1 (4.0.2 available)
+  image_picker_ios 0.8.13+7 (0.8.13+8 available)
+  jni 0.14.2 (1.0.3 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  melos 7.8.2 (8.9.0 available)
+  nm 0.5.0 (0.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  path_provider_android 2.2.23 (2.3.1 available)
+  posthog_flutter 5.46.0 (5.48.0 available)
+  pub_updater 0.5.0 (0.6.0 available)
+  source_gen 4.2.4 (4.3.0 available)
+  test 1.31.1 (1.32.0 available)
+  test_api 0.7.12 (0.7.14 available)
+  test_core 0.6.18 (0.6.20 available)
+Got dependencies in `/Users/kalyan/Client-project/aura`!
+20 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/kalyan/Client-project/aura/apps/mobile/test/design_audit_test.dart
+00:00 +0: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +2: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +3: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +4: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +5: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +6: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +7: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +8: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +9: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +10: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +11: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +12: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:00 +13: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:01 +14: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:01 +15: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:01 +16: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: setup: Calm and 1 minute are the defaults; 4-7-8 adds the light-headed note; Start begins with "Breathe in"
+00:01 +17: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +18: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +19: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +19: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: the Rooms tab your rooms (back with the same name), memories, and help in the top bar
+reflections: other (400, http_400)
+00:01 +20: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +21: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +22: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +23: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +24: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +25: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +26: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +27: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +28: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +29: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +30: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +30: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_screen_test.dart: first check-in: Done finishes onboarding and lands on Home
+capsules: notifications unavailable (LateError)
+00:01 +31: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +32: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +32: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: the Home "Your rooms" strip active rooms only (not memories), each at least 48 dp, read as "The Rain Sanctuary, 3 people here now"
+reflections: other (400, http_400)
+00:01 +32: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_screen_test.dart: first check-in: Done finishes onboarding and lands on Home
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:01 +33: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +34: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +35: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +36: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +37: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +38: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +39: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order a clean note: the capsule step runs first (not held), then the saved moment: Starlight, the companion line, "A minute for you" and the room offer
+00:01 +39: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+capsules: notifications unavailable (LateError)
+00:01 +40: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:01 +40: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:02 +41: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +41: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+plus: entitlement refresh failed (ApiException)
+00:02 +42: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +42: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_screen_test.dart: after the first check-in, Done offers notifications once: the warm explainer comes before any OS prompt
+capsules: notifications unavailable (LateError)
+00:02 +43: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +43: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_screen_test.dart: after the first check-in, Done offers notifications once: the warm explainer comes before any OS prompt
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:02 +44: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+reflections: other (400, http_400)
+00:02 +45: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: ≥ 60 s of breathing ticks off today's Breathe once, and the end screen says so (REQ-SAN-04)
+00:02 +45: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:02 +46: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: ≥ 60 s of breathing ticks off today's Breathe once, and the end screen says so (REQ-SAN-04)
+00:02 +46: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+plus: entitlement refresh failed (ApiException)
+00:03 +47: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: ≥ 60 s of breathing ticks off today's Breathe once, and the end screen says so (REQ-SAN-04)
+00:03 +47: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+reflections: other (400, http_400)
+reflections: other (400, http_400)
+00:03 +48: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: ≥ 60 s of breathing ticks off today's Breathe once, and the end screen says so (REQ-SAN-04)
+00:03 +49: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: ≥ 60 s of breathing ticks off today's Breathe once, and the end screen says so (REQ-SAN-04)
+00:03 +50: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:03 +51: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:03 +52: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:03 +53: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:03 +54: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:03 +55: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+capsules: notifications unavailable (LateError)
+00:03 +56: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+capsules: sweep MissingPluginException
+00:03 +57: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:04 +57: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_nav_test.dart: Settings opens from the Home top bar, never a tab
+capsules: notifications unavailable (LateError)
+00:04 +58: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:04 +58: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_nav_test.dart: Settings opens from the Home top bar, never a tab
+capsules: sweep MissingPluginException
+00:04 +59: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:04 +60: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:04 +61: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: "I need help now" on Home opens the Safety Center above the shell; Close returns to Home
+00:04 +62: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: a hidden Breathe is never ticked off; nor before onboarding
+00:04 +63: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order crisis words and a wake-up together: the sheet first, then the held capsule step, then only the wake-up line
+00:04 +64: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order crisis words and a wake-up together: the sheet first, then the held capsule step, then only the wake-up line
+00:04 +65: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order crisis words and a wake-up together: the sheet first, then the held capsule step, then only the wake-up line
+00:04 +66: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order crisis words and a wake-up together: the sheet first, then the held capsule step, then only the wake-up line
+00:04 +67: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: order crisis words and a wake-up together: the sheet first, then the held capsule step, then only the wake-up line
+00:05 +68: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: immediate help first: helplines, when to call emergency services, the grounding minute, then the boundary
+00:05 +69: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: immediate help first: helplines, when to call emergency services, the grounding minute, then the boundary
+00:05 +70: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: "I need help now" is the second focus stop, and opening it pauses the pacer (REQ-SAN-08)
+00:05 +71: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +72: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +73: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +74: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +75: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +76: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) crisis words in a custom name: the habit saves and the support sheet opens
+00:05 +77: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: Storm's minute: three breaths with grounding cues, then "Keep going" opens Breathe
+00:05 +78: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: Storm's minute: three breaths with grounding cues, then "Keep going" opens Breathe
+00:05 +79: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_breathe_session_test.dart: Storm's minute: three breaths with grounding cues, then "Keep going" opens Breathe
+00:05 +80: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" storm: one tap opens its activity; it never starts on its own
+00:05 +81: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" storm: one tap opens its activity; it never starts on its own
+00:05 +82: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" storm: one tap opens its activity; it never starts on its own
+00:05 +83: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" storm: one tap opens its activity; it never starts on its own
+00:05 +84: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) the editor scrolls at 200% text without overflow
+00:06 +85: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) the editor scrolls at 200% text without overflow
+00:06 +86: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) the editor scrolls at 200% text without overflow
+00:06 +87: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" rain: one tap opens its activity; it never starts on its own
+00:06 +88: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" rain: one tap opens its activity; it never starts on its own
+00:06 +89: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +90: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +91: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +92: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +93: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +94: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +95: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: under 18 (and behind the under-13 lock) Childline is listed
+00:06 +96: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_nav_test.dart: 200% text (real fonts): nothing overflows, labels stay whole and break only between words, targets stay 48 dp 320 dp, te-Latn
+00:06 +97: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" sunrise: one tap opens its activity; it never starts on its own
+00:07 +98: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" sunrise: one tap opens its activity; it never starts on its own
+00:07 +99: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the Settings › Help & Safety link signed in after onboarding: shown, and opens Settings
+00:07 +100: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the Settings › Help & Safety link signed in after onboarding: shown, and opens Settings
+00:07 +101: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" ✕ dismisses it with one tap; Done stays
+00:07 +102: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the Settings › Help & Safety link signed out: hidden
+00:07 +103: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" Storm → the land activity is the paced 30 s grounding
+00:08 +104: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" Storm → the land activity is the paced 30 s grounding
+00:08 +105: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: offline and signed out: everything shows at once, no spinner
+00:08 +106: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts te at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:08 +107: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: a device that can't dial shows the number with Copy under that row
+00:08 +108: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts te-Latn at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:08 +109: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: Close returns to the task underneath with its input kept
+00:08 +110: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts hi at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:08 +111: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts hi at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:09 +112: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts hi at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:09 +113: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the finished minute ticks off Breathe for an onboarded person (F2)
+00:09 +114: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts hi-Latn at 200%: the saved moment scrolls, Done stays pinned and nothing overflows
+00:09 +115: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the crisis interception keeps the support sheet, over the navigation bar too
+00:09 +116: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the crisis interception keeps the support sheet, over the navigation bar too
+00:09 +117: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: the crisis interception keeps the support sheet, over the navigation bar too
+00:09 +118: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: "A minute for you" real fonts te at 1.0x: the same size for every quadrant (REQ-CMP-05), nothing overflows
+00:09 +119: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +120: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +121: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +122: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +123: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +124: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:09 +125: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:10 +126: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips en
+00:10 +127: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) a note of 50+ characters ticks off today's Journal once, with a quiet line
+00:10 +128: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) a note of 50+ characters ticks off today's Journal once, with a quiet line
+00:10 +129: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) a note of 50+ characters ticks off today's Journal once, with a quiet line
+00:11 +130: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) a note of 50+ characters ticks off today's Journal once, with a quiet line
+00:11 +131: /Users/kalyan/Client-project/aura/apps/mobile/test/safety_center_test.dart: 200% text (real fonts): nothing overflows or clips hi-Latn
+00:11 +132: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) 49 characters, a hidden Journal, or the onboarding check-in: nothing
+00:13 +133: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) characters as people see them: 25 Telugu syllables are 25, not 50
+00:13 +134: /Users/kalyan/Client-project/aura/apps/mobile/test/checkin_post_save_order_test.dart: Journal auto-complete (F2) an edit within 24 h that writes a longer note ticks it off
+00:13 +135: All tests passed!

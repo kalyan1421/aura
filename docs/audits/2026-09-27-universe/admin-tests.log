@@ -1,0 +1,54 @@
+
+> @aura/admin@0.1.0 test /Users/kalyan/Client-project/aura/apps/admin
+> node --no-warnings=ExperimentalWarning --test test/*.test.mts
+
+✔ form-action allows the Google sign-in redirect chain and nothing else (0.737542ms)
+✔ durations (0.369542ms)
+✔ SLA text and state (0.454541ms)
+✔ IST formatting and fallbacks (0.156333ms)
+✔ labels and hashes (0.06075ms)
+✔ report reason 9 keeps its label (targeting a young person) (0.4575ms)
+✔ queue session and deletion case wording (0.095958ms)
+✔ lexicon refusals become short lines; verdicts say what the app shows (0.172166ms)
+✔ history actions read as words (0.35425ms)
+✔ a refusal lists schema problems line by line (0.318375ms)
+✔ a new key comes with all five lines (1.180666ms)
+✔ an existing key can be added without lines (its words are reused), retired by default (0.146916ms)
+✔ half-filled words, bad keys, pools, reasons and positions are refused before the API (0.102583ms)
+✔ textsFrom trims and reports what is missing (0.157875ms)
+✔ history lines read as words (0.115709ms)
+✔ nights read as a short date (0.118375ms)
+✔ every PRD 19 kill switch maps to a flag; coverage follows the table (6.952375ms)
+✔ region state: the flag off wins over the list (0.189875ms)
+✔ only the two regional flags and region-shaped names pass (1.717709ms)
+✔ same host → allowed; another host → refused (3.221459ms)
+✔ missing, opaque (null) and malformed origins are refused without throwing (0.077042ms)
+✔ two words of letters (2.717292ms)
+✔ never digits, handles, one word or three (0.110166ms)
+✔ status tabs default to held; unknown values fall back (0.416583ms)
+✔ labels cover every status, hold reason and reject reason in the contract (0.346833ms)
+✔ scores: highest first, formatted, highlighted at 0.4 and above (0.176166ms)
+✔ crisis items (US-42): detection, support sheet and wording (0.132417ms)
+✔ decision form: approve and reason codes (select or custom) (9.589208ms)
+✔ decision form: only the allowed decisions (0.080083ms)
+✔ decision form: remove with the reason the author sees and an optional strike (0.158209ms)
+✔ decision form: escalate needs a higher lane (0.057542ms)
+✔ decision result in one line (0.293292ms)
+✔ ids and pools (0.280916ms)
+✔ round trip (25.920458ms)
+✔ fresh IV each time: the same value never seals the same (1.885833ms)
+✔ tampered, truncated, wrong-key and foreign values open to null (2.052959ms)
+✔ bound to its purpose: a PKCE cookie never opens as a session, nor the other way round (review §5.14) (1.268375ms)
+✔ v1 values (sealed before the purpose binding) no longer open: one fresh sign-in (1.148875ms)
+✔ the email code is development only: on for NODE_ENV development / test, never in production, closed when unset (1.806375ms)
+✔ Google Workspace SSO with the hd hint; a malformed domain is dropped (the API enforces the domain anyway) (0.226042ms)
+✔ PKCE: RFC 7636 verifier and S256 challenge (3.84225ms)
+✔ the authorize URL: Supabase Google provider, PKCE, callback, hd hint, account chooser — no personal data (0.571833ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 289.98275

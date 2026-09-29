@@ -1,0 +1,254 @@
+
+> @aura/aura-api@0.1.0 start:dev /Users/kalyan/Client-project/aura/server/aura-api
+> ts-node-dev --respawn --transpile-only src/main.ts
+
+[INFO] 02:30:43 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [NestFactory] Starting Nest application...
+[Nest] 48776  - 09/27/2026, 2:30:45 AM    WARN [Billing] APPLE_IAP_ISSUER_ID / _KEY_ID / _PRIVATE_KEY not set: App Store purchases stay "confirming" until a notification arrives
+[Nest] 48776  - 09/27/2026, 2:30:45 AM    WARN [Billing] Play Developer API not configured: Google purchases stay "confirming"
+[Nest] 48776  - 09/27/2026, 2:30:45 AM    WARN [RemoteConfig] lexicon signing uses the public DEVELOPMENT key (ba9afcf9c1f7ab25); set LEXICON_SIGNING_KEY for real use
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] AppModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] ConfigModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] SanctuaryModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM    WARN [Reflections] OPENAI_API_KEY is not set: reflections fail closed — every reflection the text rules do not decide is held for human review
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] ProgressionModule dependencies initialized +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] DbModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] QueuesModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] CatalogueModule dependencies initialized +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] AuthModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] CapsuleUnlockModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] BillingCoreModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] KeysModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] KeepsakesModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] ProfileModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] AccountModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] CapsulesModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] MediaModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] ReviewSignInModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] NotificationsModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] AdminCoreModule dependencies initialized +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] RoomsModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] BillingModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] SyncModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] DevicesModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] IntentionsModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] RemoteConfigModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] SafetyModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] RipplesModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] QuietModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] AdminModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [InstanceLoader] ReflectionsModule dependencies initialized +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] HealthController {/health}: +2ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/health, GET} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] ProfileController {/v1}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/profile, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/me/snapshot, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] SyncController {/v1/sync}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/sync/push, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] KeysController {/v1/keys}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/keys/data-key, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] DevicesController {/v1/devices}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/devices, PUT} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/devices, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] DevicesAdminController {/admin/devices}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/devices, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/devices/ban-account, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/devices/bans, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/devices/bans/:banId/lift, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/devices/:deviceId/ban, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] AccountController {/v1/account}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/account, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/account/deletion, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/account/deletion, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/account/export, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/account/apple-auth, POST} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] MediaController {/v1/media}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/media/upload-url, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/media/download-url, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] RoomsController {/v1/rooms}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/match, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/heartbeat, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/gestures, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/intention/hold, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/leave, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/survey, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/mutes, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/mutes/:memberId, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] WindDownController {/v1/rooms/:roomId/wind-down}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/wind-down, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/wind-down, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/wind-down, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] SafetyController {/v1/safety}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/guidelines/accept, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/reports, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/reports, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/blocks, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/blocks, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/blocks/:blockId, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/me, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/corpus-consent, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/safety/corpus-consent, PUT} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] SessionController {/admin/session}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/session, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/session/started, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/session/ended, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] ModerationController {/admin}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/work, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/stats, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/queue, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reports/:reportId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reports/:reportId/actions, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/sanctions, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/sanctions/:sanctionId/lift, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/mandatory-reports, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/mandatory-reports/:holdId/checklist, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/mandatory-reports/:holdId/record, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/evidence/:holdId/export, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] GrievancesPublicController {/v1/grievances}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/grievances/officer, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/grievances, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] GrievancesAdminController {/admin/grievances}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/grievances, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/grievances, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/grievances/:id, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/grievances/:id/acknowledge, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/grievances/:id/resolve, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] LegalOrdersAdminController {/admin/legal-orders}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/legal-orders, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/legal-orders, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/legal-orders/:id, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/legal-orders/:id/acknowledge, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/legal-orders/:id/close, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] LegalOrdersIntakeController {/v1/intake/legal-orders}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/intake/legal-orders, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] PagingController {/admin}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/paging/status, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/pages, GET} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/pages/test, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/pages/:id, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/pages/:id/ack, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] ConfigController {/admin}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/flags/:key, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/audit, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/audit/verify, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/audit/exports, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/audit/exports, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] RegionPauseController {/admin/config/regions}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/regions, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/regions/:key/:region/pause, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/regions/:key/:region/resume, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] PseudonymsController {/admin/config/pseudonyms}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/pseudonyms, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/pseudonyms/block, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/config/pseudonyms/unblock, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] StaffController {/admin/staff}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/staff, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/staff, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/staff/:staffId, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] DeletionCasesAdminController {/admin/deletion-cases}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases/:caseId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases/:caseId/resend, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases/:caseId/delete, POST} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/deletion-cases/:caseId/close, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] DeletionRequestsPublicController {/v1/deletion-requests}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/deletion-requests/:token, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/deletion-requests/:token/confirm, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/deletion-requests/:token/decline, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] RemoteConfigController {/v1}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/config, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/lexicon/crisis, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/helplines, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] LexiconAdminController {/admin/lexicons/crisis}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis/versions/:version, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis/versions, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis/versions/baseline, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis/test, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/lexicons/crisis/publish, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] HelplinesAdminController {/admin/helplines}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/helplines, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/helplines/versions/:version, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/helplines/versions, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/helplines/versions/baseline, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/helplines/publish, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] ReflectionsController {/v1/rooms/:roomId/reflections}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/reflections, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/reflections/:reflectionId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/reflections, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/rooms/:roomId/reflections/:reflectionId, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] AdminReflectionsController {/admin/reflections}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections/by-report/:reportId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections/:reflectionId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections/:reflectionId/decision, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections/pools/:pool/pause, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/reflections/pools/:pool/resume, POST} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] RipplesController {/v1/ripples}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/match, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/match/:ticketId, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/rooms/:roomId/invite, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/echo-consent, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/echo-consent, PUT} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId/leave, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId/complete, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId/reports, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId/blocks, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/ripples/sessions/:sessionId/flood, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] QuietController {/v1/quiet}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/quiet/join, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/quiet/sessions/:sessionId/heartbeat, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/quiet/sessions/:sessionId/leave, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/quiet/sessions/:sessionId/gestures, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/quiet/sessions/:sessionId/reports, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] BillingController {/v1/billing}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/entitlement, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/purchases, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/restore, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/gifts, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/gifts/:giftId, DELETE} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/gifts/received, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/gifts/received/seen, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/stardust/redeem, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/sky, PUT} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] BillingWebhooksController {/v1/billing/webhooks}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/webhooks/apple, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/billing/webhooks/google, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] IntentionsAdminController {/admin/intentions}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/intentions, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/intentions/presets, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/intentions/presets/:pool/:key, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/admin/intentions/words/:key, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] IntentionsPublicController {/v1/intentions}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/intentions, GET} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] KeepsakesController {/v1/keepsakes}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/keepsakes, GET} route +1ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RoutesResolver] ReviewSignInController {/v1/auth}: +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [RouterExplorer] Mapped {/v1/auth/review-sign-in, POST} route +0ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [NestApplication] Nest application successfully started +3ms
+[Nest] 48776  - 09/27/2026, 2:30:45 AM     LOG [Bootstrap] aura-api listening on :3310 (development)
+[Nest] 48776  - 09/27/2026, 3:40:29 AM    WARN [Queues] redis: write EPIPE
+[Nest] 48776  - 09/27/2026, 3:40:33 AM    WARN [Queues] redis: read ECONNRESET
+[Nest] 48776  - 09/27/2026, 3:40:33 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:33 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:34 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:34 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:34 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:35 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:35 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:36 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:36 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:37 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:37 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:38 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:39 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:40 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:41 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:41 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391
+[Nest] 48776  - 09/27/2026, 3:40:42 AM    WARN [Queues] redis: connect ECONNREFUSED 127.0.0.1:6391

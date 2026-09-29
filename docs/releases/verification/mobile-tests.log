@@ -1,0 +1,220 @@
+Waiting for another flutter command to release the startup lock...
+Resolving dependencies in `/Users/kalyan/Client-project/aura`...
+Downloading packages...
+  _fe_analyzer_shared 103.0.0 (108.0.0 available)
+  analyzer 13.3.0 (14.4.0 available)
+  cli_util 0.5.2 (0.6.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  dbus 0.7.15 (0.8.0 available)
+  equatable 2.1.0 (3.0.0 available)
+  freezed 4.0.1 (4.0.2 available)
+  image_picker_ios 0.8.13+7 (0.8.13+8 available)
+  jni 0.14.2 (1.0.3 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  melos 7.8.2 (8.9.0 available)
+  nm 0.5.0 (0.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  path_provider_android 2.2.23 (2.3.1 available)
+  petitparser 7.0.2 (7.1.0 available)
+  posthog_flutter 5.46.0 (5.50.1 available)
+  pub_updater 0.5.0 (0.6.0 available)
+  source_gen 4.2.4 (4.3.0 available)
+  test 1.31.1 (1.32.0 available)
+  test_api 0.7.12 (0.7.14 available)
+  test_core 0.6.18 (0.6.20 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies in `/Users/kalyan/Client-project/aura`!
+22 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart
+00:00 +0: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: F13 copy exists
+00:00 +1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: no pressure, reward or exclamation in en
+00:00 +2: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: no pressure, reward or exclamation in te
+00:00 +3: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: no pressure, reward or exclamation in te_Latn
+00:00 +4: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: no pressure, reward or exclamation in hi
+00:00 +5: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: no pressure, reward or exclamation in hi_Latn
+00:00 +6: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_copy_lint_test.dart: placeholders: only the milestone, the line and the link; dates only inside the private box
+00:00 +7: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +8: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +9: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +10: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +11: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +12: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +13: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +14: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +15: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +16: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +17: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +18: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +19: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +20: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +21: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +22: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +23: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +24: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +24 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:00 +24 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: Rooms tab: failed refresh retains links without live presence claims and then recovers
+rooms: network (500, internal_error)
+00:01 +25 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:01 +25 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: Home strip: failed refresh retains links without live presence claims and then recovers
+rooms: network (500, internal_error)
+00:01 +26 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:01 +26 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: the Rooms tab your rooms (back with the same name), memories, and help in the top bar
+reflections: other (400, http_400)
+00:01 +27 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box only the seals earned, each with its line and day, in catalogue order
+00:01 +28 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/recovery_navigation_test.dart: Keepsakes expired session opens the appropriate recovery destination
+00:01 +29 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +30 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +31 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +32 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +33 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +34 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +35 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +36 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +37 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+reflections: other (400, http_400)
+00:01 +37 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: the Home "Your rooms" strip active rooms only (not memories), each at least 48 dp, read as "The Rain Sanctuary, 3 people here now"
+reflections: other (400, http_400)
+00:01 +38 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states loading: a calm "Opening the room…", help already there
+00:01 +39 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +40 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +41 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +41 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states live: real counts (read as "3 people here now, 18 today"), your name here, the members and all 8 gestures
+reflections: other (400, http_400)
+00:01 +42 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +43 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +44 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +44 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+capsules: notifications unavailable (LateError)
+00:01 +45 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +45 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states empty (cold start): honest counts and "Leave a light for the next one"
+reflections: other (400, http_400)
+00:01 +46 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +46 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:01 +47 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: offline: "Rooms open when you're back online", and no call (REQ-ROOM-01)
+00:01 +47 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_remote_flags_test.dart: the server paused rooms before this phone heard (503 rooms_paused): the same calm words
+rooms: paused (503, rooms_paused)
+00:02 +47 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states realtime dropped: "Reconnecting…" while it rejoins
+reflections: other (400, http_400)
+00:02 +48 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +48 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states realtime dropped: "Reconnecting…" while it rejoins
+reflections: other (400, http_400)
+00:02 +49 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+plus: entitlement refresh failed (ApiException)
+00:02 +50 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +50 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states closing: "This room becomes a memory at …"; gestures still work
+reflections: other (400, http_400)
+00:02 +51 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +51 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states memory: read-only (no tray), "Find a new room", and report and block still there; help too
+reflections: other (400, http_400)
+00:02 +52 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +53 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +53 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states the room closes while you look: it dims into a memory in place
+reflections: other (400, http_400)
+reflections: other (400, http_400)
+00:02 +54 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +55 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+reflections: other (400, http_400)
+00:02 +55 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states gone (purged, or not yours): a calm line and back to your rooms; help stays
+rooms: notFound (404, not_found)
+00:02 +56 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes the Rooms tab root has Settings (not Back) and the strip is on Home; /rooms/:id opens above the shell
+00:02 +57 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +57 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: states suspended: calm, no blame, help always here
+rooms: suspended (403, rooms_suspended)
+00:02 +57 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+capsules: notifications unavailable (LateError)
+00:02 +58 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +59 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +59 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:02 +59 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: offline from the start: no call, the offline words, then the room on reconnect
+reflections: other (400, http_400)
+00:02 +60 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +60 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+plus: entitlement refresh failed (ApiException)
+00:02 +61 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +61 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: announcements (REQ-A11Y-06) sending to everyone, to one member, and receiving
+reflections: other (400, http_400)
+00:02 +61 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_home_test.dart: routes /rooms/join takes the check-in as extra (never in the location) and becomes the room
+reflections: other (400, http_400)
+reflections: other (400, http_400)
+00:02 +61 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_remote_flags_test.dart: Hindi + Hinglish pool closed (flag): the English-room choice right away, no refused call; "Join English room" matches with the fallback
+reflections: other (400, http_400)
+00:02 +62 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:02 +63 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: online: guidelines first, then "Finding people…", then the room, matched on this check-in
+reflections: other (400, http_400)
+00:03 +64 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: online: guidelines first, then "Finding people…", then the room, matched on this check-in
+00:03 +65 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: online: guidelines first, then "Finding people…", then the room, matched on this check-in
+00:03 +65 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: announcements (REQ-A11Y-06) others' gestures are unnamed; under Reduce Motion it only fades in place
+reflections: other (400, http_400)
+00:03 +66 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +67 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +67 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_remote_flags_test.dart: Hindi + Hinglish pool open (flag): the match goes straight to the server; English is unaffected by the pool flag
+reflections: other (400, http_400)
+00:03 +67 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: Lantern Hour: the calm lantern line and glow
+reflections: other (400, http_400)
+00:03 +68 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +68 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: leave: a calm confirm, the survey (eligible), then gone
+reflections: other (400, http_400)
+00:03 +68 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: Sanctuary: nothing overflows with pseudo strings
+capsules: notifications unavailable (LateError)
+00:03 +69 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +70 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +70 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_remote_flags_test.dart: Hindi + Hinglish pool open (flag): the match goes straight to the server; English is unaffected by the pool flag
+reflections: other (400, http_400)
+00:03 +70 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: back asks "Did you feel less alone?" once when eligible; closing it counts as Skip
+reflections: other (400, http_400)
+00:03 +71 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +72 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: the private box tapping a seal opens its share card: the seal and its line, never the day
+00:03 +72 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: leaving the guidelines never enters a room; accepted once, they are not asked again
+reflections: other (400, http_400)
+00:03 +73 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: leaving the guidelines never enters a room; accepted once, they are not asked again
+00:03 +73 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: 200% text in Telugu: the room, a member sheet and the report sheet fit without overflow
+reflections: other (400, http_400)
+00:03 +74 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: leaving the guidelines never enters a room; accepted once, they are not asked again
+00:03 +75 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: leaving the guidelines never enters a room; accepted once, they are not asked again
+00:03 +76 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:03 +76 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: DS-10: an account id sent by mistake is never shown or read out
+reflections: other (400, http_400)
+00:03 +77 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:03 +78 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:03 +78 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_screen_test.dart: "I need help now" is within the first three focus stops (after Back and the room name)
+reflections: other (400, http_400)
+00:03 +79 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:03 +80 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:03 +80 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: without a mood given, it joins with the newest check-in in the quadrant on this phone
+reflections: other (400, http_400)
+00:04 +81 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once one new keepsake: a small card with its line, then never again
+00:04 +82 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: without a mood given, it joins with the newest check-in in the quadrant on this phone
+00:04 +83 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +84 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +85 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +86 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +87 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +87 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining Hindi + Hinglish not open yet: "Join English room" retries with the fallback
+rooms: poolUnavailable (409, language_pool_unavailable)
+00:04 +88 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/no_hardcoded_strings_test.dart: no hard-coded user-facing strings in lib/src
+00:04 +89 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: grievance form: nothing overflows with pseudo strings
+00:04 +90 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: grievance form: nothing overflows with pseudo strings
+00:04 +91 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining Hindi + Hinglish not open yet: "Join English room" retries with the fallback
+reflections: other (400, http_400)
+00:04 +92 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/keepsakes_test.dart: Home: a new seal shows once hide streak number: a glow seal is kept quietly, never put on Home
+00:04 +93 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +94 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +94 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining "Tell me when they open" is kept on this phone
+rooms: poolUnavailable (409, language_pool_unavailable)
+00:04 +95 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +96 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +97 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +98 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: data export: nothing overflows with pseudo strings
+00:04 +99 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining "Tell me when they open" is kept on this phone
+00:04 +100 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining 3 new rooms for this feeling today: calm words and "See your rooms"
+rooms: joinLimit (429, room_join_limit)
+00:05 +101 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/rooms_offer_test.dart: joining offline: "Rooms need a connection. Your check-in is saved.", no call; it joins by itself once back online
+reflections: other (400, http_400)
+00:05 +102 ~1: All tests passed!

@@ -1,0 +1,272 @@
+00:00 +0: loading /Users/kalyan/Client-project/aura/apps/mobile/test/universe_scene_test.dart
+00:00 +0: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_scene_test.dart: growth is bounded, monotonic and handles missing progression
+00:00 +1: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_scene_test.dart: destination picking follows projection through camera orbit and zoom
+00:00 +2: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_scene_test.dart: camera bounds keep the island above the near plane
+00:00 +3: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_scene_test.dart: mesh stays bounded and low detail reduces work
+00:00 +4: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +5: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +6: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +7: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +8: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +9: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:00 +10: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +10: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: the real router after onboarding: the shell with Home; /history is in the Insights tab
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:01 +11: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +12: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +13: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +14: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +15: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +16: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+00:01 +17: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: top to bottom: the orb, Today's minute, Breathe, the grounding library, then the Future you slot
+capsules: notifications unavailable (LateError)
+00:01 +18: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: Grove reuses habits and existing progress grows the mesh
+00:01 +19: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: Grove reuses habits and existing progress grows the mesh
+00:02 +19: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) when everything fits, the avatar takes exactly the rest: the last habit row ends at the navigation bar
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:02 +20: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: Grove reuses habits and existing progress grows the mesh
+00:02 +20: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: the real router Check in (centre action) opens above the shell and returns to the tab it came from
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:02 +21: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) when everything fits, the avatar takes exactly the rest: the last habit row ends at the navigation bar
+00:02 +22: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +22: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) no overflow at 375×667
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:02 +23: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +24: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +25: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +25: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) no overflow at 390×844
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:02 +26: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +27: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +27: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: one tap opens an activity full screen; ✕ comes back
+capsules: notifications unavailable (LateError)
+00:02 +28: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +28: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 375×667: stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: notifications unavailable (LateError)
+00:02 +28: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: the real router "I need help now" on onboarding (Welcome) opens the Safety Center; Close returns there
+capsules: notifications unavailable (LateError)
+00:02 +29: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) Edit sits next to the title (48 dp); a preset switch hides its chip through the outbox
+00:02 +29: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 375×667: stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: sweep MissingPluginException
+00:02 +29: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: the real router "I need help now" on onboarding (Welcome) opens the Safety Center; Close returns there
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:03 +30: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +31: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +32: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+capsules: notifications unavailable (LateError)
+00:03 +33: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+capsules: sweep MissingPluginException
+00:03 +33: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 375×667 (new user): stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:03 +34: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +34: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: the real router "I need help now" on the under-13 screen opens the Safety Center; Close returns there
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:03 +35: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +36: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +37: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +38: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: entry opens world and all care destinations use existing flows
+00:03 +38: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 390×844: stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:03 +39: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) adding a custom habit shows a chip with the generic icon
+00:03 +40: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) adding a custom habit shows a chip with the generic icon
+00:03 +40: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 390×844 (new user): stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: notifications unavailable (LateError)
+00:03 +41: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) adding a custom habit shows a chip with the generic icon
+00:03 +41: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 390×844 (new user): stats row, glow card and the whole first habit row sit above the navigation bar without scrolling
+capsules: sweep MissingPluginException
+00:03 +41: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://checkin: Home, with the check-in above it
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:03 +42: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) adding a custom habit shows a chip with the generic icon
+00:03 +43: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts te at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:03 +43: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 200% text at 375×667: nothing overflows and Home still scrolls to the habits
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:04 +44: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +45: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +45: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://safety during onboarding: over the step
+capsules: notifications unavailable (LateError)
+00:04 +46: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +46: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://safety during onboarding: over the step
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:04 +47: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +47: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 200% text at 390×844: nothing overflows and Home still scrolls to the habits
+capsules: notifications unavailable (LateError)
+00:04 +48: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +49: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +50: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +51: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +52: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +52: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts te at 200% text: everything lays out, nothing overflows
+capsules: notifications unavailable (LateError)
+00:04 +52: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) 200% text at 390×844: nothing overflows and Home still scrolls to the habits
+capsules: sweep MissingPluginException
+00:04 +53: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +54: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +55: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +56: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +57: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +58: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +59: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +60: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +61: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +62: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +63: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +64: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +65: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +65 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +66 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +67 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +67 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://sanctuary while locked: the lock wins
+capsules: notifications unavailable (LateError)
+00:04 +68 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: check-in: nothing overflows with pseudo strings
+00:04 +68 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://sanctuary while locked: the lock wins
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:04 +69 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: 320dp at 200% text and reduced motion: hi
+00:04 +69 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) the decorative wordmark shows when "I need help now" fits beside it, steps aside first when it would not, and help never wraps (the heart only when even the pill alone does not fit)
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:04 +70 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: 320dp at 200% text and reduced motion: hi
+00:04 +70 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:04 +71 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts te-Latn at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:04 +71 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) the decorative wordmark shows when "I need help now" fits beside it, steps aside first when it would not, and help never wraps (the heart only when even the pill alone does not fit)
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:04 +71 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: Sanctuary: nothing overflows with pseudo strings
+capsules: notifications unavailable (LateError)
+00:04 +72 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts te-Latn at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:04 +73 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) the field stops at 30 characters (grapheme clusters); a long Telugu name saves with no "too long" note
+00:04 +73 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) the decorative wordmark shows when "I need help now" fits beside it, steps aside first when it would not, and help never wraps (the heart only when even the pill alone does not fit)
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:05 +74 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: layout (item 1) the decorative wordmark shows when "I need help now" fits beside it, steps aside first when it would not, and help never wraps (the heart only when even the pill alone does not fit)
+00:05 +75 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +76 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +76 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts te-Latn at 200% text: everything lays out, nothing overflows
+capsules: notifications unavailable (LateError)
+00:05 +77 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +78 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +78 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: Starlight row (item 2) day one: stage name, quiet bar toward Ember, today's Starlight; no repeated total
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:05 +79 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +80 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +80 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: Starlight row (item 2) Constellation shows its stars instead of a bar
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:05 +81 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +82 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +83 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +84 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +84 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: glow card (item 3) star icon, not fire; the rest-day row explains rest days
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:05 +85 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +86 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running: safety over the tab, check-in back to its tab, sanctuary switches tabs
+00:05 +87 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: glow card (item 3) star icon, not fire; the rest-day row explains rest days
+00:05 +87 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+capsules: notifications unavailable (LateError)
+00:05 +88 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: glow card (item 3) star icon, not fire; the rest-day row explains rest days
+00:05 +88 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:05 +89 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/pseudo_localization_test.dart: grievance form: nothing overflows with pseudo strings
+00:05 +90 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: 320dp at 200% text and reduced motion: te_Latn
+00:05 +90 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: glow card (item 3) Hide streak number keeps glow days and rest days
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:06 +90 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts en at 200% text: everything lays out, nothing overflows
+capsules: notifications unavailable (LateError)
+00:06 +91 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/universe_screen_test.dart: 320dp at 200% text and reduced motion: te_Latn
+00:06 +92 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+00:06 +93 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+00:06 +94 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+00:06 +94 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: history line (item 4) "Your check-ins" when none today; opens the Insights tab (the history)
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:06 +95 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links running while locked or onboarding: only Safety opens
+00:06 +96 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:06 +96 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links aura://auth-callback is left to Supabase: the screen stays
+capsules: notifications unavailable (LateError)
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:06 +97 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:06 +98 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/habits_editor_test.dart: Home habits and the editor (item 5) chips use restrained haptics that Comfort can switch off
+00:06 +98 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: history line (item 4) counts today's check-ins
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:06 +99 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links aura://auth-callback is left to Supabase: the screen stays
+00:06 +100 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links aura://auth-callback is left to Supabase: the screen stays
+00:06 +101 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links aura://auth-callback is left to Supabase: the screen stays
+00:06 +102 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi at 200% text: everything lays out, nothing overflows
+00:06 +102 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://auth-callback: the gate picks the screen
+capsules: notifications unavailable (LateError)
+00:06 +102 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi at 200% text: everything lays out, nothing overflows
+capsules: notifications unavailable (LateError)
+00:06 +103 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: sync indicator (item 7) signed in and online: state, explanation and Sync now
+00:06 +103 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/shell_router_test.dart: deep links cold start aura://auth-callback: the gate picks the screen
+platform: deviceProfile MissingPluginException
+platform: appVersion MissingPluginException
+capsules: sweep MissingPluginException
+00:06 +103 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: sync indicator (item 7) signed in and online: state, explanation and Sync now
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+plus: entitlement refresh failed (ApiException)
+plus: entitlement refresh failed (ApiException)
+rooms: other (400, http_400)
+00:06 +104 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: sync indicator (item 7) signed in and online: state, explanation and Sync now
+00:07 +105 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi-Latn at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:07 +105 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: sync indicator (item 7) offline: "Saved on this phone", no Sync now
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:07 +106 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi-Latn at 200% text: every activity lays out (setup, running, the end), nothing overflows
+00:07 +107 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: account deletion hold a scheduled deletion shows "Keep my account?" on Home
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+plus: entitlement refresh failed (ApiException)
+plus: entitlement refresh failed (ApiException)
+rooms: other (400, http_400)
+00:07 +107 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/sanctuary_screen_test.dart: real fonts hi-Latn at 200% text: everything lays out, nothing overflows
+capsules: notifications unavailable (LateError)
+00:07 +108 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: account deletion hold a scheduled deletion shows "Keep my account?" on Home
+00:07 +109 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: account deletion hold no hold: no card
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:07 +110 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: check-in entry (item 8): the shell's centre action, not a bar on Home Home has no check-in bar of its own
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:08 +111 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: check-in entry (item 8): the shell's centre action, not a bar on Home the new-user check-in pulse plays normally
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:08 +112 ~1: /Users/kalyan/Client-project/aura/apps/mobile/test/home_screen_test.dart: check-in entry (item 8): the shell's centre action, not a bar on Home no pulse under Reduce Motion
+capsules: notifications unavailable (LateError)
+capsules: sweep MissingPluginException
+00:08 +113 ~1: All tests passed!

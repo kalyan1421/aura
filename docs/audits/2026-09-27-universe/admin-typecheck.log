@@ -1,0 +1,6 @@
+
+> @aura/admin@0.1.0 typecheck /Users/kalyan/Client-project/aura/apps/admin
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully

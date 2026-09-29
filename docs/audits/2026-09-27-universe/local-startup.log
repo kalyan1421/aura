@@ -1,0 +1,9 @@
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_APPLE_SECRET
+supabase start is already running.
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_APPLE_SECRET
+WARN: environment variable is unset: SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET
+supabase_db_aura container is not running: exited
+Try rerunning the command with --debug to troubleshoot the error.

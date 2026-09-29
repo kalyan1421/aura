@@ -1,0 +1,45 @@
+Window: "iPhone 16 Pro", App: Simulator.
+0 standard window iPhone 16 Pro – iOS 18.0, Secondary Actions: Raise
+	1 button Action
+	2 button Volume Up
+	3 button Volume Down
+	4 button Sleep/Wake
+	5 container
+		6 button Description: Back, Secondary Actions: Cancel
+		7 text Description: Your universe, Secondary Actions: Cancel
+		8 button Description: I need help now, Secondary Actions: Cancel
+		9 Group Secondary Actions: Cancel
+		10 text Description: A little care, a little growth. Explore at your own pace., Secondary Actions: Cancel
+		11 button Description: Use list view, Secondary Actions: Cancel
+		12 button Description: Rotate left, Secondary Actions: Cancel
+		13 button Description: Rotate right, Secondary Actions: Cancel
+		14 button Description: Zoom in, Secondary Actions: Cancel
+		15 button Description: Zoom out, Secondary Actions: Cancel
+		16 button Description: Reset camera, Secondary Actions: Cancel
+		17 text Description: Drag to look around. Tap a light or choose a place below., Secondary Actions: Cancel
+		18 button Description: Habit Grove, Secondary Actions: Cancel
+		19 button Description: Tide Pool, Secondary Actions: Cancel
+		20 button Description: Reflection Garden, Secondary Actions: Cancel
+		21 button Description: Observatory, Secondary Actions: Cancel
+		22 element Secondary Actions: Cancel, Description: Habit Grove
+Your existing Starlight helps these plants grow. A small habit is enough for today.
+		23 button Description: Open habits, Secondary Actions: Cancel
+	24 toolbar
+		25 button Description: Home, Secondary Actions: Move previous, Move next, Remove from toolbar
+		26 button Description: Save Screen, Secondary Actions: Move previous, Move next, Remove from toolbar
+		27 button Description: Rotate, Secondary Actions: Move previous, Move next, Remove from toolbar
+	28 close button
+	29 full screen button Help: this button also has an action to zoom the window, Secondary Actions: zoom the window
+	30 minimize button
+	31 text iPhone 16 Pro iOS 18.0
+32 menu bar
+	33 Simulator
+	34 File
+	35 Edit
+	36 Device
+	37 I/O
+	38 Features
+	39 Window
+	40 Help
+
+The focused UI element is 0 standard window iPhone 16 Pro – iOS 18.0, Secondary Actions: Raise

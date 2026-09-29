@@ -1,0 +1,29 @@
+Resolving dependencies in `/Users/kalyan/Client-project/aura`...
+Downloading packages...
+  _fe_analyzer_shared 103.0.0 (108.0.0 available)
+  analyzer 13.3.0 (14.4.0 available)
+  cli_util 0.5.2 (0.6.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  dbus 0.7.15 (0.8.0 available)
+  equatable 2.1.0 (3.0.0 available)
+  freezed 4.0.1 (4.0.2 available)
+  image_picker_ios 0.8.13+7 (0.8.13+8 available)
+  jni 0.14.2 (1.0.3 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  melos 7.8.2 (8.9.0 available)
+  nm 0.5.0 (0.6.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  path_provider_android 2.2.23 (2.3.1 available)
+  petitparser 7.0.2 (7.1.0 available)
+  posthog_flutter 5.46.0 (5.50.1 available)
+  pub_updater 0.5.0 (0.6.0 available)
+  source_gen 4.2.4 (4.3.0 available)
+  test 1.31.1 (1.32.0 available)
+  test_api 0.7.12 (0.7.14 available)
+  test_core 0.6.18 (0.6.20 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies in `/Users/kalyan/Client-project/aura`!
+22 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Analyzing mobile...                                             
+No issues found! (ran in 6.8s)
