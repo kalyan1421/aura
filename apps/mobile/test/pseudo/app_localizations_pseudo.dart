@@ -3131,4 +3131,12 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   @override
   String universe_plantRowResting(String name, String stage, String state) =>
       pseudo(super.universe_plantRowResting(name, stage, state));
+  @override
+  String get universe_welcomeTitle => pseudo(super.universe_welcomeTitle);
+  @override
+  String get universe_welcomeBody => pseudo(super.universe_welcomeBody);
+  @override
+  String get universe_welcomeCheckIn => pseudo(super.universe_welcomeCheckIn);
+  @override
+  String get universe_welcomeExplore => pseudo(super.universe_welcomeExplore);
 }

@@ -1448,5 +1448,9 @@
   "universe_vitality_wilting": "కొంచెం వాడింది",
   "universe_vitality_dormant": "నిద్రలో, మీ కోసం ఎదురుచూస్తోంది",
   "universe_plantRow": "{name}, {stage}",
-  "universe_plantRowResting": "{name}, {stage}, {state}"
+  "universe_plantRowResting": "{name}, {stage}, {state}",
+  "universe_welcomeTitle": "మీ ప్రపంచం ఇక్కడే ఉంది",
+  "universe_welcomeBody": "అంతా మీరు వదిలిన చోటే ఉంది. మీకు వీలైనప్పుడు, మీకు సులభంగా అనిపించే విధంగా తిరిగి రండి.",
+  "universe_welcomeCheckIn": "చెక్-ఇన్ చేయండి",
+  "universe_welcomeExplore": "ఊరికే చూడండి"
 }

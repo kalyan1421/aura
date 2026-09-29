@@ -14,6 +14,7 @@ import {
   growthStage,
   habitVitality,
   isResting,
+  showWelcomeBack,
   stageFor,
   starlightAwards,
   traitLevel,
@@ -94,6 +95,7 @@ const runners: Record<string, Runner> = {
     if (c.kind === 'stage') return expect(growthStage(c.days)).toBe(c.expect);
     if (c.kind === 'eligible') return expect(decayEligible(c.optedIn, c.ageYears)).toBe(c.expect);
     if (c.kind === 'vitality') return expect(habitVitality(c as unknown as VitalityInput)).toBe(c.expect);
+    if (c.kind === 'welcome') return expect(showWelcomeBack(c.lastActiveDay, c.today, c.shownFor)).toBe(c.expect);
     throw new Error(`world.json: unknown kind ${String(c.kind)}`);
   },
   'nebula.json': (c) => expect(isResting(c.lastActiveDay, c.currentAuraDay)).toBe(c.expect),

@@ -5496,6 +5496,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String universe_plantRowResting(String name, String stage, String state) {
     return '$name, $stage, $state';
   }
+
+  @override
+  String get universe_welcomeTitle => 'आपकी दुनिया यहीं है';
+
+  @override
+  String get universe_welcomeBody =>
+      'सब कुछ वहीं है जहाँ आपने छोड़ा था। जब मन हो, जिस तरह आसान लगे, वैसे लौट आइए।';
+
+  @override
+  String get universe_welcomeCheckIn => 'चेक-इन करें';
+
+  @override
+  String get universe_welcomeExplore => 'बस आसपास देखें';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -11055,4 +11068,17 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String universe_plantRowResting(String name, String stage, String state) {
     return '$name, $stage, $state';
   }
+
+  @override
+  String get universe_welcomeTitle => 'Aapki duniya yahin hai';
+
+  @override
+  String get universe_welcomeBody =>
+      'Sab kuch wahin hai jahan aapne chhoda tha. Jab mann ho, jis tarah aasaan lage, waise laut aaiye.';
+
+  @override
+  String get universe_welcomeCheckIn => 'Check-in karein';
+
+  @override
+  String get universe_welcomeExplore => 'Bas aaspaas dekhein';
 }

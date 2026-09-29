@@ -8800,6 +8800,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{name}, {stage}, {state}'**
   String universe_plantRowResting(String name, String stage, String state);
+
+  /// Title of the one-time card on returning to the personal universe after time away. Warm; no guilt, no numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Your world is here'**
+  String get universe_welcomeTitle;
+
+  /// Body of the welcome-back card. Must not mention days away, streaks or anything missed.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is right where you left it. Come back to it whenever you like, in any way that feels doable.'**
+  String get universe_welcomeBody;
+
+  /// Welcome-back card button that opens the ordinary quick check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get universe_welcomeCheckIn;
+
+  /// Welcome-back card button that dismisses the card; nothing is required.
+  ///
+  /// In en, this message translates to:
+  /// **'Just look around'**
+  String get universe_welcomeExplore;
 }
 
 class _AppLocalizationsDelegate

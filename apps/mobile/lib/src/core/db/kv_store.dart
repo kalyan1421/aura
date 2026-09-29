@@ -29,6 +29,10 @@ abstract final class KvKeys {
   static const String pullCursor = 'sync.pull_cursor';
   static const String carriesOnShownFor = 'streak.carries_on_shown_for';
 
+  /// W04: the `lastActiveDay` the universe's "Your world is here" card was
+  /// last shown for (ISO), so it appears once per absence. Device-only.
+  static const String welcomeShownFor = 'universe.welcome_shown_for';
+
   /// Push soft ask answered: `{answer: allow|notNow, at}`. Nothing is asked
   /// or registered before this exists (PRD 15-permissions).
   static const String pushSoftAsk = 'push.soft_ask';

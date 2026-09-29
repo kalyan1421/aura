@@ -5522,6 +5522,19 @@ class AppLocalizationsTe extends AppLocalizations {
   String universe_plantRowResting(String name, String stage, String state) {
     return '$name, $stage, $state';
   }
+
+  @override
+  String get universe_welcomeTitle => 'మీ ప్రపంచం ఇక్కడే ఉంది';
+
+  @override
+  String get universe_welcomeBody =>
+      'అంతా మీరు వదిలిన చోటే ఉంది. మీకు వీలైనప్పుడు, మీకు సులభంగా అనిపించే విధంగా తిరిగి రండి.';
+
+  @override
+  String get universe_welcomeCheckIn => 'చెక్-ఇన్ చేయండి';
+
+  @override
+  String get universe_welcomeExplore => 'ఊరికే చూడండి';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -11101,4 +11114,17 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String universe_plantRowResting(String name, String stage, String state) {
     return '$name, $stage, $state';
   }
+
+  @override
+  String get universe_welcomeTitle => 'Mee prapancham ikkade undi';
+
+  @override
+  String get universe_welcomeBody =>
+      'Anthaa meeru vadilina chote undi. Meeku veelainappudu, meeku sulabhanga anipinche vidhamga tirigi randi.';
+
+  @override
+  String get universe_welcomeCheckIn => 'Check-in cheyandi';
+
+  @override
+  String get universe_welcomeExplore => 'Oorike choodandi';
 }

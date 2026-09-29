@@ -18,6 +18,7 @@ import '../progress/progress_view.dart';
 import '../sanctuary/sanctuary_activities.dart';
 import 'universe_scene.dart';
 import 'universe_scene_view.dart';
+import 'welcome_back.dart';
 import 'world_habits.dart';
 
 extension UniverseDestinationCopy on UniverseDestination {
@@ -180,6 +181,12 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
               children: [
+                if (ref.watch(welcomeBackProvider).value ?? false) ...[
+                  _WelcomeBack(
+                    resting: habits?.where((h) => h.resting).length ?? 0,
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 Text(l.universe_intro, style: t.bodyLarge),
                 const SizedBox(height: 12),
                 Align(
@@ -411,6 +418,63 @@ class _GrovePlants extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// The one-time return card (W04): the world is intact, and nothing is asked.
+/// Either action ends it for this absence. It never mentions days away,
+/// streaks or what was missed; a resting plant gets the same warm line the
+/// Grove uses.
+class _WelcomeBack extends ConsumerWidget {
+  const _WelcomeBack({required this.resting});
+  final int resting;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    void done() => ref.read(welcomeBackProvider.notifier).dismiss();
+    return Semantics(
+      liveRegion: true,
+      child: Card(
+        key: const ValueKey('universe-welcome'),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(l.universe_welcomeTitle, style: t.titleLarge),
+              const SizedBox(height: 8),
+              Text(l.universe_welcomeBody, style: t.bodyMedium),
+              if (resting > 0) ...[
+                const SizedBox(height: 8),
+                Text(l.universe_plantsResting(resting), style: t.bodyMedium),
+              ],
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton(
+                    key: const ValueKey('universe-welcome-checkin'),
+                    onPressed: () {
+                      done();
+                      context.push(Routes.checkIn);
+                    },
+                    child: Text(l.universe_welcomeCheckIn),
+                  ),
+                  TextButton(
+                    key: const ValueKey('universe-welcome-explore'),
+                    onPressed: done,
+                    child: Text(l.universe_welcomeExplore),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

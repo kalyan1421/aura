@@ -7033,5 +7033,21 @@
         "type": "String"
       }
     }
+  },
+  "universe_welcomeTitle": "Your world is here",
+  "@universe_welcomeTitle": {
+    "description": "Title of the one-time card on returning to the personal universe after time away. Warm; no guilt, no numbers."
+  },
+  "universe_welcomeBody": "Everything is right where you left it. Come back to it whenever you like, in any way that feels doable.",
+  "@universe_welcomeBody": {
+    "description": "Body of the welcome-back card. Must not mention days away, streaks or anything missed."
+  },
+  "universe_welcomeCheckIn": "Check in",
+  "@universe_welcomeCheckIn": {
+    "description": "Welcome-back card button that opens the ordinary quick check-in."
+  },
+  "universe_welcomeExplore": "Just look around",
+  "@universe_welcomeExplore": {
+    "description": "Welcome-back card button that dismisses the card; nothing is required."
   }
 }

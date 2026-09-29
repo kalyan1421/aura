@@ -1448,5 +1448,9 @@
   "universe_vitality_wilting": "Thoda jhuka hua",
   "universe_vitality_dormant": "So raha hai, aapka intezaar kar raha hai",
   "universe_plantRow": "{name}, {stage}",
-  "universe_plantRowResting": "{name}, {stage}, {state}"
+  "universe_plantRowResting": "{name}, {stage}, {state}",
+  "universe_welcomeTitle": "Aapki duniya yahin hai",
+  "universe_welcomeBody": "Sab kuch wahin hai jahan aapne chhoda tha. Jab mann ho, jis tarah aasaan lage, waise laut aaiye.",
+  "universe_welcomeCheckIn": "Check-in karein",
+  "universe_welcomeExplore": "Bas aaspaas dekhein"
 }

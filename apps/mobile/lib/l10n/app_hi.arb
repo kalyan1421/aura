@@ -1448,5 +1448,9 @@
   "universe_vitality_wilting": "थोड़ा झुका हुआ",
   "universe_vitality_dormant": "सो रहा है, आपका इंतज़ार कर रहा है",
   "universe_plantRow": "{name}, {stage}",
-  "universe_plantRowResting": "{name}, {stage}, {state}"
+  "universe_plantRowResting": "{name}, {stage}, {state}",
+  "universe_welcomeTitle": "आपकी दुनिया यहीं है",
+  "universe_welcomeBody": "सब कुछ वहीं है जहाँ आपने छोड़ा था। जब मन हो, जिस तरह आसान लगे, वैसे लौट आइए।",
+  "universe_welcomeCheckIn": "चेक-इन करें",
+  "universe_welcomeExplore": "बस आसपास देखें"
 }

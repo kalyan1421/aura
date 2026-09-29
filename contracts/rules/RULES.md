@@ -243,3 +243,9 @@ keepsake or share milestone, and nothing here is pushed or shared. A world objec
   Rest days (§7) do **not** bridge vitality: the stakes are the person's own choice, unlike the automatic Resting Nebula, which
   this rule never reads or changes. Copy for `dimmed`/`wilting`/`dormant` is descriptive and warm ("resting", "waiting for you"),
   never "dead", "lost" or a number of missed days.
+- **`welcome`** — `showWelcomeBack({lastActiveDay, today, shownFor})` (W04): the one-time "Your world is here" card in the personal
+  universe. True iff the person is resting (§8: `lastActiveDay != null` and `days(today − lastActiveDay) ≥ 3`) **and**
+  `shownFor != lastActiveDay`. `shownFor` is the `lastActiveDay` the card was last shown for (device-only, never pushed), so it
+  appears **once per absence**: coming back and being active moves `lastActiveDay`, so a later absence shows it again, and merely
+  leaving and re-opening the universe never repeats it. A new person (`lastActiveDay == null`) never sees it. Copy is warm and
+  never mentions days away, streaks, loss or what was missed; it works with Comfort › hide streak number because it shows no number.

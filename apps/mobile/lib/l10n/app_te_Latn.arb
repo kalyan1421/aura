@@ -1448,5 +1448,9 @@
   "universe_vitality_wilting": "Konchem vaadindi",
   "universe_vitality_dormant": "Nidralo, mee kosam edurchoostondi",
   "universe_plantRow": "{name}, {stage}",
-  "universe_plantRowResting": "{name}, {stage}, {state}"
+  "universe_plantRowResting": "{name}, {stage}, {state}",
+  "universe_welcomeTitle": "Mee prapancham ikkade undi",
+  "universe_welcomeBody": "Anthaa meeru vadilina chote undi. Meeku veelainappudu, meeku sulabhanga anipinche vidhamga tirigi randi.",
+  "universe_welcomeCheckIn": "Check-in cheyandi",
+  "universe_welcomeExplore": "Oorike choodandi"
 }

@@ -182,6 +182,15 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
               ).name,
               c['expect'],
             );
+          case 'welcome':
+            expect(
+              showWelcomeBack(
+                lastActiveDay: _day(c['lastActiveDay']),
+                today: LocalDay.parse(c['today'] as String),
+                shownFor: _day(c['shownFor']),
+              ),
+              c['expect'],
+            );
           default:
             fail('Unknown world.json case kind "$kind"');
         }

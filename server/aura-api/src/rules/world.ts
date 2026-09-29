@@ -1,4 +1,5 @@
 import { daysBetween } from './dates';
+import { isResting } from './nebula';
 
 /** RULES.md §13 — presentation-only world objects. Never touches the ledger; no endpoint uses it. */
 export type GrowthStage = 'seed' | 'sprout' | 'young' | 'grown' | 'flourishing' | 'ancient';
@@ -39,4 +40,12 @@ export function habitVitality(i: VitalityInput): Vitality {
   if (gap >= 4) return 'wilting';
   if (gap >= 2) return 'dimmed';
   return 'thriving';
+}
+
+/**
+ * W04 — the one-time "Your world is here" card. Resting (§8) and not already shown for this absence
+ * (`shownFor` is the `lastActiveDay` it was last shown for). Device-only; no endpoint uses it.
+ */
+export function showWelcomeBack(lastActiveDay: string | null, today: string, shownFor: string | null): boolean {
+  return isResting(lastActiveDay, today) && shownFor !== lastActiveDay;
 }

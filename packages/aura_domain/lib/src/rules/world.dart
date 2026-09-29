@@ -1,4 +1,5 @@
 import '../local_day.dart';
+import 'progression.dart' show isResting;
 
 /// How grown a habit's world object is (RULES.md section 13). Permanent:
 /// it depends only on the count of distinct logged days.
@@ -69,3 +70,13 @@ Vitality habitVitality({
   if (gap >= 2) return Vitality.dimmed;
   return Vitality.thriving;
 }
+
+/// The one-time "Your world is here" card in the personal universe (W04,
+/// RULES.md section 13). True when the person is resting ([isResting]: three
+/// or more Aura days without activity) and the card has not already been shown
+/// for this absence ([shownFor] is the `lastActiveDay` it was shown for).
+bool showWelcomeBack({
+  required LocalDay? lastActiveDay,
+  required LocalDay today,
+  required LocalDay? shownFor,
+}) => isResting(lastActiveDay, today) && shownFor != lastActiveDay;

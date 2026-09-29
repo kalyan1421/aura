@@ -5493,4 +5493,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String universe_plantRowResting(String name, String stage, String state) {
     return '$name, $stage, $state';
   }
+
+  @override
+  String get universe_welcomeTitle => 'Your world is here';
+
+  @override
+  String get universe_welcomeBody =>
+      'Everything is right where you left it. Come back to it whenever you like, in any way that feels doable.';
+
+  @override
+  String get universe_welcomeCheckIn => 'Check in';
+
+  @override
+  String get universe_welcomeExplore => 'Just look around';
 }

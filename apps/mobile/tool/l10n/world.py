@@ -34,3 +34,12 @@ s("universe_vitality_wilting", "Drooping a little", "State of a committed habit 
 s("universe_vitality_dormant", "Asleep, waiting for you", "State of a committed habit plant after a long break. It never disappears and one log wakes it.", "నిద్రలో, మీ కోసం ఎదురుచూస్తోంది", "Nidralo, mee kosam edurchoostondi", hi="सो रहा है, आपका इंतज़ार कर रहा है", hl="So raha hai, aapka intezaar kar raha hai")
 s("universe_plantRow", "{name}, {stage}", "Screen-reader and visible label of one habit plant that is doing well.", "{name}, {stage}", "{name}, {stage}", STR("name", "stage"), hi="{name}, {stage}", hl="{name}, {stage}")
 s("universe_plantRowResting", "{name}, {stage}, {state}", "Label of one habit plant that is resting, drooping or asleep. {state} is one of the vitality words.", "{name}, {stage}, {state}", "{name}, {stage}, {state}", STR("name", "stage", "state"), hi="{name}, {stage}, {state}", hl="{name}, {stage}, {state}")
+
+# ---- Personal universe: the welcome back card (W04) ----------------------
+# Shown once per absence (RULES.md section 13, `welcome`). Never mentions days away, streaks,
+# loss or what was missed; it works with Comfort > hide streak number because it shows no number.
+s("universe_welcomeTitle", "Your world is here", "Title of the one-time card on returning to the personal universe after time away. Warm; no guilt, no numbers.", "మీ ప్రపంచం ఇక్కడే ఉంది", "Mee prapancham ikkade undi", hi="आपकी दुनिया यहीं है", hl="Aapki duniya yahin hai")
+s("universe_welcomeBody", "Everything is right where you left it. Come back to it whenever you like, in any way that feels doable.", "Body of the welcome-back card. Must not mention days away, streaks or anything missed.", "అంతా మీరు వదిలిన చోటే ఉంది. మీకు వీలైనప్పుడు, మీకు సులభంగా అనిపించే విధంగా తిరిగి రండి.", "Anthaa meeru vadilina chote undi. Meeku veelainappudu, meeku sulabhanga anipinche vidhamga tirigi randi.", hi="सब कुछ वहीं है जहाँ आपने छोड़ा था। जब मन हो, जिस तरह आसान लगे, वैसे लौट आइए।", hl="Sab kuch wahin hai jahan aapne chhoda tha. Jab mann ho, jis tarah aasaan lage, waise laut aaiye.")
+s("universe_welcomeCheckIn", "Check in", "Welcome-back card button that opens the ordinary quick check-in.", "చెక్-ఇన్ చేయండి", "Check-in cheyandi", hi="चेक-इन करें", hl="Check-in karein")
+s("universe_welcomeExplore", "Just look around", "Welcome-back card button that dismisses the card; nothing is required.", "ఊరికే చూడండి", "Oorike choodandi", hi="बस आसपास देखें", hl="Bas aaspaas dekhein")
+
