@@ -3226,6 +3226,105 @@ class AppLocalizationsTe extends AppLocalizations {
       'హాయిగా విశ్రాంతి తీసుకోండి. మిగతాది రాత్రి చూసుకుంటుంది.';
 
   @override
+  String get rooms_presenceStale =>
+      'ఇక్కడ ఎవరున్నారో చూడటానికి మళ్లీ కనెక్ట్ అవ్వండి';
+
+  @override
+  String get keepsakes_refreshFailed =>
+      'ఇప్పుడు జ్ఞాపికలను నవీకరించలేకపోయాం. దాచుకున్న జ్ఞాపికలు ఇక్కడే ఉన్నాయి.';
+
+  @override
+  String get keepsakes_signedOut =>
+      'జ్ఞాపికలను నవీకరించడానికి మళ్లీ సైన్ ఇన్ అవ్వండి. దాచుకున్న జ్ఞాపికలు ఇక్కడే ఉన్నాయి.';
+
+  @override
+  String get keepsakes_accountUnavailable =>
+      'ఈ ఖాతాకు ప్రస్తుతం జ్ఞాపికలు అందుబాటులో లేవు. ఖాతా సెట్టింగ్‌లను చూడండి.';
+
+  @override
+  String get keepsakes_unavailable =>
+      'ఈ బిల్డ్‌లో జ్ఞాపికల నవీకరణ ఇంకా సిద్ధంగా లేదు. దాచుకున్న జ్ఞాపికలు ఇక్కడే ఉన్నాయి.';
+
+  @override
+  String get keepsakes_accountAction => 'ఖాతా సెట్టింగ్‌లు';
+
+  @override
+  String get universe_title => 'మీ విశ్వం';
+
+  @override
+  String get universe_entry =>
+      'అలవాట్లు, ప్రశాంత క్షణాలు, భవిష్యత్తులోని మీ కోసం ఒక చిన్న ప్రపంచం.';
+
+  @override
+  String get universe_intro =>
+      'కొంచెం శ్రద్ధ, కొంచెం ఎదుగుదల. మీకు నచ్చిన వేగంలో అన్వేషించండి.';
+
+  @override
+  String get universe_worldView => '3D ప్రపంచాన్ని చూపించు';
+
+  @override
+  String get universe_listView => 'జాబితాగా చూడు';
+
+  @override
+  String get universe_grove => 'అలవాట్ల వనం';
+
+  @override
+  String get universe_pool => 'ప్రశాంత కొలను';
+
+  @override
+  String get universe_reflection => 'మనసు తోట';
+
+  @override
+  String get universe_observatory => 'నక్షత్రాల కేంద్రం';
+
+  @override
+  String get universe_groveBody =>
+      'ప్రతి అలవాటు మీరు లాగ్ చేసే కొద్దీ పెరిగే ఒక మొక్క. మీరు సంకల్పించినవి రోజులు మిస్ అయితే విశ్రాంతి తీసుకుంటాయి, ఒక్క లాగ్‌తో మేల్కొంటాయి.';
+
+  @override
+  String get universe_poolBody =>
+      'నీటి పక్కన ప్రశాంతంగా శ్వాస తీసుకోండి. సిద్ధంగా ఉన్నప్పుడే మొదలుపెట్టండి.';
+
+  @override
+  String get universe_reflectionBody =>
+      'ఒక వ్యక్తిగత చెక్-ఇన్‌తో మీ భావాలను గమనించండి. మీ భావాలు మీ సంరక్షణ ప్రదేశంలోనే ఉంటాయి.';
+
+  @override
+  String get universe_observatoryBody =>
+      'భవిష్యత్తులోని మీ కోసం ఒక ఆప్యాయ సందేశం ఉంచండి లేదా మీ టైమ్ క్యాప్సూల్స్ చూడండి.';
+
+  @override
+  String get universe_habits => 'అలవాట్లు తెరువు';
+
+  @override
+  String get universe_breathe => 'శ్వాస మొదలుపెట్టు';
+
+  @override
+  String get universe_checkIn => 'చెక్-ఇన్ చేయి';
+
+  @override
+  String get universe_capsules => 'టైమ్ క్యాప్సూల్స్ తెరువు';
+
+  @override
+  String get universe_left => 'ఎడమకు తిప్పు';
+
+  @override
+  String get universe_right => 'కుడికి తిప్పు';
+
+  @override
+  String get universe_zoomIn => 'దగ్గరగా చూడు';
+
+  @override
+  String get universe_zoomOut => 'దూరంగా చూడు';
+
+  @override
+  String get universe_reset => 'కెమెరా రీసెట్ చేయి';
+
+  @override
+  String get universe_hint =>
+      'చుట్టూ చూడటానికి లాగండి. వెలుగుపై తాకండి లేదా కింద ఒక ప్రదేశాన్ని ఎంచుకోండి.';
+
+  @override
   String get reflections_title => 'మనసులో మాటలు';
 
   @override
@@ -5337,6 +5436,92 @@ class AppLocalizationsTe extends AppLocalizations {
   @override
   String get widget_discreetNote =>
       'యాప్ పేరు, మూడ్ మాటలు లేని ఒక సాదా నక్షత్రం. దాన్ని ట్యాప్ చేస్తే యాప్ తెరుచుకుంటుంది.';
+
+  @override
+  String get habits_commitmentsTitle => 'సంకల్పాలు';
+
+  @override
+  String get habits_commitmentsBody =>
+      'మీరు దగ్గరగా ఉంచుకోవాలనుకునే అలవాట్లను ఎంచుకోండి. కొన్ని రోజులు మిస్ అయితే, మీ ప్రపంచంలో ఆ అలవాటు మొక్క విశ్రాంతి తీసుకుంటుంది. ఒక్క లాగ్‌తో అది మళ్లీ మేల్కొంటుంది. మీ Starlight, glow days ఎప్పటికీ తగ్గవు.';
+
+  @override
+  String get habits_commitmentSwitch => 'సంకల్పంగా పరిగణించండి';
+
+  @override
+  String habits_pauseSemantic(String name) {
+    return '$nameకు విరామం ఇవ్వండి';
+  }
+
+  @override
+  String habits_pausedUntil(String date) {
+    return '$date వరకు విరామం';
+  }
+
+  @override
+  String habits_pauseDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count రోజులు',
+      one: '$count రోజు',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habits_pauseEnd => 'విరామం ముగించండి';
+
+  @override
+  String get universe_yourPlants => 'మీ మొక్కలు';
+
+  @override
+  String universe_plantsResting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count మొక్కలు విశ్రాంతి తీసుకుంటున్నాయి. ఒక్కో లాగ్‌తో ఒక్కొక్కటి మేల్కొంటుంది.',
+      one: 'ఒక మొక్క విశ్రాంతి తీసుకుంటోంది. ఒక్క లాగ్‌తో అది మేల్కొంటుంది.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get universe_stage_seed => 'విత్తనం';
+
+  @override
+  String get universe_stage_sprout => 'మొలక';
+
+  @override
+  String get universe_stage_young => 'పెరుగుతోంది';
+
+  @override
+  String get universe_stage_grown => 'ఎదిగింది';
+
+  @override
+  String get universe_stage_flourishing => 'పచ్చగా ఉంది';
+
+  @override
+  String get universe_stage_ancient => 'పురాతనం';
+
+  @override
+  String get universe_vitality_dimmed => 'విశ్రాంతి';
+
+  @override
+  String get universe_vitality_wilting => 'కొంచెం వాడింది';
+
+  @override
+  String get universe_vitality_dormant => 'నిద్రలో, మీ కోసం ఎదురుచూస్తోంది';
+
+  @override
+  String universe_plantRow(String name, String stage) {
+    return '$name, $stage';
+  }
+
+  @override
+  String universe_plantRowResting(String name, String stage, String state) {
+    return '$name, $stage, $state';
+  }
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -8593,6 +8778,105 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
       'Haayiga rest teesukondi. Migataadi raatri choosukuntundi.';
 
   @override
+  String get rooms_presenceStale =>
+      'Ikkada evarunnaro choodataniki malli connect avvandi';
+
+  @override
+  String get keepsakes_refreshFailed =>
+      'Ippudu keepsakes ni refresh cheyalekapoyaam. Daachukunna keepsakes ikkade unnaayi.';
+
+  @override
+  String get keepsakes_signedOut =>
+      'Keepsakes ni refresh cheyadaniki malli sign in avvandi. Daachukunna keepsakes ikkade unnaayi.';
+
+  @override
+  String get keepsakes_accountUnavailable =>
+      'Ee account ki prastutam keepsakes andubaatulo levu. Account settings choodandi.';
+
+  @override
+  String get keepsakes_unavailable =>
+      'Ee build lo keepsakes refresh inkaa siddhanga ledu. Daachukunna keepsakes ikkade unnaayi.';
+
+  @override
+  String get keepsakes_accountAction => 'Account settings';
+
+  @override
+  String get universe_title => 'Mee viswam';
+
+  @override
+  String get universe_entry =>
+      'Alavaatlu, prashaantha kshanaalu, bhavishyatthuloni mee kosam oka chinna prapancham.';
+
+  @override
+  String get universe_intro =>
+      'Konchem sraddha, konchem edugudala. Meeku nachina vegamlo anveshinchandi.';
+
+  @override
+  String get universe_worldView => '3D prapancham choopinchu';
+
+  @override
+  String get universe_listView => 'Jaabithaaga choodu';
+
+  @override
+  String get universe_grove => 'Alavaatla vanam';
+
+  @override
+  String get universe_pool => 'Prashaantha kolanu';
+
+  @override
+  String get universe_reflection => 'Manasu thota';
+
+  @override
+  String get universe_observatory => 'Nakshatraala kendram';
+
+  @override
+  String get universe_groveBody =>
+      'Prati alavaatu meeru log chese koddi perige oka mokka. Meeru sankalpinchinavi rojulu miss aite vishraanti teesukuntaayi, okka log tho melukuntaayi.';
+
+  @override
+  String get universe_poolBody =>
+      'Neeti pakkana prashaanthanga swaasa theesukondi. Siddhamga unnappude modalupettandi.';
+
+  @override
+  String get universe_reflectionBody =>
+      'Oka vyakthigatha check-in tho mee bhaavaalanu gamaninchandi. Mee bhaavaalu mee care space lone untaayi.';
+
+  @override
+  String get universe_observatoryBody =>
+      'Bhavishyatthuloni mee kosam oka aapyaaya sandesam unchandi leda mee time capsules choodandi.';
+
+  @override
+  String get universe_habits => 'Alavaatlu theruvu';
+
+  @override
+  String get universe_breathe => 'Swaasa modalupettu';
+
+  @override
+  String get universe_checkIn => 'Check-in cheyi';
+
+  @override
+  String get universe_capsules => 'Time capsules theruvu';
+
+  @override
+  String get universe_left => 'Edamaku thippu';
+
+  @override
+  String get universe_right => 'Kudiki thippu';
+
+  @override
+  String get universe_zoomIn => 'Daggaraga choodu';
+
+  @override
+  String get universe_zoomOut => 'Dooramga choodu';
+
+  @override
+  String get universe_reset => 'Camera reset cheyi';
+
+  @override
+  String get universe_hint =>
+      'Chuttoo choodataaniki laagandi. Velugupai thaakandi leda kinda oka pradesam enchukondi.';
+
+  @override
   String get reflections_title => 'Reflections';
 
   @override
@@ -10731,4 +11015,90 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   @override
   String get widget_discreetNote =>
       'App peru, mood maatalu leni oka simple star. Daanni tap cheste app open avutundi.';
+
+  @override
+  String get habits_commitmentsTitle => 'Sankalpaalu';
+
+  @override
+  String get habits_commitmentsBody =>
+      'Meeru daggaraga unchukovaalanukune alavaatlanu enchukondi. Konni rojulu miss aite, mee prapancham lo aa alavaatu mokka vishraanti teesukuntundi. Okka log tho adi malli melukuntundi. Mee Starlight, glow days eppatiki taggavu.';
+
+  @override
+  String get habits_commitmentSwitch => 'Sankalpam ga pariganinchandi';
+
+  @override
+  String habits_pauseSemantic(String name) {
+    return '$name ki viraamam ivvandi';
+  }
+
+  @override
+  String habits_pausedUntil(String date) {
+    return '$date varaku viraamam';
+  }
+
+  @override
+  String habits_pauseDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rojulu',
+      one: '$count roju',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habits_pauseEnd => 'Viraamam mugimchandi';
+
+  @override
+  String get universe_yourPlants => 'Mee mokkalu';
+
+  @override
+  String universe_plantsResting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count mokkalu vishraanti teesukuntunnaayi. Okko log tho okkokkati melukuntundi.',
+      one: 'Oka mokka vishraanti teesukuntondi. Okka log tho adi melukuntundi.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get universe_stage_seed => 'Vittanam';
+
+  @override
+  String get universe_stage_sprout => 'Molaka';
+
+  @override
+  String get universe_stage_young => 'Perugutondi';
+
+  @override
+  String get universe_stage_grown => 'Edigindi';
+
+  @override
+  String get universe_stage_flourishing => 'Pacchaga undi';
+
+  @override
+  String get universe_stage_ancient => 'Puraatanam';
+
+  @override
+  String get universe_vitality_dimmed => 'Vishraanti';
+
+  @override
+  String get universe_vitality_wilting => 'Konchem vaadindi';
+
+  @override
+  String get universe_vitality_dormant => 'Nidralo, mee kosam edurchoostondi';
+
+  @override
+  String universe_plantRow(String name, String stage) {
+    return '$name, $stage';
+  }
+
+  @override
+  String universe_plantRowResting(String name, String stage, String state) {
+    return '$name, $stage, $state';
+  }
 }

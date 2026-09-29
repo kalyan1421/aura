@@ -3221,6 +3221,104 @@ class AppLocalizationsEn extends AppLocalizations {
       'Rest well. The night can hold the rest.';
 
   @override
+  String get rooms_presenceStale => 'Reconnect to see who\'s here';
+
+  @override
+  String get keepsakes_refreshFailed =>
+      'Couldn\'t refresh keepsakes just now. Your saved keepsakes are still here.';
+
+  @override
+  String get keepsakes_signedOut =>
+      'Sign in again to refresh your keepsakes. Your saved keepsakes are still here.';
+
+  @override
+  String get keepsakes_accountUnavailable =>
+      'Keepsakes aren\'t available for this account right now. Check your account settings.';
+
+  @override
+  String get keepsakes_unavailable =>
+      'Keepsake refresh isn\'t set up in this build. Your saved keepsakes are still here.';
+
+  @override
+  String get keepsakes_accountAction => 'Account settings';
+
+  @override
+  String get universe_title => 'Your universe';
+
+  @override
+  String get universe_entry =>
+      'A small world for habits, quiet moments and future you.';
+
+  @override
+  String get universe_intro =>
+      'A little care, a little growth. Explore at your own pace.';
+
+  @override
+  String get universe_worldView => 'Show 3D world';
+
+  @override
+  String get universe_listView => 'Use list view';
+
+  @override
+  String get universe_grove => 'Habit Grove';
+
+  @override
+  String get universe_pool => 'Tide Pool';
+
+  @override
+  String get universe_reflection => 'Reflection Garden';
+
+  @override
+  String get universe_observatory => 'Observatory';
+
+  @override
+  String get universe_groveBody =>
+      'Each habit is a plant that grows as you log it. Plants you commit to rest when days are missed, and a single log wakes them.';
+
+  @override
+  String get universe_poolBody =>
+      'Take a quiet breath beside the water. Start only when you are ready.';
+
+  @override
+  String get universe_reflectionBody =>
+      'Notice how you feel with a private check-in. Your feelings stay in your care space.';
+
+  @override
+  String get universe_observatoryBody =>
+      'Leave a kind message for future you, or return to your time capsules.';
+
+  @override
+  String get universe_habits => 'Open habits';
+
+  @override
+  String get universe_breathe => 'Start breathing';
+
+  @override
+  String get universe_checkIn => 'Check in';
+
+  @override
+  String get universe_capsules => 'Open time capsules';
+
+  @override
+  String get universe_left => 'Rotate left';
+
+  @override
+  String get universe_right => 'Rotate right';
+
+  @override
+  String get universe_zoomIn => 'Zoom in';
+
+  @override
+  String get universe_zoomOut => 'Zoom out';
+
+  @override
+  String get universe_reset => 'Reset camera';
+
+  @override
+  String get universe_hint =>
+      'Drag to look around. Tap a light or choose a place below.';
+
+  @override
   String get reflections_title => 'Reflections';
 
   @override
@@ -5310,4 +5408,89 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get widget_discreetNote =>
       'A plain star with no app name and no mood words. Tapping it opens the app.';
+
+  @override
+  String get habits_commitmentsTitle => 'Commitments';
+
+  @override
+  String get habits_commitmentsBody =>
+      'Pick the habits you want to keep close. If you miss a few days, that habit\'s plant in your world rests. One log wakes it. Your Starlight and glow days are never touched.';
+
+  @override
+  String get habits_commitmentSwitch => 'Treat as a commitment';
+
+  @override
+  String habits_pauseSemantic(String name) {
+    return 'Pause $name';
+  }
+
+  @override
+  String habits_pausedUntil(String date) {
+    return 'Paused until $date';
+  }
+
+  @override
+  String habits_pauseDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habits_pauseEnd => 'End pause';
+
+  @override
+  String get universe_yourPlants => 'Your plants';
+
+  @override
+  String universe_plantsResting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count plants are resting. A single log wakes each one.',
+      one: 'One plant is resting. A single log wakes it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get universe_stage_seed => 'Seed';
+
+  @override
+  String get universe_stage_sprout => 'Sprout';
+
+  @override
+  String get universe_stage_young => 'Growing';
+
+  @override
+  String get universe_stage_grown => 'Grown';
+
+  @override
+  String get universe_stage_flourishing => 'Flourishing';
+
+  @override
+  String get universe_stage_ancient => 'Ancient';
+
+  @override
+  String get universe_vitality_dimmed => 'Resting';
+
+  @override
+  String get universe_vitality_wilting => 'Drooping a little';
+
+  @override
+  String get universe_vitality_dormant => 'Asleep, waiting for you';
+
+  @override
+  String universe_plantRow(String name, String stage) {
+    return '$name, $stage';
+  }
+
+  @override
+  String universe_plantRowResting(String name, String stage, String state) {
+    return '$name, $stage, $state';
+  }
 }

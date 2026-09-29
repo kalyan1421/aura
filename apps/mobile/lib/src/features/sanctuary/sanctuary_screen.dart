@@ -12,6 +12,7 @@ import '../shell/app_shell.dart' show ShellSettingsButton, isShellTabRoot;
 import 'breath_orb.dart';
 import 'sanctuary_activities.dart';
 import 'sounds/sounds_entry.dart';
+import '../universe/universe_entry.dart';
 
 /// The Sanctuary tab (F15 v1): a private, calm space. Top to bottom: the
 /// person's Aura as a still orb, "Today's minute" (one suggestion per Aura
@@ -96,6 +97,7 @@ class SanctuaryScreen extends ConsumerWidget {
             // F4 "Future you": the capsules feature fills this tile (and its
             // own heading); it renders nothing until then.
             const CapsulesEntryTile(),
+            const UniverseEntry(),
           ],
         ),
       ),

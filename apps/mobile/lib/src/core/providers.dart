@@ -349,6 +349,8 @@ SyncController syncController(Ref ref) {
       if (!Env.hasSupabase) return;
       await pull.reconcilePresetHabits(sb.Supabase.instance.client);
     },
+    onCommitmentRejected: (habitId) =>
+        ref.read(habitRepositoryProvider).clearRejectedCommitment(habitId),
     onUnder13: () async {
       await ref.read(gateControllerProvider.notifier).blockUnder13();
       await auth.signOut();

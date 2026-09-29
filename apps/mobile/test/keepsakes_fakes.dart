@@ -13,11 +13,13 @@ class FakeKeepsakesApi implements KeepsakesApi {
 
   List<OwnKeepsake> list;
   bool offline = false;
+  Object? error;
   int calls = 0;
 
   @override
   Future<List<OwnKeepsake>> mine() async {
     calls++;
+    if (error != null) throw error!;
     if (offline) {
       throw const ApiException(code: 'connectionError', isNetwork: true);
     }

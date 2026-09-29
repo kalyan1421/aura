@@ -75,6 +75,7 @@ class SyncService implements SyncTrigger {
     required this._alreadyPulled,
     required this._onUnder13,
     this._reconcileHabits,
+    this._onCommitmentRejected,
     this._onDeletionPending,
     this._media,
     this._capsules,
@@ -107,6 +108,12 @@ class SyncService implements SyncTrigger {
   /// Adopts the server's habit id when a preset exists twice (e.g. created
   /// offline on two phones) and re-queues the affected habit logs.
   final Future<void> Function()? _reconcileHabits;
+
+  /// W02/W03: the server refused a habit's commitment (`commitment_not_available`
+  /// or `invalid_commitment`, e.g. an under-18 age signal this phone has not
+  /// seen). The habit id is handed over so the phone stops showing stakes the
+  /// server does not hold.
+  final Future<void> Function(String habitId)? _onCommitmentRejected;
 
   final AuthRepository _auth;
   final AuraApi? _api;
@@ -547,6 +554,11 @@ class SyncService implements SyncTrigger {
           debugPrint('sync: rejected ${row.entity}/${row.op} (${r.reason})');
           await _outbox.reject([row], r.reason ?? 'rejected', _clock.now());
           if (r.reason == 'duplicate_preset_habit') reconcile = true;
+          if (row.entity == Entities.habit &&
+              (r.reason == 'commitment_not_available' ||
+                  r.reason == 'invalid_commitment')) {
+            await _onCommitmentRejected?.call(row.entityId);
+          }
           if (row.entity == Entities.capsule) {
             await _capsules?.onRejected(row, r.reason ?? 'rejected');
           }

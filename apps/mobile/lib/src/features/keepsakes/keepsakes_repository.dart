@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:aura_domain/aura_domain.dart';
 
 import '../../core/db/kv_store.dart';
+import '../../core/net/aura_api.dart' show ApiException;
 import 'keepsakes_api.dart';
 
 /// Keys of this feature in the encrypted key/value table. All are the
@@ -18,16 +19,25 @@ abstract final class KeepsakeKv {
 }
 
 /// Result of a [KeepsakesRepository.refresh].
-enum KeepsakesRefresh { updated, offline, unavailable }
+enum KeepsakesRefresh {
+  updated,
+  offline,
+  network,
+  signedOut,
+  accountUnavailable,
+  unavailable,
+  failed,
+}
 
 /// The person's own keepsakes: fetched from NestJS (which awards anything
 /// newly reached first), cached on the phone for offline use. Never written
 /// by the app: there is no way to grant, change or remove one here.
 class KeepsakesRepository {
-  KeepsakesRepository({required this._kv, required this._api});
+  KeepsakesRepository({required this._kv, required this._api, this._isOnline});
 
   final KvStore _kv;
   final KeepsakesApi? _api;
+  final bool Function()? _isOnline;
 
   /// The cached keepsakes in catalogue order, known keys only (a key from a
   /// newer server is simply not shown). `null` until the first fetch.
@@ -48,15 +58,29 @@ class KeepsakesRepository {
   Future<KeepsakesRefresh> refresh() async {
     final api = _api;
     if (api == null) return KeepsakesRefresh.unavailable;
+    if (_isOnline?.call() == false) return KeepsakesRefresh.offline;
     try {
       final list = await api.mine();
       await _kv.setJson(KeepsakeKv.cache, {
         'keepsakes': [for (final k in list) k.toJson()],
       });
       return KeepsakesRefresh.updated;
+    } on ApiException catch (e) {
+      if (e.status == 401) return KeepsakesRefresh.signedOut;
+      if (e.isDeletionPending || e.isAccountClosed || e.isDeviceBanned) {
+        return KeepsakesRefresh.accountUnavailable;
+      }
+      if (e.isNetwork ||
+          (e.status ?? 0) >= 500 ||
+          e.status == 408 ||
+          e.status == 429) {
+        return KeepsakesRefresh.network;
+      }
+      return KeepsakesRefresh.failed;
     } on Object {
-      // Offline, signed out, deletion pending…: the cache stays as it was.
-      return KeepsakesRefresh.offline;
+      // Keep the cache for every failure; an unknown error isn't proof
+      // that the phone is offline.
+      return KeepsakesRefresh.failed;
     }
   }
 

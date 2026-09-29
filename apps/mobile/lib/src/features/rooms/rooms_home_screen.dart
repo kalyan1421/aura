@@ -50,7 +50,13 @@ class RoomsHomeScreen extends ConsumerWidget {
         if (r.room.isMemory) r,
     ];
     final error = rooms.error;
-    final loaded = rooms.hasValue && !rooms.isLoading;
+    final loaded = rooms.hasValue && !rooms.isLoading && !rooms.hasError;
+    final presenceFresh =
+        ready &&
+        loaded &&
+        !rooms.hasError &&
+        (ref.watch(connectivityProvider).value ?? false) &&
+        ref.watch(remoteFlagsProvider).roomsEnabled;
 
     return Scaffold(
       appBar: helpAppBar(
@@ -121,7 +127,8 @@ class RoomsHomeScreen extends ConsumerWidget {
               ],
               if (active.isNotEmpty) ...[
                 _Heading(l.rooms_yourRooms),
-                for (final r in active) _RoomCard(summary: r),
+                for (final r in active)
+                  _RoomCard(summary: r, presenceFresh: presenceFresh),
                 const SizedBox(height: AuraSpace.l),
               ],
               if (memories.isNotEmpty) ...[
@@ -180,9 +187,10 @@ class _Heading extends StatelessWidget {
 /// One of your rooms: its theme, your name there and how many are here now
 /// (or, for a memory, until when you can look back).
 class _RoomCard extends StatelessWidget {
-  const _RoomCard({required this.summary});
+  const _RoomCard({required this.summary, this.presenceFresh = true});
 
   final RoomSummary summary;
+  final bool presenceFresh;
 
   @override
   Widget build(BuildContext context) {
@@ -191,10 +199,12 @@ class _RoomCard extends StatelessWidget {
     final room = summary.room;
     final theme = roomThemeName(l, room.theme);
     final memory = room.isMemory;
-    final lantern = !memory && room.lanternHour.active;
+    final lantern = !memory && presenceFresh && room.lanternHour.active;
     final status = memory
         ? l.rooms_memoryUntil(roomDate(context, room.purgeAt))
-        : l.rooms_hereNow(summary.counts.hereNow);
+        : presenceFresh
+        ? l.rooms_hereNow(summary.counts.hereNow)
+        : l.rooms_presenceStale;
     return Padding(
       padding: const EdgeInsets.only(bottom: AuraSpace.s),
       child: Semantics(
@@ -202,7 +212,7 @@ class _RoomCard extends StatelessWidget {
         label: [
           theme,
           l.rooms_youAre(summary.me.pseudonym),
-          memory
+          memory || !presenceFresh
               ? status
               : l.rooms_countsSemantic(
                   summary.counts.hereNow,

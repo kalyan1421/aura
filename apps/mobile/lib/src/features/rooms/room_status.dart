@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/router/routes.dart';
 import '../../core/widgets/inline_notice.dart';
 import 'room_copy.dart';
 import 'room_models.dart';
@@ -100,6 +102,13 @@ class _RoomsFailureNoticeState extends ConsumerState<RoomsFailureNotice> {
               key: const ValueKey('rooms-retry'),
               onPressed: _busy ? null : _retry,
               child: Text(l.rooms_tryAgain),
+            )
+          : f.kind == RoomsFailureKind.signedOut &&
+                GoRouter.maybeOf(context) != null
+          ? TextButton(
+              key: const ValueKey('rooms-failure-sign-in'),
+              onPressed: () => context.push(Routes.signIn),
+              child: Text(l.rooms_signIn),
             )
           : null,
     );

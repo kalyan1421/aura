@@ -6,6 +6,7 @@
 // changes or removes a keepsake: it only asks the server for its own.
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/core/db/kv_store.dart';
+import 'package:aura/src/core/net/aura_api.dart' show ApiException;
 import 'package:aura/src/core/providers.dart';
 import 'package:aura/src/features/keepsakes/keepsake_home_card.dart';
 import 'package:aura/src/features/keepsakes/keepsake_seal.dart';
@@ -148,7 +149,7 @@ void main() {
       expect(find.byKey(const ValueKey('keepsakes-share-aura')), findsNothing);
     });
 
-    kWidgets('offline: the cached box still shows, new ones come later', (
+    kWidgets('network failure preserves the cache and retry recovers', (
       tester,
     ) async {
       await tester.pumpWidget(app(const SizedBox()));
@@ -163,7 +164,30 @@ void main() {
       await tester.pumpWidget(app(const KeepsakesScreen()));
       await settleIo(tester);
       expect(find.text('Breathed together for the first time'), findsOneWidget);
-      expect(find.byKey(const ValueKey('keepsakes-offline')), findsOneWidget);
+      expect(find.byKey(const ValueKey('keepsakes-network')), findsOneWidget);
+      expect(find.byKey(const ValueKey('keepsakes-offline')), findsNothing);
+      api.offline = false;
+      api.list = [keep('capsule_sealed_first', '2026-10-04')];
+      await tester.tap(find.byKey(const ValueKey('keepsakes-retry')));
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('keepsakes-network')), findsNothing);
+      expect(find.text('Sealed a note for future me'), findsOneWidget);
+    });
+
+    kWidgets('expired sign-in is explained without an offline claim', (
+      tester,
+    ) async {
+      api.error = const ApiException(code: 'signed_out', status: 401);
+      await tester.pumpWidget(app(const KeepsakesScreen()));
+      await settleIo(tester);
+      expect(find.byKey(const ValueKey('keepsakes-signedOut')), findsOneWidget);
+      expect(find.byKey(const ValueKey('keepsakes-offline')), findsNothing);
+      expect(find.byKey(const ValueKey('keepsakes-retry')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('keepsakes-empty')),
+        findsNothing,
+        reason: 'A failed first fetch cannot establish an empty collection',
+      );
     });
 
     kWidgets(
@@ -279,8 +303,58 @@ void main() {
         'sanctuary_minutes_300',
       ]);
       api.offline = true;
-      expect(await repo.refresh(), KeepsakesRefresh.offline);
+      expect(await repo.refresh(), KeepsakesRefresh.network);
       expect(await repo.watch().first, hasLength(2));
+    });
+
+    test('known offline state skips the API', () async {
+      final repo = KeepsakesRepository(
+        kv: KvStore(db),
+        api: api,
+        isOnline: () => false,
+      );
+      expect(await repo.refresh(), KeepsakesRefresh.offline);
+      expect(api.calls, 0);
+    });
+
+    test('auth, service, account and unexpected failures preserve cached keepsakes', () async {
+      final repo = KeepsakesRepository(kv: KvStore(db), api: api);
+      api.list = [keep('capsule_sealed_first', '2026-10-01')];
+      expect(await repo.refresh(), KeepsakesRefresh.updated);
+      final cases = <(Object, KeepsakesRefresh)>[
+        (
+          const ApiException(code: 'signed_out', status: 401),
+          KeepsakesRefresh.signedOut,
+        ),
+        (
+          const ApiException(code: 'internal_error', status: 500),
+          KeepsakesRefresh.network,
+        ),
+        (
+          const ApiException(code: 'rate_limit', status: 429),
+          KeepsakesRefresh.network,
+        ),
+        (
+          const ApiException(code: 'account_deletion_pending', status: 403),
+          KeepsakesRefresh.accountUnavailable,
+        ),
+        (
+          const ApiException(code: 'account_closed', status: 403),
+          KeepsakesRefresh.accountUnavailable,
+        ),
+        (
+          const ApiException(code: 'invalid_response', status: 400),
+          KeepsakesRefresh.failed,
+        ),
+        (StateError('Unexpected response'), KeepsakesRefresh.failed),
+      ];
+      for (final (error, expected) in cases) {
+        api.error = error;
+        expect(await repo.refresh(), expected);
+        expect(await repo.watch().first, [
+          keep('capsule_sealed_first', '2026-10-01'),
+        ]);
+      }
     });
 
     test('keepsake lines exist for every catalogue key', () {

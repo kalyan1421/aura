@@ -25,6 +25,7 @@ final keepsakesRepositoryProvider = Provider<KeepsakesRepository>(
   (ref) => KeepsakesRepository(
     kv: ref.watch(kvStoreProvider),
     api: ref.watch(keepsakesApiProvider),
+    isOnline: () => ref.read(connectivityProvider).value ?? true,
   ),
 );
 

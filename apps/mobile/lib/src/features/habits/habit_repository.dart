@@ -54,24 +54,62 @@ class HabitToday {
   String get key => preset?.key ?? habitId!;
 }
 
+/// One shown habit as the world reads it (W03): counts and days only, never
+/// a note or a mood. [habitId] is `null` for a preset never used (a seed).
+class HabitWorldInput {
+  const HabitWorldInput({
+    this.habitId,
+    this.preset,
+    this.name,
+    this.distinctLoggedDays = 0,
+    this.lastLogDay,
+    this.committedFrom,
+    this.pausedThrough,
+  });
+
+  final String? habitId;
+  final PresetHabit? preset;
+
+  /// A custom habit's own name (never sent to analytics or logs).
+  final String? name;
+  final int distinctLoggedDays;
+  final LocalDay? lastLogDay;
+  final LocalDay? committedFrom;
+  final LocalDay? pausedThrough;
+}
+
 /// One row in the habits editor: shown on Home or not.
 class HabitSetting {
-  const HabitSetting.preset(PresetHabit this.preset, {required this.shown})
-    : habitId = null,
-      name = null;
+  const HabitSetting.preset(
+    PresetHabit this.preset, {
+    required this.shown,
+    this.habitId,
+    this.committedFrom,
+    this.pausedThrough,
+  }) : name = null;
 
   const HabitSetting.custom({
     required String this.habitId,
     required String this.name,
     required this.shown,
+    this.committedFrom,
+    this.pausedThrough,
   }) : preset = null;
 
   final PresetHabit? preset;
+
+  /// `null` for a preset that was never used (its row is created lazily).
   final String? habitId;
   final String? name;
 
   /// `habits.active`: shown on Home.
   final bool shown;
+
+  /// W02: the person's own commitment, `YYYY-MM-DD` (`null` = none).
+  final String? committedFrom;
+  final String? pausedThrough;
+
+  bool get committed => committedFrom != null;
 
   bool get isCustom => preset == null;
   String get key => preset?.key ?? habitId!;
@@ -188,20 +226,27 @@ class HabitRepository {
         ]))
         .watch()
         .map((rows) {
-          final presetShown = <String, bool>{
+          final presetRows = <String, HabitRow>{
             for (final r in rows)
-              if (r.kind == 'preset' && r.presetKey != null)
-                r.presetKey!: r.active,
+              if (r.kind == 'preset' && r.presetKey != null) r.presetKey!: r,
           };
           return [
             for (final p in presetHabits)
-              HabitSetting.preset(p, shown: presetShown[p.key] ?? true),
+              HabitSetting.preset(
+                p,
+                shown: presetRows[p.key]?.active ?? true,
+                habitId: presetRows[p.key]?.id,
+                committedFrom: presetRows[p.key]?.committedFrom,
+                pausedThrough: presetRows[p.key]?.pausedThrough,
+              ),
             for (final r in rows)
               if (r.kind == 'custom')
                 HabitSetting.custom(
                   habitId: r.id,
                   name: r.name ?? '',
                   shown: r.active,
+                  committedFrom: r.committedFrom,
+                  pausedThrough: r.pausedThrough,
                 ),
           ];
         });
@@ -321,6 +366,76 @@ class HabitRepository {
       payload: {'id': habitId},
     );
   });
+
+  // ---- the personal world (W03) ----------------------------------------------
+
+  /// What the world needs to draw each shown habit as a plant (RULES.md
+  /// section 13): shown presets in catalogue order (one without a row is a
+  /// seed), then active custom habits. Counts distinct live logged days and
+  /// the last one; never reads a note or a mood.
+  Stream<List<HabitWorldInput>> watchWorldInputs() {
+    return _db
+        .customSelect(
+          'SELECT h.id AS id, h.kind AS kind, h.preset_key AS preset_key, '
+          '  h.name AS name, h.active AS active, '
+          '  h.committed_from AS committed_from, '
+          '  h.paused_through AS paused_through, '
+          '  COUNT(DISTINCT l.local_day) AS days, MAX(l.local_day) AS last_day '
+          'FROM habits h LEFT JOIN habit_logs l '
+          '  ON l.habit_id = h.id AND l.deleted_at IS NULL '
+          'GROUP BY h.id '
+          'ORDER BY h.created_at, h.rowid',
+          readsFrom: {_db.habits, _db.habitLogs},
+        )
+        .watch()
+        .map((rows) {
+          HabitWorldInput read(QueryRow r, {PresetHabit? preset}) =>
+              HabitWorldInput(
+                habitId: r.read<String>('id'),
+                preset: preset,
+                name: r.readNullable<String>('name'),
+                distinctLoggedDays: r.read<int>('days'),
+                lastLogDay: LocalDay.tryParse(r.readNullable<String>('last_day')),
+                committedFrom: LocalDay.tryParse(
+                  r.readNullable<String>('committed_from'),
+                ),
+                pausedThrough: LocalDay.tryParse(
+                  r.readNullable<String>('paused_through'),
+                ),
+              );
+          final presetRows = <String, QueryRow>{};
+          final custom = <HabitWorldInput>[];
+          for (final r in rows) {
+            final key = r.readNullable<String>('preset_key');
+            if (r.read<String>('kind') == 'preset' && key != null) {
+              presetRows[key] = r;
+            } else if (r.read<bool>('active')) {
+              custom.add(read(r));
+            }
+          }
+          return [
+            for (final p in presetHabits)
+              if (presetRows[p.key] == null)
+                HabitWorldInput(preset: p)
+              else if (presetRows[p.key]!.read<bool>('active'))
+                read(presetRows[p.key]!, preset: p),
+            ...custom,
+          ];
+        });
+  }
+
+  /// The server refused a commitment change (`commitment_not_available` or
+  /// `invalid_commitment`, e.g. an age signal this phone has not seen): drop it
+  /// here so the world never shows stakes the server does not hold. Queues
+  /// nothing; the next deliberate change is sent explicitly again.
+  Future<void> clearRejectedCommitment(String habitId) async {
+    await (_db.update(_db.habits)..where((t) => t.id.equals(habitId))).write(
+      const HabitsCompanion(
+        committedFrom: Value(null),
+        pausedThrough: Value(null),
+      ),
+    );
+  }
 
   // ---- commitments (W02) -----------------------------------------------------
 

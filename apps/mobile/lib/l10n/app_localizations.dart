@@ -5147,6 +5147,180 @@ abstract class AppLocalizations {
   /// **'Rest well. The night can hold the rest.'**
   String get rooms_windDownCue_rest_well;
 
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect to see who\'s here'**
+  String get rooms_presenceStale;
+
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t refresh keepsakes just now. Your saved keepsakes are still here.'**
+  String get keepsakes_refreshFailed;
+
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in again to refresh your keepsakes. Your saved keepsakes are still here.'**
+  String get keepsakes_signedOut;
+
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Keepsakes aren\'t available for this account right now. Check your account settings.'**
+  String get keepsakes_accountUnavailable;
+
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Keepsake refresh isn\'t set up in this build. Your saved keepsakes are still here.'**
+  String get keepsakes_unavailable;
+
+  /// Recovery status or action; preserve cached personal data and avoid claiming live presence.
+  ///
+  /// In en, this message translates to:
+  /// **'Account settings'**
+  String get keepsakes_accountAction;
+
+  /// Personal universe: title copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Your universe'**
+  String get universe_title;
+
+  /// Personal universe: entry copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'A small world for habits, quiet moments and future you.'**
+  String get universe_entry;
+
+  /// Personal universe: intro copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'A little care, a little growth. Explore at your own pace.'**
+  String get universe_intro;
+
+  /// Personal universe: worldView copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Show 3D world'**
+  String get universe_worldView;
+
+  /// Personal universe: listView copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Use list view'**
+  String get universe_listView;
+
+  /// Personal universe: grove copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Grove'**
+  String get universe_grove;
+
+  /// Personal universe: pool copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Tide Pool'**
+  String get universe_pool;
+
+  /// Personal universe: reflection copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection Garden'**
+  String get universe_reflection;
+
+  /// Personal universe: observatory copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Observatory'**
+  String get universe_observatory;
+
+  /// Personal universe: groveBody copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Each habit is a plant that grows as you log it. Plants you commit to rest when days are missed, and a single log wakes them.'**
+  String get universe_groveBody;
+
+  /// Personal universe: poolBody copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a quiet breath beside the water. Start only when you are ready.'**
+  String get universe_poolBody;
+
+  /// Personal universe: reflectionBody copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice how you feel with a private check-in. Your feelings stay in your care space.'**
+  String get universe_reflectionBody;
+
+  /// Personal universe: observatoryBody copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a kind message for future you, or return to your time capsules.'**
+  String get universe_observatoryBody;
+
+  /// Personal universe: habits copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Open habits'**
+  String get universe_habits;
+
+  /// Personal universe: breathe copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Start breathing'**
+  String get universe_breathe;
+
+  /// Personal universe: checkIn copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get universe_checkIn;
+
+  /// Personal universe: capsules copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Open time capsules'**
+  String get universe_capsules;
+
+  /// Personal universe: left copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate left'**
+  String get universe_left;
+
+  /// Personal universe: right copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate right'**
+  String get universe_right;
+
+  /// Personal universe: zoomIn copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom in'**
+  String get universe_zoomIn;
+
+  /// Personal universe: zoomOut copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom out'**
+  String get universe_zoomOut;
+
+  /// Personal universe: reset copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset camera'**
+  String get universe_reset;
+
+  /// Personal universe: hint copy or accessible control label.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to look around. Tap a light or choose a place below.'**
+  String get universe_hint;
+
   /// Room screen: heading over the reflections (short moderated posts answered only with gestures).
   ///
   /// In en, this message translates to:
@@ -8506,6 +8680,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A plain star with no app name and no mood words. Tapping it opens the app.'**
   String get widget_discreetNote;
+
+  /// Habits editor section title for the opt-in world commitments (adults only).
+  ///
+  /// In en, this message translates to:
+  /// **'Commitments'**
+  String get habits_commitmentsTitle;
+
+  /// Explains commitments before the switches. Must say plainly that Starlight and glow days are never affected and that one log restores the plant.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the habits you want to keep close. If you miss a few days, that habit\'s plant in your world rests. One log wakes it. Your Starlight and glow days are never touched.'**
+  String get habits_commitmentsBody;
+
+  /// Subtitle under a habit's name on the commitment switch. Read by screen readers after the habit name.
+  ///
+  /// In en, this message translates to:
+  /// **'Treat as a commitment'**
+  String get habits_commitmentSwitch;
+
+  /// Tooltip and screen-reader label for the pause menu of a committed habit.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause {name}'**
+  String habits_pauseSemantic(String name);
+
+  /// Subtitle of a committed habit while a pause is on. {date} is a short local date.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused until {date}'**
+  String habits_pausedUntil(String date);
+
+  /// Pause length choice in the pause menu.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} day} other{{count} days}}'**
+  String habits_pauseDays(int count);
+
+  /// Pause menu item that ends a pause early.
+  ///
+  /// In en, this message translates to:
+  /// **'End pause'**
+  String get habits_pauseEnd;
+
+  /// Heading of the accessible list of habit plants in the Habit Grove card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plants'**
+  String get universe_yourPlants;
+
+  /// Grove summary when committed plants are resting. Warm; never a count of missed days, never 'dead' or 'lost'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{One plant is resting. A single log wakes it.} other{{count} plants are resting. A single log wakes each one.}}'**
+  String universe_plantsResting(int count);
+
+  /// Growth stage of a habit plant: no logs yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed'**
+  String get universe_stage_seed;
+
+  /// Growth stage of a habit plant.
+  ///
+  /// In en, this message translates to:
+  /// **'Sprout'**
+  String get universe_stage_sprout;
+
+  /// Growth stage of a habit plant.
+  ///
+  /// In en, this message translates to:
+  /// **'Growing'**
+  String get universe_stage_young;
+
+  /// Growth stage of a habit plant.
+  ///
+  /// In en, this message translates to:
+  /// **'Grown'**
+  String get universe_stage_grown;
+
+  /// Growth stage of a habit plant.
+  ///
+  /// In en, this message translates to:
+  /// **'Flourishing'**
+  String get universe_stage_flourishing;
+
+  /// Growth stage of a habit plant after a long time of care.
+  ///
+  /// In en, this message translates to:
+  /// **'Ancient'**
+  String get universe_stage_ancient;
+
+  /// State of a committed habit plant after a few missed days. Never negative.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting'**
+  String get universe_vitality_dimmed;
+
+  /// State of a committed habit plant after several missed days. Gentle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drooping a little'**
+  String get universe_vitality_wilting;
+
+  /// State of a committed habit plant after a long break. It never disappears and one log wakes it.
+  ///
+  /// In en, this message translates to:
+  /// **'Asleep, waiting for you'**
+  String get universe_vitality_dormant;
+
+  /// Screen-reader and visible label of one habit plant that is doing well.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {stage}'**
+  String universe_plantRow(String name, String stage);
+
+  /// Label of one habit plant that is resting, drooping or asleep. {state} is one of the vitality words.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {stage}, {state}'**
+  String universe_plantRowResting(String name, String stage, String state);
 }
 
 class _AppLocalizationsDelegate

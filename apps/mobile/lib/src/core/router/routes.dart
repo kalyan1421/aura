@@ -21,6 +21,7 @@ abstract final class Routes {
   static const String blocked = '/blocked';
   static const String home = '/home';
   static const String sanctuary = '/sanctuary';
+  static const String universe = '/universe';
   static const String rooms = '/rooms';
 
   /// Matching a room for a saved check-in; the quadrant and mood travel as

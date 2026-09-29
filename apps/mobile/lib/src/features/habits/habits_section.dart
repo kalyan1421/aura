@@ -120,6 +120,7 @@ class _HabitChip extends ConsumerWidget {
     // semantics are replaced, so the tap action is restored here.
     return Semantics(
       label: h.done ? l.home_habitDone(name) : l.home_habitNotYet(name),
+      enabled: true,
       toggled: h.done,
       onTap: toggle,
       excludeSemantics: true,

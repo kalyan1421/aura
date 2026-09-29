@@ -3218,6 +3218,104 @@ class AppLocalizationsHi extends AppLocalizations {
       'अच्छे से आराम करें। बाकी रात सँभाल लेगी।';
 
   @override
+  String get rooms_presenceStale =>
+      'यहाँ कौन है देखने के लिए फिर से कनेक्ट करें';
+
+  @override
+  String get keepsakes_refreshFailed =>
+      'अभी यादगारें रीफ़्रेश नहीं हो सकीं। आपकी सहेजी हुई यादगारें यहीं हैं।';
+
+  @override
+  String get keepsakes_signedOut =>
+      'यादगारें रीफ़्रेश करने के लिए फिर से साइन इन करें। आपकी सहेजी हुई यादगारें यहीं हैं।';
+
+  @override
+  String get keepsakes_accountUnavailable =>
+      'अभी इस खाते के लिए यादगारें उपलब्ध नहीं हैं। खाते की सेटिंग देखें।';
+
+  @override
+  String get keepsakes_unavailable =>
+      'इस बिल्ड में यादगारें रीफ़्रेश करना अभी तैयार नहीं है। आपकी सहेजी हुई यादगारें यहीं हैं।';
+
+  @override
+  String get keepsakes_accountAction => 'खाते की सेटिंग';
+
+  @override
+  String get universe_title => 'आपका संसार';
+
+  @override
+  String get universe_entry =>
+      'आदतों, शांत पलों और भविष्य के आपके लिए एक छोटा संसार।';
+
+  @override
+  String get universe_intro => 'थोड़ी देखभाल, थोड़ी बढ़त। अपनी गति से खोजें।';
+
+  @override
+  String get universe_worldView => '3D संसार दिखाएँ';
+
+  @override
+  String get universe_listView => 'सूची में देखें';
+
+  @override
+  String get universe_grove => 'आदतों का उपवन';
+
+  @override
+  String get universe_pool => 'शांत जल';
+
+  @override
+  String get universe_reflection => 'मन का बगीचा';
+
+  @override
+  String get universe_observatory => 'तारों की वेधशाला';
+
+  @override
+  String get universe_groveBody =>
+      'हर आदत एक पौधा है जो लॉग करने पर बढ़ता है। जिन पौधों का आपने संकल्प लिया है, वे दिन छूटने पर आराम करते हैं, और एक लॉग उन्हें जगा देता है।';
+
+  @override
+  String get universe_poolBody =>
+      'पानी के पास शांति से साँस लें। जब तैयार हों, तभी शुरू करें।';
+
+  @override
+  String get universe_reflectionBody =>
+      'एक निजी चेक-इन से अपनी भावनाएँ समझें। आपकी भावनाएँ आपकी देखभाल की जगह में रहती हैं।';
+
+  @override
+  String get universe_observatoryBody =>
+      'भविष्य के अपने लिए एक प्यारा संदेश छोड़ें या अपने टाइम कैप्सूल देखें।';
+
+  @override
+  String get universe_habits => 'आदतें खोलें';
+
+  @override
+  String get universe_breathe => 'साँस लेना शुरू करें';
+
+  @override
+  String get universe_checkIn => 'चेक-इन करें';
+
+  @override
+  String get universe_capsules => 'टाइम कैप्सूल खोलें';
+
+  @override
+  String get universe_left => 'बाईं ओर घुमाएँ';
+
+  @override
+  String get universe_right => 'दाईं ओर घुमाएँ';
+
+  @override
+  String get universe_zoomIn => 'पास से देखें';
+
+  @override
+  String get universe_zoomOut => 'दूर से देखें';
+
+  @override
+  String get universe_reset => 'कैमरा रीसेट करें';
+
+  @override
+  String get universe_hint =>
+      'चारों ओर देखने के लिए खींचें। रोशनी पर टैप करें या नीचे कोई जगह चुनें।';
+
+  @override
   String get reflections_title => 'दिल की बातें';
 
   @override
@@ -5313,6 +5411,91 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get widget_discreetNote =>
       'बिना ऐप के नाम और बिना मूड वाले शब्दों का एक सादा तारा। इसे टैप करने पर ऐप खुलता है।';
+
+  @override
+  String get habits_commitmentsTitle => 'संकल्प';
+
+  @override
+  String get habits_commitmentsBody =>
+      'जिन आदतों को आप अपने पास रखना चाहते हैं, उन्हें चुनें। कुछ दिन छूट जाएँ तो आपकी दुनिया में उस आदत का पौधा आराम करता है। एक लॉग उसे जगा देता है। आपकी Starlight और glow days को कभी कुछ नहीं होता।';
+
+  @override
+  String get habits_commitmentSwitch => 'संकल्प की तरह लें';
+
+  @override
+  String habits_pauseSemantic(String name) {
+    return '$name को विराम दें';
+  }
+
+  @override
+  String habits_pausedUntil(String date) {
+    return '$date तक विराम';
+  }
+
+  @override
+  String habits_pauseDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count दिन',
+      one: '$count दिन',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habits_pauseEnd => 'विराम खत्म करें';
+
+  @override
+  String get universe_yourPlants => 'आपके पौधे';
+
+  @override
+  String universe_plantsResting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count पौधे आराम कर रहे हैं। हर एक को एक लॉग जगा देता है।',
+      one: 'एक पौधा आराम कर रहा है। एक लॉग उसे जगा देता है।',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get universe_stage_seed => 'बीज';
+
+  @override
+  String get universe_stage_sprout => 'अंकुर';
+
+  @override
+  String get universe_stage_young => 'बढ़ता हुआ';
+
+  @override
+  String get universe_stage_grown => 'पूरा बढ़ा';
+
+  @override
+  String get universe_stage_flourishing => 'हरा-भरा';
+
+  @override
+  String get universe_stage_ancient => 'प्राचीन';
+
+  @override
+  String get universe_vitality_dimmed => 'आराम में';
+
+  @override
+  String get universe_vitality_wilting => 'थोड़ा झुका हुआ';
+
+  @override
+  String get universe_vitality_dormant => 'सो रहा है, आपका इंतज़ार कर रहा है';
+
+  @override
+  String universe_plantRow(String name, String stage) {
+    return '$name, $stage';
+  }
+
+  @override
+  String universe_plantRowResting(String name, String stage, String state) {
+    return '$name, $stage, $state';
+  }
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -8566,6 +8749,105 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
       'Acche se aaram karein. Baaki raat sambhaal legi.';
 
   @override
+  String get rooms_presenceStale =>
+      'Yahan kaun hai dekhne ke liye phir se connect karein';
+
+  @override
+  String get keepsakes_refreshFailed =>
+      'Abhi yaadgaarein refresh nahi ho sakin. Aapki save ki hui yaadgaarein yahin hain.';
+
+  @override
+  String get keepsakes_signedOut =>
+      'Yaadgaarein refresh karne ke liye phir se sign in karein. Aapki save ki hui yaadgaarein yahin hain.';
+
+  @override
+  String get keepsakes_accountUnavailable =>
+      'Abhi is account ke liye yaadgaarein available nahi hain. Account settings dekhein.';
+
+  @override
+  String get keepsakes_unavailable =>
+      'Is build mein yaadgaarein refresh karna abhi taiyaar nahi hai. Aapki save ki hui yaadgaarein yahin hain.';
+
+  @override
+  String get keepsakes_accountAction => 'Account settings';
+
+  @override
+  String get universe_title => 'Aapka sansaar';
+
+  @override
+  String get universe_entry =>
+      'Aadaton, shaant palon aur future you ke liye ek chhota sansaar.';
+
+  @override
+  String get universe_intro =>
+      'Thodi care, thodi growth. Apni raftaar se explore karein.';
+
+  @override
+  String get universe_worldView => '3D sansaar dikhayein';
+
+  @override
+  String get universe_listView => 'List mein dekhein';
+
+  @override
+  String get universe_grove => 'Aadaton ka upvan';
+
+  @override
+  String get universe_pool => 'Shaant paani';
+
+  @override
+  String get universe_reflection => 'Mann ka bageecha';
+
+  @override
+  String get universe_observatory => 'Taaron ki vedhshala';
+
+  @override
+  String get universe_groveBody =>
+      'Har aadat ek paudha hai jo log karne par badhta hai. Jin paudhon ka aapne sankalp liya hai, ve din chhootne par aaraam karte hain, aur ek log unhein jaga deta hai.';
+
+  @override
+  String get universe_poolBody =>
+      'Paani ke paas shaanti se saans lein. Jab taiyaar hon, tabhi shuru karein.';
+
+  @override
+  String get universe_reflectionBody =>
+      'Ek private check-in se apni feelings samjhein. Aapki feelings aapki care space mein rehti hain.';
+
+  @override
+  String get universe_observatoryBody =>
+      'Future you ke liye ek pyaara message chhodein ya apne time capsules dekhein.';
+
+  @override
+  String get universe_habits => 'Aadatein kholein';
+
+  @override
+  String get universe_breathe => 'Saans lena shuru karein';
+
+  @override
+  String get universe_checkIn => 'Check-in karein';
+
+  @override
+  String get universe_capsules => 'Time capsules kholein';
+
+  @override
+  String get universe_left => 'Baayein ghumayein';
+
+  @override
+  String get universe_right => 'Daayein ghumayein';
+
+  @override
+  String get universe_zoomIn => 'Paas se dekhein';
+
+  @override
+  String get universe_zoomOut => 'Door se dekhein';
+
+  @override
+  String get universe_reset => 'Camera reset karein';
+
+  @override
+  String get universe_hint =>
+      'Aas-paas dekhne ke liye drag karein. Roshni par tap karein ya neeche koi jagah chunein.';
+
+  @override
   String get reflections_title => 'Reflections';
 
   @override
@@ -10686,4 +10968,91 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   @override
   String get widget_discreetNote =>
       'Bina app ke naam aur bina mood words ka ek simple taara. Ise tap karne par app khulta hai.';
+
+  @override
+  String get habits_commitmentsTitle => 'Sankalp';
+
+  @override
+  String get habits_commitmentsBody =>
+      'Jin aadaton ko aap apne paas rakhna chahte hain, unhein chunein. Kuch din chhoot jayein to aapki duniya mein us aadat ka paudha aaraam karta hai. Ek log use jaga deta hai. Aapki Starlight aur glow days ko kabhi kuch nahi hota.';
+
+  @override
+  String get habits_commitmentSwitch => 'Sankalp ki tarah lein';
+
+  @override
+  String habits_pauseSemantic(String name) {
+    return '$name ko viraam dein';
+  }
+
+  @override
+  String habits_pausedUntil(String date) {
+    return '$date tak viraam';
+  }
+
+  @override
+  String habits_pauseDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count din',
+      one: '$count din',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get habits_pauseEnd => 'Viraam khatam karein';
+
+  @override
+  String get universe_yourPlants => 'Aapke paudhe';
+
+  @override
+  String universe_plantsResting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count paudhe aaraam kar rahe hain. Har ek ko ek log jaga deta hai.',
+      one: 'Ek paudha aaraam kar raha hai. Ek log use jaga deta hai.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get universe_stage_seed => 'Beej';
+
+  @override
+  String get universe_stage_sprout => 'Ankur';
+
+  @override
+  String get universe_stage_young => 'Badhta hua';
+
+  @override
+  String get universe_stage_grown => 'Poora badha';
+
+  @override
+  String get universe_stage_flourishing => 'Hara-bhara';
+
+  @override
+  String get universe_stage_ancient => 'Praacheen';
+
+  @override
+  String get universe_vitality_dimmed => 'Aaraam mein';
+
+  @override
+  String get universe_vitality_wilting => 'Thoda jhuka hua';
+
+  @override
+  String get universe_vitality_dormant =>
+      'So raha hai, aapka intezaar kar raha hai';
+
+  @override
+  String universe_plantRow(String name, String stage) {
+    return '$name, $stage';
+  }
+
+  @override
+  String universe_plantRowResting(String name, String stage, String state) {
+    return '$name, $stage, $state';
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aura/src/app.dart';
 import 'package:aura/src/core/providers.dart';
+import 'package:aura/src/core/net/aura_api.dart' show ApiException;
 import 'package:aura/src/core/router/deep_links.dart';
 import 'package:aura/src/core/router/router.dart';
 import 'package:aura/src/features/home/home_screen.dart';
@@ -9,6 +10,7 @@ import 'package:aura/src/features/rooms/room_join_screen.dart';
 import 'package:aura/src/features/rooms/room_navigation.dart';
 import 'package:aura/src/features/rooms/room_screen.dart';
 import 'package:aura/src/features/rooms/rooms_home_screen.dart';
+import 'package:aura/src/features/rooms/rooms_providers.dart';
 import 'package:aura/src/features/rooms/your_rooms_strip.dart';
 import 'package:aura/src/features/shell/app_shell.dart';
 import 'package:aura/src/features/support/support_sheet.dart';
@@ -63,6 +65,57 @@ Future<void> _end(WidgetTester tester) async {
 }
 
 void main() {
+  for (final (name, screen) in <(String, Widget)>[
+    ('Rooms tab', const RoomsHomeScreen()),
+    ('Home strip', const Scaffold(body: Center(child: YourRoomsStrip()))),
+  ]) {
+    testWidgets(
+      '$name: failed refresh retains links without live presence claims and then recovers',
+      (tester) async {
+        final semantics = tester.ensureSemantics();
+        final api = _withRooms();
+        await pumpRooms(tester, screen, api: api);
+        expect(find.textContaining('5 here now'), findsOneWidget);
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(screen.runtimeType)),
+        );
+        api.fail['rooms'] = const ApiException(
+          code: 'internal_error',
+          status: 500,
+        );
+        container.invalidate(myRoomsProvider);
+        await settleRooms(tester);
+        expect(find.textContaining('here now'), findsNothing);
+        expect(
+          find.textContaining("Reconnect to see who's here"),
+          findsNWidgets(2),
+        );
+        final labels = [
+          for (final node in tester.semantics.simulatedAccessibilityTraversal())
+            node.getSemanticsData().label,
+        ].join(' | ');
+        expect(labels, isNot(contains('people here now')));
+        expect(labels, isNot(contains('people today')));
+        expect(
+          find.byKey(
+            ValueKey(
+              name == 'Rooms tab' ? 'room-card-$roomId' : 'strip-room-$roomId',
+            ),
+          ),
+          findsOneWidget,
+        );
+        container.invalidate(myRoomsProvider);
+        await settleRooms(tester);
+        expect(find.textContaining('5 here now'), findsOneWidget);
+        expect(
+          find.textContaining("Reconnect to see who's here"),
+          findsNothing,
+        );
+        semantics.dispose();
+        await _end(tester);
+      },
+    );
+  }
   group('the Rooms tab', () {
     testWidgets('your rooms (back with the same name), memories, and help in '
         'the top bar', (tester) async {

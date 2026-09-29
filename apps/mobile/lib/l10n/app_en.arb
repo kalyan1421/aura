@@ -4136,6 +4136,122 @@
   "@rooms_windDownCue_rest_well": {
     "description": "A preset text cue of the Lantern Hour wind-down (shown on screen, never spoken). Gentle, no promises about sleep."
   },
+  "rooms_presenceStale": "Reconnect to see who's here",
+  "@rooms_presenceStale": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "keepsakes_refreshFailed": "Couldn't refresh keepsakes just now. Your saved keepsakes are still here.",
+  "@keepsakes_refreshFailed": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "keepsakes_signedOut": "Sign in again to refresh your keepsakes. Your saved keepsakes are still here.",
+  "@keepsakes_signedOut": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "keepsakes_accountUnavailable": "Keepsakes aren't available for this account right now. Check your account settings.",
+  "@keepsakes_accountUnavailable": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "keepsakes_unavailable": "Keepsake refresh isn't set up in this build. Your saved keepsakes are still here.",
+  "@keepsakes_unavailable": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "keepsakes_accountAction": "Account settings",
+  "@keepsakes_accountAction": {
+    "description": "Recovery status or action; preserve cached personal data and avoid claiming live presence."
+  },
+  "universe_title": "Your universe",
+  "@universe_title": {
+    "description": "Personal universe: title copy or accessible control label."
+  },
+  "universe_entry": "A small world for habits, quiet moments and future you.",
+  "@universe_entry": {
+    "description": "Personal universe: entry copy or accessible control label."
+  },
+  "universe_intro": "A little care, a little growth. Explore at your own pace.",
+  "@universe_intro": {
+    "description": "Personal universe: intro copy or accessible control label."
+  },
+  "universe_worldView": "Show 3D world",
+  "@universe_worldView": {
+    "description": "Personal universe: worldView copy or accessible control label."
+  },
+  "universe_listView": "Use list view",
+  "@universe_listView": {
+    "description": "Personal universe: listView copy or accessible control label."
+  },
+  "universe_grove": "Habit Grove",
+  "@universe_grove": {
+    "description": "Personal universe: grove copy or accessible control label."
+  },
+  "universe_pool": "Tide Pool",
+  "@universe_pool": {
+    "description": "Personal universe: pool copy or accessible control label."
+  },
+  "universe_reflection": "Reflection Garden",
+  "@universe_reflection": {
+    "description": "Personal universe: reflection copy or accessible control label."
+  },
+  "universe_observatory": "Observatory",
+  "@universe_observatory": {
+    "description": "Personal universe: observatory copy or accessible control label."
+  },
+  "universe_groveBody": "Each habit is a plant that grows as you log it. Plants you commit to rest when days are missed, and a single log wakes them.",
+  "@universe_groveBody": {
+    "description": "Personal universe: groveBody copy or accessible control label."
+  },
+  "universe_poolBody": "Take a quiet breath beside the water. Start only when you are ready.",
+  "@universe_poolBody": {
+    "description": "Personal universe: poolBody copy or accessible control label."
+  },
+  "universe_reflectionBody": "Notice how you feel with a private check-in. Your feelings stay in your care space.",
+  "@universe_reflectionBody": {
+    "description": "Personal universe: reflectionBody copy or accessible control label."
+  },
+  "universe_observatoryBody": "Leave a kind message for future you, or return to your time capsules.",
+  "@universe_observatoryBody": {
+    "description": "Personal universe: observatoryBody copy or accessible control label."
+  },
+  "universe_habits": "Open habits",
+  "@universe_habits": {
+    "description": "Personal universe: habits copy or accessible control label."
+  },
+  "universe_breathe": "Start breathing",
+  "@universe_breathe": {
+    "description": "Personal universe: breathe copy or accessible control label."
+  },
+  "universe_checkIn": "Check in",
+  "@universe_checkIn": {
+    "description": "Personal universe: checkIn copy or accessible control label."
+  },
+  "universe_capsules": "Open time capsules",
+  "@universe_capsules": {
+    "description": "Personal universe: capsules copy or accessible control label."
+  },
+  "universe_left": "Rotate left",
+  "@universe_left": {
+    "description": "Personal universe: left copy or accessible control label."
+  },
+  "universe_right": "Rotate right",
+  "@universe_right": {
+    "description": "Personal universe: right copy or accessible control label."
+  },
+  "universe_zoomIn": "Zoom in",
+  "@universe_zoomIn": {
+    "description": "Personal universe: zoomIn copy or accessible control label."
+  },
+  "universe_zoomOut": "Zoom out",
+  "@universe_zoomOut": {
+    "description": "Personal universe: zoomOut copy or accessible control label."
+  },
+  "universe_reset": "Reset camera",
+  "@universe_reset": {
+    "description": "Personal universe: reset copy or accessible control label."
+  },
+  "universe_hint": "Drag to look around. Tap a light or choose a place below.",
+  "@universe_hint": {
+    "description": "Personal universe: hint copy or accessible control label."
+  },
   "reflections_title": "Reflections",
   "@reflections_title": {
     "description": "Room screen: heading over the reflections (short moderated posts answered only with gestures)."
@@ -6798,5 +6914,124 @@
   "widget_discreetNote": "A plain star with no app name and no mood words. Tapping it opens the app.",
   "@widget_discreetNote": {
     "description": "Note under 'Discreet widget'."
+  },
+  "habits_commitmentsTitle": "Commitments",
+  "@habits_commitmentsTitle": {
+    "description": "Habits editor section title for the opt-in world commitments (adults only)."
+  },
+  "habits_commitmentsBody": "Pick the habits you want to keep close. If you miss a few days, that habit's plant in your world rests. One log wakes it. Your Starlight and glow days are never touched.",
+  "@habits_commitmentsBody": {
+    "description": "Explains commitments before the switches. Must say plainly that Starlight and glow days are never affected and that one log restores the plant."
+  },
+  "habits_commitmentSwitch": "Treat as a commitment",
+  "@habits_commitmentSwitch": {
+    "description": "Subtitle under a habit's name on the commitment switch. Read by screen readers after the habit name."
+  },
+  "habits_pauseSemantic": "Pause {name}",
+  "@habits_pauseSemantic": {
+    "description": "Tooltip and screen-reader label for the pause menu of a committed habit.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habits_pausedUntil": "Paused until {date}",
+  "@habits_pausedUntil": {
+    "description": "Subtitle of a committed habit while a pause is on. {date} is a short local date.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "habits_pauseDays": "{count, plural, one{{count} day} other{{count} days}}",
+  "@habits_pauseDays": {
+    "description": "Pause length choice in the pause menu.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "habits_pauseEnd": "End pause",
+  "@habits_pauseEnd": {
+    "description": "Pause menu item that ends a pause early."
+  },
+  "universe_yourPlants": "Your plants",
+  "@universe_yourPlants": {
+    "description": "Heading of the accessible list of habit plants in the Habit Grove card."
+  },
+  "universe_plantsResting": "{count, plural, one{One plant is resting. A single log wakes it.} other{{count} plants are resting. A single log wakes each one.}}",
+  "@universe_plantsResting": {
+    "description": "Grove summary when committed plants are resting. Warm; never a count of missed days, never 'dead' or 'lost'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "universe_stage_seed": "Seed",
+  "@universe_stage_seed": {
+    "description": "Growth stage of a habit plant: no logs yet."
+  },
+  "universe_stage_sprout": "Sprout",
+  "@universe_stage_sprout": {
+    "description": "Growth stage of a habit plant."
+  },
+  "universe_stage_young": "Growing",
+  "@universe_stage_young": {
+    "description": "Growth stage of a habit plant."
+  },
+  "universe_stage_grown": "Grown",
+  "@universe_stage_grown": {
+    "description": "Growth stage of a habit plant."
+  },
+  "universe_stage_flourishing": "Flourishing",
+  "@universe_stage_flourishing": {
+    "description": "Growth stage of a habit plant."
+  },
+  "universe_stage_ancient": "Ancient",
+  "@universe_stage_ancient": {
+    "description": "Growth stage of a habit plant after a long time of care."
+  },
+  "universe_vitality_dimmed": "Resting",
+  "@universe_vitality_dimmed": {
+    "description": "State of a committed habit plant after a few missed days. Never negative."
+  },
+  "universe_vitality_wilting": "Drooping a little",
+  "@universe_vitality_wilting": {
+    "description": "State of a committed habit plant after several missed days. Gentle."
+  },
+  "universe_vitality_dormant": "Asleep, waiting for you",
+  "@universe_vitality_dormant": {
+    "description": "State of a committed habit plant after a long break. It never disappears and one log wakes it."
+  },
+  "universe_plantRow": "{name}, {stage}",
+  "@universe_plantRow": {
+    "description": "Screen-reader and visible label of one habit plant that is doing well.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "universe_plantRowResting": "{name}, {stage}, {state}",
+  "@universe_plantRowResting": {
+    "description": "Label of one habit plant that is resting, drooping or asleep. {state} is one of the vitality words.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "stage": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
   }
 }

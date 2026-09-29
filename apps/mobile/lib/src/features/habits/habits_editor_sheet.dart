@@ -12,6 +12,7 @@ import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/inline_notice.dart';
 import '../support/crisis_lexicon.dart';
 import '../support/support_sheet.dart';
+import 'decay_eligibility.dart';
 import 'habit_providers.dart';
 import 'habit_repository.dart';
 import 'habits_section.dart';
@@ -127,6 +128,26 @@ class _HabitsEditorSheetState extends ConsumerState<HabitsEditorSheet> {
     if (crisis && mounted) await showSupportSheet(context);
   }
 
+  /// W03: turn a habit's commitment on or off (RULES.md section 13). A preset
+  /// that was never used gets its row first. Under 18 the section is not shown;
+  /// the repository refuses it too.
+  Future<void> _commit(HabitSetting h, bool on) => _write((l) async {
+    AuraHaptics.selection();
+    final id = h.habitId ?? await _repo.ensurePresetId(h.key);
+    final age = await ref.read(deviceAgeYearsProvider.future);
+    final r = await _repo.setCommitment(id, committed: on, ageYears: age);
+    if (r == CommitmentResult.notAvailable) return l.habits_saveFailed;
+    _synced();
+    return null;
+  });
+
+  Future<void> _pause(HabitSetting h, int days) => _write((l) async {
+    AuraHaptics.selection();
+    await _repo.pauseCommitment(h.habitId!, days: days);
+    _synced();
+    return null;
+  });
+
   Future<void> _remove(HabitSetting h) async {
     final l = AppLocalizations.of(context);
     final ok = await showDialog<bool>(
@@ -171,6 +192,12 @@ class _HabitsEditorSheetState extends ConsumerState<HabitsEditorSheet> {
     final limitText = l.habits_limit(HabitRepository.maxActiveCustomHabits);
     // At the limit the limit note already shows; don't repeat it.
     final notice = atLimit && _notice == limitText ? null : _notice;
+    // Opt-in decay is for adults only: under 18 (or before a DOB) it is absent.
+    final showCommitments = decayEligible(
+      optedIn: true,
+      ageYears: ref.watch(deviceAgeYearsProvider).value ?? 0,
+    );
+    final shownHabits = settings.where((h) => h.shown).toList();
 
     Widget section(String title) => Padding(
       padding: const EdgeInsets.only(top: AuraSpace.l, bottom: AuraSpace.xs),
@@ -295,9 +322,62 @@ class _HabitsEditorSheetState extends ConsumerState<HabitsEditorSheet> {
               const SizedBox(height: AuraSpace.s),
               InlineNotice(notice, key: const ValueKey('habits-notice')),
             ],
+            if (showCommitments && shownHabits.isNotEmpty) ...[
+              section(l.habits_commitmentsTitle),
+              Text(
+                l.habits_commitmentsBody,
+                key: const ValueKey('habits-commitments-body'),
+                style: t.bodyMedium?.copyWith(color: AuraColors.textSoft),
+              ),
+              const SizedBox(height: AuraSpace.xs),
+              for (final h in shownHabits) _commitmentRow(context, l, h),
+            ],
           ],
         ),
       ),
+    );
+  }
+
+  Widget _commitmentRow(BuildContext context, AppLocalizations l, HabitSetting h) {
+    final name = habitDisplayName(l, preset: h.preset, name: h.name);
+    final until = LocalDay.tryParse(h.pausedThrough);
+    final subtitle = until == null
+        ? l.habits_commitmentSwitch
+        : l.habits_pausedUntil(
+            MaterialLocalizations.of(context).formatShortMonthDay(
+              DateTime(until.year, until.month, until.day),
+            ),
+          );
+    return Row(
+      children: [
+        Expanded(
+          child: SwitchListTile(
+            key: ValueKey('commitment-switch-${h.key}'),
+            contentPadding: EdgeInsets.zero,
+            title: Text(name),
+            subtitle: Text(subtitle),
+            value: h.committed,
+            onChanged: _busy ? null : (v) => _commit(h, v),
+          ),
+        ),
+        if (h.committed)
+          PopupMenuButton<int>(
+            key: ValueKey('commitment-pause-${h.key}'),
+            tooltip: l.habits_pauseSemantic(name),
+            enabled: !_busy,
+            icon: const Icon(Icons.pause_circle_outline_rounded),
+            onSelected: (days) => _pause(h, days),
+            itemBuilder: (_) => [
+              for (final days in const [3, 7, 14])
+                PopupMenuItem<int>(
+                  value: days,
+                  child: Text(l.habits_pauseDays(days)),
+                ),
+              if (until != null)
+                PopupMenuItem<int>(value: 0, child: Text(l.habits_pauseEnd)),
+            ],
+          ),
+      ],
     );
   }
 }

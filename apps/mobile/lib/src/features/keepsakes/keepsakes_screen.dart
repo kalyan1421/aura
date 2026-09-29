@@ -4,13 +4,16 @@ import 'package:aura_domain/aura_domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/a11y/motion.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
+import '../../core/widgets/inline_notice.dart';
 import '../progress/progress_view.dart';
 import '../share/share_card_data.dart';
 import '../share/share_sheet.dart';
@@ -49,7 +52,8 @@ class KeepsakesScreen extends ConsumerStatefulWidget {
 }
 
 class _KeepsakesScreenState extends ConsumerState<KeepsakesScreen> {
-  bool _offline = false;
+  KeepsakesRefresh? _refreshResult;
+  bool _refreshing = false;
 
   @override
   void initState() {
@@ -58,17 +62,74 @@ class _KeepsakesScreenState extends ConsumerState<KeepsakesScreen> {
   }
 
   Future<void> _refresh() async {
+    if (_refreshing) return;
+    setState(() => _refreshing = true);
     final r = await ref.read(keepsakesRepositoryProvider).refresh();
-    if (mounted) setState(() => _offline = r == KeepsakesRefresh.offline);
+    if (mounted) {
+      setState(() {
+        _refreshResult = r;
+        _refreshing = false;
+      });
+    }
+  }
+
+  Widget? _refreshNotice(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final result = _refreshResult;
+    if (result == null || result == KeepsakesRefresh.updated) return null;
+    final text = switch (result) {
+      KeepsakesRefresh.offline => l.keepsakes_offline,
+      KeepsakesRefresh.network => l.keepsakes_refreshFailed,
+      KeepsakesRefresh.signedOut => l.keepsakes_signedOut,
+      KeepsakesRefresh.accountUnavailable => l.keepsakes_accountUnavailable,
+      KeepsakesRefresh.unavailable => l.keepsakes_unavailable,
+      _ => l.keepsakes_refreshFailed,
+    };
+    final router = GoRouter.maybeOf(context);
+    final Widget? action;
+    if (result == KeepsakesRefresh.signedOut && router != null) {
+      action = TextButton(
+        key: const ValueKey('keepsakes-sign-in'),
+        onPressed: () => router.push(Routes.signIn),
+        child: Text(l.rooms_signIn),
+      );
+    } else if (result == KeepsakesRefresh.accountUnavailable &&
+        router != null) {
+      action = TextButton(
+        key: const ValueKey('keepsakes-account'),
+        onPressed: () => router.push(Routes.settings),
+        child: Text(l.keepsakes_accountAction),
+      );
+    } else if (result == KeepsakesRefresh.offline ||
+        result == KeepsakesRefresh.network ||
+        result == KeepsakesRefresh.failed) {
+      action = TextButton(
+        key: const ValueKey('keepsakes-retry'),
+        onPressed: _refreshing ? null : _refresh,
+        child: Text(l.rooms_tryAgain),
+      );
+    } else {
+      action = null;
+    }
+    return InlineNotice(
+      text,
+      key: ValueKey('keepsakes-${result.name}'),
+      icon: result == KeepsakesRefresh.offline
+          ? Icons.cloud_off_outlined
+          : Icons.info_outline_rounded,
+      action: action,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context).textTheme;
-    final list = ref.watch(keepsakesProvider).value ?? const <OwnKeepsake>[];
+    final cached = ref.watch(keepsakesProvider).value;
+    final list = cached ?? const <OwnKeepsake>[];
     final avatar = ref.watch(progressViewProvider.select((v) => v.avatar));
     final reduce = reduceMotionOf(context);
+    final notice = _refreshNotice(context);
 
     return Scaffold(
       appBar: helpAppBar(context, title: l.keepsakes_title),
@@ -77,6 +138,7 @@ class _KeepsakesScreenState extends ConsumerState<KeepsakesScreen> {
           onRefresh: _refresh,
           child: ListView(
             key: const ValueKey('keepsakes-list'),
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(
               AuraSpace.gutter,
               AuraSpace.s,
@@ -88,16 +150,12 @@ class _KeepsakesScreenState extends ConsumerState<KeepsakesScreen> {
                 l.keepsakes_intro,
                 style: t.bodyLarge?.copyWith(color: AuraColors.textSoft),
               ),
-              if (_offline) ...[
+              if (notice != null) ...[
                 const SizedBox(height: AuraSpace.s),
-                Text(
-                  l.keepsakes_offline,
-                  key: const ValueKey('keepsakes-offline'),
-                  style: t.bodySmall?.copyWith(color: AuraColors.textMuted),
-                ),
+                notice,
               ],
               const SizedBox(height: AuraSpace.l),
-              if (list.isEmpty)
+              if (list.isEmpty && cached != null)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: AuraSpace.xl),
                   child: Text(
@@ -107,7 +165,7 @@ class _KeepsakesScreenState extends ConsumerState<KeepsakesScreen> {
                     style: t.bodyLarge,
                   ),
                 )
-              else
+              else if (list.isNotEmpty)
                 LayoutBuilder(
                   builder: (context, box) {
                     final columns = box.maxWidth >= 520 ? 3 : 2;

@@ -30,6 +30,7 @@ import '../ripples/ripple_entry.dart';
 import '../rooms/your_rooms_strip.dart';
 import '../support/crisis_follow_up.dart';
 import '../support/support_sheet.dart';
+import '../universe/universe_entry.dart';
 import 'rest_days_sheet.dart';
 import 'sync_status_sheet.dart';
 
@@ -168,6 +169,7 @@ class HomeScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+                      const UniverseEntry(),
                       // F7: Breath Ripples quick-match, under the fold (it
                       // never shrinks the hero; nothing when switched off).
                       const RipplesHomeCard(),

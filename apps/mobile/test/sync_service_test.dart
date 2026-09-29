@@ -58,6 +58,7 @@ class _FakeApi extends AuraApi {
   ApiException? failNextPush;
   ApiException? failNextProfile;
   String? rejectEntity;
+  String rejectReason = 'unknown_mood';
 
   @override
   Future<ProfileResult> postProfile(ProfileRequest body) async {
@@ -87,7 +88,7 @@ class _FakeApi extends AuraApi {
           MutationResult(
             id: m.id,
             status: m.entity == rejectEntity ? 'rejected' : 'applied',
-            reason: m.entity == rejectEntity ? 'unknown_mood' : null,
+            reason: m.entity == rejectEntity ? rejectReason : null,
           ),
       ],
       snapshot: _snapshot(10),
@@ -144,6 +145,9 @@ void main() {
       pull: (_, _) async {},
       alreadyPulled: (_) async => true,
       onUnder13: () async {},
+      onCommitmentRejected: (habitId) =>
+          HabitRepository(db, outbox, time, const Ids())
+              .clearRejectedCommitment(habitId),
     );
   });
 
@@ -299,6 +303,27 @@ void main() {
     expect(await outbox.count(), 0);
     final dead = await db.select(db.deadLetters).get();
     expect(dead.single.reason, 'unknown_mood');
+  });
+
+  test('a refused commitment is dead-lettered and dropped locally, so the '
+      'world never shows stakes the server does not hold (W03)', () async {
+    final habits = HabitRepository(db, outbox, time, const Ids());
+    await habits.addCustom('Read');
+    final id = (await db.select(db.habits).getSingle()).id;
+    await habits.setCommitment(id, committed: true, ageYears: 30);
+    // The phone believes an adult; the server has an under-18 age signal.
+    api
+      ..rejectEntity = 'habit'
+      ..rejectReason = 'commitment_not_available';
+    await sync.kick();
+
+    final dead = await db.select(db.deadLetters).get();
+    expect(dead.map((d) => d.reason), everyElement('commitment_not_available'));
+    final habit = await db.select(db.habits).getSingle();
+    expect(habit.committedFrom, isNull);
+    expect(habit.pausedThrough, isNull);
+    expect(habit.name, 'Read'); // the habit itself stays
+    expect(await outbox.count(), 0); // nothing re-queued
   });
 
   // ---- M2: request-level errors never dead-letter a batch ------------------

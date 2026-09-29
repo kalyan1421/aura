@@ -33,6 +33,7 @@ import '../../features/sanctuary/sanctuary_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/update/update_required.dart';
+import '../../features/universe/universe_screen.dart';
 import '../a11y/motion.dart';
 import '../remote_config/remote_config_providers.dart';
 import 'deep_links.dart';
@@ -158,6 +159,7 @@ GoRouter router(Ref ref) {
           first: gate.value.stage == OnboardingStage.firstCheckIn,
         ),
       ),
+      route(Routes.universe, (_) => const UniverseScreen()),
       route(Routes.safety, (_) => const SafetyCenterScreen()),
       route(Routes.settings, (_) => const SettingsScreen()),
       // F12 Aura Plus: opened only from a limit screen or Settings (`from`

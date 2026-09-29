@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../core/providers.dart';
+import '../../core/remote_config/remote_config_providers.dart';
 import '../../core/theme/aura_tokens.dart';
 import '../checkin/quadrant_glyph.dart';
 import 'room_copy.dart';
@@ -10,16 +12,25 @@ import 'rooms_providers.dart';
 
 /// Home "Your rooms" strip (F5): the rooms you are in right now (at most
 /// one per quadrant), each a pill with the quadrant glyph, theme and "N
-/// here now"; tap to go back with the same pseudonym. Nothing at all when
-/// there are none, when offline or signed out (Home never shows a rooms
-/// error). Wraps at large text; every pill is at least 48 dp tall. No
+/// here now"; tap to go back with the same pseudonym. Cached rooms keep
+/// their links while presence is being refreshed or unavailable, without
+/// claiming live counts. Nothing when there are none. Wraps at large text;
+/// every pill is at least 48 dp tall. No
 /// LayoutBuilder: Home measures this with a dry layout.
 class YourRoomsStrip extends ConsumerWidget {
   const YourRoomsStrip({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final rooms = ref.watch(myRoomsProvider).value ?? const [];
+    final state = ref.watch(myRoomsProvider);
+    final rooms = state.value ?? const [];
+    final presenceFresh =
+        ref.watch(roomsReadyProvider) &&
+        state.hasValue &&
+        !state.isLoading &&
+        !state.hasError &&
+        (ref.watch(connectivityProvider).value ?? false) &&
+        ref.watch(remoteFlagsProvider).roomsEnabled;
     final active = [
       for (final r in rooms)
         if (!r.room.isMemory) r,
@@ -48,10 +59,13 @@ class YourRoomsStrip extends ConsumerWidget {
               for (final r in active)
                 Semantics(
                   button: true,
-                  label: l.rooms_stripSemantic(
-                    roomThemeName(l, r.room.theme),
-                    r.counts.hereNow,
-                  ),
+                  label: presenceFresh
+                      ? l.rooms_stripSemantic(
+                          roomThemeName(l, r.room.theme),
+                          r.counts.hereNow,
+                        )
+                      : '${roomThemeName(l, r.room.theme)}, '
+                            '${l.rooms_presenceStale}',
                   hint: l.rooms_openHint,
                   onTap: () => openRoom(context, r.room.roomId),
                   excludeSemantics: true,
@@ -80,7 +94,7 @@ class YourRoomsStrip extends ConsumerWidget {
                               Flexible(
                                 child: Text(
                                   '${roomThemeName(l, r.room.theme)} · '
-                                  '${l.rooms_hereNow(r.counts.hereNow)}',
+                                  '${presenceFresh ? l.rooms_hereNow(r.counts.hereNow) : l.rooms_presenceStale}',
                                   style: t.labelLarge,
                                 ),
                               ),

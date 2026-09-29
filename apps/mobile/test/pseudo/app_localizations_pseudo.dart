@@ -1833,6 +1833,65 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   String get rooms_windDownCue_rest_well =>
       pseudo(super.rooms_windDownCue_rest_well);
   @override
+  String get rooms_presenceStale => pseudo(super.rooms_presenceStale);
+  @override
+  String get keepsakes_refreshFailed => pseudo(super.keepsakes_refreshFailed);
+  @override
+  String get keepsakes_signedOut => pseudo(super.keepsakes_signedOut);
+  @override
+  String get keepsakes_accountUnavailable =>
+      pseudo(super.keepsakes_accountUnavailable);
+  @override
+  String get keepsakes_unavailable => pseudo(super.keepsakes_unavailable);
+  @override
+  String get keepsakes_accountAction => pseudo(super.keepsakes_accountAction);
+  @override
+  String get universe_title => pseudo(super.universe_title);
+  @override
+  String get universe_entry => pseudo(super.universe_entry);
+  @override
+  String get universe_intro => pseudo(super.universe_intro);
+  @override
+  String get universe_worldView => pseudo(super.universe_worldView);
+  @override
+  String get universe_listView => pseudo(super.universe_listView);
+  @override
+  String get universe_grove => pseudo(super.universe_grove);
+  @override
+  String get universe_pool => pseudo(super.universe_pool);
+  @override
+  String get universe_reflection => pseudo(super.universe_reflection);
+  @override
+  String get universe_observatory => pseudo(super.universe_observatory);
+  @override
+  String get universe_groveBody => pseudo(super.universe_groveBody);
+  @override
+  String get universe_poolBody => pseudo(super.universe_poolBody);
+  @override
+  String get universe_reflectionBody => pseudo(super.universe_reflectionBody);
+  @override
+  String get universe_observatoryBody => pseudo(super.universe_observatoryBody);
+  @override
+  String get universe_habits => pseudo(super.universe_habits);
+  @override
+  String get universe_breathe => pseudo(super.universe_breathe);
+  @override
+  String get universe_checkIn => pseudo(super.universe_checkIn);
+  @override
+  String get universe_capsules => pseudo(super.universe_capsules);
+  @override
+  String get universe_left => pseudo(super.universe_left);
+  @override
+  String get universe_right => pseudo(super.universe_right);
+  @override
+  String get universe_zoomIn => pseudo(super.universe_zoomIn);
+  @override
+  String get universe_zoomOut => pseudo(super.universe_zoomOut);
+  @override
+  String get universe_reset => pseudo(super.universe_reset);
+  @override
+  String get universe_hint => pseudo(super.universe_hint);
+  @override
   String get reflections_title => pseudo(super.reflections_title);
   @override
   String get reflections_intro => pseudo(super.reflections_intro);
@@ -3024,4 +3083,52 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   String get widget_discreet => pseudo(super.widget_discreet);
   @override
   String get widget_discreetNote => pseudo(super.widget_discreetNote);
+  @override
+  String get habits_commitmentsTitle => pseudo(super.habits_commitmentsTitle);
+  @override
+  String get habits_commitmentsBody => pseudo(super.habits_commitmentsBody);
+  @override
+  String get habits_commitmentSwitch => pseudo(super.habits_commitmentSwitch);
+  @override
+  String habits_pauseSemantic(String name) =>
+      pseudo(super.habits_pauseSemantic(name));
+  @override
+  String habits_pausedUntil(String date) =>
+      pseudo(super.habits_pausedUntil(date));
+  @override
+  String habits_pauseDays(int count) => pseudo(super.habits_pauseDays(count));
+  @override
+  String get habits_pauseEnd => pseudo(super.habits_pauseEnd);
+  @override
+  String get universe_yourPlants => pseudo(super.universe_yourPlants);
+  @override
+  String universe_plantsResting(int count) =>
+      pseudo(super.universe_plantsResting(count));
+  @override
+  String get universe_stage_seed => pseudo(super.universe_stage_seed);
+  @override
+  String get universe_stage_sprout => pseudo(super.universe_stage_sprout);
+  @override
+  String get universe_stage_young => pseudo(super.universe_stage_young);
+  @override
+  String get universe_stage_grown => pseudo(super.universe_stage_grown);
+  @override
+  String get universe_stage_flourishing =>
+      pseudo(super.universe_stage_flourishing);
+  @override
+  String get universe_stage_ancient => pseudo(super.universe_stage_ancient);
+  @override
+  String get universe_vitality_dimmed => pseudo(super.universe_vitality_dimmed);
+  @override
+  String get universe_vitality_wilting =>
+      pseudo(super.universe_vitality_wilting);
+  @override
+  String get universe_vitality_dormant =>
+      pseudo(super.universe_vitality_dormant);
+  @override
+  String universe_plantRow(String name, String stage) =>
+      pseudo(super.universe_plantRow(name, stage));
+  @override
+  String universe_plantRowResting(String name, String stage, String state) =>
+      pseudo(super.universe_plantRowResting(name, stage, state));
 }
