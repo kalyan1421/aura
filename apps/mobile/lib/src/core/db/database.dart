@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -65,6 +65,11 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(capsules);
         await m.createTable(capsuleMedia);
         await customStatement(_capsulesIndex);
+      }
+      if (from < 6) {
+        // v6: W02 habit commitments (opt-in world decay, RULES.md section 13).
+        await m.addColumn(habits, habits.committedFrom);
+        await m.addColumn(habits, habits.pausedThrough);
       }
     },
     beforeOpen: (details) async {

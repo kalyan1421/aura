@@ -60,7 +60,7 @@ void main() {
     'PRAGMA user_version = 4',
   ];
 
-  test('v4 → v5 keeps every row and adds the capsule tables', () async {
+  test('v4 → latest keeps every row and adds the capsule tables', () async {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     final db = AppDatabase(
       NativeDatabase.memory(
@@ -74,9 +74,9 @@ void main() {
     addTearDown(db.close);
 
     final c = await db.select(db.checkIns).getSingle(); // opens + migrates
-    expect(db.schemaVersion, 5);
+    expect(db.schemaVersion, 6);
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.data.values.single, 5);
+    expect(version.data.values.single, 6);
     expect(c.note, 'tea');
     expect(c.voiceFile, 'r.enc');
     final o = await db.select(db.outbox).getSingle();

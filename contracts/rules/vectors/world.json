@@ -1,0 +1,40 @@
+{
+  "cases": [
+    { "kind": "stage", "name": "no logs is a seed", "days": 0, "expect": "seed" },
+    { "kind": "stage", "name": "first log sprouts", "days": 1, "expect": "sprout" },
+    { "kind": "stage", "name": "3 is still a sprout", "days": 3, "expect": "sprout" },
+    { "kind": "stage", "name": "4 is young", "days": 4, "expect": "young" },
+    { "kind": "stage", "name": "9 is still young", "days": 9, "expect": "young" },
+    { "kind": "stage", "name": "10 is grown", "days": 10, "expect": "grown" },
+    { "kind": "stage", "name": "24 is still grown", "days": 24, "expect": "grown" },
+    { "kind": "stage", "name": "25 is flourishing", "days": 25, "expect": "flourishing" },
+    { "kind": "stage", "name": "59 is still flourishing", "days": 59, "expect": "flourishing" },
+    { "kind": "stage", "name": "60 is ancient", "days": 60, "expect": "ancient" },
+    { "kind": "stage", "name": "far beyond stays ancient", "days": 5000, "expect": "ancient" },
+    { "kind": "stage", "name": "negative counts clamp to seed", "days": -3, "expect": "seed" },
+
+    { "kind": "eligible", "name": "adult who opted in", "optedIn": true, "ageYears": 18, "expect": true },
+    { "kind": "eligible", "name": "adult who did not opt in", "optedIn": false, "ageYears": 30, "expect": false },
+    { "kind": "eligible", "name": "17 never eligible even if opted in", "optedIn": true, "ageYears": 17, "expect": false },
+    { "kind": "eligible", "name": "13 never eligible", "optedIn": true, "ageYears": 13, "expect": false },
+
+    { "kind": "vitality", "name": "decay off keeps everything thriving", "decayActive": false, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-02", "pausedThrough": null, "today": "2026-11-30", "expect": "thriving" },
+    { "kind": "vitality", "name": "not a commitment never decays", "decayActive": true, "committedFrom": null, "lastLogDay": "2026-10-02", "pausedThrough": null, "today": "2026-11-30", "expect": "thriving" },
+    { "kind": "vitality", "name": "logged today", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-10", "expect": "thriving" },
+    { "kind": "vitality", "name": "today still open the day after a log", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-11", "expect": "thriving" },
+    { "kind": "vitality", "name": "one full missed day is still thriving", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-12", "expect": "thriving" },
+    { "kind": "vitality", "name": "two missed days dim", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-13", "expect": "dimmed" },
+    { "kind": "vitality", "name": "three missed days still dimmed", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-14", "expect": "dimmed" },
+    { "kind": "vitality", "name": "four missed days wilt", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-15", "expect": "wilting" },
+    { "kind": "vitality", "name": "six missed days still wilting", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-17", "expect": "wilting" },
+    { "kind": "vitality", "name": "seven missed days go dormant", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2026-10-18", "expect": "dormant" },
+    { "kind": "vitality", "name": "a year away is dormant, never lower", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-10", "pausedThrough": null, "today": "2027-10-10", "expect": "dormant" },
+    { "kind": "vitality", "name": "one log restores a dormant object", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2027-10-10", "pausedThrough": null, "today": "2027-10-10", "expect": "thriving" },
+    { "kind": "vitality", "name": "never logged counts from the commitment day", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": null, "pausedThrough": null, "today": "2026-10-05", "expect": "dimmed" },
+    { "kind": "vitality", "name": "commitment made today is thriving", "decayActive": true, "committedFrom": "2026-10-05", "lastLogDay": null, "pausedThrough": null, "today": "2026-10-05", "expect": "thriving" },
+    { "kind": "vitality", "name": "a log before the commitment does not help", "decayActive": true, "committedFrom": "2026-10-10", "lastLogDay": "2026-10-01", "pausedThrough": null, "today": "2026-10-15", "expect": "wilting" },
+    { "kind": "vitality", "name": "pause holds thriving through its last day", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-02", "pausedThrough": "2026-10-20", "today": "2026-10-20", "expect": "thriving" },
+    { "kind": "vitality", "name": "pause counts from its end", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-02", "pausedThrough": "2026-10-20", "today": "2026-10-23", "expect": "dimmed" },
+    { "kind": "vitality", "name": "future log day (clock skew) never decays", "decayActive": true, "committedFrom": "2026-10-01", "lastLogDay": "2026-10-12", "pausedThrough": null, "today": "2026-10-10", "expect": "thriving" }
+  ]
+}

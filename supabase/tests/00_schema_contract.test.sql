@@ -28,7 +28,7 @@ with expected(tbl, cols) as (values
   ('device_tokens',      array['id','user_id','platform','token','updated_at']),
   ('feature_flags',      array['key','enabled','payload']),
   ('habit_logs',         array['id','user_id','habit_id','local_day','device_ts','server_ts']),
-  ('habits',             array['id','user_id','kind','preset_key','name','active','created_at','updated_at']),
+  ('habits',             array['id','user_id','kind','preset_key','name','active','created_at','updated_at','committed_from','paused_through']),
   ('moods',              array['id','quadrant','sort','names']),
   ('notification_prefs', array['user_id','reminder_time','quiet_start','quiet_end','discreet','lantern_opt_in','updated_at']),
   ('preset_habits',      array['key','names']),

@@ -83,6 +83,14 @@ class Habits extends Table {
   DateTimeColumn get updatedAt => dateTime()();
   BoolColumn get synced => boolean().withDefault(const Constant(false))();
 
+  /// W02 (RULES.md section 13): the Aura day (`YYYY-MM-DD`) the person chose
+  /// "treat this as a commitment"; `null` = not a commitment, never decays.
+  /// Schema v6.
+  TextColumn get committedFrom => text().nullable()();
+
+  /// W02: a person-chosen pause; needs [committedFrom]. Schema v6.
+  TextColumn get pausedThrough => text().nullable()();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }

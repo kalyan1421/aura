@@ -36,6 +36,7 @@ import {
   pushRequestSchema,
   timedSchema,
   type CheckInPayload,
+  type HabitPayload,
   type Mutation,
   type MutationResult,
 } from './sync.schema';
@@ -50,6 +51,9 @@ export const MAX_AHEAD_DAYS = 2;
 
 /** PRD F2: the 6 presets (each at most once per user) + up to 3 active custom habits. */
 export const MAX_ACTIVE_CUSTOM_HABITS = 3;
+
+/** W02: the longest pause a person can set ahead of today (a holiday, an illness), in Aura days. */
+export const MAX_PAUSE_DAYS = 60;
 
 /** Namespace for deterministic habit ledger source ids: uuidv5(`${habitId}:${localDay}`). */
 export const HABIT_CREDIT_NS = '6f1f5a4e-2c1b-4d7e-9a53-0b8f3c2d9e71';
@@ -352,7 +356,31 @@ export class SyncService {
     } else if (p.active && (await this.repo.countActiveCustomHabits(ctx.tx, ctx.userId, p.id)) >= MAX_ACTIVE_CUSTOM_HABITS) {
       reject('too_many_custom_habits');
     }
+    await this.validateCommitment(ctx, p);
     if (!(await this.repo.upsertHabit(ctx.tx, ctx.userId, p))) reject('id_conflict');
+  }
+
+  /**
+   * W02 (RULES.md §13). A commitment is the person's own opt-in to reversible world decay; it never touches the ledger.
+   * `commitment_not_available`: a minor (stored DOB or platform signal) may not start one (a resend of an unchanged
+   * value is fine). `invalid_commitment`: a pause without a commitment, a start more than a day from today, or a pause
+   * longer than {@link MAX_PAUSE_DAYS} ahead.
+   */
+  private async validateCommitment(ctx: Ctx, p: HabitPayload): Promise<void> {
+    if (p.committedFrom === undefined && p.pausedThrough === undefined) return;
+    const existing = await this.repo.findHabit(ctx.tx, ctx.userId, p.id);
+    const committedFrom = p.committedFrom === undefined ? (existing?.committedFrom ?? null) : p.committedFrom;
+    const pausedThrough = p.pausedThrough === undefined ? (existing?.pausedThrough ?? null) : p.pausedThrough;
+    const today = auraDay(ctx.now, ctx.tz);
+    if (committedFrom !== null && committedFrom !== (existing?.committedFrom ?? null)) {
+      if (await this.repo.isMinor(ctx.tx, ctx.userId)) reject('commitment_not_available');
+      if (Math.abs(daysBetween(today, committedFrom)) > 1) reject('invalid_commitment');
+    }
+    if (pausedThrough !== null) {
+      if (committedFrom === null) reject('invalid_commitment');
+      if (daysBetween(today, pausedThrough) > MAX_PAUSE_DAYS) reject('invalid_commitment');
+      if (committedFrom !== null && daysBetween(committedFrom, pausedThrough) < -1) reject('invalid_commitment');
+    }
   }
 
   private async upsertHabitLog(ctx: Ctx, m: Mutation): Promise<void> {

@@ -15,3 +15,4 @@ export 'src/rules/keepsakes.dart';
 export 'src/rules/look_back.dart';
 export 'src/rules/progression.dart';
 export 'src/rules/streak.dart';
+export 'src/rules/world.dart';

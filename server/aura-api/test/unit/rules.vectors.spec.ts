@@ -10,6 +10,9 @@ import {
   foldStreak,
   hueFor,
   isEligible,
+  decayEligible,
+  growthStage,
+  habitVitality,
   isResting,
   stageFor,
   starlightAwards,
@@ -17,6 +20,7 @@ import {
   type Quadrant,
   type StarlightEvent,
   type StreakState,
+  type VitalityInput,
 } from '../../src/rules';
 import { isValidUnlockDate, pickTrigger, unlockAt, type TriggerCapsule, type TriggerCheckIn } from '../../src/capsules/capsule-rules';
 import {
@@ -85,6 +89,13 @@ const runners: Record<string, Runner> = {
     }
   },
   'streak.json': (c) => expect(foldStreak(c.initial as StreakState, c.days)).toEqual(c.expect),
+  // RULES.md §13 (world objects; presentation-only).
+  'world.json': (c) => {
+    if (c.kind === 'stage') return expect(growthStage(c.days)).toBe(c.expect);
+    if (c.kind === 'eligible') return expect(decayEligible(c.optedIn, c.ageYears)).toBe(c.expect);
+    if (c.kind === 'vitality') return expect(habitVitality(c as unknown as VitalityInput)).toBe(c.expect);
+    throw new Error(`world.json: unknown kind ${String(c.kind)}`);
+  },
   'nebula.json': (c) => expect(isResting(c.lastActiveDay, c.currentAuraDay)).toBe(c.expect),
   // RULES.md §9 (F4). One file, three pure rules told apart by `kind`.
   'capsules.json': (c) => {

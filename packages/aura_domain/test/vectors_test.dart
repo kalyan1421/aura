@@ -155,6 +155,39 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
       });
     }
   },
+  // RULES.md section 13 (world objects; presentation-only).
+  'world.json': (json) {
+    for (final c in _cases(json)) {
+      final kind = c['kind'] as String;
+      test('$kind: ${c['name']}', () {
+        switch (kind) {
+          case 'stage':
+            expect(growthStage(c['days'] as int).name, c['expect']);
+          case 'eligible':
+            expect(
+              decayEligible(
+                optedIn: c['optedIn'] as bool,
+                ageYears: c['ageYears'] as int,
+              ),
+              c['expect'],
+            );
+          case 'vitality':
+            expect(
+              habitVitality(
+                decayActive: c['decayActive'] as bool,
+                committedFrom: _day(c['committedFrom']),
+                lastLogDay: _day(c['lastLogDay']),
+                pausedThrough: _day(c['pausedThrough']),
+                today: LocalDay.parse(c['today'] as String),
+              ).name,
+              c['expect'],
+            );
+          default:
+            fail('Unknown world.json case kind "$kind"');
+        }
+      });
+    }
+  },
   'nebula.json': (json) {
     for (final c in _cases(json)) {
       test(c['name'], () {

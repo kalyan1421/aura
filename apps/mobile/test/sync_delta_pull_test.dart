@@ -272,4 +272,32 @@ void main() {
     await pull.pullDelta(client: client, userId: 'user-2', api: _Api());
     expect(queries['check_ins']!.containsKey('updated_at'), isFalse);
   });
+
+  test('W02: commitment days pulled from another phone; null clears them', () async {
+    tables['habits'] = [
+      {
+        ...tables['habits']!.single,
+        'committed_from': '2026-10-09',
+        'paused_through': '2026-10-14',
+        'updated_at': '2026-10-09T07:00:00+00:00',
+      },
+    ];
+    await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
+    var habit = await db.select(db.habits).getSingle();
+    expect(habit.committedFrom, '2026-10-09');
+    expect(habit.pausedThrough, '2026-10-14');
+
+    tables['habits'] = [
+      {
+        ...tables['habits']!.single,
+        'committed_from': null,
+        'paused_through': null,
+        'updated_at': '2026-10-10T07:00:00+00:00',
+      },
+    ];
+    await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
+    habit = await db.select(db.habits).getSingle();
+    expect(habit.committedFrom, isNull);
+    expect(habit.pausedThrough, isNull);
+  });
 }

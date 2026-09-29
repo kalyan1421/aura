@@ -80,6 +80,11 @@ class HabitSetting {
 /// Why adding or showing a custom habit did not happen.
 enum CustomHabitResult { saved, tooMany, invalid }
 
+/// Outcome of changing a habit's commitment (W02, RULES.md section 13).
+/// [notAvailable]: opt-in decay is never available under 18. [invalid]: a
+/// pause needs a commitment, and lasts 1 to [HabitRepository.maxPauseDays].
+enum CommitmentResult { saved, notAvailable, notFound, invalid }
+
 /// Binary, self-reported habits per Aura day (F2): the six presets plus up
 /// to 3 active custom habits. No "missed" state. Every change is written
 /// locally together with its outbox mutation (the app never writes personal
@@ -317,6 +322,87 @@ class HabitRepository {
     );
   });
 
+  // ---- commitments (W02) -----------------------------------------------------
+
+  /// The longest pause, in Aura days ahead of today (server: `MAX_PAUSE_DAYS`).
+  static const int maxPauseDays = 60;
+
+  /// Turns the person's own commitment on or off for a habit (RULES.md
+  /// section 13). Presentation-only: it never touches Starlight, streaks or
+  /// keepsakes. Starting one needs [ageYears] of at least 18
+  /// ([decayEligible]); ending one is always allowed and also ends a pause.
+  /// Written locally with its outbox mutation, like every personal change.
+  Future<CommitmentResult> setCommitment(
+    String habitId, {
+    required bool committed,
+    required int ageYears,
+  }) => _db.transaction(() async {
+    final habit = await _byId(habitId);
+    if (habit == null) return CommitmentResult.notFound;
+    if (committed && !decayEligible(optedIn: true, ageYears: ageYears)) {
+      return CommitmentResult.notAvailable;
+    }
+    if (committed && habit.committedFrom != null) return CommitmentResult.saved;
+    final now = _time.now();
+    final from = committed ? _time.dayOf(now).toIso() : null;
+    await _writeCommitment(habit, now, committedFrom: from, pausedThrough: null);
+    return CommitmentResult.saved;
+  });
+
+  /// Pauses a commitment for [days] Aura days from today (holiday, illness),
+  /// or ends the pause with `days: 0`. Needs an existing commitment.
+  Future<CommitmentResult> pauseCommitment(
+    String habitId, {
+    required int days,
+  }) => _db.transaction(() async {
+    final habit = await _byId(habitId);
+    if (habit == null) return CommitmentResult.notFound;
+    if (habit.committedFrom == null || days < 0 || days > maxPauseDays) {
+      return CommitmentResult.invalid;
+    }
+    final now = _time.now();
+    final through = days == 0
+        ? null
+        : _time.dayOf(now).addDays(days).toIso();
+    await _writeCommitment(
+      habit,
+      now,
+      committedFrom: habit.committedFrom,
+      pausedThrough: through,
+    );
+    return CommitmentResult.saved;
+  });
+
+  Future<HabitRow?> _byId(String habitId) => (_db.select(
+    _db.habits,
+  )..where((t) => t.id.equals(habitId))).getSingleOrNull();
+
+  Future<void> _writeCommitment(
+    HabitRow habit,
+    DateTime now, {
+    required String? committedFrom,
+    required String? pausedThrough,
+  }) async {
+    await (_db.update(_db.habits)..where((t) => t.id.equals(habit.id))).write(
+      HabitsCompanion(
+        committedFrom: Value(committedFrom),
+        pausedThrough: Value(pausedThrough),
+        updatedAt: Value(now),
+        synced: const Value(false),
+      ),
+    );
+    // Explicit nulls clear on the server; ordinary edits omit the fields.
+    await _enqueueUpsert(
+      id: habit.id,
+      kind: habit.kind,
+      presetKey: habit.presetKey,
+      name: habit.name,
+      active: habit.active,
+      now: now,
+      commitment: {'committedFrom': committedFrom, 'pausedThrough': pausedThrough},
+    );
+  }
+
   // ---- internals -------------------------------------------------------------
 
   Future<HabitRow?> _presetRow(String presetKey, {required bool create}) async {
@@ -387,6 +473,7 @@ class HabitRepository {
     required String? name,
     required bool active,
     required DateTime now,
+    Map<String, Object?> commitment = const {},
   }) => _outbox.enqueue(
     entity: Entities.habit,
     op: Ops.upsert,
@@ -400,6 +487,7 @@ class HabitRepository {
       'presetKey': presetKey,
       'name': name,
       'active': active,
+      ...commitment,
     },
   );
 

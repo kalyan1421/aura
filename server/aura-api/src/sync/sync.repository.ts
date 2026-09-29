@@ -112,15 +112,30 @@ export class SyncRepository {
   // ---------- habits ----------
   /** Upsert owned by `userId`; returns false when the id belongs to someone else. */
   async upsertHabit(q: Queryable, userId: string, h: HabitPayload): Promise<boolean> {
+    // W02: `undefined` keeps the stored commitment days, `null` clears them (see habitPayloadSchema).
     const r = await q.query(
-      `insert into public.habits (id, user_id, kind, preset_key, name, active)
-       values ($1, $2, $3, $4, $5, $6)
+      `insert into public.habits (id, user_id, kind, preset_key, name, active, committed_from, paused_through)
+       values ($1, $2, $3, $4, $5, $6, $8, $10)
        on conflict (id) do update set
          kind = excluded.kind, preset_key = excluded.preset_key, name = excluded.name,
-         active = excluded.active, updated_at = now()
+         active = excluded.active,
+         committed_from = case when $7::boolean then excluded.committed_from else public.habits.committed_from end,
+         paused_through = case when $9::boolean then excluded.paused_through else public.habits.paused_through end,
+         updated_at = now()
        where public.habits.user_id = excluded.user_id
        returning id`,
-      [h.id, userId, h.kind, h.kind === 'preset' ? h.presetKey : null, h.name, h.active],
+      [
+        h.id,
+        userId,
+        h.kind,
+        h.kind === 'preset' ? h.presetKey : null,
+        h.name,
+        h.active,
+        h.committedFrom !== undefined,
+        h.committedFrom ?? null,
+        h.pausedThrough !== undefined,
+        h.pausedThrough ?? null,
+      ],
     );
     return (r.rowCount ?? 0) > 0;
   }
@@ -143,12 +158,25 @@ export class SyncRepository {
     return r.rows[0]?.n ?? 0;
   }
 
-  async findHabit(q: Queryable, userId: string, habitId: string): Promise<{ presetKey: string | null } | null> {
-    const r = await q.query<{ preset_key: string | null }>(
-      'select preset_key from public.habits where id = $1 and user_id = $2',
+  async findHabit(
+    q: Queryable,
+    userId: string,
+    habitId: string,
+  ): Promise<{ presetKey: string | null; committedFrom: string | null; pausedThrough: string | null } | null> {
+    const r = await q.query<{ preset_key: string | null; committed_from: string | null; paused_through: string | null }>(
+      `select preset_key, to_char(committed_from, 'YYYY-MM-DD') as committed_from,
+              to_char(paused_through, 'YYYY-MM-DD') as paused_through
+         from public.habits where id = $1 and user_id = $2`,
       [habitId, userId],
     );
-    return r.rows[0] ? { presetKey: r.rows[0].preset_key } : null;
+    const row = r.rows[0];
+    return row ? { presetKey: row.preset_key, committedFrom: row.committed_from, pausedThrough: row.paused_through } : null;
+  }
+
+  /** Under 18 by stored DOB or an unexpired platform age signal (`user_is_minor`). Server-side only (DS-10). */
+  async isMinor(q: Queryable, userId: string): Promise<boolean> {
+    const r = await q.query<{ minor: boolean }>('select public.user_is_minor($1) as minor', [userId]);
+    return r.rows[0]?.minor ?? false;
   }
 
   /** Hard delete; habit_logs cascade. Ledger rows and active days are untouched. */

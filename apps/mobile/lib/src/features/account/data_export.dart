@@ -183,6 +183,9 @@ Future<ExportBundle> collectExport({
           'kind': h.kind,
           'shown': h.active,
           'added': _day(h.createdAt),
+          // W02: the person's own opt-in (RULES.md section 13); null = none.
+          'committedFrom': h.committedFrom,
+          'pausedThrough': h.pausedThrough,
         },
     ],
     habitLogs: [

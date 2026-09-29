@@ -14,6 +14,7 @@ import {
   CHECK_IN_EDIT_WINDOW_MS,
   EDIT_MAX_FUTURE_SKEW_MS,
   habitCreditId,
+  MAX_PAUSE_DAYS,
   SyncService,
   VOICE_CLEANUP_TIMEOUT_MS,
 } from '../../src/sync/sync.service';
@@ -32,7 +33,19 @@ class MemRepo {
     string,
     { user: string; moodId: string; tags: string[]; localDay: string; deviceTs: string; backfill: boolean; voicePath: string | null }
   >();
-  habits = new Map<string, { user: string; kind: string; presetKey: string | null; name: string | null; active: boolean }>();
+  habits = new Map<
+    string,
+    {
+      user: string;
+      kind: string;
+      presetKey: string | null;
+      name: string | null;
+      active: boolean;
+      committedFrom: string | null;
+      pausedThrough: string | null;
+    }
+  >();
+  minors = new Set<string>();
   logs = new Map<string, { user: string; habitId: string; localDay: string }>();
   ledger: { user: string; amount: number; reason: string; sourceId: string; habitKey: string | null; localDay: string }[] = [];
   active = new Set<string>();
@@ -97,7 +110,15 @@ class MemRepo {
   async upsertHabit(
     _: unknown,
     u: string,
-    h: { id: string; kind: string; presetKey?: string | null; name: string | null; active: boolean },
+    h: {
+      id: string;
+      kind: string;
+      presetKey?: string | null;
+      name: string | null;
+      active: boolean;
+      committedFrom?: string | null;
+      pausedThrough?: string | null;
+    },
   ) {
     const cur = this.habits.get(h.id);
     if (cur && cur.user !== u) return false;
@@ -107,8 +128,14 @@ class MemRepo {
       presetKey: h.kind === 'preset' ? (h.presetKey ?? null) : null,
       name: h.name,
       active: h.active,
+      // undefined keeps, null clears (habitPayloadSchema)
+      committedFrom: h.committedFrom === undefined ? (cur?.committedFrom ?? null) : h.committedFrom,
+      pausedThrough: h.pausedThrough === undefined ? (cur?.pausedThrough ?? null) : h.pausedThrough,
     });
     return true;
+  }
+  async isMinor(_: unknown, u: string) {
+    return this.minors.has(u);
   }
   async presetHabitTaken(_: unknown, u: string, presetKey: string, exceptId: string) {
     return [...this.habits.entries()].some(([id, h]) => id !== exceptId && h.user === u && h.kind === 'preset' && h.presetKey === presetKey);
@@ -118,7 +145,7 @@ class MemRepo {
   }
   async findHabit(_: unknown, u: string, id: string) {
     const h = this.habits.get(id);
-    return h && h.user === u ? { presetKey: h.presetKey } : null;
+    return h && h.user === u ? { presetKey: h.presetKey, committedFrom: h.committedFrom, pausedThrough: h.pausedThrough } : null;
   }
   async deleteHabit(_: unknown, u: string, id: string) {
     if (this.habits.get(id)?.user === u) this.habits.delete(id);
@@ -397,6 +424,73 @@ describe('SyncService review fixes', () => {
     const deactivate = { ...habit(c1), payload: { id: c1, kind: 'custom', name: 'h-old', active: false } };
     const r2 = await push(s, [habit(p1, 'breathe'), deactivate, habit(c4)]);
     expect(r2.results.map((x) => x.status)).toEqual(['applied', 'applied', 'applied']);
+  });
+
+  describe('W02 habit commitments (RULES.md §13)', () => {
+    const custom = (id: string, extra: Record<string, unknown> = {}) => ({
+      ...habit(id),
+      payload: { id, kind: 'custom', name: 'Read', active: true, ...extra },
+    });
+    const reasons = async (s: SyncService, ms: unknown[]) => (await push(s, ms)).results.map((x) => x.reason ?? x.status);
+
+    it('stores a commitment and a pause; an omitted field keeps them, null clears them', async () => {
+      const repo = new MemRepo();
+      const s = makeService(repo);
+      const id = uuidv7();
+      expect(await reasons(s, [custom(id, { committedFrom: TODAY, pausedThrough: addDays(TODAY, 5) })])).toEqual(['applied']);
+      expect(repo.habits.get(id)).toMatchObject({ committedFrom: TODAY, pausedThrough: addDays(TODAY, 5) });
+      // an older client renaming the habit sends neither field: nothing is cleared
+      expect(await reasons(s, [custom(id, { name: 'Read more' })])).toEqual(['applied']);
+      expect(repo.habits.get(id)).toMatchObject({ name: 'Read more', committedFrom: TODAY, pausedThrough: addDays(TODAY, 5) });
+      // ending the pause, then the commitment
+      expect(await reasons(s, [custom(id, { pausedThrough: null })])).toEqual(['applied']);
+      expect(repo.habits.get(id)).toMatchObject({ committedFrom: TODAY, pausedThrough: null });
+      expect(await reasons(s, [custom(id, { committedFrom: null })])).toEqual(['applied']);
+      expect(repo.habits.get(id)).toMatchObject({ committedFrom: null, pausedThrough: null });
+    });
+
+    it('never touches the ledger: committing or pausing earns and costs nothing', async () => {
+      const repo = new MemRepo();
+      const s = makeService(repo);
+      const r = await push(s, [custom(uuidv7(), { committedFrom: TODAY })]);
+      expect(r.results.map((x) => x.status)).toEqual(['applied']);
+      expect(repo.ledger).toHaveLength(0);
+      expect(r.snapshot.starlight).toEqual({ total: 0, today: 0 });
+    });
+
+    it('a minor cannot start a commitment, can still track habits, and an unchanged resend is not refused', async () => {
+      const repo = new MemRepo();
+      const s = makeService(repo);
+      const id = uuidv7();
+      repo.minors.add(USER);
+      expect(await reasons(s, [custom(id, { committedFrom: TODAY }), custom(uuidv7())])).toEqual(['commitment_not_available', 'applied']);
+      expect(repo.habits.get(id)).toBeUndefined();
+      // a commitment made as an adult keeps working if a later age signal flags the account
+      const kept = uuidv7();
+      repo.minors.delete(USER);
+      await push(s, [custom(kept, { committedFrom: TODAY })]);
+      repo.minors.add(USER);
+      expect(await reasons(s, [custom(kept, { name: 'Read again', committedFrom: TODAY })])).toEqual(['applied']);
+    });
+
+    it('rejects a pause without a commitment, a start far from today and an over-long pause', async () => {
+      const s = makeService(new MemRepo());
+      expect(await reasons(s, [custom(uuidv7(), { pausedThrough: addDays(TODAY, 3) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: addDays(TODAY, 5) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: addDays(TODAY, -5) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS + 1) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS) })])).toEqual(['applied']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: 'not-a-day' })])).toEqual(['invalid_payload']);
+    });
+
+    it('works for a preset habit too', async () => {
+      const repo = new MemRepo();
+      const s = makeService(repo);
+      const id = uuidv7();
+      const m = { ...habit(id, 'breathe'), payload: { id, kind: 'preset', presetKey: 'breathe', name: null, active: true, committedFrom: TODAY } };
+      expect(await reasons(s, [m])).toEqual(['applied']);
+      expect(repo.habits.get(id)?.committedFrom).toBe(TODAY);
+    });
   });
 
   it("judges timing in the mutation's own tz: a check-in stamped in New York is live, not a backfill", async () => {

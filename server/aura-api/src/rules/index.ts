@@ -10,3 +10,4 @@ export * from './streak';
 export * from './nebula';
 export * from './insights';
 export * from './look-back';
+export * from './world';

@@ -216,3 +216,30 @@ parses to nothing. Compare numerically part by part, missing parts are 0; the bu
 both sides have one**. An update is required only when both versions parse and the installed one is lower
 (fail open: an unreadable version on either side never blocks the app). Dart: `packages/aura_domain`
 `app_version.dart`; TS: `server/aura-api/src/remote-config/app-version.ts`.
+
+## 13. World objects: growth and opt-in decay (`world.json`, presentation-only)
+
+Rules for how a habit appears in the personal 3D world (see `docs/releases/NEXT_RELEASE_PLAN.md`, "Revision 29 Sep"). They run
+**on the device only** and read the person's own habit logs; the TypeScript copy exists so both engines keep passing the vectors,
+and no endpoint uses it. **They never touch the ledger:** nothing here awards Starlight, changes a stage, glow streak, rest bank,
+keepsake or share milestone, and nothing here is pushed or shared. A world object is a *view* of habit logs. Every case has a `kind`.
+
+- **`stage`** — `growthStage(distinctLoggedDays)`: the number of distinct Aura days on which the habit has a live (not deleted)
+  log, matched on each log's stamped `localDay`. `seed` 0 · `sprout` 1 · `young` 4 · `grown` 10 · `flourishing` 25 · `ancient` 60.
+  Growth is **permanent progress**: it depends only on the count, so a missed day can never lower it. (Deleting a log lowers the
+  count, exactly as the log itself is gone; that is a correction, not a penalty.)
+- **`eligible`** — `decayEligible({optedIn, ageYears})` = `optedIn && ageYears ≥ 18`. Decay is **off by default, chosen by the
+  person, and never available under 18** (owner default, PRD D2; revisit only with a product and safety decision). A person who is
+  not eligible sees every object `thriving`, whatever they have logged.
+- **`vitality`** — `habitVitality({decayActive, committedFrom, lastLogDay, pausedThrough, today})`. The per-habit **commitment**
+  ("Treat this as a commitment") *is* the opt-in: there is no separate global setting to sync. `decayActive` is
+  `decayEligible(optedIn: the person has at least one commitment, ageYears)`; it stores nothing and only adds the age gate.
+  The columns are `habits.committed_from` / `habits.paused_through` (W02, migration `…36_habit_commitments`; server refuses a
+  minor's commitment: `contracts/api/v1.md`). If `decayActive` is false or `committedFrom` is null → `thriving`. Otherwise `anchor` = the latest of `committedFrom`, `lastLogDay` and `pausedThrough` (nulls ignored), and
+  `gap = max(0, days(today − anchor) − 1)`: whole Aura days missed, so *today* (still open) and the day after a log never count.
+  `thriving` gap 0–1 · `dimmed` 2–3 · `wilting` 4–6 · `dormant` ≥ 7. Nothing is lower than `dormant`: an object never disappears,
+  never loses its growth stage and is never deleted. **One log today restores `thriving` at once** (gap 0). `pausedThrough` is a
+  person-chosen pause (holiday, illness): while `today ≤ pausedThrough` the anchor is at least today, so nothing decays.
+  Rest days (§7) do **not** bridge vitality: the stakes are the person's own choice, unlike the automatic Resting Nebula, which
+  this rule never reads or changes. Copy for `dimmed`/`wilting`/`dormant` is descriptive and warm ("resting", "waiting for you"),
+  never "dead", "lost" or a number of missed days.

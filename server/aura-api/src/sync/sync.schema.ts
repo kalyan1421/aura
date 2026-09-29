@@ -97,6 +97,16 @@ const optionalName = z
   .nullish()
   .transform((v) => v ?? null);
 
+/**
+ * W02 commitment days (RULES.md §13). `undefined` keeps what the server has (an older client editing a habit's name
+ * never clears a commitment); `null` clears it.
+ */
+const commitmentDay = z
+  .string()
+  .refine(isLocalDay, 'must be a real date YYYY-MM-DD')
+  .nullable()
+  .optional();
+
 export const habitPayloadSchema = z.discriminatedUnion('kind', [
   z.object({
     id: uuid,
@@ -104,6 +114,8 @@ export const habitPayloadSchema = z.discriminatedUnion('kind', [
     presetKey: z.string().min(1).max(64),
     name: optionalName,
     active: z.boolean().default(true),
+    committedFrom: commitmentDay,
+    pausedThrough: commitmentDay,
   }),
   z.object({
     id: uuid,
@@ -111,6 +123,8 @@ export const habitPayloadSchema = z.discriminatedUnion('kind', [
     presetKey: z.null().optional(),
     name: z.string().trim().min(1),
     active: z.boolean().default(true),
+    committedFrom: commitmentDay,
+    pausedThrough: commitmentDay,
   }),
 ]);
 export type HabitPayload = z.infer<typeof habitPayloadSchema>;

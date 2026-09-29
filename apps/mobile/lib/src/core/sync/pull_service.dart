@@ -189,7 +189,8 @@ class PullService {
       'id,mood_id,quadrant,tags,note_ct,voice_path,local_day,device_ts,source,'
       'updated_at';
   static const String _habitColumns =
-      'id,kind,preset_key,name,active,created_at,updated_at';
+      'id,kind,preset_key,name,active,created_at,updated_at,'
+      'committed_from,paused_through';
   static const String _logColumns = 'id,habit_id,local_day,device_ts,server_ts';
 
   /// Server tombstones are kept this long (server `SYNC_TOMBSTONE_RETENTION_DAYS`
@@ -379,6 +380,8 @@ class PullService {
         active: Value((h['active'] as bool?) ?? true),
         updatedAt: Value(DateTime.parse(h['updated_at'] as String).toUtc()),
         synced: const Value(true),
+        committedFrom: Value(h['committed_from'] as String?),
+        pausedThrough: Value(h['paused_through'] as String?),
       ),
     );
   }
@@ -532,6 +535,8 @@ class PullService {
               createdAt: DateTime.parse(h['created_at'] as String).toUtc(),
               updatedAt: DateTime.parse(h['updated_at'] as String).toUtc(),
               synced: const Value(true),
+              committedFrom: Value(h['committed_from'] as String?),
+              pausedThrough: Value(h['paused_through'] as String?),
             ),
             mode: InsertMode.insertOrIgnore,
           );

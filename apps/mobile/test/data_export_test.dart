@@ -74,6 +74,8 @@ Future<void> _seed(AppDatabase db) async {
           presetKey: const Value('hydrate'),
           createdAt: at,
           updatedAt: at,
+          committedFrom: const Value('2026-10-01'),
+          pausedThrough: const Value('2026-10-12'),
         ),
       );
   await db
@@ -164,6 +166,9 @@ void main() {
       'from': 'app',
     });
     expect(b.habits.single['name'], 'Hydrate');
+    // W02: the person's own commitment is part of their data.
+    expect(b.habits.single['committedFrom'], '2026-10-01');
+    expect(b.habits.single['pausedThrough'], '2026-10-12');
     expect(b.habitLogs.single, {'habit': 'Hydrate', 'day': '2026-10-08'});
 
     final sealed = b.capsules.firstWhere((c) => c['opened'] == false);

@@ -1013,6 +1013,28 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, HabitRow> {
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _committedFromMeta = const VerificationMeta(
+    'committedFrom',
+  );
+  @override
+  late final GeneratedColumn<String> committedFrom = GeneratedColumn<String>(
+    'committed_from',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pausedThroughMeta = const VerificationMeta(
+    'pausedThrough',
+  );
+  @override
+  late final GeneratedColumn<String> pausedThrough = GeneratedColumn<String>(
+    'paused_through',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1023,6 +1045,8 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, HabitRow> {
     createdAt,
     updatedAt,
     synced,
+    committedFrom,
+    pausedThrough,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1089,6 +1113,24 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, HabitRow> {
         synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
       );
     }
+    if (data.containsKey('committed_from')) {
+      context.handle(
+        _committedFromMeta,
+        committedFrom.isAcceptableOrUnknown(
+          data['committed_from']!,
+          _committedFromMeta,
+        ),
+      );
+    }
+    if (data.containsKey('paused_through')) {
+      context.handle(
+        _pausedThroughMeta,
+        pausedThrough.isAcceptableOrUnknown(
+          data['paused_through']!,
+          _pausedThroughMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1130,6 +1172,14 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, HabitRow> {
         DriftSqlType.bool,
         data['${effectivePrefix}synced'],
       )!,
+      committedFrom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}committed_from'],
+      ),
+      pausedThrough: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}paused_through'],
+      ),
     );
   }
 
@@ -1148,6 +1198,14 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool synced;
+
+  /// W02 (RULES.md section 13): the Aura day (`YYYY-MM-DD`) the person chose
+  /// "treat this as a commitment"; `null` = not a commitment, never decays.
+  /// Schema v6.
+  final String? committedFrom;
+
+  /// W02: a person-chosen pause; needs [committedFrom]. Schema v6.
+  final String? pausedThrough;
   const HabitRow({
     required this.id,
     required this.kind,
@@ -1157,6 +1215,8 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
     required this.createdAt,
     required this.updatedAt,
     required this.synced,
+    this.committedFrom,
+    this.pausedThrough,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1173,6 +1233,12 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['synced'] = Variable<bool>(synced);
+    if (!nullToAbsent || committedFrom != null) {
+      map['committed_from'] = Variable<String>(committedFrom);
+    }
+    if (!nullToAbsent || pausedThrough != null) {
+      map['paused_through'] = Variable<String>(pausedThrough);
+    }
     return map;
   }
 
@@ -1188,6 +1254,12 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       synced: Value(synced),
+      committedFrom: committedFrom == null && nullToAbsent
+          ? const Value.absent()
+          : Value(committedFrom),
+      pausedThrough: pausedThrough == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pausedThrough),
     );
   }
 
@@ -1205,6 +1277,8 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       synced: serializer.fromJson<bool>(json['synced']),
+      committedFrom: serializer.fromJson<String?>(json['committedFrom']),
+      pausedThrough: serializer.fromJson<String?>(json['pausedThrough']),
     );
   }
   @override
@@ -1219,6 +1293,8 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'synced': serializer.toJson<bool>(synced),
+      'committedFrom': serializer.toJson<String?>(committedFrom),
+      'pausedThrough': serializer.toJson<String?>(pausedThrough),
     };
   }
 
@@ -1231,6 +1307,8 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? synced,
+    Value<String?> committedFrom = const Value.absent(),
+    Value<String?> pausedThrough = const Value.absent(),
   }) => HabitRow(
     id: id ?? this.id,
     kind: kind ?? this.kind,
@@ -1240,6 +1318,12 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     synced: synced ?? this.synced,
+    committedFrom: committedFrom.present
+        ? committedFrom.value
+        : this.committedFrom,
+    pausedThrough: pausedThrough.present
+        ? pausedThrough.value
+        : this.pausedThrough,
   );
   HabitRow copyWithCompanion(HabitsCompanion data) {
     return HabitRow(
@@ -1251,6 +1335,12 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       synced: data.synced.present ? data.synced.value : this.synced,
+      committedFrom: data.committedFrom.present
+          ? data.committedFrom.value
+          : this.committedFrom,
+      pausedThrough: data.pausedThrough.present
+          ? data.pausedThrough.value
+          : this.pausedThrough,
     );
   }
 
@@ -1264,7 +1354,9 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
           ..write('active: $active, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('synced: $synced')
+          ..write('synced: $synced, ')
+          ..write('committedFrom: $committedFrom, ')
+          ..write('pausedThrough: $pausedThrough')
           ..write(')'))
         .toString();
   }
@@ -1279,6 +1371,8 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
     createdAt,
     updatedAt,
     synced,
+    committedFrom,
+    pausedThrough,
   );
   @override
   bool operator ==(Object other) =>
@@ -1291,7 +1385,9 @@ class HabitRow extends DataClass implements Insertable<HabitRow> {
           other.active == this.active &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.synced == this.synced);
+          other.synced == this.synced &&
+          other.committedFrom == this.committedFrom &&
+          other.pausedThrough == this.pausedThrough);
 }
 
 class HabitsCompanion extends UpdateCompanion<HabitRow> {
@@ -1303,6 +1399,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<bool> synced;
+  final Value<String?> committedFrom;
+  final Value<String?> pausedThrough;
   final Value<int> rowid;
   const HabitsCompanion({
     this.id = const Value.absent(),
@@ -1313,6 +1411,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.synced = const Value.absent(),
+    this.committedFrom = const Value.absent(),
+    this.pausedThrough = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   HabitsCompanion.insert({
@@ -1324,6 +1424,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
     required DateTime createdAt,
     required DateTime updatedAt,
     this.synced = const Value.absent(),
+    this.committedFrom = const Value.absent(),
+    this.pausedThrough = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        kind = Value(kind),
@@ -1338,6 +1440,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<bool>? synced,
+    Expression<String>? committedFrom,
+    Expression<String>? pausedThrough,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1349,6 +1453,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (synced != null) 'synced': synced,
+      if (committedFrom != null) 'committed_from': committedFrom,
+      if (pausedThrough != null) 'paused_through': pausedThrough,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1362,6 +1468,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<bool>? synced,
+    Value<String?>? committedFrom,
+    Value<String?>? pausedThrough,
     Value<int>? rowid,
   }) {
     return HabitsCompanion(
@@ -1373,6 +1481,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       synced: synced ?? this.synced,
+      committedFrom: committedFrom ?? this.committedFrom,
+      pausedThrough: pausedThrough ?? this.pausedThrough,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1404,6 +1514,12 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
+    if (committedFrom.present) {
+      map['committed_from'] = Variable<String>(committedFrom.value);
+    }
+    if (pausedThrough.present) {
+      map['paused_through'] = Variable<String>(pausedThrough.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1421,6 +1537,8 @@ class HabitsCompanion extends UpdateCompanion<HabitRow> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('synced: $synced, ')
+          ..write('committedFrom: $committedFrom, ')
+          ..write('pausedThrough: $pausedThrough, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5691,6 +5809,8 @@ typedef $$HabitsTableCreateCompanionBuilder = HabitsCompanion Function({
   required DateTime createdAt,
   required DateTime updatedAt,
   Value<bool> synced,
+  Value<String?> committedFrom,
+  Value<String?> pausedThrough,
   Value<int> rowid,
 });
 typedef $$HabitsTableUpdateCompanionBuilder = HabitsCompanion Function({
@@ -5702,6 +5822,8 @@ typedef $$HabitsTableUpdateCompanionBuilder = HabitsCompanion Function({
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> synced,
+  Value<String?> committedFrom,
+  Value<String?> pausedThrough,
   Value<int> rowid,
 });
 
@@ -5751,6 +5873,16 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<bool> get synced => $composableBuilder(
     column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get committedFrom => $composableBuilder(
+    column: $table.committedFrom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pausedThrough => $composableBuilder(
+    column: $table.pausedThrough,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -5803,6 +5935,16 @@ class $$HabitsTableOrderingComposer
     column: $table.synced,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get committedFrom => $composableBuilder(
+    column: $table.committedFrom,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pausedThrough => $composableBuilder(
+    column: $table.pausedThrough,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HabitsTableAnnotationComposer
@@ -5837,6 +5979,16 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<String> get committedFrom => $composableBuilder(
+    column: $table.committedFrom,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get pausedThrough => $composableBuilder(
+    column: $table.pausedThrough,
+    builder: (column) => column,
+  );
 }
 
 class $$HabitsTableTableManager
@@ -5875,6 +6027,8 @@ class $$HabitsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<bool> synced = const Value.absent(),
+                Value<String?> committedFrom = const Value.absent(),
+                Value<String?> pausedThrough = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
@@ -5885,6 +6039,8 @@ class $$HabitsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synced: synced,
+                committedFrom: committedFrom,
+                pausedThrough: pausedThrough,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -5897,6 +6053,8 @@ class $$HabitsTableTableManager
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<bool> synced = const Value.absent(),
+                Value<String?> committedFrom = const Value.absent(),
+                Value<String?> pausedThrough = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
@@ -5907,6 +6065,8 @@ class $$HabitsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 synced: synced,
+                committedFrom: committedFrom,
+                pausedThrough: pausedThrough,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
