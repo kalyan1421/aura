@@ -101,6 +101,11 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
   WorldPoint _to = const WorldPoint(0, 0.16, 0);
   late final AnimationController _walk;
 
+  /// W05 camera follow: 0 is the whole-island view, 1 follows the companion.
+  /// Eased in when free roam starts and out when it ends; never under
+  /// reduced motion, where the island stays framed and still.
+  late final AnimationController _follow;
+
   /// T04: where the companion faces, and how far it has walked in free roam
   /// (its stride follows the distance, not the clock).
   double _heading = 0;
@@ -171,6 +176,10 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
+    _follow = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
     _roamTicker = createTicker(_onRoamTick);
     _momentPlay =
         AnimationController(
@@ -192,7 +201,12 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (reduceMotionOf(context)) _walk.value = 1;
+    if (reduceMotionOf(context)) {
+      _walk.value = 1;
+      _follow.value = 0;
+    } else if (_freeRoam && _follow.value == 0) {
+      _follow.forward();
+    }
     // Also runs when this route becomes current again (a sheet or a pushed
     // care flow closed): a moment waiting meanwhile plays now.
     if (ModalRoute.isCurrentOf(context) ?? true) _playSoon();
@@ -204,6 +218,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
       _walk.value = 1;
       _setRoamInput(RoamInput.zero);
       if (_playing) _momentPlay.value = 1;
+      if (_follow.isAnimating) _follow.value = _freeRoam && _following ? 1 : 0;
     }
   }
 
@@ -214,6 +229,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     _roamTicker?.dispose();
     _moved.dispose();
     _momentPlay.dispose();
+    _follow.dispose();
     _walk.dispose();
     super.dispose();
   }
@@ -268,6 +284,27 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
   void _setFreeRoam(bool on) {
     _setRoamInput(RoamInput.zero);
     setState(() => _freeRoam = on);
+    if (!_following) {
+      _follow.value = 0;
+    } else if (on) {
+      _follow.forward();
+    } else {
+      _follow.reverse();
+    }
+  }
+
+  /// Whether the camera follows in free roam: not under reduced motion.
+  bool get _following => !(mounted && reduceMotionOf(context));
+
+  /// The camera the scene is drawn and picked with. The person's own orbit
+  /// and zoom ([_camera]) are kept; in free roam only its look-at point moves
+  /// with the companion. Walking reads [_camera], so its directions never
+  /// shift while the view follows.
+  UniverseCamera get _view {
+    final weight = Curves.easeInOut.transform(_follow.value);
+    return weight == 0
+        ? _camera
+        : _camera.lookingAt(followTarget(_position, weight));
   }
 
   // ---- world moments (T04) --------------------------------------------------
@@ -292,7 +329,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     });
     if (still) return;
     _cheerFrom = _heading;
-    _cheerTo = headingToward(_position, _camera.eye, fallback: _heading);
+    _cheerTo = headingToward(_position, _view.eye, fallback: _heading);
     _momentPlay.forward(from: 0);
   }
 
@@ -393,6 +430,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       _walk.value = 1;
                       _setRoamInput(RoamInput.zero);
                       if (_playing) _momentPlay.value = 1;
+                      _follow.value = 0;
                       setState(() {
                         _listOnly = !_listOnly;
                         _freeRoam = false;
@@ -452,10 +490,11 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                               _walk,
                               _moved,
                               _momentPlay,
+                              _follow,
                             ]),
                             builder: (context, _) => UniverseSceneView(
                               mesh: _mesh!,
-                              camera: _camera,
+                              camera: _view,
                               companion: _position,
                               pose: _pose,
                               changes: changes,

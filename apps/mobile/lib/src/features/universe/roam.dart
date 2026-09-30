@@ -183,3 +183,17 @@ UniverseDestination? nearestPlace(WorldPoint p) {
 extension RoamStop on UniverseDestination {
   WorldPoint get walkStop => keepOnIsland(avatarStop);
 }
+
+/// How much of the way the free-roam camera follows the companion: at 1 it
+/// would stay dead centre; a little less keeps more of the island in view
+/// when the companion walks to the edge.
+const double roamFollowReach = 0.8;
+
+/// Where the camera looks in free roam: the island's centre blended toward
+/// the companion by [weight] (0 is the whole-island view, 1 is following).
+/// Only the look-at point moves: yaw, pitch and zoom stay the person's own,
+/// so walking stays camera-relative without the view turning under them.
+WorldPoint followTarget(WorldPoint companion, double weight) {
+  final w = weight.clamp(0.0, 1.0) * roamFollowReach;
+  return WorldPoint(companion.x * w, UniverseCamera.home.y, companion.z * w);
+}

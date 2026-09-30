@@ -161,29 +161,47 @@ class UniverseCamera {
     this.yaw = 0.18,
     this.pitch = 0.66,
     this.distance = 7.8,
+    this.target = home,
   });
+
+  /// The island's centre, where the camera looks unless it follows someone.
+  static const WorldPoint home = WorldPoint(0, 0.25, 0);
+
   final double yaw;
   final double pitch;
   final double distance;
+
+  /// The point the camera looks at and orbits around: [home], or in free
+  /// roam a point that follows the companion (W05 camera follow).
+  final WorldPoint target;
 
   UniverseCamera orbit(double horizontal, double vertical) => UniverseCamera(
     yaw: yaw + horizontal,
     pitch: (pitch + vertical).clamp(0.35, 1.15),
     distance: distance,
+    target: target,
   );
 
   UniverseCamera zoom(double delta) => UniverseCamera(
     yaw: yaw,
     pitch: pitch,
     distance: (distance + delta).clamp(6.5, 11),
+    target: target,
   );
 
-  WorldPoint get eye => WorldPoint(
-    math.sin(yaw) * math.cos(pitch) * distance,
-    math.sin(pitch) * distance,
-    math.cos(yaw) * math.cos(pitch) * distance,
-  );
-  WorldPoint get forward => (const WorldPoint(0, 0.25, 0) - eye).unit;
+  /// The same view, aimed at [point] instead: yaw, pitch and distance stay.
+  UniverseCamera lookingAt(WorldPoint point) =>
+      UniverseCamera(yaw: yaw, pitch: pitch, distance: distance, target: point);
+
+  WorldPoint get eye =>
+      target -
+      home +
+      WorldPoint(
+        math.sin(yaw) * math.cos(pitch) * distance,
+        math.sin(pitch) * distance,
+        math.cos(yaw) * math.cos(pitch) * distance,
+      );
+  WorldPoint get forward => (target - eye).unit;
   WorldPoint get right => forward.cross(const WorldPoint(0, 1, 0)).unit;
   WorldPoint get up => right.cross(forward).unit;
 
@@ -227,6 +245,20 @@ class UniverseCamera {
     }
     return nearest;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is UniverseCamera &&
+      other.yaw == yaw &&
+      other.pitch == pitch &&
+      other.distance == distance &&
+      other.target.x == target.x &&
+      other.target.y == target.y &&
+      other.target.z == target.z;
+
+  @override
+  int get hashCode =>
+      Object.hash(yaw, pitch, distance, target.x, target.y, target.z);
 }
 
 class WorldFace {
