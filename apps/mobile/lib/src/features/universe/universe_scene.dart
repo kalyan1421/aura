@@ -40,7 +40,13 @@ enum UniverseDestination {
     observatory => const WorldPoint(1.25, 0.15, -1.2),
   };
 
-  WorldPoint get avatarStop => position * 0.7;
+  /// Where the companion stops for this place. The grove's plaza holds up to
+  /// nine plants (W03), so it waits at the plaza's edge, facing in, where it
+  /// never stands inside a plant or hides the one a moment is about (T04).
+  WorldPoint get avatarStop => switch (this) {
+    grove => position + WorldPoint(-position.x, 0, -position.z).unit * 0.98,
+    _ => position * 0.7,
+  };
 }
 
 /// Read existing progress; never create a second reward ledger. Today’s

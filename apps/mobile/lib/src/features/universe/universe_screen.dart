@@ -374,6 +374,11 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                 ],
                 Text(l.universe_intro, style: t.bodyLarge),
                 const SizedBox(height: 12),
+                // First, so it is seen and announced as the world opens.
+                if (_moment case final moment?) ...[
+                  _WorldChanges(moment: moment),
+                  const SizedBox(height: 12),
+                ],
                 Align(
                   alignment: AlignmentDirectional.centerEnd,
                   child: TextButton.icon(
@@ -510,10 +515,6 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       onNudge: _nudge,
                     ),
                   ],
-                  const SizedBox(height: 16),
-                ],
-                if (_moment case final moment?) ...[
-                  _WorldChanges(moment: moment),
                   const SizedBox(height: 16),
                 ],
                 Wrap(
