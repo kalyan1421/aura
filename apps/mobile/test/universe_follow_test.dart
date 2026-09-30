@@ -294,19 +294,30 @@ void main() {
       await end(tester);
     });
 
-    testWidgets('the list view resets the view to the whole island', (
+    testWidgets('back from the list view the camera is already where the mode '
+        'puts it: following in free roam, the whole island otherwise', (
       tester,
     ) async {
+      Future<void> listAndBack() async {
+        await tester.tap(find.byKey(const ValueKey('universe-view-toggle')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('universe-view-toggle')));
+        await tester.pump();
+      }
+
       await pump(tester);
       await tester.tap(find.byKey(const ValueKey('universe-grove')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Free roam'));
       await tester.pumpAndSettle();
-      expect(scene(tester).camera.target, isNot(UniverseCamera.home));
-      await tester.tap(find.byKey(const ValueKey('universe-view-toggle')));
+      await listAndBack();
+      // The view is new, so it starts in place rather than easing there.
+      final s = scene(tester);
+      _near(s.camera.target, followTarget(s.companion, 1));
+
+      await tester.tap(find.text('Tap to travel'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('universe-view-toggle')));
-      await tester.pumpAndSettle();
+      await listAndBack();
       _near(scene(tester).camera.target, UniverseCamera.home);
       await end(tester);
     });

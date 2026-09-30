@@ -38,6 +38,11 @@ abstract final class KvKeys {
   /// once. Device-only presentation state; losing it only resets the baseline.
   static const String worldSeen = 'universe.world_seen';
 
+  /// W05: the person last chose free roam in the universe (`roam`); absent
+  /// is the default tap-to-travel. A device-only way-of-looking preference,
+  /// wiped with the person's local data like the rest of the universe's.
+  static const String universeRoamMode = 'universe.roam_mode';
+
   /// W06: the person turned on "use my steps" (`1`). Only this flag is kept;
   /// the step count itself is never stored, logged or uploaded.
   static const String healthStepsEnabled = 'health.steps_enabled';

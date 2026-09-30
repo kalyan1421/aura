@@ -22,6 +22,7 @@ import '../health/health_providers.dart';
 import 'real_life_card.dart';
 import 'roam.dart';
 import 'roam_controls.dart';
+import 'roam_mode.dart';
 import 'universe_scene.dart';
 import 'sky.dart';
 import 'universe_scene_view.dart';
@@ -92,7 +93,12 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
   bool _listOnly = false;
 
   /// W05: optional free-roam mode. Tap-to-travel and the list stay available.
+  /// It opens in the mode the person last chose ([RoamModePreference]).
   bool _freeRoam = false;
+
+  /// The person used the mode switch this visit: the remembered mode, which
+  /// may arrive a moment after opening, never overrides that choice.
+  bool _modeChosen = false;
   RoamInput _roamInput = RoamInput.zero;
   Ticker? _roamTicker;
   Duration _lastRoamTick = Duration.zero;
@@ -196,6 +202,12 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     ref.listenManual(worldMomentsProvider, (_, next) {
       if (next != null) _playSoon();
     });
+    // Open in the mode chosen last time. Out of initState: it sets state.
+    ref.listenManual(roamModePreferenceProvider, (_, next) {
+      if (next.value case final freeRoam?) {
+        Future.microtask(() => _restoreMode(freeRoam));
+      }
+    }, fireImmediately: true);
   }
 
   @override
@@ -279,6 +291,20 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     if (near != null && near != _selected) {
       setState(() => _selected = near);
     }
+  }
+
+  /// The remembered mode arrived. The camera eases onto the companion as it
+  /// does when the person switches.
+  void _restoreMode(bool freeRoam) {
+    if (_disposed || !mounted || _modeChosen || _listOnly) return;
+    if (freeRoam != _freeRoam) _setFreeRoam(freeRoam);
+  }
+
+  /// The person chose a mode on the switch: use it and remember it.
+  void _chooseMode(bool freeRoam) {
+    _modeChosen = true;
+    _setFreeRoam(freeRoam);
+    ref.read(roamModePreferenceProvider.notifier).choose(freeRoam: freeRoam);
   }
 
   void _setFreeRoam(bool on) {
@@ -430,10 +456,16 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       _walk.value = 1;
                       _setRoamInput(RoamInput.zero);
                       if (_playing) _momentPlay.value = 1;
-                      _follow.value = 0;
+                      // The list has no roam controls. Back in the world, the
+                      // remembered mode returns (the view is new, so no ease).
+                      final toWorld = _listOnly;
+                      final freeRoam =
+                          toWorld &&
+                          (ref.read(roamModePreferenceProvider).value ?? false);
+                      _follow.value = freeRoam && _following ? 1 : 0;
                       setState(() {
                         _listOnly = !_listOnly;
-                        _freeRoam = false;
+                        _freeRoam = freeRoam;
                       });
                     },
                   ),
@@ -455,7 +487,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       ),
                     ],
                     selected: {_freeRoam},
-                    onSelectionChanged: (v) => _setFreeRoam(v.first),
+                    onSelectionChanged: (v) => _chooseMode(v.first),
                   ),
                   const SizedBox(height: 12),
                   ValueListenableBuilder<bool>(
