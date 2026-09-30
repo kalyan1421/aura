@@ -35,6 +35,13 @@ export class ModerationController {
     return this.console.stats();
   }
 
+  /** W07 (product measurement, not moderation): Owner and the Read-only analyst only. */
+  @Get('stats/commitments')
+  @AdminRoles('owner', 'analyst')
+  commitmentStats(): ReturnType<ModerationConsoleService['commitmentOutcomes']> {
+    return this.console.commitmentOutcomes();
+  }
+
   @Get('queue')
   @AdminRoles('owner', 'moderator')
   async queue(

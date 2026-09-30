@@ -345,6 +345,20 @@ export interface Stats {
   generatedAt: string;
 }
 
+/** W07: aggregate outcomes of habit commitments (`GET /admin/stats/commitments`). */
+export interface CommitmentOutcomes {
+  rows: Array<{
+    measure: 'recovery_7d' | 'lapse_14d' | 'logs_14d_change' | 'ended_30d';
+    cohort: 'committed' | 'control' | 'difference';
+    users: number;
+    units: number;
+    /** `null` when the cell has fewer than 20 people (suppressed). */
+    value: number | null;
+    suppressed: boolean;
+  }>;
+  generatedAt: string;
+}
+
 /** Crisis lexicon versions (contracts/api/v1.md "Crisis lexicon versions"; src/remote-config). */
 export interface LexiconVersionSummary {
   version: number;

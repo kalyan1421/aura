@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { AutoRefresh } from '@/components/client';
 import { LaneBadge, PageHead, When } from '@/components/ui';
 import { apiGet } from '@/lib/api';
@@ -60,6 +61,9 @@ export default async function StatsPage() {
           <div className="num">{s.pagesOpen}</div>
         </div>
       </div>
+      <p className="small spaced">
+        <Link href="/stats/commitments">Habit commitments: do they help?</Link>
+      </p>
     </>
   );
 }

@@ -47,6 +47,10 @@ abstract final class KvKeys {
   /// the step count itself is never stored, logged or uploaded.
   static const String healthStepsEnabled = 'health.steps_enabled';
 
+  /// W06 (iOS): the system Health prompt has been shown once. HealthKit hides
+  /// whether a *read* was allowed, so this is all the app can know.
+  static const String healthAsked = 'health.asked';
+
   /// Push soft ask answered: `{answer: allow|notNow, at}`. Nothing is asked
   /// or registered before this exists (PRD 15-permissions).
   static const String pushSoftAsk = 'push.soft_ask';

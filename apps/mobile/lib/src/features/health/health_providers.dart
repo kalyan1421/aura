@@ -1,16 +1,29 @@
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../core/db/kv_store.dart';
 import '../../core/providers.dart';
+import 'health_plugin_platform.dart';
 import 'health_source.dart';
+import 'platform_health_source.dart';
 
 part 'health_providers.g.dart';
 
-/// The platform health adapter. Override in the app (or a test) once an
-/// adapter exists; the default keeps every health surface hidden.
+/// The platform health adapter (HealthKit on iOS, Health Connect on Android);
+/// anywhere else every health surface stays hidden. Tests override this.
 @Riverpod(keepAlive: true)
-HealthSource healthSource(Ref ref) => const UnavailableHealthSource();
+HealthSource healthSource(Ref ref) {
+  final platform = defaultTargetPlatform;
+  if (kIsWeb ||
+      (platform != TargetPlatform.iOS && platform != TargetPlatform.android)) {
+    return const UnavailableHealthSource();
+  }
+  return PlatformHealthSource(
+    platform: HealthPluginPlatform(),
+    kv: ref.watch(kvStoreProvider),
+  );
+}
 
 @riverpod
 Future<HealthAvailability> healthAvailability(Ref ref) async {

@@ -9,6 +9,8 @@ import 'package:aura/src/core/sync/sync_service.dart';
 import 'package:aura/src/core/theme/app_theme.dart';
 import 'package:aura/src/core/time/clock.dart';
 import 'package:aura/src/features/auth/auth_repository.dart';
+import 'package:aura/src/features/health/health_providers.dart';
+import 'package:aura/src/features/health/health_source.dart';
 import 'package:aura/src/features/avatar/avatar_assets.dart';
 import 'package:aura/src/features/onboarding/gate_controller.dart';
 import 'package:aura/src/features/push/push_messaging.dart';
@@ -77,9 +79,14 @@ List<Override> testOverrides({
   TimeContext? time,
   AuthRepository auth = const UnavailableAuthRepository(),
   MemoryWidgetHost? widgetHost,
+  HealthSource? health,
 }) {
   final t = time ?? testTime();
   return [
+    // No health plugin channel in tests unless a test brings its own source.
+    healthSourceProvider.overrideWithValue(
+      health ?? const UnavailableHealthSource(),
+    ),
     appDatabaseProvider.overrideWithValue(db),
     secureStoreProvider.overrideWithValue(secure ?? MemorySecureStore()),
     timeContextProvider.overrideWithValue(t),

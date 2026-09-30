@@ -37,6 +37,17 @@
 	     (PRD 15-permissions wording). Foreground recording only. -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To record a voice note, Aura needs your microphone. Recordings stay private to you and are never shared in rooms.</string>
+	<!-- T01: lets the GPU renderer for the personal universe start (Flutter GPU,
+	     flutter_scene). The renderer itself is off unless a build sets
+	     the AURA_NATIVE_SCENE dart define to true. -->
+	<key>FLTEnableFlutterGPU</key>
+	<true/>
+	<!-- W06 opt-in step-lit path stones: read-only step count from Apple Health,
+	     asked only from the universe's card after its in-app explainer
+	     (PRD 15-permissions "Health steps"). No write access is requested, so
+	     there is no NSHealthUpdateUsageDescription. -->
+	<key>NSHealthShareUsageDescription</key>
+	<string>If you turn it on, Aura reads your step count so today's walk can make the path stones in your world glow. It stays on this phone and is never uploaded or shown.</string>
 	<!-- F4 capsule photos come from PHPicker with requestFullMetadata: false,
 	     which never asks for library access (PRD 15-permissions). The key is
 	     here only because App Store review requires it of any binary that

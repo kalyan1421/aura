@@ -63,7 +63,9 @@ select is(
         'admin_deletion_cases_list','admin_extend_evidence_hold','admin_hide_account_from_rooms','admin_item_crisis_flagged',
         'admin_lift_sanction','admin_record_mandatory_report','admin_reflection_author','admin_reflection_decide',
         'admin_reflection_escalate','admin_report_for_action','admin_resolve_report', -- F6: migration 18
-        'admin_staff_add','admin_staff_list','admin_staff_update','user_is_minor'],
+        'admin_staff_add','admin_staff_list','admin_staff_update',
+        'commitment_outcomes', -- W07: aggregates only (migration 37)
+        'user_is_minor'],
   'aura_admin can execute only the listed SECURITY DEFINER functions');
 select is_empty(
   $$ select p.proname || ' / ' || r from pg_proc p join pg_namespace n on n.oid = p.pronamespace

@@ -1194,6 +1194,25 @@ describe('Admin console v0 (e2e, live Supabase Auth + TOTP, Postgres, Redis, Mai
   });
 
   // ================================================================== the 2-hour queue session cap
+  describe('W07: commitment outcomes are aggregate-only, for the Owner and the analyst', () => {
+    it('owner and analyst get the aggregate, a moderator is refused, and small cells are hidden', async () => {
+      const analyst = await staff('adm-analyst-w07', 'analyst');
+      const ok = await adm(analyst, 'get', '/admin/stats/commitments');
+      expect(ok.status).toBe(200);
+      expect(ok.body).toEqual({ rows: expect.any(Array), generatedAt: expect.any(String) });
+      for (const r of ok.body.rows as Array<Record<string, unknown>>) {
+        // Nothing that could identify a person: only these columns, and never a value for fewer than 20 people.
+        expect(Object.keys(r).sort()).toEqual(['cohort', 'measure', 'suppressed', 'units', 'users', 'value']);
+        if ((r.users as number) < 20) {
+          expect(r.value).toBeNull();
+          expect(r.suppressed).toBe(true);
+        }
+      }
+      expect((await adm(owner, 'get', '/admin/stats/commitments')).status).toBe(200);
+      expect((await adm(moderator, 'get', '/admin/stats/commitments')).status).toBe(403);
+    });
+  });
+
   describe('queue sessions are capped at 2 h (PRD 19): non-urgent items close, paging and crisis items stay open', () => {
     it('423 queue_session_cap for a non-urgent item after 2 h of review; a crisis item still opens', async () => {
       await freshRooms();

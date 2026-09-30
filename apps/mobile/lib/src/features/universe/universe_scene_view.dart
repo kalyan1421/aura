@@ -59,7 +59,7 @@ class UniverseSceneView extends StatelessWidget {
             },
             child: CustomPaint(
               size: box.biggest,
-              painter: _IslandPainter(
+              painter: IslandPainter(
                 mesh,
                 camera,
                 companion,
@@ -77,8 +77,14 @@ class UniverseSceneView extends StatelessWidget {
   );
 }
 
-class _IslandPainter extends CustomPainter {
-  _IslandPainter(
+/// Which part of the picture a painter draws. The Canvas renderer draws
+/// [all]; the GPU renderer (native/) draws the faces itself and asks the same
+/// painter for the sky behind it ([background]) and the sparkles and place
+/// lights over it ([overlay]), so nothing is drawn twice or drifts apart.
+enum IslandLayer { all, background, overlay }
+
+class IslandPainter extends CustomPainter {
+  IslandPainter(
     this.mesh,
     this.camera,
     this.companion,
@@ -86,8 +92,10 @@ class _IslandPainter extends CustomPainter {
     this.sky,
     this.pose,
     this.changes,
-    this.changeProgress,
-  );
+    this.changeProgress, {
+    this.layer = IslandLayer.all,
+  });
+  final IslandLayer layer;
   final SkyPhase sky;
   final CompanionPose pose;
   final List<WorldPlantChange> changes;
@@ -99,6 +107,12 @@ class _IslandPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (layer != IslandLayer.overlay) _paintSky(canvas, size);
+    if (layer == IslandLayer.background) return;
+    _paintWorld(canvas, size);
+  }
+
+  void _paintSky(Canvas canvas, Size size) {
     canvas.drawRect(
       Offset.zero & size,
       Paint()
@@ -126,6 +140,9 @@ class _IslandPainter extends CustomPainter {
       final y = ((i * 37 + 7) % 89) / 89 * size.height;
       canvas.drawCircle(Offset(x, y), i % 4 == 0 ? 1.4 : 0.7, starPaint);
     }
+  }
+
+  void _paintWorld(Canvas canvas, Size size) {
     final projectPoint = camera.projector(size);
     final eye = camera.eye;
     void drawFaces(List<WorldFace> faces) {
@@ -170,17 +187,24 @@ class _IslandPainter extends CustomPainter {
 
     // All landmarks are above the terrain. Draw the terrain first so the
     // large ground triangles cannot cover smaller objects at oblique angles.
-    drawFaces(mesh.faces.take(mesh.terrainFaceCount).toList());
-    drawFaces([
-      ...mesh.faces.skip(mesh.terrainFaceCount),
-      for (final change in changes)
-        ...IslandMesh.changingPlant(
-          change,
-          changeProgress,
+    // (The GPU renderer draws the faces itself, with a depth buffer.)
+    if (layer == IslandLayer.all) {
+      drawFaces(mesh.faces.take(mesh.terrainFaceCount).toList());
+      drawFaces([
+        ...mesh.faces.skip(mesh.terrainFaceCount),
+        for (final change in changes)
+          ...IslandMesh.changingPlant(
+            change,
+            changeProgress,
+            lowDetail: mesh.lowDetail,
+          ),
+        ...IslandMesh.companion(
+          companion,
           lowDetail: mesh.lowDetail,
+          pose: pose,
         ),
-      ...IslandMesh.companion(companion, lowDetail: mesh.lowDetail, pose: pose),
-    ]);
+      ]);
+    }
     // A few soft sparkles mark what the moment is about: over each changing
     // plant, and around the companion while it celebrates.
     final glow = math.sin(changeProgress.clamp(0.0, 1.0) * math.pi);
@@ -243,7 +267,8 @@ class _IslandPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_IslandPainter old) =>
+  bool shouldRepaint(IslandPainter old) =>
+      old.layer != layer ||
       old.mesh != mesh ||
       old.camera != camera ||
       old.companion != companion ||

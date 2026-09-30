@@ -21,6 +21,18 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <!-- W06 opt-in step-lit path stones: read-only steps from Health Connect,
+         asked from the universe's card after its in-app explainer (PRD
+         15-permissions "Health steps"). Nothing else is read or written. -->
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
+    <!-- Health Connect (the Health app's data store) and its "why does this
+         app want my data" screen. -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata"/>
+        <intent>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
+        </intent>
+    </queries>
     <!-- No advertising id (PRD 13-analytics principle 8, 15-permissions
          "Tracking"): Aura has no ad SDKs. Some Google libraries merge AD_ID
          in; removing it keeps the Data safety form and the binary in step.
@@ -43,6 +55,10 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- T01: lets the GPU renderer for the personal universe start (Flutter
+             GPU, flutter_scene). The renderer itself is off unless a build
+             sets the AURA_NATIVE_SCENE dart define to true. -->
+        <meta-data android:name="io.flutter.embedding.android.EnableFlutterGPU" android:value="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -84,7 +100,25 @@
                 <data android:scheme="aura" android:host="sanctuary"/>
                 <data android:scheme="aura" android:host="rooms"/>
             </intent-filter>
+            <!-- W06: Health Connect's "why does this app want my data" opens the
+                 app (Android 13 and earlier); the universe's opt-in card
+                 explains it in plain words and the privacy policy covers it. -->
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE"/>
+            </intent-filter>
         </activity>
+        <!-- W06, Android 14+: Health Connect's permission screen links here
+             ("View permission usage"). Only the system may start it. -->
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE"/>
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS"/>
+            </intent-filter>
+        </activity-alias>
         <!-- FCM: no token is created until the user opts in after the first
              check-in (PushService turns auto-init on, and off at sign-out). -->
         <meta-data

@@ -8,20 +8,20 @@ part of 'health_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The platform health adapter. Override in the app (or a test) once an
-/// adapter exists; the default keeps every health surface hidden.
+/// The platform health adapter (HealthKit on iOS, Health Connect on Android);
+/// anywhere else every health surface stays hidden. Tests override this.
 
 @ProviderFor(healthSource)
 final healthSourceProvider = HealthSourceProvider._();
 
-/// The platform health adapter. Override in the app (or a test) once an
-/// adapter exists; the default keeps every health surface hidden.
+/// The platform health adapter (HealthKit on iOS, Health Connect on Android);
+/// anywhere else every health surface stays hidden. Tests override this.
 
 final class HealthSourceProvider
     extends $FunctionalProvider<HealthSource, HealthSource, HealthSource>
     with $Provider<HealthSource> {
-  /// The platform health adapter. Override in the app (or a test) once an
-  /// adapter exists; the default keeps every health surface hidden.
+  /// The platform health adapter (HealthKit on iOS, Health Connect on Android);
+  /// anywhere else every health surface stays hidden. Tests override this.
   HealthSourceProvider._()
     : super(
         from: null,
@@ -55,7 +55,7 @@ final class HealthSourceProvider
   }
 }
 
-String _$healthSourceHash() => r'c743e713789ee0c3c15e87d50885a26f4403e1f5';
+String _$healthSourceHash() => r'2186aced4ef446358ddb10a8894b383bde69918e';
 
 @ProviderFor(healthAvailability)
 final healthAvailabilityProvider = HealthAvailabilityProvider._();

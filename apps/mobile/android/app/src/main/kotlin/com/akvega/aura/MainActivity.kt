@@ -14,14 +14,16 @@ import com.google.android.gms.auth.blockstore.Blockstore
 import com.google.android.gms.auth.blockstore.DeleteBytesRequest
 import com.google.android.gms.auth.blockstore.RetrieveBytesRequest
 import com.google.android.gms.auth.blockstore.StoreBytesData
-import com.ryanheise.audioservice.AudioServiceActivity
+import com.ryanheise.audioservice.AudioServiceFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-// AudioServiceActivity (a FlutterActivity) shares this engine with the
-// Sounds media-playback service, so lock-screen controls and background
-// playback reach the Dart mixer (F15; audio_service).
-class MainActivity : AudioServiceActivity() {
+// AudioServiceFragmentActivity (a FlutterFragmentActivity) shares this engine
+// with the Sounds media-playback service, so lock-screen controls and
+// background playback reach the Dart mixer (F15; audio_service). It is the
+// fragment variant because Health Connect's permission request (W06, the
+// `health` plugin) uses registerForActivityResult.
+class MainActivity : AudioServiceFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // Home-screen widget store (F11; widget/AuraWidgetBridge.kt).

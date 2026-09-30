@@ -1,6 +1,5 @@
 import 'package:aura/src/core/db/database.dart';
 import 'package:aura/src/core/db/kv_store.dart';
-import 'package:aura/src/features/health/health_providers.dart';
 import 'package:aura/src/features/health/health_source.dart';
 import 'package:aura/src/features/universe/sky.dart';
 import 'package:aura/src/features/universe/universe_scene_view.dart';
@@ -67,10 +66,11 @@ Future<void> _pump(
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        ...testOverrides(db: db, time: at == null ? null : testTime(at)),
-        if (health != null) healthSourceProvider.overrideWithValue(health),
-      ],
+      overrides: testOverrides(
+        db: db,
+        time: at == null ? null : testTime(at),
+        health: health,
+      ),
       child: localized(const UniverseScreen()),
     ),
   );

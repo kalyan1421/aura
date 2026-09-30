@@ -55,6 +55,8 @@ export interface ServerExport {
   giftsSent: Array<{ gift: string; status: string; day: string | null; deliveredAt: string | null; refundedAt: string | null }>;
   giftsReceived: Array<{ gift: string; stardust: number; deliveredAt: string | null }>;
   keepsakes: Array<{ key: string; earnedOn: string }>;
+  /** W07: when the person started or ended a habit commitment (dates only; the habit is not named). */
+  commitmentHistory: Array<{ kind: 'start' | 'end'; day: string }>;
   sanctuarySessions: Array<{ activity: string; variant: string | null; durationS: number; localDay: string }>;
   consents: Array<{ purpose: string; policyVersion: string; grantedAt: string; withdrawnAt: string | null }>;
   guidelinesAccepted: Array<{ version: number; acceptedAt: string }>;
@@ -125,6 +127,10 @@ export async function buildServerExport(q: Queryable, masterKey: Buffer, userId:
   const received = await q.query<{ gift_kind: string; stardust_amount: number; delivered_at: Date | null }>(
     `select gift_kind, stardust_amount, delivered_at from public.gifts
       where recipient_user_id = $1 and status = 'delivered' order by delivered_at`,
+    [userId],
+  );
+  const commitmentHistory = await q.query<{ kind: 'start' | 'end'; day: string }>(
+    `select kind, to_char(day, 'YYYY-MM-DD') as day from public.habit_commitment_events where user_id = $1 order by at, id`,
     [userId],
   );
   const keepsakes = await q.query<{ keepsake_key: string; earned_on: string }>(
@@ -222,6 +228,7 @@ export async function buildServerExport(q: Queryable, masterKey: Buffer, userId:
     giftsSent: sent.rows.map((g) => ({ gift: g.gift_kind, status: g.status, day: day(g.sender_day), deliveredAt: iso(g.delivered_at), refundedAt: iso(g.refunded_at) })),
     giftsReceived: received.rows.map((g) => ({ gift: g.gift_kind, stardust: Number(g.stardust_amount), deliveredAt: iso(g.delivered_at) })),
     keepsakes: keepsakes.rows.map((k) => ({ key: k.keepsake_key, earnedOn: k.earned_on })),
+    commitmentHistory: commitmentHistory.rows.map((c) => ({ kind: c.kind, day: c.day })),
     sanctuarySessions: sessions.rows.map((s) => ({ activity: s.activity, variant: s.variant, durationS: s.duration_s, localDay: s.local_day })),
     consents: consents.rows.map((c) => ({ purpose: c.purpose, policyVersion: c.policy_version, grantedAt: c.granted_at.toISOString(), withdrawnAt: iso(c.withdrawn_at) })),
     guidelinesAccepted: guidelines.rows.map((g) => ({ version: g.version, acceptedAt: g.accepted_at.toISOString() })),

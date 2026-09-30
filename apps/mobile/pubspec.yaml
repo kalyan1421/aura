@@ -95,6 +95,18 @@ dependencies:
   # SDKs. The PNG is rendered on device (features/share).
   share_plus: ^13.3.0
 
+  # W06: read-only step count from Apple Health (HealthKit) / Health Connect,
+  # opt-in, on the phone only (features/health). Needs Android minSdk 26.
+  health: ^13.3.2
+
+  # T01: the GPU (Impeller / Flutter GPU) renderer for the personal universe,
+  # behind the same scene boundary as the Canvas renderer and OFF by default
+  # (features/universe/native). Needs Flutter >= 3.47.
+  flutter_scene: ^0.23.0
+  flutter_gpu:
+    sdk: flutter
+  vector_math: ^2.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

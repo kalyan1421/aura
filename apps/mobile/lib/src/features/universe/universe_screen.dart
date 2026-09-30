@@ -25,7 +25,7 @@ import 'roam_controls.dart';
 import 'roam_mode.dart';
 import 'universe_scene.dart';
 import 'sky.dart';
-import 'universe_scene_view.dart';
+import 'universe_scene_host.dart';
 import 'welcome_back.dart';
 import 'world_habits.dart';
 import 'world_moments.dart';
@@ -524,7 +524,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                               _momentPlay,
                               _follow,
                             ]),
-                            builder: (context, _) => UniverseSceneView(
+                            builder: (context, _) => UniverseSceneHost(
                               mesh: _mesh!,
                               camera: _view,
                               companion: _position,

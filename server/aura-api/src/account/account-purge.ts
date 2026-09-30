@@ -16,6 +16,7 @@ import { MediaStoreUnavailableError, type PrivateMediaStore } from './private-me
 export const PERSONAL_TABLES = [
   'habit_logs',
   'habits',
+  'habit_commitment_events', // W07: after habits (deleting a committed habit records an end); no FK to habits
   'check_ins',
   'capsules', // F4 (tombstones too); capsule_unlock_schedule cascades; media lives under <user_id>/capsules/
   'starlight_ledger',

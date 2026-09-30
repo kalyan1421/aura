@@ -217,6 +217,22 @@ export class ModerationConsoleService {
     });
   }
 
+  /**
+   * W07: do habit commitments help? Aggregates only (adults, within-person comparison, cells under 20 people
+   * suppressed by the database), no ids and no content. See docs/measurement/commitments.md for how to read it.
+   */
+  async commitmentOutcomes(): Promise<{
+    rows: Array<{ measure: string; cohort: string; users: number; units: number; value: number | null; suppressed: boolean }>;
+    generatedAt: string;
+  }> {
+    return this.adminDb.withTx(async (tx) => {
+      const r = await tx.query<{ measure: string; cohort: string; users: number; units: number; value: number | null; suppressed: boolean }>(
+        `select measure, cohort, users, units, value::float8 as value, suppressed from public.commitment_outcomes()`,
+      );
+      return { rows: r.rows, generatedAt: new Date().toISOString() };
+    });
+  }
+
   private async laneSummaryWith(q: Queryable): Promise<LaneSummary[]> {
     const r = await q.query<{ lane: Lane; open: number; overdue: number; paging: number }>(
       `select lane, count(*)::int as open, count(*) filter (where sla_due_at < now())::int as overdue,

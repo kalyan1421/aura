@@ -910,7 +910,12 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
         deviceTs: now(),
         payload: { id: uuidv7(), payloadCt: Buffer.from('capsule-ciphertext').toString('base64'), unlockType: 'mood', triggerQuadrant: 'rain' },
       };
-      const r = await pushAs(u, [checkIn(), habit(h, 'breathe'), log(h), capsule]).expect(200);
+      // W07: a committed habit, so its start is on record (habit_commitment_events) and the purge has to remove it.
+      const committed = {
+        ...habit(h, 'breathe'),
+        payload: { id: h, kind: 'preset', presetKey: 'breathe', name: null, active: true, committedFrom: today() },
+      };
+      const r = await pushAs(u, [checkIn(), committed, log(h), capsule]).expect(200);
       expect(r.body.results.map((x: { status: string }) => x.status)).toEqual(['applied', 'applied', 'applied', 'applied']);
       await as(u, http().get('/v1/keys/data-key')).expect(200);
       await as(u, http().put('/v1/devices')).send({ token: fcmToken(), platform: 'ios' }).expect(204);
