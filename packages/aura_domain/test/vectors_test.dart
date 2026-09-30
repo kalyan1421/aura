@@ -182,6 +182,10 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
               ).name,
               c['expect'],
             );
+          case 'sky':
+            expect(skyPhase(c['hour'] as int).name, c['expect']);
+          case 'stones':
+            expect(litStones(c['steps'] as int?), c['expect']);
           case 'welcome':
             expect(
               showWelcomeBack(
@@ -191,6 +195,24 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
               ),
               c['expect'],
             );
+          case 'changes':
+            WorldLook look(Map<String, dynamic> m) => WorldLook(
+              GrowthStage.fromName(m['stage'] as String),
+              Vitality.fromName(m['vitality'] as String),
+            );
+            final seen = (c['seen'] as Map<String, dynamic>?)?.map(
+              (k, v) => MapEntry(k, look(v as Map<String, dynamic>)),
+            );
+            final current = [
+              for (final m
+                  in (c['current'] as List<dynamic>)
+                      .cast<Map<String, dynamic>>())
+                (key: m['key'] as String, look: look(m)),
+            ];
+            expect([
+              for (final ch in worldChanges(seen: seen, current: current))
+                {'key': ch.key, 'kind': ch.kind.name},
+            ], c['expect']);
           default:
             fail('Unknown world.json case kind "$kind"');
         }

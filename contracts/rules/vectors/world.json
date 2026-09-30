@@ -343,6 +343,574 @@
       "today": "2026-10-08",
       "shownFor": "2026-10-05",
       "expect": false
+    },
+    {
+      "kind": "sky",
+      "name": "hour 0 is night",
+      "hour": 0,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 4 is night",
+      "hour": 4,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 5 is dawn",
+      "hour": 5,
+      "expect": "dawn"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 6 is dawn",
+      "hour": 6,
+      "expect": "dawn"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 7 is day",
+      "hour": 7,
+      "expect": "day"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 12 is day",
+      "hour": 12,
+      "expect": "day"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 16 is day",
+      "hour": 16,
+      "expect": "day"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 17 is dusk",
+      "hour": 17,
+      "expect": "dusk"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 18 is dusk",
+      "hour": 18,
+      "expect": "dusk"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 19 is night",
+      "hour": 19,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 23 is night",
+      "hour": 23,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 24 is night",
+      "hour": 24,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour 29 is dawn",
+      "hour": 29,
+      "expect": "dawn"
+    },
+    {
+      "kind": "sky",
+      "name": "hour -1 is night",
+      "hour": -1,
+      "expect": "night"
+    },
+    {
+      "kind": "sky",
+      "name": "hour -19 is dawn",
+      "hour": -19,
+      "expect": "dawn"
+    },
+    {
+      "kind": "stones",
+      "name": "steps None",
+      "steps": null,
+      "expect": 0
+    },
+    {
+      "kind": "stones",
+      "name": "steps -5",
+      "steps": -5,
+      "expect": 0
+    },
+    {
+      "kind": "stones",
+      "name": "steps 0",
+      "steps": 0,
+      "expect": 0
+    },
+    {
+      "kind": "stones",
+      "name": "steps 999",
+      "steps": 999,
+      "expect": 0
+    },
+    {
+      "kind": "stones",
+      "name": "steps 1000",
+      "steps": 1000,
+      "expect": 1
+    },
+    {
+      "kind": "stones",
+      "name": "steps 1999",
+      "steps": 1999,
+      "expect": 1
+    },
+    {
+      "kind": "stones",
+      "name": "steps 2000",
+      "steps": 2000,
+      "expect": 2
+    },
+    {
+      "kind": "stones",
+      "name": "steps 8000",
+      "steps": 8000,
+      "expect": 8
+    },
+    {
+      "kind": "stones",
+      "name": "steps 15999",
+      "steps": 15999,
+      "expect": 15
+    },
+    {
+      "kind": "stones",
+      "name": "steps 16000",
+      "steps": 16000,
+      "expect": 16
+    },
+    {
+      "kind": "stones",
+      "name": "steps 100000",
+      "steps": 100000,
+      "expect": 16
+    },
+    {
+      "kind": "changes",
+      "name": "the first look is a baseline, never a moment",
+      "seen": null,
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        },
+        {
+          "key": "c:1",
+          "stage": "seed",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "nothing changed",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "a higher stage grows",
+      "seen": {
+        "p:walk": {
+          "stage": "sprout",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "two stages at once is one grow",
+      "seen": {
+        "p:walk": {
+          "stage": "sprout",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "seed to sprout grows",
+      "seen": {
+        "p:hydrate": {
+          "stage": "seed",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:hydrate",
+          "stage": "sprout",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:hydrate",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "a lower stage (a deleted log) is not a change",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "sprout",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "a resting plant that is thriving again wakes",
+      "seen": {
+        "p:walk": {
+          "stage": "grown",
+          "vitality": "dimmed"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "wake"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "waking from dormant",
+      "seen": {
+        "p:walk": {
+          "stage": "grown",
+          "vitality": "dormant"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "wake"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "starting to rest is never a moment",
+      "seen": {
+        "p:walk": {
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "dimmed"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "resting more deeply is never a moment",
+      "seen": {
+        "p:walk": {
+          "stage": "grown",
+          "vitality": "dimmed"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "wilting"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "resting a little less is not a wake",
+      "seen": {
+        "p:walk": {
+          "stage": "grown",
+          "vitality": "wilting"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "dimmed"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "grow wins over wake",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "dormant"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "growing while still resting (an old day logged) grows",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "wilting"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "grown",
+          "vitality": "wilting"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "a key new to the grove sprouts, whatever its stage",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        },
+        {
+          "key": "c:9",
+          "stage": "sprout",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "c:9",
+          "kind": "sprout"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "an empty grove that was seen is a baseline too: new plants sprout",
+      "seen": {},
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "seed",
+          "vitality": "thriving"
+        },
+        {
+          "key": "p:sleep",
+          "stage": "seed",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:walk",
+          "kind": "sprout"
+        },
+        {
+          "key": "p:sleep",
+          "kind": "sprout"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "a key that left the grove is not a change",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "thriving"
+        },
+        "c:1": {
+          "stage": "grown",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": []
+    },
+    {
+      "kind": "changes",
+      "name": "several changes keep the current order",
+      "seen": {
+        "p:walk": {
+          "stage": "sprout",
+          "vitality": "thriving"
+        },
+        "p:sleep": {
+          "stage": "young",
+          "vitality": "dormant"
+        },
+        "p:read": {
+          "stage": "seed",
+          "vitality": "thriving"
+        }
+      },
+      "current": [
+        {
+          "key": "p:read",
+          "stage": "seed",
+          "vitality": "thriving"
+        },
+        {
+          "key": "p:sleep",
+          "stage": "young",
+          "vitality": "thriving"
+        },
+        {
+          "key": "c:2",
+          "stage": "seed",
+          "vitality": "thriving"
+        },
+        {
+          "key": "p:walk",
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      ],
+      "expect": [
+        {
+          "key": "p:sleep",
+          "kind": "wake"
+        },
+        {
+          "key": "c:2",
+          "kind": "sprout"
+        },
+        {
+          "key": "p:walk",
+          "kind": "grow"
+        }
+      ]
+    },
+    {
+      "kind": "changes",
+      "name": "nothing current is nothing",
+      "seen": {
+        "p:walk": {
+          "stage": "young",
+          "vitality": "thriving"
+        }
+      },
+      "current": [],
+      "expect": []
     }
   ]
 }

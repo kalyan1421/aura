@@ -2128,6 +2128,7 @@ Purchases are confirmed by Aura's server (NestJS) with Apple or Google before an
 | **Background audio** (iOS `UIBackgroundModes: audio`; Android media-playback foreground service: `FOREGROUND_SERVICE` + `FOREGROUND_SERVICE_MEDIA_PLAYBACK`, install-time) | Never: a capability, not a prompt. Used only while F15 Sounds or an F16 shared sound is playing (from Milestone B) | None | Not applicable. On Android 13+ the media playback notification is exempt from `POST_NOTIFICATIONS` `[STORE: verify]`, so Sounds work even if notifications are declined |
 | **Exact alarms** (Android `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`) | **Not requested** | None | Reminders use inexact scheduling; ±15 min is fine for a nudge |
 | **Location** | **Not requested** | None | Lantern Hour (9–11 pm local) and the room timezone-region key use the device time zone setting, not location |
+| **Health: steps** (iOS HealthKit `NSHealthShareUsageDescription` + capability; Android Health Connect `READ_STEPS`) | **Not enabled in v1.0.** When an adapter ships (W06): only from the opt-in card in the personal universe, after its soft-ask copy | "If you allow it, today's steps make the path stones glow a little. Aura only reads a step count, keeps it on this phone, never uploads or shows it, and a quiet day just leaves a plain path." | Nothing changes and nothing is lost; the card says so. The universe, check-in and every care tool work unchanged |
 | **App Tracking Transparency** (iOS) | **Not requested**: Aura does no tracking | None | Not applicable |
 
 ### Notes
@@ -2156,6 +2157,13 @@ Purchases are confirmed by Aura's server (NestJS) with Apple or Google before an
 
 #### Tracking
 - No IDFA or GAID; the `AD_ID` permission some Google libraries merge in is removed with `tools:node="remove"` `[STORE]`. `PrivacyInfo.xcprivacy` declares no tracking domains, the App Store label reads "Data Not Used to Track You", and the Play Data safety form matches the Analytics & Tracking Plan. Excluding under-18 users from behavioural analytics is an internal rule with no prompt or permission.
+
+#### Health steps (W06, not enabled in v1.0)
+- **What it reads:** one number, today's step count, read-only. No sleep, heart rate, workouts, location or history. Sleep is deliberately not used: any threshold would be a health judgement.
+- **What it does:** lights up to 16 path stones in the personal universe, one per thousand steps (RULES.md section 13 `stones`). Warmth only: no steps is a plain path, never a dim or "missed" one; there is no goal, streak or reward; it never touches Starlight, streaks or keepsakes.
+- **What it never does:** show the number, store it (only the opt-in flag is kept), log it, send it to analytics, upload it, or share it. Off by default; nothing is read from the health store until the person turns it on.
+- **Same for everyone 13+**, like every permission (no age difference), and it never gates a core flow.
+- **Ship checklist (owner):** enable the HealthKit capability on the App ID and add `NSHealthShareUsageDescription` / `NSHealthUpdateUsageDescription`; Health Connect `READ_STEPS`, the `<queries>` entry, the permission-rationale intent and `VIEW_PERMISSION_USAGE` alias linking the privacy policy, and `MainActivity` extending `FlutterFragmentActivity`; update the privacy policy and the App Store privacy label and Play data-safety and Health Connect declaration forms; App Review notes explaining the read-only step use. None of this is done: the app ships with no health adapter and shows nothing about health.
 
 ---
 

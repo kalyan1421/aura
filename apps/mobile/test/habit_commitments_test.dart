@@ -127,6 +127,29 @@ void main() {
     expect(h.committedFrom, '2026-10-08');
   });
 
+  test('ending what is not there, or pausing to the same day, writes and '
+      'queues nothing', () async {
+    // Not a commitment: ending it changes nothing.
+    expect(
+      await repo.setCommitment(habitId, committed: false, ageYears: 30),
+      CommitmentResult.saved,
+    );
+    expect(await _mutations(db), isEmpty);
+    await repo.setCommitment(habitId, committed: true, ageYears: 30);
+    // No pause to end.
+    await db.delete(db.outbox).go();
+    expect(
+      await repo.pauseCommitment(habitId, days: 0),
+      CommitmentResult.saved,
+    );
+    expect(await _mutations(db), isEmpty);
+    // The same pause twice is one mutation.
+    await repo.pauseCommitment(habitId, days: 7);
+    await db.delete(db.outbox).go();
+    await repo.pauseCommitment(habitId, days: 7);
+    expect(await _mutations(db), isEmpty);
+  });
+
   test('unknown habit', () async {
     expect(
       await repo.setCommitment('nope', committed: true, ageYears: 30),

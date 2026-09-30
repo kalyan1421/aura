@@ -265,19 +265,31 @@ void main() {
       expect(read.stage, GrowthStage.sprout);
     });
 
-    test('a rejected commitment is dropped locally and queues nothing',
-        () async {
+    test('a commitment the server will not start is dropped locally with its '
+        'pause, and nothing is queued', () async {
       await repo.addCustom('Read');
       final id = (await db.select(db.habits).getSingle()).id;
       await repo.setCommitment(id, committed: true, ageYears: 30);
       await repo.pauseCommitment(id, days: 7);
       await db.delete(db.outbox).go();
 
-      await repo.clearRejectedCommitment(id);
+      await repo.clearRejectedCommitment(id, 'commitment_not_available');
       final h = await db.select(db.habits).getSingle();
       expect(h.committedFrom, isNull);
       expect(h.pausedThrough, isNull);
       expect(await db.select(db.outbox).get(), isEmpty);
+    });
+
+    test('a refused pause drops only the pause; the commitment the server '
+        'holds stays', () async {
+      await repo.addCustom('Read');
+      final id = (await db.select(db.habits).getSingle()).id;
+      await repo.setCommitment(id, committed: true, ageYears: 30);
+      await repo.pauseCommitment(id, days: 7);
+      await repo.clearRejectedCommitment(id, 'invalid_commitment');
+      final h = await db.select(db.habits).getSingle();
+      expect(h.committedFrom, '2026-10-08');
+      expect(h.pausedThrough, isNull);
     });
   });
 

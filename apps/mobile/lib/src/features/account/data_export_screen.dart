@@ -44,6 +44,8 @@ class _DataExportScreenState extends ConsumerState<DataExportScreen> {
       sealed: l.export_sealed,
       voiceNote: l.export_voiceNote,
       nothing: l.export_nothing,
+      commitmentSince: l.export_hCommitment,
+      pausedUntil: l.export_hPausedUntil,
     );
     final box = _button.currentContext?.findRenderObject() as RenderBox?;
     final origin = box == null

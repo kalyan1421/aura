@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -34,7 +36,11 @@ class _RoamControlsState extends State<RoamControls> {
   static const double _knob = 44;
   static const double _button = 48;
 
+  /// A press shorter than this is a tap: one small step, no walking.
+  static const Duration _tapTime = Duration(milliseconds: 120);
+
   final Set<_Arrow> _held = {};
+  final Map<_Arrow, Timer> _pressing = {};
   Offset _stick = Offset.zero; // -1..1, screen up is -dy
   int? _stickPointer;
 
@@ -51,6 +57,9 @@ class _RoamControlsState extends State<RoamControls> {
 
   @override
   void dispose() {
+    for (final t in _pressing.values) {
+      t.cancel();
+    }
     // Never leave the companion walking when the controls go away.
     widget.onInput(RoamInput.zero);
     super.dispose();
@@ -79,14 +88,28 @@ class _RoamControlsState extends State<RoamControls> {
   };
 
   Widget _arrowButton(_Arrow a, IconData icon, String label) {
+    // Walking starts once a press has lasted [_tapTime]; a shorter press is a
+    // tap and takes one small step instead, so a quick tap is never a no-op.
     void down() {
-      setState(() => _held.add(a));
-      _emit();
+      _pressing[a]?.cancel();
+      _pressing[a] = Timer(_tapTime, () {
+        _pressing.remove(a);
+        setState(() => _held.add(a));
+        _emit();
+      });
     }
 
-    void up() {
-      setState(() => _held.remove(a));
-      _emit();
+    void up({required bool cancelled}) {
+      final wasTap = _pressing.remove(a);
+      if (wasTap != null) {
+        wasTap.cancel();
+        if (!cancelled) widget.onNudge(_nudgeFor(a));
+        return;
+      }
+      if (_held.contains(a)) {
+        setState(() => _held.remove(a));
+        _emit();
+      }
     }
 
     return Semantics(
@@ -108,8 +131,8 @@ class _RoamControlsState extends State<RoamControls> {
           key: ValueKey('roam-${a.name}'),
           behavior: HitTestBehavior.opaque,
           onPointerDown: (_) => down(),
-          onPointerUp: (_) => up(),
-          onPointerCancel: (_) => up(),
+          onPointerUp: (_) => up(cancelled: false),
+          onPointerCancel: (_) => up(cancelled: true),
           child: SizedBox(
             width: _button,
             height: _button,

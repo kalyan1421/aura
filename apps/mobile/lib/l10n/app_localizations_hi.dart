@@ -5531,6 +5531,48 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get universe_walkRight => 'दाएँ चलें';
+
+  @override
+  String export_hCommitment(String date) {
+    return '$date से संकल्प';
+  }
+
+  @override
+  String export_hPausedUntil(String date) {
+    return '$date तक विराम';
+  }
+
+  @override
+  String get universe_reallifeTitle => 'सैर से रास्ता जगमगाता है';
+
+  @override
+  String get universe_reallifeBody =>
+      'अगर आप अनुमति दें, तो आपके फ़ोन के Health डेटा से आज के क़दम रास्ते के पत्थरों को थोड़ा रोशन करते हैं। Aura सिर्फ़ क़दमों की गिनती पढ़ता है, उसे इसी फ़ोन में रखता है, कभी अपलोड या दिखाता नहीं, और शांत दिन पर रास्ता बस सादा रहता है।';
+
+  @override
+  String get universe_reallifeSwitch => 'मेरे क़दम इस्तेमाल करें';
+
+  @override
+  String get universe_reallifeDenied =>
+      'कोई बात नहीं। कुछ नहीं बदलेगा। आप बाद में फ़ोन की Health सेटिंग में अनुमति दे सकते हैं।';
+
+  @override
+  String get universe_changesTitle => 'आपकी दुनिया में नया';
+
+  @override
+  String universe_changeGrow(String name, String stage) {
+    return '$name का पौधा नए पड़ाव तक बढ़ा: $stage';
+  }
+
+  @override
+  String universe_changeWake(String name) {
+    return '$name का पौधा फिर से जाग गया';
+  }
+
+  @override
+  String universe_changeSprout(String name) {
+    return '$name के लिए नया पौधा';
+  }
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -11125,4 +11167,46 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get universe_walkRight => 'Daayein chalein';
+
+  @override
+  String export_hCommitment(String date) {
+    return '$date se sankalp';
+  }
+
+  @override
+  String export_hPausedUntil(String date) {
+    return '$date tak viraam';
+  }
+
+  @override
+  String get universe_reallifeTitle => 'Sair se raasta jagmagata hai';
+
+  @override
+  String get universe_reallifeBody =>
+      'Agar aap anumati dein, to aapke phone ke Health data se aaj ke kadam raaste ke patthron ko thoda roshan karte hain. Aura sirf kadmon ki ginti padhta hai, use isi phone mein rakhta hai, kabhi upload ya dikhata nahi, aur shaant din par raasta bas saada rehta hai.';
+
+  @override
+  String get universe_reallifeSwitch => 'Mere kadam istemaal karein';
+
+  @override
+  String get universe_reallifeDenied =>
+      'Koi baat nahi. Kuch nahi badlega. Aap baad mein phone ki Health settings mein anumati de sakte hain.';
+
+  @override
+  String get universe_changesTitle => 'Aapki duniya mein naya';
+
+  @override
+  String universe_changeGrow(String name, String stage) {
+    return '$name ka paudha naye padaav tak badha: $stage';
+  }
+
+  @override
+  String universe_changeWake(String name) {
+    return '$name ka paudha phir se jaag gaya';
+  }
+
+  @override
+  String universe_changeSprout(String name) {
+    return '$name ke liye naya paudha';
+  }
 }

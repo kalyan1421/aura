@@ -21,7 +21,7 @@ import 'helpers.dart';
 /// made on the phone. Own records only; deleted ones left out; sealed
 /// capsules stay sealed; nothing about anyone else.
 
-const _labels = ExportLabels(
+final _labels = ExportLabels(
   title: 'Your Aura data',
   exported: 'Made on 8 Oct 2026',
   checkIns: 'Check-ins',
@@ -33,6 +33,8 @@ const _labels = ExportLabels(
   sealed: 'Sealed',
   voiceNote: 'voice note',
   nothing: 'Nothing here yet.',
+  commitmentSince: (d) => 'Commitment since $d',
+  pausedUntil: (d) => 'paused until $d',
 );
 
 Future<void> _seed(AppDatabase db) async {
@@ -208,6 +210,9 @@ void main() {
       expect(html, isNot(contains('<script')));
       expect(html, isNot(contains('http')));
       expect(html, contains('Sealed'));
+      // W02: the person's own commitment is in the readable copy too.
+      expect(html, contains('Commitment since 2026-10-01'));
+      expect(html, contains('paused until 2026-10-12'));
       // No server part: the account sections are simply absent.
       expect(html, isNot(contains('Your reflections')));
     },

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:aura_domain/aura_domain.dart' show GrowthStage, Vitality;
+import 'package:flutter/animation.dart' show Curves;
 
 /// Presentation-only coordinates. No personal text or identifiers enter
 /// the renderer, and geometry never awards or persists progression.
@@ -73,6 +74,81 @@ class WorldPlant {
 
 /// The most habit plants the grove holds (six presets + three custom habits).
 const int maxWorldPlants = 9;
+
+/// A plant in the middle of a moment (T04): how it looked when last seen
+/// ([from], `null` for a new plant) and how it is now. Like [WorldPlant], only
+/// a slot, stages and vitalities cross the renderer boundary.
+class WorldPlantChange {
+  const WorldPlantChange({required this.from, required this.to});
+  final WorldPlant? from;
+  final WorldPlant to;
+  int get slot => to.slot;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WorldPlantChange && other.from == from && other.to == to;
+
+  @override
+  int get hashCode => Object.hash(from, to);
+}
+
+/// What the companion is doing (T04). A native rig maps each to a clip; the
+/// Canvas renderer draws it procedurally. Nothing here follows how the person
+/// feels: a celebration only ever marks a plant that grew, woke or was planted.
+enum CompanionMotion { idle, walk, celebrate }
+
+/// The companion's pose: [heading] is the direction it faces (radians, 0 is
+/// +z, toward the default camera) and [phase] how far it is through a stride
+/// (walk, any number: one unit per step) or through its celebration (0-1).
+class CompanionPose {
+  const CompanionPose({
+    this.motion = CompanionMotion.idle,
+    this.heading = 0,
+    this.phase = 0,
+  });
+  static const CompanionPose still = CompanionPose();
+
+  final CompanionMotion motion;
+  final double heading;
+  final double phase;
+
+  /// How high the body is lifted off the grass by this pose.
+  double get lift => switch (motion) {
+    CompanionMotion.idle => 0,
+    // A small bob per step.
+    CompanionMotion.walk => (math.sin(phase * math.pi)).abs() * 0.035,
+    // Two happy hops, then settling.
+    CompanionMotion.celebrate => () {
+      final u = (phase / 0.8).clamp(0.0, 1.0);
+      return (math.sin(u * math.pi * 2)).abs() * 0.12 * (1 - u * 0.4);
+    }(),
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      other is CompanionPose &&
+      other.motion == motion &&
+      other.heading == heading &&
+      other.phase == phase;
+
+  @override
+  int get hashCode => Object.hash(motion, heading, phase);
+}
+
+/// The heading that faces from [from] toward [to] on the ground plane, or
+/// [fallback] when they are (nearly) the same point.
+double headingToward(WorldPoint from, WorldPoint to, {double fallback = 0}) {
+  final dx = to.x - from.x;
+  final dz = to.z - from.z;
+  return dx * dx + dz * dz < 1e-10 ? fallback : math.atan2(dx, dz);
+}
+
+/// Turns from [a] to [b] the short way round.
+double lerpHeading(double a, double b, double t) {
+  var d = (b - a) % (math.pi * 2);
+  if (d > math.pi) d -= math.pi * 2;
+  return a + d * t.clamp(0.0, 1.0);
+}
 
 class UniverseCamera {
   const UniverseCamera({
@@ -162,10 +238,14 @@ class WorldFace {
 class IslandMesh {
   /// [plants] draws one plant per habit (W03). Without it the grove falls back
   /// to three plants that follow the aggregate [growth] (the first prototype).
+  /// Plants in [changingSlots] are left out: a moment draws them per frame
+  /// ([IslandMesh.changingPlant]) while it plays (T04).
   IslandMesh({
     required double growth,
     this.lowDetail = false,
     List<WorldPlant>? plants,
+    int litStones = 0,
+    Set<int> changingSlots = const {},
   }) {
     const rock = Color(0xFF605A83);
     const grass = Color(0xFF547D77);
@@ -184,11 +264,23 @@ class IslandMesh {
     );
     frustum(const WorldPoint(0, 0.04, 0), 2.55, 2.50, 0.09, grass, 24);
     terrainFaceCount = faces.length;
-    // Stepping stones connect every landmark to the companion.
-    for (final d in UniverseDestination.values) {
+    // Stepping stones connect every landmark to the companion. After a walk
+    // (W06, opt-in) the first ones glow, spread evenly over the four paths:
+    // warmth only, a plain stone is never a "missed" one.
+    const warm = Color(0xFFF2D28C);
+    final places = UniverseDestination.values;
+    for (var di = 0; di < places.length; di++) {
       for (var i = 1; i <= 4; i++) {
-        final p = d.position * (i / 5);
-        frustum(WorldPoint(p.x, 0.14, p.z), 0.09, 0.09, 0.035, stone, 6);
+        final p = places[di].position * (i / 5);
+        final lit = (i - 1) * places.length + di < litStones;
+        frustum(
+          WorldPoint(p.x, 0.14, p.z),
+          0.09,
+          0.09,
+          0.035,
+          lit ? warm : stone,
+          6,
+        );
       }
     }
     final grove = UniverseDestination.grove.position;
@@ -204,7 +296,8 @@ class IslandMesh {
       }
     } else {
       for (final plant in plants.take(maxWorldPlants)) {
-        _plant(grove + plantOffset(plant.slot), plant, leaf, grass, brass);
+        if (changingSlots.contains(plant.slot)) continue;
+        _plant(grove + plantOffset(plant.slot), plant);
       }
     }
     final pool = UniverseDestination.tidePool.position;
@@ -281,38 +374,101 @@ class IslandMesh {
     0.135,
   ];
 
-  void _plant(
-    WorldPoint base,
-    WorldPlant plant,
-    Color leaf,
-    Color grass,
-    Color brass,
-  ) {
-    final stage = plant.stage.index;
-    final crown = _stageCrown[stage];
+  static const Color _leaf = Color(0xFF9CCAAD);
+  static const Color _grass = Color(0xFF547D77);
+  static const Color _brass = Color(0xFFD7B88A);
+
+  static (double droop, Color color) _rested(Vitality vitality) {
     const dusk = Color(0xFF7480A6);
-    final (double droop, Color color) = switch (plant.vitality) {
-      Vitality.thriving => (1.0, leaf),
-      Vitality.dimmed => (0.95, Color.lerp(leaf, dusk, 0.3)!),
-      Vitality.wilting => (0.78, Color.lerp(leaf, dusk, 0.6)!),
-      Vitality.dormant => (0.62, Color.lerp(leaf, dusk, 0.85)!),
+    return switch (vitality) {
+      Vitality.thriving => (1.0, _leaf),
+      Vitality.dimmed => (0.95, Color.lerp(_leaf, dusk, 0.3)!),
+      Vitality.wilting => (0.78, Color.lerp(_leaf, dusk, 0.6)!),
+      Vitality.dormant => (0.62, Color.lerp(_leaf, dusk, 0.85)!),
     };
-    if (stage == 0) {
-      sphere(base + const WorldPoint(0, 0.02, 0), crown, brass, coarse: true);
+  }
+
+  void _plant(WorldPoint base, WorldPlant plant) {
+    final (droop, color) = _rested(plant.vitality);
+    _plantShape(
+      base,
+      stage: plant.stage.index.toDouble(),
+      droop: droop,
+      color: color,
+      thriving: plant.vitality == Vitality.thriving,
+    );
+  }
+
+  /// One plant at a possibly fractional [stage] (0 seed … 5 ancient), so a
+  /// moment can grow it smoothly; whole stages draw exactly the W03 plant.
+  /// [scale] shrinks a new plant as it comes up out of the ground.
+  void _plantShape(
+    WorldPoint base, {
+    required double stage,
+    required double droop,
+    required Color color,
+    required bool thriving,
+    double scale = 1,
+  }) {
+    double at(List<double> values) {
+      final s = stage.clamp(0.0, values.length - 1.0);
+      final i = s.floor().clamp(0, values.length - 2);
+      return values[i] + (values[i + 1] - values[i]) * (s - i);
+    }
+
+    final crown = at(_stageCrown) * scale;
+    if (stage <= 0) {
+      sphere(base + const WorldPoint(0, 0.02, 0), crown, _brass, coarse: true);
       return;
     }
-    final height = _stageHeight[stage] * droop;
-    frustum(base, 0.03, 0.02, height, brass, 6);
-    sphere(base + WorldPoint(0, height, 0), crown, color, coarse: true);
-    if (stage >= 3) {
+    // Between seed and sprout the stem rises and the seed turns to leaf.
+    final leafColor = stage < 1 ? Color.lerp(_brass, color, stage)! : color;
+    final height = at(_stageHeight) * droop * scale;
+    frustum(base, 0.03 * scale, 0.02 * scale, height, _brass, 6);
+    sphere(base + WorldPoint(0, height, 0), crown, leafColor, coarse: true);
+    if (stage > 2) {
       sphere(
-        base + WorldPoint(0.07, height * 0.62, 0),
-        crown * 0.7,
-        plant.vitality == Vitality.thriving ? grass : color,
+        base + WorldPoint(0.07 * scale, height * 0.62, 0),
+        crown * 0.7 * (stage - 2).clamp(0.0, 1.0),
+        thriving ? _grass : leafColor,
         coarse: true,
       );
     }
   }
+
+  /// The faces of a plant in the middle of a moment, [t] from 0 (as last
+  /// seen) to 1 (as it is now). A new plant comes up out of the ground; a
+  /// grown one rises to its stage; a waking one warms and lifts its crown.
+  static List<WorldFace> changingPlant(
+    WorldPlantChange change,
+    double t, {
+    bool lowDetail = false,
+  }) {
+    final art = IslandMesh._(lowDetail);
+    final u = Curves.easeOutBack.transform(t.clamp(0.0, 1.0));
+    final from = change.from;
+    final to = change.to;
+    final (toDroop, toColor) = _rested(to.vitality);
+    final (fromDroop, fromColor) = from == null
+        ? (toDroop, toColor)
+        : _rested(from.vitality);
+    final fromStage = from?.stage.index.toDouble() ?? to.stage.index.toDouble();
+    art._plantShape(
+      UniverseDestination.grove.position + plantOffset(to.slot),
+      stage: fromStage + (to.stage.index - fromStage) * u,
+      droop: fromDroop + (toDroop - fromDroop) * u,
+      color: Color.lerp(fromColor, toColor, t.clamp(0.0, 1.0))!,
+      thriving: to.vitality == Vitality.thriving,
+      scale: from == null ? math.max(0.0, u) : 1,
+    );
+    return art.faces;
+  }
+
+  /// Where a changing plant's sparkle sits: just above its crown as it is now.
+  static WorldPoint crownOf(WorldPlant plant) =>
+      UniverseDestination.grove.position +
+      plantOffset(plant.slot) +
+      WorldPoint(0, _stageHeight[plant.stage.index] + 0.16, 0);
 
   void frustum(
     WorldPoint base,
@@ -397,27 +553,29 @@ class IslandMesh {
   static List<WorldFace> companion(
     WorldPoint position, {
     bool lowDetail = false,
+    CompanionPose pose = CompanionPose.still,
   }) {
     // Reuse the bounded mesh primitives without rebuilding the island.
     final art = IslandMesh._(lowDetail);
     const coat = Color(0xFFE9C79D);
     const face = Color(0xFFF9EED6);
-    final p = WorldPoint(position.x, 0.16, position.z);
+    final p = WorldPoint(position.x, 0.16 + pose.lift, position.z);
+    // Face [pose.heading]: offsets are authored facing +z.
+    final cos = math.cos(pose.heading);
+    final sin = math.sin(pose.heading);
+    WorldPoint turned(double x, double y, double z) =>
+        p + WorldPoint(x * cos + z * sin, y, -x * sin + z * cos);
     art.frustum(p, 0.21, 0.12, 0.39, coat, 10);
     art.sphere(p + const WorldPoint(0, 0.48, 0), 0.18, face);
-    art.sphere(
-      p + const WorldPoint(-0.063, 0.5, 0.157),
-      0.021,
-      const Color(0xFF403D53),
-    );
-    art.sphere(
-      p + const WorldPoint(0.063, 0.5, 0.157),
-      0.021,
-      const Color(0xFF403D53),
-    );
+    art.sphere(turned(-0.063, 0.5, 0.157), 0.021, const Color(0xFF403D53));
+    art.sphere(turned(0.063, 0.5, 0.157), 0.021, const Color(0xFF403D53));
+    // The leaf on its head opens a little while it celebrates.
+    final joy = pose.motion == CompanionMotion.celebrate
+        ? math.sin(pose.phase.clamp(0.0, 1.0) * math.pi) * 0.5
+        : 0.0;
     art.sphere(
       p + const WorldPoint(0, 0.69, 0),
-      0.065,
+      0.065 * (1 + joy),
       const Color(0xFFB7DDBA),
     );
     return art.faces;

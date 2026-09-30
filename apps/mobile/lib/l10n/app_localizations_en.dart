@@ -5528,4 +5528,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get universe_walkRight => 'Walk right';
+
+  @override
+  String export_hCommitment(String date) {
+    return 'Commitment since $date';
+  }
+
+  @override
+  String export_hPausedUntil(String date) {
+    return 'paused until $date';
+  }
+
+  @override
+  String get universe_reallifeTitle => 'Walks light the path';
+
+  @override
+  String get universe_reallifeBody =>
+      'If you allow it, today\'s steps from your phone\'s Health data make the path stones glow a little. Aura only reads a step count, keeps it on this phone, never uploads or shows it, and a quiet day just leaves a plain path.';
+
+  @override
+  String get universe_reallifeSwitch => 'Use my steps';
+
+  @override
+  String get universe_reallifeDenied =>
+      'That\'s fine. Nothing changes. You can allow it later in your phone\'s Health settings.';
+
+  @override
+  String get universe_changesTitle => 'New in your world';
+
+  @override
+  String universe_changeGrow(String name, String stage) {
+    return '$name grew to a new stage: $stage';
+  }
+
+  @override
+  String universe_changeWake(String name) {
+    return '$name is awake again';
+  }
+
+  @override
+  String universe_changeSprout(String name) {
+    return 'A new plant for $name';
+  }
 }

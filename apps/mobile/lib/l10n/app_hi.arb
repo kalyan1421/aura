@@ -1459,5 +1459,15 @@
   "universe_walkForward": "आगे चलें",
   "universe_walkBack": "पीछे चलें",
   "universe_walkLeft": "बाएँ चलें",
-  "universe_walkRight": "दाएँ चलें"
+  "universe_walkRight": "दाएँ चलें",
+  "export_hCommitment": "{date} से संकल्प",
+  "export_hPausedUntil": "{date} तक विराम",
+  "universe_reallifeTitle": "सैर से रास्ता जगमगाता है",
+  "universe_reallifeBody": "अगर आप अनुमति दें, तो आपके फ़ोन के Health डेटा से आज के क़दम रास्ते के पत्थरों को थोड़ा रोशन करते हैं। Aura सिर्फ़ क़दमों की गिनती पढ़ता है, उसे इसी फ़ोन में रखता है, कभी अपलोड या दिखाता नहीं, और शांत दिन पर रास्ता बस सादा रहता है।",
+  "universe_reallifeSwitch": "मेरे क़दम इस्तेमाल करें",
+  "universe_reallifeDenied": "कोई बात नहीं। कुछ नहीं बदलेगा। आप बाद में फ़ोन की Health सेटिंग में अनुमति दे सकते हैं।",
+  "universe_changesTitle": "आपकी दुनिया में नया",
+  "universe_changeGrow": "{name} का पौधा नए पड़ाव तक बढ़ा: {stage}",
+  "universe_changeWake": "{name} का पौधा फिर से जाग गया",
+  "universe_changeSprout": "{name} के लिए नया पौधा"
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aura_domain/aura_domain.dart' show LocalDay;
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
@@ -566,6 +567,38 @@ class PullService {
                 .get();
         for (final d in dups) {
           merged++;
+          // A commitment made on the discarded duplicate (its own upsert was
+          // refused as `duplicate_preset_habit`) moves to the server's habit
+          // and goes out again explicitly.
+          final start = LocalDay.tryParse(d.committedFrom);
+          if (start != null && s['committed_from'] == null) {
+            await (_db.update(_db.habits)
+                  ..where((t) => t.id.equals(serverId)))
+                .write(
+                  HabitsCompanion(
+                    committedFrom: Value(d.committedFrom),
+                    pausedThrough: Value(d.pausedThrough),
+                    synced: const Value(false),
+                  ),
+                );
+            await _outbox.enqueue(
+              entity: Entities.habit,
+              op: Ops.upsert,
+              entityId: serverId,
+              deviceTs: DateTime.now().toUtc(),
+              localDay: start,
+              tz: 'UTC',
+              payload: {
+                'id': serverId,
+                'kind': 'preset',
+                'presetKey': key,
+                'name': s['name'],
+                'active': (s['active'] as bool?) ?? true,
+                'committedFrom': d.committedFrom,
+                'pausedThrough': d.pausedThrough,
+              },
+            );
+          }
           final logs = await (_db.select(
             _db.habitLogs,
           )..where((t) => t.habitId.equals(d.id))).get();

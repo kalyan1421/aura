@@ -8866,6 +8866,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Walk right'**
   String get universe_walkRight;
+
+  /// HTML export: a habit the person committed to (RULES.md section 13). {date} is an ISO day.
+  ///
+  /// In en, this message translates to:
+  /// **'Commitment since {date}'**
+  String export_hCommitment(String date);
+
+  /// HTML export: the commitment is paused until this ISO day.
+  ///
+  /// In en, this message translates to:
+  /// **'paused until {date}'**
+  String export_hPausedUntil(String date);
+
+  /// Title of the opt-in card that lets today's steps glow the path stones. Only shown when the phone has a health source.
+  ///
+  /// In en, this message translates to:
+  /// **'Walks light the path'**
+  String get universe_reallifeTitle;
+
+  /// Consent copy. Must say: opt-in, read-only step count, stays on the phone, never uploaded or shown, no penalty for a quiet day.
+  ///
+  /// In en, this message translates to:
+  /// **'If you allow it, today\'s steps from your phone\'s Health data make the path stones glow a little. Aura only reads a step count, keeps it on this phone, never uploads or shows it, and a quiet day just leaves a plain path.'**
+  String get universe_reallifeBody;
+
+  /// Label of the switch that turns on step-lit path stones.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my steps'**
+  String get universe_reallifeSwitch;
+
+  /// Shown when the person declines the system health permission. Calm; nothing is lost.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s fine. Nothing changes. You can allow it later in your phone\'s Health settings.'**
+  String get universe_reallifeDenied;
+
+  /// Heading above the short list of what changed in the personal world since the person last looked (a plant grew, woke or was planted). Screen readers announce it.
+  ///
+  /// In en, this message translates to:
+  /// **'New in your world'**
+  String get universe_changesTitle;
+
+  /// A habit's plant reached a higher growth stage since the last look. {stage} is one of the growth stage words (Sprout, Growing, ...).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} grew to a new stage: {stage}'**
+  String universe_changeGrow(String name, String stage);
+
+  /// A resting habit plant is thriving again (one log wakes it). Warm; never mention the days it rested.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is awake again'**
+  String universe_changeWake(String name);
+
+  /// A habit was added to the grove since the last look, so a new plant appeared.
+  ///
+  /// In en, this message translates to:
+  /// **'A new plant for {name}'**
+  String universe_changeSprout(String name);
 }
 
 class _AppLocalizationsDelegate

@@ -26,7 +26,7 @@ import { QueuesService } from '../../src/queues/queues.service';
 import { runRoomLifecycle } from '../../src/rooms/room-lifecycle';
 import { purgeExpiredEvidence } from '../../src/safety/evidence';
 import { ReportsService } from '../../src/safety/reports.service';
-import { SUPABASE_URL, bootApp, createUser, dbPool, deleteUser, localAnonKey, localServiceKey, type TestUser } from './support';
+import { SUPABASE_URL, bootApp, createUser, dbPool, deleteUser, localAnonKey, removeUserViaAuth, setUserPassword, type TestUser } from './support';
 
 jest.setTimeout(90_000);
 
@@ -348,11 +348,7 @@ describe('Admin console v0 (e2e, live Supabase Auth + TOTP, Postgres, Redis, Mai
 
     it('a staff account can be deleted through Supabase Auth (the allowlist row goes, the removal is audited)', async () => {
       const temp = await staff('adm-temp', 'analyst', false);
-      const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${temp.id}`, {
-        method: 'DELETE',
-        headers: { apikey: localServiceKey(), Authorization: `Bearer ${localServiceKey()}` },
-      });
-      expect(res.status).toBe(200);
+      expect(await removeUserViaAuth(temp.id)).toBe(200);
       expect((await db.query('select count(*)::int as n from public.admin_staff where staff_id = $1', [temp.id])).rows[0].n).toBe(0);
       const audit = await db.query(`select actor from public.moderation_actions where action = 'staff_removed' and detail->>'staffId' = $1`, [temp.id]);
       expect(audit.rows).toEqual([{ actor: 'db:supabase_auth_admin' }]);
@@ -790,11 +786,7 @@ describe('Admin console v0 (e2e, live Supabase Auth + TOTP, Postgres, Redis, Mai
       );
       // A fresh session for this user, then mark its first factor as the OAuth sign-in and refresh.
       const pw = `pw-${randomBytes(12).toString('hex')}`;
-      await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${u.id}`, {
-        method: 'PUT',
-        headers: { apikey: localServiceKey(), Authorization: `Bearer ${localServiceKey()}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pw }),
-      });
+      await setUserPassword(u.id, pw);
       const s = (await (
         await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
           method: 'POST',

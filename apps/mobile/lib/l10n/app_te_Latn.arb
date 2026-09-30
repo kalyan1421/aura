@@ -1459,5 +1459,15 @@
   "universe_walkForward": "Munduku nadavandi",
   "universe_walkBack": "Venakki nadavandi",
   "universe_walkLeft": "Edamaku nadavandi",
-  "universe_walkRight": "Kudiki nadavandi"
+  "universe_walkRight": "Kudiki nadavandi",
+  "export_hCommitment": "{date} nundi sankalpam",
+  "export_hPausedUntil": "{date} varaku viraamam",
+  "universe_reallifeTitle": "Nadakalu daarini veligistaayi",
+  "universe_reallifeBody": "Meeru anumatiste, mee phone Health data loni eeroju adugulu daari raallanu konchem veligistaayi. Aura kevalam adugula sankhyanu chaduvutundi, daanni ee phone lone unchutundi, eppudu upload cheyadu leda choopadu, nishabda roju valla daari saadhaaranam ga untundi.",
+  "universe_reallifeSwitch": "Naa adugulu vaadandi",
+  "universe_reallifeDenied": "Parvaledu. Emi maaradu. Tarvaata mee phone Health settings lo anumatinchavachu.",
+  "universe_changesTitle": "Mee prapanchamlo kottavi",
+  "universe_changeGrow": "{name} mokka kotta dashaku perigindi: {stage}",
+  "universe_changeWake": "{name} mokka malli melukondi",
+  "universe_changeSprout": "{name} kosam kotta mokka"
 }

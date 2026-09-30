@@ -76,6 +76,8 @@ class ExportLabels {
     required this.sealed,
     required this.voiceNote,
     required this.nothing,
+    required this.commitmentSince,
+    required this.pausedUntil,
   });
 
   final String title;
@@ -91,6 +93,11 @@ class ExportLabels {
   final String sealed;
   final String voiceNote;
   final String nothing;
+
+  /// "Commitment since {day}" / "paused until {day}" for a habit's own opt-in
+  /// (W02); each takes an ISO day.
+  final String Function(String day) commitmentSince;
+  final String Function(String day) pausedUntil;
 }
 
 // ---- collecting ---------------------------------------------------------------
@@ -290,7 +297,12 @@ String exportHtml(ExportBundle b, ExportLabels l) {
   }
   section(l.habits, [
     for (final h in b.habits)
-      '${_esc(h['name'])} <span class="muted">· ${byHabit['${h['name']}'] ?? 0}</span>',
+      [
+        '${_esc(h['name'])} <span class="muted">· ${byHabit['${h['name']}'] ?? 0}</span>',
+        if (h['committedFrom'] != null)
+          '<span class="muted">· ${_esc(l.commitmentSince('${h['committedFrom']}'))}'
+              '${h['pausedThrough'] != null ? ' · ${_esc(l.pausedUntil('${h['pausedThrough']}'))}' : ''}</span>',
+      ].join(' '),
   ]);
 
   section(l.capsules, [

@@ -80,3 +80,93 @@ bool showWelcomeBack({
   required LocalDay today,
   required LocalDay? shownFor,
 }) => isResting(lastActiveDay, today) && shownFor != lastActiveDay;
+
+/// The sky over the personal universe (W06, RULES.md section 13).
+enum SkyPhase {
+  dawn,
+  day,
+  dusk,
+  night;
+
+  static SkyPhase fromName(String name) =>
+      values.firstWhere((p) => p.name == name);
+}
+
+/// The sky for a wall-clock hour on the phone (any integer, normalised mod
+/// 24). Decoration only: no location, no permission, never mood or health.
+SkyPhase skyPhase(int localHour) {
+  final h = ((localHour % 24) + 24) % 24;
+  if (h >= 5 && h < 7) return SkyPhase.dawn;
+  if (h >= 7 && h < 17) return SkyPhase.day;
+  if (h >= 17 && h < 19) return SkyPhase.dusk;
+  return SkyPhase.night;
+}
+
+/// How many stepping stones the island has to light.
+const int pathStoneCount = 16;
+
+/// Stones that glow after [steps] today: one per thousand, up to
+/// [pathStoneCount]. Warmth only: null, negative or zero steps is a plain
+/// path, never a dim one. The number itself is never shown or kept.
+int litStones(int? steps) {
+  if (steps == null || steps <= 0) return 0;
+  final stones = steps ~/ 1000;
+  return stones > pathStoneCount ? pathStoneCount : stones;
+}
+
+/// How a world object looked the last time the person saw it (T04).
+class WorldLook {
+  const WorldLook(this.stage, this.vitality);
+  final GrowthStage stage;
+  final Vitality vitality;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WorldLook && other.stage == stage && other.vitality == vitality;
+
+  @override
+  int get hashCode => Object.hash(stage, vitality);
+}
+
+/// A world object that deserves a one-time moment.
+enum WorldChangeKind {
+  /// New to the grove.
+  sprout,
+
+  /// Reached a higher growth stage.
+  grow,
+
+  /// Was resting and is thriving again.
+  wake;
+
+  static WorldChangeKind fromName(String name) =>
+      values.firstWhere((k) => k.name == name);
+}
+
+typedef WorldChange = ({String key, WorldChangeKind kind});
+
+/// What changed since the person last saw the world (RULES.md section 13
+/// `changes`). A `null` [seen] is the baseline: the first look is never a
+/// moment. At most one change per key, in [current] order; a lower stage or a
+/// plant starting to rest is never a change. Presentation only.
+List<WorldChange> worldChanges({
+  required Map<String, WorldLook>? seen,
+  required List<({String key, WorldLook look})> current,
+}) {
+  if (seen == null) return const [];
+  return [
+    for (final c in current)
+      if (_changeOf(seen[c.key], c.look) case final kind?)
+        (key: c.key, kind: kind),
+  ];
+}
+
+WorldChangeKind? _changeOf(WorldLook? before, WorldLook now) {
+  if (before == null) return WorldChangeKind.sprout;
+  if (now.stage.index > before.stage.index) return WorldChangeKind.grow;
+  if (before.vitality != Vitality.thriving &&
+      now.vitality == Vitality.thriving) {
+    return WorldChangeKind.wake;
+  }
+  return null;
+}

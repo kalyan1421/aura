@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:aura_domain/aura_domain.dart' show GrowthStage, Vitality;
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:aura_domain/aura_domain.dart'
+    show GrowthStage, Vitality, WorldChangeKind, litStones;
+import 'package:flutter/foundation.dart' show listEquals, setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,12 +18,16 @@ import '../capsules/capsules_list_screen.dart';
 import '../habits/habits_section.dart';
 import '../progress/progress_view.dart';
 import '../sanctuary/sanctuary_activities.dart';
+import '../health/health_providers.dart';
+import 'real_life_card.dart';
 import 'roam.dart';
 import 'roam_controls.dart';
 import 'universe_scene.dart';
+import 'sky.dart';
 import 'universe_scene_view.dart';
 import 'welcome_back.dart';
 import 'world_habits.dart';
+import 'world_moments.dart';
 
 extension UniverseDestinationCopy on UniverseDestination {
   String title(AppLocalizations l) => switch (this) {
@@ -95,9 +100,65 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
   WorldPoint _from = const WorldPoint(0, 0.16, 0);
   WorldPoint _to = const WorldPoint(0, 0.16, 0);
   late final AnimationController _walk;
+
+  /// T04: where the companion faces, and how far it has walked in free roam
+  /// (its stride follows the distance, not the clock).
+  double _heading = 0;
+  double _roamWalked = 0;
+
+  /// T04: the world moment playing (or last played, for its text twin).
+  late final AnimationController _momentPlay;
+  WorldMoment? _moment;
+  bool _playing = false;
+  double _cheerFrom = 0;
+  double _cheerTo = 0;
+
+  /// Bumped on every roam step so only the scene repaints; the rest of the
+  /// screen is rebuilt when the chosen place changes, not on every frame.
+  final ValueNotifier<int> _moved = ValueNotifier(0);
   IslandMesh? _mesh;
   double? _meshGrowth;
   List<WorldPlant>? _meshPlants;
+  int? _meshLit;
+  Set<int> _meshChanging = const {};
+
+  /// World units per step of the companion's walk.
+  static const double _stride = 0.2;
+
+  bool get _roaming => _roamTicker?.isActive ?? false;
+
+  /// What the companion is doing now, from the screen's own state: a
+  /// celebration while a moment plays, a walk while it travels, else still.
+  /// Under reduced motion it never bobs or hops (the moment itself is off).
+  CompanionPose get _pose {
+    if (_playing) {
+      final t = _momentPlay.value;
+      return CompanionPose(
+        motion: CompanionMotion.celebrate,
+        heading: lerpHeading(_cheerFrom, _cheerTo, t * 4),
+        phase: t,
+      );
+    }
+    final reduce = mounted && reduceMotionOf(context);
+    if (!reduce && _walk.isAnimating) {
+      final leg = _to - _from;
+      final walked =
+          math.sqrt(leg.dot(leg)) * Curves.easeInOut.transform(_walk.value);
+      return CompanionPose(
+        motion: CompanionMotion.walk,
+        heading: _heading,
+        phase: walked / _stride,
+      );
+    }
+    if (!reduce && _roaming) {
+      return CompanionPose(
+        motion: CompanionMotion.walk,
+        heading: _heading,
+        phase: _roamWalked / _stride,
+      );
+    }
+    return CompanionPose(heading: _heading);
+  }
 
   WorldPoint get _position =>
       WorldPoint.lerp(_from, _to, Curves.easeInOut.transform(_walk.value));
@@ -111,12 +172,30 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
       duration: const Duration(milliseconds: 700),
     );
     _roamTicker = createTicker(_onRoamTick);
+    _momentPlay =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 1600),
+        )..addStatusListener((status) {
+          if (status != AnimationStatus.completed || !_playing) return;
+          _heading = _cheerTo;
+          if (!_disposed) setState(() => _playing = false);
+          _playSoon();
+        });
+    // A moment that arrives while the world is on screen plays at once;
+    // one that arrives under a sheet (logging in the Grove) waits for it.
+    ref.listenManual(worldMomentsProvider, (_, next) {
+      if (next != null) _playSoon();
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (reduceMotionOf(context)) _walk.value = 1;
+    // Also runs when this route becomes current again (a sheet or a pushed
+    // care flow closed): a moment waiting meanwhile plays now.
+    if (ModalRoute.isCurrentOf(context) ?? true) _playSoon();
   }
 
   @override
@@ -124,6 +203,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     if (state != AppLifecycleState.resumed) {
       _walk.value = 1;
       _setRoamInput(RoamInput.zero);
+      if (_playing) _momentPlay.value = 1;
     }
   }
 
@@ -132,6 +212,8 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     _disposed = true;
     WidgetsBinding.instance.removeObserver(this);
     _roamTicker?.dispose();
+    _moved.dispose();
+    _momentPlay.dispose();
     _walk.dispose();
     super.dispose();
   }
@@ -159,8 +241,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     _moveTo(stepRoam(_position, _roamInput, _camera, dt));
   }
 
-  void _nudge(RoamInput input) =>
-      _moveTo(nudgeRoam(_position, input, _camera));
+  void _nudge(RoamInput input) => _moveTo(nudgeRoam(_position, input, _camera));
 
   /// Puts the companion at [point] and, near a place, selects it so the care
   /// card (a live region) names it and its button acts on it.
@@ -168,14 +249,20 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     if (_disposed) return;
     final here = _position;
     if (point.x == here.x && point.z == here.z) return;
+    _heading = headingToward(here, point, fallback: _heading);
+    final step = point - here;
+    _roamWalked += math.sqrt(step.x * step.x + step.z * step.z);
     _walk.stop();
-    setState(() {
-      _from = point;
-      _to = point;
-      _walk.value = 1;
-      final near = nearestPlace(point);
-      if (near != null) _selected = near;
-    });
+    _from = point;
+    _to = point;
+    _walk.value = 1;
+    // The scene listens to [_moved]; the rest of the screen only when the
+    // chosen place changes.
+    _moved.value++;
+    final near = nearestPlace(point);
+    if (near != null && near != _selected) {
+      setState(() => _selected = near);
+    }
   }
 
   void _setFreeRoam(bool on) {
@@ -183,12 +270,39 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     setState(() => _freeRoam = on);
   }
 
+  // ---- world moments (T04) --------------------------------------------------
+  // A plant that grew, woke or was planted since the last look plays once:
+  // the companion turns to the person and hops, the plant grows into its new
+  // shape, and the text twin below says what changed. Nothing is awarded.
+
+  /// Out of build and out of provider notifications: taking the moment
+  /// changes provider state.
+  void _playSoon() => Future.microtask(_play);
+
+  void _play() {
+    if (_disposed || !mounted || _playing) return;
+    if (!(ModalRoute.isCurrentOf(context) ?? true)) return;
+    final moment = ref.read(worldMomentsProvider.notifier).take();
+    if (moment == null) return;
+    // The list view and reduced motion show the new state and the words only.
+    final still = _listOnly || reduceMotionOf(context);
+    setState(() {
+      _moment = moment;
+      _playing = !still;
+    });
+    if (still) return;
+    _cheerFrom = _heading;
+    _cheerTo = headingToward(_position, _camera.eye, fallback: _heading);
+    _momentPlay.forward(from: 0);
+  }
+
   void _select(UniverseDestination destination) {
     final current = _position;
     setState(() {
       _selected = destination;
       _from = current;
-      _to = destination.avatarStop;
+      _to = destination.walkStop;
+      _heading = headingToward(current, _to, fallback: _heading);
     });
     if (_listOnly || reduceMotionOf(context)) {
       _walk.value = 1;
@@ -199,6 +313,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
 
   void _open() {
     _walk.value = 1;
+    if (_playing) _momentPlay.value = 1;
     switch (_selected) {
       case UniverseDestination.grove:
         showModalBottomSheet<void>(
@@ -230,9 +345,16 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     // One plant per shown habit (RULES.md section 13). Until the first read
     // the grove keeps the aggregate fallback.
     final habits = ref.watch(worldHabitsProvider).value;
-    final plants = habits == null
-        ? null
-        : [for (final h in habits) h.plant];
+    final plants = habits == null ? null : [for (final h in habits) h.plant];
+    // W06: the sky is the phone's time of day; stones glow after an opted-in
+    // walk. Both are decoration; the step count itself goes nowhere else.
+    final sky = ref.watch(skyProvider);
+    final lit = litStones(ref.watch(worldStepsProvider).value);
+    // T04: plants in a playing moment are drawn per frame, not in the mesh.
+    final changes = _playing
+        ? [for (final p in _moment!.plants) p.change]
+        : const <WorldPlantChange>[];
+    final changing = {for (final c in changes) c.slot};
     return Scaffold(
       appBar: helpAppBar(context, title: l.universe_title),
       body: SafeArea(
@@ -265,6 +387,7 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                     onPressed: () {
                       _walk.value = 1;
                       _setRoamInput(RoamInput.zero);
+                      if (_playing) _momentPlay.value = 1;
                       setState(() {
                         _listOnly = !_listOnly;
                         _freeRoam = false;
@@ -298,14 +421,20 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       if (_mesh == null ||
                           _meshGrowth != growth ||
                           !listEquals(_meshPlants, plants) ||
+                          _meshLit != lit ||
+                          !setEquals(_meshChanging, changing) ||
                           _mesh!.lowDetail != lowDetail) {
                         _mesh = IslandMesh(
                           growth: growth,
                           lowDetail: lowDetail,
                           plants: plants,
+                          litStones: lit,
+                          changingSlots: changing,
                         );
                         _meshGrowth = growth;
                         _meshPlants = plants;
+                        _meshLit = lit;
+                        _meshChanging = changing;
                       }
                       return LayoutBuilder(
                         builder: (context, box) => SizedBox(
@@ -314,12 +443,20 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                             math.max(250, box.maxWidth * 0.85),
                           ),
                           child: AnimatedBuilder(
-                            animation: _walk,
+                            animation: Listenable.merge([
+                              _walk,
+                              _moved,
+                              _momentPlay,
+                            ]),
                             builder: (context, _) => UniverseSceneView(
                               mesh: _mesh!,
                               camera: _camera,
                               companion: _position,
+                              pose: _pose,
+                              changes: changes,
+                              changeProgress: _momentPlay.value,
                               selected: _selected,
+                              sky: sky,
                               onOrbit: (h, v) =>
                                   setState(() => _camera = _camera.orbit(h, v)),
                               onSelect: _select,
@@ -373,6 +510,10 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                       onNudge: _nudge,
                     ),
                   ],
+                  const SizedBox(height: 16),
+                ],
+                if (_moment case final moment?) ...[
+                  _WorldChanges(moment: moment),
                   const SizedBox(height: 16),
                 ],
                 Wrap(
@@ -437,6 +578,9 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                     ),
                   ),
                 ),
+                // Only when the phone has a health source (W06).
+                const SizedBox(height: 16),
+                const RealLifeCard(),
               ],
             ),
           ),
@@ -512,6 +656,66 @@ class _GrovePlants extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// The text twin of a world moment (T04): what grew, woke or was planted
+/// since the last look, in words, for everyone (the scene itself is hidden
+/// from screen readers). Only good news is ever listed; it stays for the visit.
+class _WorldChanges extends StatelessWidget {
+  const _WorldChanges({required this.moment});
+  final WorldMoment moment;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context).textTheme;
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      child: Column(
+        key: const ValueKey('universe-changes'),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            header: true,
+            child: Text(l.universe_changesTitle, style: t.titleSmall),
+          ),
+          const SizedBox(height: 4),
+          for (final p in moment.plants)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.auto_awesome_outlined,
+                    size: 18,
+                    color: AuraColors.textSoft,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(() {
+                      final name = habitDisplayName(
+                        l,
+                        preset: p.habit.input.preset,
+                        name: p.habit.input.name,
+                      );
+                      return switch (p.kind) {
+                        WorldChangeKind.grow => l.universe_changeGrow(
+                          name,
+                          l.stageLabel(p.habit.stage),
+                        ),
+                        WorldChangeKind.wake => l.universe_changeWake(name),
+                        WorldChangeKind.sprout => l.universe_changeSprout(name),
+                      };
+                    }(), style: t.bodyMedium),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

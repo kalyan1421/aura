@@ -111,9 +111,10 @@ class SyncService implements SyncTrigger {
 
   /// W02/W03: the server refused a habit's commitment (`commitment_not_available`
   /// or `invalid_commitment`, e.g. an under-18 age signal this phone has not
-  /// seen). The habit id is handed over so the phone stops showing stakes the
-  /// server does not hold.
-  final Future<void> Function(String habitId)? _onCommitmentRejected;
+  /// seen). The habit id and the reason are handed over so the phone stops
+  /// showing stakes the server does not hold (and keeps the ones it does).
+  final Future<void> Function(String habitId, String reason)?
+  _onCommitmentRejected;
 
   final AuthRepository _auth;
   final AuraApi? _api;
@@ -557,7 +558,7 @@ class SyncService implements SyncTrigger {
           if (row.entity == Entities.habit &&
               (r.reason == 'commitment_not_available' ||
                   r.reason == 'invalid_commitment')) {
-            await _onCommitmentRejected?.call(row.entityId);
+            await _onCommitmentRejected?.call(row.entityId, r.reason!);
           }
           if (row.entity == Entities.capsule) {
             await _capsules?.onRejected(row, r.reason ?? 'rejected');

@@ -7077,5 +7077,73 @@
   "universe_walkRight": "Walk right",
   "@universe_walkRight": {
     "description": "Screen-reader label of the free-roam right arrow."
+  },
+  "export_hCommitment": "Commitment since {date}",
+  "@export_hCommitment": {
+    "description": "HTML export: a habit the person committed to (RULES.md section 13). {date} is an ISO day.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "export_hPausedUntil": "paused until {date}",
+  "@export_hPausedUntil": {
+    "description": "HTML export: the commitment is paused until this ISO day.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "universe_reallifeTitle": "Walks light the path",
+  "@universe_reallifeTitle": {
+    "description": "Title of the opt-in card that lets today's steps glow the path stones. Only shown when the phone has a health source."
+  },
+  "universe_reallifeBody": "If you allow it, today's steps from your phone's Health data make the path stones glow a little. Aura only reads a step count, keeps it on this phone, never uploads or shows it, and a quiet day just leaves a plain path.",
+  "@universe_reallifeBody": {
+    "description": "Consent copy. Must say: opt-in, read-only step count, stays on the phone, never uploaded or shown, no penalty for a quiet day."
+  },
+  "universe_reallifeSwitch": "Use my steps",
+  "@universe_reallifeSwitch": {
+    "description": "Label of the switch that turns on step-lit path stones."
+  },
+  "universe_reallifeDenied": "That's fine. Nothing changes. You can allow it later in your phone's Health settings.",
+  "@universe_reallifeDenied": {
+    "description": "Shown when the person declines the system health permission. Calm; nothing is lost."
+  },
+  "universe_changesTitle": "New in your world",
+  "@universe_changesTitle": {
+    "description": "Heading above the short list of what changed in the personal world since the person last looked (a plant grew, woke or was planted). Screen readers announce it."
+  },
+  "universe_changeGrow": "{name} grew to a new stage: {stage}",
+  "@universe_changeGrow": {
+    "description": "A habit's plant reached a higher growth stage since the last look. {stage} is one of the growth stage words (Sprout, Growing, ...).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "universe_changeWake": "{name} is awake again",
+  "@universe_changeWake": {
+    "description": "A resting habit plant is thriving again (one log wakes it). Warm; never mention the days it rested.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "universe_changeSprout": "A new plant for {name}",
+  "@universe_changeSprout": {
+    "description": "A habit was added to the grove since the last look, so a new plant appeared.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

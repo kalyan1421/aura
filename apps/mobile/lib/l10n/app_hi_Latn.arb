@@ -1459,5 +1459,15 @@
   "universe_walkForward": "Aage chalein",
   "universe_walkBack": "Peeche chalein",
   "universe_walkLeft": "Baayein chalein",
-  "universe_walkRight": "Daayein chalein"
+  "universe_walkRight": "Daayein chalein",
+  "export_hCommitment": "{date} se sankalp",
+  "export_hPausedUntil": "{date} tak viraam",
+  "universe_reallifeTitle": "Sair se raasta jagmagata hai",
+  "universe_reallifeBody": "Agar aap anumati dein, to aapke phone ke Health data se aaj ke kadam raaste ke patthron ko thoda roshan karte hain. Aura sirf kadmon ki ginti padhta hai, use isi phone mein rakhta hai, kabhi upload ya dikhata nahi, aur shaant din par raasta bas saada rehta hai.",
+  "universe_reallifeSwitch": "Mere kadam istemaal karein",
+  "universe_reallifeDenied": "Koi baat nahi. Kuch nahi badlega. Aap baad mein phone ki Health settings mein anumati de sakte hain.",
+  "universe_changesTitle": "Aapki duniya mein naya",
+  "universe_changeGrow": "{name} ka paudha naye padaav tak badha: {stage}",
+  "universe_changeWake": "{name} ka paudha phir se jaag gaya",
+  "universe_changeSprout": "{name} ke liye naya paudha"
 }

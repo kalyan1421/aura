@@ -3153,4 +3153,29 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   String get universe_walkLeft => pseudo(super.universe_walkLeft);
   @override
   String get universe_walkRight => pseudo(super.universe_walkRight);
+  @override
+  String export_hCommitment(String date) =>
+      pseudo(super.export_hCommitment(date));
+  @override
+  String export_hPausedUntil(String date) =>
+      pseudo(super.export_hPausedUntil(date));
+  @override
+  String get universe_reallifeTitle => pseudo(super.universe_reallifeTitle);
+  @override
+  String get universe_reallifeBody => pseudo(super.universe_reallifeBody);
+  @override
+  String get universe_reallifeSwitch => pseudo(super.universe_reallifeSwitch);
+  @override
+  String get universe_reallifeDenied => pseudo(super.universe_reallifeDenied);
+  @override
+  String get universe_changesTitle => pseudo(super.universe_changesTitle);
+  @override
+  String universe_changeGrow(String name, String stage) =>
+      pseudo(super.universe_changeGrow(name, stage));
+  @override
+  String universe_changeWake(String name) =>
+      pseudo(super.universe_changeWake(name));
+  @override
+  String universe_changeSprout(String name) =>
+      pseudo(super.universe_changeSprout(name));
 }

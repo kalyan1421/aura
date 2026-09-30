@@ -249,3 +249,22 @@ keepsake or share milestone, and nothing here is pushed or shared. A world objec
   appears **once per absence**: coming back and being active moves `lastActiveDay`, so a later absence shows it again, and merely
   leaving and re-opening the universe never repeats it. A new person (`lastActiveDay == null`) never sees it. Copy is warm and
   never mentions days away, streaks, loss or what was missed; it works with Comfort › hide streak number because it shows no number.
+- **`sky`** — `skyPhase(localHour)` (W06): the personal universe's sky follows the phone's own wall clock, so it needs no location
+  and no permission. `localHour` is 0–23 in the device zone (any integer is normalised mod 24). `dawn` 5 ≤ h < 7 · `day` 7 ≤ h < 17 ·
+  `dusk` 17 ≤ h < 19 · `night` otherwise. Latitude and season are not modelled (a real sunrise needs a location, which Aura does not
+  ask for). The sky is decoration only: it never changes with mood, habits or health data.
+- **`stones`** — `litStones(steps)` (W06, opt-in and read-only): how many of the island's `16` path stones glow after today's steps
+  (`0` for `null`, negative or not-a-number; otherwise `min(16, floor(steps / 1000))`). **Warmth only:** no steps is a plain path, never
+  a dim or "missed" one; there is no goal or recommended amount; the number of steps is never shown, stored, logged, uploaded or
+  shared, and nothing here touches the ledger. Steps come from the platform health store only after the person turns it on.
+- **`changes`** — `worldChanges({seen, current})` (T04): which world objects deserve a one-time moment (the companion's
+  celebration and a plant's grow or wake animation) since the person last saw the world. `seen` maps an opaque object key to the
+  `{stage, vitality}` last shown, or is `null` when nothing was ever shown; `current` is the ordered list of `{key, stage, vitality}`
+  now. A `null` `seen` is the **baseline**: no changes (the first look is never a moment). Otherwise, in `current` order, at most one
+  change per key: a key absent from `seen` → `sprout` (new to the grove); a higher stage → `grow`; a `seen` vitality other than
+  `thriving` that is now `thriving` → `wake`; `grow` wins over `wake`. **Nothing else is a change:** a lower stage (a deleted log), a
+  plant starting to rest or resting more deeply, and a key that left the grove are never animated or announced; the world never
+  dramatises rest or a correction. Keys are the app's own (a preset's catalogue key or a custom habit's id) and `seen` lives on the
+  device only (never pushed, wiped with the account's local data). **Replay is cosmetic:** losing `seen` only means the next look is
+  a new baseline; a moment awards nothing, changes nothing and is never tied to how the person feels.
+

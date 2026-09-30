@@ -33,6 +33,15 @@ abstract final class KvKeys {
   /// last shown for (ISO), so it appears once per absence. Device-only.
   static const String welcomeShownFor = 'universe.welcome_shown_for';
 
+  /// T04: how each world object looked when the person last saw it
+  /// (`{key: [stage, vitality]}`), so a plant's grow or wake moment plays
+  /// once. Device-only presentation state; losing it only resets the baseline.
+  static const String worldSeen = 'universe.world_seen';
+
+  /// W06: the person turned on "use my steps" (`1`). Only this flag is kept;
+  /// the step count itself is never stored, logged or uploaded.
+  static const String healthStepsEnabled = 'health.steps_enabled';
+
   /// Push soft ask answered: `{answer: allow|notNow, at}`. Nothing is asked
   /// or registered before this exists (PRD 15-permissions).
   static const String pushSoftAsk = 'push.soft_ask';

@@ -1459,5 +1459,15 @@
   "universe_walkForward": "ముందుకు నడవండి",
   "universe_walkBack": "వెనక్కి నడవండి",
   "universe_walkLeft": "ఎడమకు నడవండి",
-  "universe_walkRight": "కుడికి నడవండి"
+  "universe_walkRight": "కుడికి నడవండి",
+  "export_hCommitment": "{date} నుండి సంకల్పం",
+  "export_hPausedUntil": "{date} వరకు విరామం",
+  "universe_reallifeTitle": "నడకలు దారిని వెలిగిస్తాయి",
+  "universe_reallifeBody": "మీరు అనుమతిస్తే, మీ ఫోన్ ఆరోగ్య డేటాలోని ఈరోజు అడుగులు దారి రాళ్లను కొంచెం వెలిగిస్తాయి. Aura కేవలం అడుగుల సంఖ్యను చదువుతుంది, దాన్ని ఈ ఫోన్‌లోనే ఉంచుతుంది, ఎప్పుడూ అప్‌లోడ్ చేయదు లేదా చూపదు, నిశ్శబ్ద రోజు వల్ల దారి సాధారణంగానే ఉంటుంది.",
+  "universe_reallifeSwitch": "నా అడుగులు వాడండి",
+  "universe_reallifeDenied": "పర్వాలేదు. ఏమీ మారదు. తర్వాత మీ ఫోన్ ఆరోగ్య సెట్టింగ్‌లలో అనుమతించవచ్చు.",
+  "universe_changesTitle": "మీ ప్రపంచంలో కొత్తవి",
+  "universe_changeGrow": "{name} మొక్క కొత్త దశకు పెరిగింది: {stage}",
+  "universe_changeWake": "{name} మొక్క మళ్లీ మేల్కొంది",
+  "universe_changeSprout": "{name} కోసం కొత్త మొక్క"
 }

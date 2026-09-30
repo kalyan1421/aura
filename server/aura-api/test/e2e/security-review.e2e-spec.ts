@@ -160,15 +160,9 @@ describe('security review: what a user token reaches without NestJS (e2e)', () =
 
   // ------------------------------------------------------------------ GoTrue MFA (console enrolment relies on this)
   it('SR-6: once a TOTP factor is verified, a fresh first-factor (AAL1) session cannot enroll another one', async () => {
-    const email = `e2e-sr-mfa-${randomBytes(4).toString('hex')}@aura.test`;
-    const password = `pw-${randomBytes(12).toString('hex')}`;
-    const svc = localServiceKey();
-    const created = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
-      method: 'POST',
-      headers: { apikey: svc, Authorization: `Bearer ${svc}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password, email_confirm: true }),
-    });
-    const { id } = (await created.json()) as { id: string };
+    const mfaUser = await createUser('sr-mfa');
+    const { id, email } = mfaUser;
+    const password = mfaUser.password as string;
     users.push({ id, email, token: '' });
     const signIn = async (): Promise<string> => {
       const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {

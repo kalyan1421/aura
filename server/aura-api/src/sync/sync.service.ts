@@ -55,6 +55,13 @@ export const MAX_ACTIVE_CUSTOM_HABITS = 3;
 /** W02: the longest pause a person can set ahead of today (a holiday, an illness), in Aura days. */
 export const MAX_PAUSE_DAYS = 60;
 
+/**
+ * W02: a commitment made offline arrives later, like any event (RULES.md §2 allows up to 30 days), so a new
+ * `committedFrom` may be this many days in the past. One day of slack either way covers the device zone and the
+ * profile zone disagreeing about "today" (travel, midnight).
+ */
+export const MAX_COMMITMENT_AGE_DAYS = 30;
+
 /** Namespace for deterministic habit ledger source ids: uuidv5(`${habitId}:${localDay}`). */
 export const HABIT_CREDIT_NS = '6f1f5a4e-2c1b-4d7e-9a53-0b8f3c2d9e71';
 export const habitCreditId = (habitId: string, localDay: string): string =>
@@ -363,8 +370,8 @@ export class SyncService {
   /**
    * W02 (RULES.md §13). A commitment is the person's own opt-in to reversible world decay; it never touches the ledger.
    * `commitment_not_available`: a minor (stored DOB or platform signal) may not start one (a resend of an unchanged
-   * value is fine). `invalid_commitment`: a pause without a commitment, a start more than a day from today, or a pause
-   * longer than {@link MAX_PAUSE_DAYS} ahead.
+   * value is fine). `invalid_commitment`: a pause without a commitment, a start more than a day in the future or older
+   * than {@link MAX_COMMITMENT_AGE_DAYS}, or a pause longer than {@link MAX_PAUSE_DAYS} (+1 day of zone slack) ahead.
    */
   private async validateCommitment(ctx: Ctx, p: HabitPayload): Promise<void> {
     if (p.committedFrom === undefined && p.pausedThrough === undefined) return;
@@ -374,11 +381,12 @@ export class SyncService {
     const today = auraDay(ctx.now, ctx.tz);
     if (committedFrom !== null && committedFrom !== (existing?.committedFrom ?? null)) {
       if (await this.repo.isMinor(ctx.tx, ctx.userId)) reject('commitment_not_available');
-      if (Math.abs(daysBetween(today, committedFrom)) > 1) reject('invalid_commitment');
+      const age = daysBetween(committedFrom, today); // > 0: in the past (an offline commitment arriving late)
+      if (age < -1 || age > MAX_COMMITMENT_AGE_DAYS) reject('invalid_commitment');
     }
     if (pausedThrough !== null) {
       if (committedFrom === null) reject('invalid_commitment');
-      if (daysBetween(today, pausedThrough) > MAX_PAUSE_DAYS) reject('invalid_commitment');
+      if (daysBetween(today, pausedThrough) > MAX_PAUSE_DAYS + 1) reject('invalid_commitment');
       if (committedFrom !== null && daysBetween(committedFrom, pausedThrough) < -1) reject('invalid_commitment');
     }
   }

@@ -145,6 +145,17 @@ void main() {
       expect(_dist(out, roamObstacles.first.center), greaterThanOrEqualTo(0.61 + roamBody - 1e-9));
     });
 
+    test('tap-to-travel stops are walkable: clear of the pool wall and tower, '
+        'on the island', () {
+      for (final d in UniverseDestination.values) {
+        expect(isWalkable(d.walkStop), isTrue, reason: d.name);
+        // Near its place, so arriving there still chooses it.
+        expect(nearestPlace(d.walkStop), d, reason: d.name);
+      }
+      // The raw stops of the pool and tower were inside their solid zones.
+      expect(isWalkable(UniverseDestination.tidePool.avatarStop), isFalse);
+    });
+
     test('every place can be reached on foot and is then chosen', () {
       for (final d in UniverseDestination.values) {
         var p = _start;
@@ -342,16 +353,66 @@ void main() {
         expect(size.height, greaterThanOrEqualTo(48));
       }
       final before = companion(tester);
-      await tester.tap(find.bySemanticsLabel('Walk right'));
-      // A plain tap is a press and release: no continuous walk, no nudge.
-      await tester.pump(const Duration(milliseconds: 50));
-      final afterTap = companion(tester);
-      expect(afterTap.z, closeTo(before.z, 0.2));
       tester.semantics.tap(find.semantics.byLabel('Walk forward'));
       await tester.pump();
       final nudged = companion(tester);
-      expect(_dist(afterTap, nudged), closeTo(roamNudge, 1e-6));
+      expect(_dist(before, nudged), closeTo(roamNudge, 1e-6));
       semantics.dispose();
+      await end(tester);
+    });
+
+    testWidgets('a quick tap takes one small step; only a longer press walks',
+        (tester) async {
+      await pump(tester);
+      await enableRoam(tester);
+      final before = companion(tester);
+      await tester.tap(find.byKey(const ValueKey('roam-right')));
+      await tester.pump(const Duration(milliseconds: 300));
+      final tapped = companion(tester);
+      expect(_dist(before, tapped), closeTo(roamNudge, 1e-6));
+      // Each arrow's quick tap goes its own way.
+      await tester.tap(find.byKey(const ValueKey('roam-forward')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(companion(tester).z, lessThan(tapped.z));
+      // A press held past the tap time walks continuously and never nudges.
+      final start = companion(tester);
+      final hold = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('roam-left'))),
+      );
+      for (var i = 0; i < 20; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await hold.up();
+      await tester.pump();
+      final walked = _dist(start, companion(tester));
+      expect(walked, greaterThan(0.9)); // about 0.88 s of walking, not 0.25
+      await end(tester);
+    });
+
+    testWidgets('roaming repaints the scene without rebuilding the rest of '
+        'the screen', (tester) async {
+      await pump(tester);
+      await enableRoam(tester);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('universe-care-action')),
+        200,
+      );
+      final action = find.byKey(const ValueKey('universe-care-action'));
+      final before = tester.widget(action);
+      await tester.scrollUntilVisible(find.byType(UniverseSceneView), -250);
+      final from = companion(tester);
+      final hold = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('roam-forward'))),
+      );
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(_dist(from, companion(tester)), greaterThan(0.1)); // it moved
+      await tester.scrollUntilVisible(action, 200);
+      // The chosen place did not change, so the care card was not rebuilt.
+      expect(identical(tester.widget(action), before), isTrue);
+      await hold.up();
+      await tester.pump();
       await end(tester);
     });
 
@@ -385,7 +446,7 @@ void main() {
       await tester.pumpAndSettle();
       final p = companion(tester);
       expect(
-        _dist(p, UniverseDestination.observatory.avatarStop),
+        _dist(p, UniverseDestination.observatory.walkStop),
         lessThan(0.05),
       );
       await end(tester);

@@ -6,6 +6,7 @@ import 'package:aura/src/core/theme/app_theme.dart';
 import 'package:aura/src/features/capsules/capsules_list_screen.dart';
 import 'package:aura/src/features/progress/progress_view.dart';
 import 'package:aura/src/features/sanctuary/breathe_session_screen.dart';
+import 'package:aura/src/features/universe/roam.dart';
 import 'package:aura/src/features/universe/universe_entry.dart';
 import 'package:aura/src/features/universe/universe_scene.dart';
 import 'package:aura/src/features/universe/universe_scene_view.dart';
@@ -174,8 +175,8 @@ void main() {
       final paused = tester.widget<UniverseSceneView>(
         find.byType(UniverseSceneView),
       );
-      expect(paused.companion.x, UniverseDestination.tidePool.avatarStop.x);
-      expect(paused.companion.z, UniverseDestination.tidePool.avatarStop.z);
+      expect(paused.companion.x, closeTo(UniverseDestination.tidePool.walkStop.x, 1e-9));
+      expect(paused.companion.z, closeTo(UniverseDestination.tidePool.walkStop.z, 1e-9));
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pumpAndSettle();
       expect(
@@ -270,8 +271,8 @@ void main() {
         final scene = tester.widget<UniverseSceneView>(
           find.byType(UniverseSceneView),
         );
-        expect(scene.companion.x, d.avatarStop.x);
-        expect(scene.companion.z, d.avatarStop.z);
+        expect(scene.companion.x, closeTo(d.walkStop.x, 1e-9));
+        expect(scene.companion.z, closeTo(d.walkStop.z, 1e-9));
         expect(tester.hasRunningAnimations, isFalse);
         expect(tester.takeException(), isNull);
       }

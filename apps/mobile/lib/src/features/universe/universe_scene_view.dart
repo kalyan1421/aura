@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:aura_domain/aura_domain.dart' show SkyPhase;
 import 'package:flutter/material.dart';
 
 import 'universe_scene.dart';
@@ -15,11 +16,28 @@ class UniverseSceneView extends StatelessWidget {
     required this.selected,
     required this.onOrbit,
     required this.onSelect,
+    this.sky = SkyPhase.night,
+    this.pose = CompanionPose.still,
+    this.changes = const [],
+    this.changeProgress = 1,
   });
   final IslandMesh mesh;
   final UniverseCamera camera;
   final WorldPoint companion;
   final UniverseDestination? selected;
+
+  /// What the companion is doing (T04): standing, walking or celebrating.
+  final CompanionPose pose;
+
+  /// Plants in the middle of a moment (T04), drawn between how they were
+  /// last seen and how they are now at [changeProgress] (0-1). The [mesh]
+  /// leaves these slots out while they play.
+  final List<WorldPlantChange> changes;
+  final double changeProgress;
+
+  /// The sky over the island (W06): the phone's own time of day, decoration
+  /// only. Nothing personal reaches the renderer.
+  final SkyPhase sky;
   final void Function(double horizontal, double vertical) onOrbit;
   final ValueChanged<UniverseDestination> onSelect;
 
@@ -41,7 +59,16 @@ class UniverseSceneView extends StatelessWidget {
             },
             child: CustomPaint(
               size: box.biggest,
-              painter: _IslandPainter(mesh, camera, companion, selected),
+              painter: _IslandPainter(
+                mesh,
+                camera,
+                companion,
+                selected,
+                sky,
+                pose,
+                changes,
+                changeProgress,
+              ),
             ),
           ),
         ),
@@ -51,7 +78,20 @@ class UniverseSceneView extends StatelessWidget {
 }
 
 class _IslandPainter extends CustomPainter {
-  _IslandPainter(this.mesh, this.camera, this.companion, this.selected);
+  _IslandPainter(
+    this.mesh,
+    this.camera,
+    this.companion,
+    this.selected,
+    this.sky,
+    this.pose,
+    this.changes,
+    this.changeProgress,
+  );
+  final SkyPhase sky;
+  final CompanionPose pose;
+  final List<WorldPlantChange> changes;
+  final double changeProgress;
   final IslandMesh mesh;
   final UniverseCamera camera;
   final WorldPoint companion;
@@ -62,15 +102,26 @@ class _IslandPainter extends CustomPainter {
     canvas.drawRect(
       Offset.zero & size,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF282D47), Color(0xFF4B4B67)],
+          colors: switch (sky) {
+            SkyPhase.dawn => const [Color(0xFF3B3A63), Color(0xFFB58A8F)],
+            SkyPhase.day => const [Color(0xFF557AA6), Color(0xFFBBD5E3)],
+            SkyPhase.dusk => const [Color(0xFF443C6A), Color(0xFFCF8D7C)],
+            SkyPhase.night => const [Color(0xFF282D47), Color(0xFF4B4B67)],
+          },
         ).createShader(Offset.zero & size),
     );
+    // Stars fade out with the daylight.
+    final starAlpha = switch (sky) {
+      SkyPhase.night => 0.5,
+      SkyPhase.dawn || SkyPhase.dusk => 0.25,
+      SkyPhase.day => 0.0,
+    };
     final starPaint = Paint()
-      ..color = const Color(0xFFE7DFCD).withValues(alpha: 0.5);
-    for (var i = 0; i < 28; i++) {
+      ..color = const Color(0xFFE7DFCD).withValues(alpha: starAlpha);
+    for (var i = 0; starAlpha > 0 && i < 28; i++) {
       final x = ((i * 73 + 19) % 101) / 101 * size.width;
       final y = ((i * 37 + 7) % 89) / 89 * size.height;
       canvas.drawCircle(Offset(x, y), i % 4 == 0 ? 1.4 : 0.7, starPaint);
@@ -122,8 +173,39 @@ class _IslandPainter extends CustomPainter {
     drawFaces(mesh.faces.take(mesh.terrainFaceCount).toList());
     drawFaces([
       ...mesh.faces.skip(mesh.terrainFaceCount),
-      ...IslandMesh.companion(companion, lowDetail: mesh.lowDetail),
+      for (final change in changes)
+        ...IslandMesh.changingPlant(
+          change,
+          changeProgress,
+          lowDetail: mesh.lowDetail,
+        ),
+      ...IslandMesh.companion(companion, lowDetail: mesh.lowDetail, pose: pose),
     ]);
+    // A few soft sparkles mark what the moment is about: over each changing
+    // plant, and around the companion while it celebrates.
+    final glow = math.sin(changeProgress.clamp(0.0, 1.0) * math.pi);
+    if (changes.isNotEmpty && glow > 0.01) {
+      for (final change in changes) {
+        _sparkles(
+          canvas,
+          projectPoint(IslandMesh.crownOf(change.to)),
+          glow,
+          changeProgress,
+        );
+      }
+    }
+    if (pose.motion == CompanionMotion.celebrate) {
+      final cheer = math.sin(pose.phase.clamp(0.0, 1.0) * math.pi);
+      _sparkles(
+        canvas,
+        projectPoint(
+          WorldPoint(companion.x, 0.16 + pose.lift + 0.82, companion.z),
+        ),
+        cheer,
+        pose.phase,
+        radius: 20,
+      );
+    }
     for (final d in UniverseDestination.values) {
       final p = projectPoint(d.position + const WorldPoint(0, 0.35, 0));
       if (p == null) continue;
@@ -138,10 +220,36 @@ class _IslandPainter extends CustomPainter {
     }
   }
 
+  /// Five small twinkles on a ring around [at], turning as [turn] runs.
+  void _sparkles(
+    Canvas canvas,
+    ({Offset point, double depth})? at,
+    double alpha,
+    double turn, {
+    double radius = 12,
+  }) {
+    if (at == null || alpha <= 0) return;
+    final paint = Paint()
+      ..color = const Color(0xFFFFE6AC).withValues(alpha: alpha * 0.9);
+    for (var i = 0; i < 5; i++) {
+      final angle = i * math.pi * 2 / 5 + turn * math.pi;
+      final r = radius * (0.7 + 0.3 * alpha);
+      canvas.drawCircle(
+        at.point + Offset(math.cos(angle) * r, math.sin(angle) * r * 0.6),
+        i.isEven ? 2.2 : 1.5,
+        paint,
+      );
+    }
+  }
+
   @override
   bool shouldRepaint(_IslandPainter old) =>
       old.mesh != mesh ||
       old.camera != camera ||
       old.companion != companion ||
-      old.selected != selected;
+      old.selected != selected ||
+      old.sky != sky ||
+      old.pose != pose ||
+      old.changes != changes ||
+      old.changeProgress != changeProgress;
 }

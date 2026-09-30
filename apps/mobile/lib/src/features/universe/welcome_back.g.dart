@@ -48,7 +48,7 @@ final class WelcomeBackProvider
   WelcomeBack create() => WelcomeBack();
 }
 
-String _$welcomeBackHash() => r'20d489bd81ea984a4268d38550de759ed283f101';
+String _$welcomeBackHash() => r'b55f97ad50261b18ed2507523237751566db7c64';
 
 /// Whether the personal universe shows its one-time "Your world is here" card
 /// (W04, RULES.md section 13 `welcome`): the person has been away three or more

@@ -175,3 +175,11 @@ UniverseDestination? nearestPlace(WorldPoint p) {
   }
   return best;
 }
+
+/// Where tap-to-travel stands at a place: the place's own stop
+/// ([UniverseDestination.avatarStop]) moved out of the pool wall and tower, so
+/// switching to free roam never snaps the companion sideways or leaves it
+/// stuck inside something solid.
+extension RoamStop on UniverseDestination {
+  WorldPoint get walkStop => keepOnIsland(avatarStop);
+}

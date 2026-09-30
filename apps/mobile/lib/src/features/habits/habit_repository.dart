@@ -424,15 +424,21 @@ class HabitRepository {
         });
   }
 
-  /// The server refused a commitment change (`commitment_not_available` or
-  /// `invalid_commitment`, e.g. an age signal this phone has not seen): drop it
-  /// here so the world never shows stakes the server does not hold. Queues
-  /// nothing; the next deliberate change is sent explicitly again.
-  Future<void> clearRejectedCommitment(String habitId) async {
+  /// The server refused a commitment change. `commitment_not_available`
+  /// (an under-18 age signal this phone has not seen) refuses *starting* one,
+  /// so the server holds none: drop the commitment and its pause here.
+  /// `invalid_commitment` can only be about the pause (a start is always
+  /// within the allowed window), so only the pause is dropped and the
+  /// commitment the server does hold stays. Either way the world never shows
+  /// stakes the server does not hold. Queues nothing; the next deliberate
+  /// change is sent explicitly again.
+  Future<void> clearRejectedCommitment(String habitId, String reason) async {
     await (_db.update(_db.habits)..where((t) => t.id.equals(habitId))).write(
-      const HabitsCompanion(
-        committedFrom: Value(null),
-        pausedThrough: Value(null),
+      HabitsCompanion(
+        committedFrom: reason == 'commitment_not_available'
+            ? const Value(null)
+            : const Value.absent(),
+        pausedThrough: const Value(null),
       ),
     );
   }
@@ -458,6 +464,12 @@ class HabitRepository {
       return CommitmentResult.notAvailable;
     }
     if (committed && habit.committedFrom != null) return CommitmentResult.saved;
+    // Nothing to end: no write, no mutation.
+    if (!committed &&
+        habit.committedFrom == null &&
+        habit.pausedThrough == null) {
+      return CommitmentResult.saved;
+    }
     final now = _time.now();
     final from = committed ? _time.dayOf(now).toIso() : null;
     await _writeCommitment(habit, now, committedFrom: from, pausedThrough: null);
@@ -479,6 +491,7 @@ class HabitRepository {
     final through = days == 0
         ? null
         : _time.dayOf(now).addDays(days).toIso();
+    if (through == habit.pausedThrough) return CommitmentResult.saved;
     await _writeCommitment(
       habit,
       now,

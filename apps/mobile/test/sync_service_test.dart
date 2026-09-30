@@ -145,9 +145,9 @@ void main() {
       pull: (_, _) async {},
       alreadyPulled: (_) async => true,
       onUnder13: () async {},
-      onCommitmentRejected: (habitId) =>
+      onCommitmentRejected: (habitId, reason) =>
           HabitRepository(db, outbox, time, const Ids())
-              .clearRejectedCommitment(habitId),
+              .clearRejectedCommitment(habitId, reason),
     );
   });
 
@@ -324,6 +324,75 @@ void main() {
     expect(habit.pausedThrough, isNull);
     expect(habit.name, 'Read'); // the habit itself stays
     expect(await outbox.count(), 0); // nothing re-queued
+  });
+
+  test('a refused pause keeps the commitment the server holds (W03 review)',
+      () async {
+    final habits = HabitRepository(db, outbox, time, const Ids());
+    await habits.addCustom('Read');
+    final id = (await db.select(db.habits).getSingle()).id;
+    await habits.setCommitment(id, committed: true, ageYears: 30);
+    await sync.kick(); // the server accepts the commitment
+    await habits.pauseCommitment(id, days: 3);
+    api
+      ..rejectEntity = 'habit'
+      ..rejectReason = 'invalid_commitment';
+    await sync.kick();
+
+    final habit = await db.select(db.habits).getSingle();
+    expect(habit.committedFrom, '2026-10-08');
+    expect(habit.pausedThrough, isNull);
+  });
+
+  test('a commitment made on a duplicate preset survives the merge into the '
+      "server's habit and goes out again", () async {
+    final habits = HabitRepository(db, outbox, time, const Ids());
+    await habits.toggleToday('breathe');
+    final local = (await db.select(db.habits).get()).single;
+    await habits.setCommitment(local.id, committed: true, ageYears: 30);
+    await outbox.reject(
+      await db.select(db.outbox).get(),
+      'duplicate_preset_habit',
+      testNow,
+    );
+    final pull = PullService(
+      db: db,
+      kv: kv,
+      progress: progress,
+      dataKeys: DataKeyRepository(MemorySecureStore()),
+    );
+    const serverId = '0199aaaa-0000-7000-8000-000000000002';
+    await db.into(db.habits).insert(
+      HabitsCompanion.insert(
+        id: serverId,
+        kind: 'preset',
+        presetKey: const Value('breathe'),
+        createdAt: testNow,
+        updatedAt: testNow,
+        synced: const Value(true),
+      ),
+    );
+    await pull.mergePresetHabits([
+      {
+        'id': serverId,
+        'kind': 'preset',
+        'preset_key': 'breathe',
+        'name': null,
+        'active': true,
+        'committed_from': null,
+      },
+    ]);
+    final merged = await (db.select(db.habits)
+          ..where((t) => t.id.equals(serverId)))
+        .getSingle();
+    expect(merged.committedFrom, '2026-10-08');
+    final queued = (await db.select(db.outbox).get())
+        .where((r) => r.entity == 'habit' && r.entityId == serverId)
+        .single;
+    final payload = jsonDecode(queued.payload) as Map<String, dynamic>;
+    expect(payload['committedFrom'], '2026-10-08');
+    expect(payload['presetKey'], 'breathe');
+    expect(payload['id'], serverId);
   });
 
   // ---- M2: request-level errors never dead-letter a batch ------------------

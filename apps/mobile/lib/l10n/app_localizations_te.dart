@@ -5557,6 +5557,48 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get universe_walkRight => 'కుడికి నడవండి';
+
+  @override
+  String export_hCommitment(String date) {
+    return '$date నుండి సంకల్పం';
+  }
+
+  @override
+  String export_hPausedUntil(String date) {
+    return '$date వరకు విరామం';
+  }
+
+  @override
+  String get universe_reallifeTitle => 'నడకలు దారిని వెలిగిస్తాయి';
+
+  @override
+  String get universe_reallifeBody =>
+      'మీరు అనుమతిస్తే, మీ ఫోన్ ఆరోగ్య డేటాలోని ఈరోజు అడుగులు దారి రాళ్లను కొంచెం వెలిగిస్తాయి. Aura కేవలం అడుగుల సంఖ్యను చదువుతుంది, దాన్ని ఈ ఫోన్‌లోనే ఉంచుతుంది, ఎప్పుడూ అప్‌లోడ్ చేయదు లేదా చూపదు, నిశ్శబ్ద రోజు వల్ల దారి సాధారణంగానే ఉంటుంది.';
+
+  @override
+  String get universe_reallifeSwitch => 'నా అడుగులు వాడండి';
+
+  @override
+  String get universe_reallifeDenied =>
+      'పర్వాలేదు. ఏమీ మారదు. తర్వాత మీ ఫోన్ ఆరోగ్య సెట్టింగ్‌లలో అనుమతించవచ్చు.';
+
+  @override
+  String get universe_changesTitle => 'మీ ప్రపంచంలో కొత్తవి';
+
+  @override
+  String universe_changeGrow(String name, String stage) {
+    return '$name మొక్క కొత్త దశకు పెరిగింది: $stage';
+  }
+
+  @override
+  String universe_changeWake(String name) {
+    return '$name మొక్క మళ్లీ మేల్కొంది';
+  }
+
+  @override
+  String universe_changeSprout(String name) {
+    return '$name కోసం కొత్త మొక్క';
+  }
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -11171,4 +11213,46 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get universe_walkRight => 'Kudiki nadavandi';
+
+  @override
+  String export_hCommitment(String date) {
+    return '$date nundi sankalpam';
+  }
+
+  @override
+  String export_hPausedUntil(String date) {
+    return '$date varaku viraamam';
+  }
+
+  @override
+  String get universe_reallifeTitle => 'Nadakalu daarini veligistaayi';
+
+  @override
+  String get universe_reallifeBody =>
+      'Meeru anumatiste, mee phone Health data loni eeroju adugulu daari raallanu konchem veligistaayi. Aura kevalam adugula sankhyanu chaduvutundi, daanni ee phone lone unchutundi, eppudu upload cheyadu leda choopadu, nishabda roju valla daari saadhaaranam ga untundi.';
+
+  @override
+  String get universe_reallifeSwitch => 'Naa adugulu vaadandi';
+
+  @override
+  String get universe_reallifeDenied =>
+      'Parvaledu. Emi maaradu. Tarvaata mee phone Health settings lo anumatinchavachu.';
+
+  @override
+  String get universe_changesTitle => 'Mee prapanchamlo kottavi';
+
+  @override
+  String universe_changeGrow(String name, String stage) {
+    return '$name mokka kotta dashaku perigindi: $stage';
+  }
+
+  @override
+  String universe_changeWake(String name) {
+    return '$name mokka malli melukondi';
+  }
+
+  @override
+  String universe_changeSprout(String name) {
+    return '$name kosam kotta mokka';
+  }
 }

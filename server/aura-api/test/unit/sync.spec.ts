@@ -14,6 +14,7 @@ import {
   CHECK_IN_EDIT_WINDOW_MS,
   EDIT_MAX_FUTURE_SKEW_MS,
   habitCreditId,
+  MAX_COMMITMENT_AGE_DAYS,
   MAX_PAUSE_DAYS,
   SyncService,
   VOICE_CLEANUP_TIMEOUT_MS,
@@ -473,14 +474,25 @@ describe('SyncService review fixes', () => {
       expect(await reasons(s, [custom(kept, { name: 'Read again', committedFrom: TODAY })])).toEqual(['applied']);
     });
 
-    it('rejects a pause without a commitment, a start far from today and an over-long pause', async () => {
+    it('rejects a pause without a commitment, a start in the future or too old, and an over-long pause', async () => {
       const s = makeService(new MemRepo());
       expect(await reasons(s, [custom(uuidv7(), { pausedThrough: addDays(TODAY, 3) })])).toEqual(['invalid_commitment']);
       expect(await reasons(s, [custom(uuidv7(), { committedFrom: addDays(TODAY, 5) })])).toEqual(['invalid_commitment']);
-      expect(await reasons(s, [custom(uuidv7(), { committedFrom: addDays(TODAY, -5) })])).toEqual(['invalid_commitment']);
-      expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS + 1) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: addDays(TODAY, -(MAX_COMMITMENT_AGE_DAYS + 1)) })])).toEqual(['invalid_commitment']);
+      // a pause: 60 days is the app's longest; one more day of zone slack is still fine, two are not
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS + 2) })])).toEqual(['invalid_commitment']);
+      expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS + 1) })])).toEqual(['applied']);
       expect(await reasons(s, [custom(uuidv7(), { committedFrom: TODAY, pausedThrough: addDays(TODAY, MAX_PAUSE_DAYS) })])).toEqual(['applied']);
       expect(await reasons(s, [custom(uuidv7(), { committedFrom: 'not-a-day' })])).toEqual(['invalid_payload']);
+    });
+
+    it('a commitment made offline still arrives days later; tomorrow is fine for zone slack', async () => {
+      for (const days of [-1, -3, -MAX_COMMITMENT_AGE_DAYS, 1]) {
+        const repo = new MemRepo();
+        const h = uuidv7();
+        expect(await reasons(makeService(repo), [custom(h, { committedFrom: addDays(TODAY, days) })])).toEqual(['applied']);
+        expect(repo.habits.get(h)?.committedFrom).toBe(addDays(TODAY, days));
+      }
     });
 
     it('works for a preset habit too', async () => {
