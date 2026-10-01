@@ -4,7 +4,7 @@ import { AppConfig } from '../config/app-config';
 import { DbService } from '../db/db.service';
 import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
-import { redisOptionsFromUrl } from '../queues/redis';
+import { sharedWorkerConnection } from '../queues/redis';
 import { runFullSweep, runRecentSweep, type SweepSummary } from './sweep';
 import { errorText } from '../common/log-scrub';
 
@@ -38,7 +38,7 @@ export class KeepsakesWorkerHost implements OnApplicationBootstrap, OnApplicatio
   async onApplicationBootstrap(): Promise<void> {
     this.queue = new Queue(KEEPSAKES_QUEUE, { connection: this.queues.redis, prefix: QUEUE_PREFIX });
     this.worker = new Worker(KEEPSAKES_QUEUE, (job) => this.handle(job), {
-      connection: redisOptionsFromUrl(this.app.redisUrl),
+      connection: sharedWorkerConnection(this.app.redisUrl),
       prefix: QUEUE_PREFIX,
       concurrency: 1,
     });

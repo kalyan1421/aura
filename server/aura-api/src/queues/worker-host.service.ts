@@ -28,7 +28,7 @@ import {
   type QueueName,
 } from './queue-names';
 import { QueuesService } from './queues.service';
-import { redisOptionsFromUrl } from './redis';
+import { sharedWorkerConnection } from './redis';
 import { errorText } from '../common/log-scrub';
 
 /** Runs one BullMQ Worker per queue (worker entrypoint only) and schedules the heartbeat. */
@@ -75,7 +75,7 @@ export class WorkerHostService implements OnApplicationBootstrap, OnApplicationS
   }
 
   async onApplicationBootstrap(): Promise<void> {
-    const connection = redisOptionsFromUrl(this.config.redisUrl);
+    const connection = sharedWorkerConnection(this.config.redisUrl);
     for (const name of QUEUE_NAMES) {
       this.workers.push(new Worker(name, this.processorFor(name), { connection, prefix: QUEUE_PREFIX, concurrency: 4 }));
     }

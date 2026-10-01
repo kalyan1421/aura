@@ -6,7 +6,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { NotificationsService } from '../notifications/notifications.service';
 import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
-import { redisOptionsFromUrl } from '../queues/redis';
+import { sharedWorkerConnection } from '../queues/redis';
 import { UserMailWorkerHost, UserMailWorkerModule } from '../user-mail/user-mail.worker';
 import { BillingCoreModule } from './billing.module';
 import { expireOpenGifts } from './gifts';
@@ -47,7 +47,7 @@ export class BillingWorkerHost implements OnApplicationBootstrap, OnApplicationS
   async onApplicationBootstrap(): Promise<void> {
     this.queue = new Queue(BILLING_QUEUE, { connection: this.queues.redis, prefix: QUEUE_PREFIX });
     this.worker = new Worker(BILLING_QUEUE, (job) => this.handle(job), {
-      connection: redisOptionsFromUrl(this.app.redisUrl),
+      connection: sharedWorkerConnection(this.app.redisUrl),
       prefix: QUEUE_PREFIX,
       concurrency: 1,
     });

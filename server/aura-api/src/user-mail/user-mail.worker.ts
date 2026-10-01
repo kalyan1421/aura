@@ -9,7 +9,7 @@ import { isUuid } from '../common/uuid';
 import { DbService } from '../db/db.service';
 import { QUEUE_PREFIX } from '../queues/queue-names';
 import { QueuesService } from '../queues/queues.service';
-import { redisOptionsFromUrl } from '../queues/redis';
+import { sharedWorkerConnection } from '../queues/redis';
 import { TRIAL_EMAIL_MAX_ATTEMPTS, TrialEmailSender, dueTrialEmails } from './trial-email.sender';
 import { errorText } from '../common/log-scrub';
 
@@ -47,7 +47,7 @@ export class UserMailWorkerHost implements OnApplicationBootstrap, OnApplication
   async onApplicationBootstrap(): Promise<void> {
     this.queue = new Queue(USER_MAIL_QUEUE, { connection: this.queues.redis, prefix: QUEUE_PREFIX });
     this.worker = new Worker(USER_MAIL_QUEUE, (job, token) => this.handle(job, token), {
-      connection: redisOptionsFromUrl(this.app.redisUrl),
+      connection: sharedWorkerConnection(this.app.redisUrl),
       prefix: QUEUE_PREFIX,
       concurrency: 2,
     });

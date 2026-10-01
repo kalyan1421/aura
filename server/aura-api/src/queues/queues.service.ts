@@ -3,7 +3,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import { AppConfig } from '../config/app-config';
 import { HEARTBEAT_QUEUE, MAINTENANCE_QUEUE, QUEUE_NAMES, QUEUE_PREFIX, type QueueName } from './queue-names';
-import { redisOptionsFromUrl } from './redis';
+import { closeSharedWorkerConnections, redisOptionsFromUrl } from './redis';
 
 /** One shared Redis connection + producer handles for every Aura queue. */
 @Injectable()
@@ -15,7 +15,7 @@ export class QueuesService implements OnModuleDestroy {
   constructor(config: AppConfig) {
     // Producers must fail fast while Redis is down (an HTTP request must never hang on an enqueue).
     // `maxRetriesPerRequest: null` is only for Workers' blocking connections (worker-host.service.ts).
-    this.redis = new IORedis({ ...redisOptionsFromUrl(config.redisUrl), maxRetriesPerRequest: 1 });
+    this.redis = new IORedis({ ...redisOptionsFromUrl(config.redisUrl), maxRetriesPerRequest: 1, keepAlive: 10_000 });
     this.redis.on('error', (e) => this.logger.warn(`redis: ${e.message}`));
     for (const name of [...QUEUE_NAMES, HEARTBEAT_QUEUE, MAINTENANCE_QUEUE]) {
       this.queues.set(name, new Queue(name, { connection: this.redis, prefix: QUEUE_PREFIX }));
@@ -36,5 +36,6 @@ export class QueuesService implements OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     await Promise.allSettled([...this.queues.values()].map((q) => q.close()));
     this.redis.disconnect();
+    closeSharedWorkerConnections();
   }
 }
