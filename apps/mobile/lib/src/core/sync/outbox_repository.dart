@@ -16,6 +16,10 @@ abstract final class Entities {
   /// F4 time capsules (contracts/api/v1-capsules.md §2): ops [Ops.seal],
   /// [Ops.open], [Ops.fire], [Ops.rearm], [Ops.delete].
   static const String capsule = 'capsule';
+
+  /// U07 Orbit Loom constellations (RULES.md section 14): [Ops.upsert] keeps
+  /// one, [Ops.delete] lets it go.
+  static const String loomConstellation = 'loom_constellation';
 }
 
 abstract final class Ops {
@@ -218,6 +222,10 @@ class OutboxRepository {
             await (_db.update(_db.habitLogs)
                   ..where((t) => t.id.equals(r.entityId)))
                 .write(const HabitLogsCompanion(synced: Value(true)));
+          case Entities.loomConstellation:
+            await (_db.update(_db.loomConstellations)
+                  ..where((t) => t.id.equals(r.entityId)))
+                .write(const LoomConstellationsCompanion(synced: Value(true)));
         }
       }
     });

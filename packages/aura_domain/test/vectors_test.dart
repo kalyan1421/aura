@@ -219,6 +219,24 @@ final Map<String, void Function(Map<String, dynamic>)> runners = {
       });
     }
   },
+  'constellations.json': (json) {
+    List<List<num>> points(Object? v) => [
+      for (final p in v as List<dynamic>) (p as List<dynamic>).cast<num>(),
+    ];
+    for (final c in _cases(json)) {
+      test('${c['kind']}: ${c['name']}', () {
+        expect(c['kind'], 'problem');
+        expect(
+          constellationProblem(
+            stars: points(c['stars']),
+            links: points(c['links']),
+            meaning: c['meaning'] as String?,
+          ),
+          c['expect'],
+        );
+      });
+    }
+  },
   'nebula.json': (json) {
     for (final c in _cases(json)) {
       test(c['name'], () {

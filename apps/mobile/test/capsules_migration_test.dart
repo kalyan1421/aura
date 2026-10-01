@@ -74,9 +74,9 @@ void main() {
     addTearDown(db.close);
 
     final c = await db.select(db.checkIns).getSingle(); // opens + migrates
-    expect(db.schemaVersion, 6);
+    expect(db.schemaVersion, 7);
     final version = await db.customSelect('PRAGMA user_version').getSingle();
-    expect(version.data.values.single, 6);
+    expect(version.data.values.single, 7);
     expect(c.note, 'tea');
     expect(c.voiceFile, 'r.enc');
     final o = await db.select(db.outbox).getSingle();

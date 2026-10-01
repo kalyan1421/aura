@@ -53,6 +53,12 @@ Limits and records:
    ```
 
    A `200` with `access_token` means it works. Then sign in once on a real device with the fixed code.
+   Read a failure by its message: `401 invalid_code` = route live, wrong email/code; `404 "Not found."` = route live
+   but `REVIEW_ACCOUNT_EMAIL` / `REVIEW_ACCOUNT_CODE` unset or malformed; `404 "Cannot POST /v1/auth/review-sign-in"` =
+   Render is serving a build without the route (deploy failed or stale: check the service's Events/Deploys tab);
+   `503` = no `SUPABASE_SERVICE_ROLE_KEY`. In the app, any of these reads as "This code has timed out" or "That code
+   didn't work" (Supabase's own refusal), so always run this curl before submitting. Cold start on the Free plan can
+   take ~50 s: hit `/health` first.
 5. **App Review notes** (App Store Connect → the version → App Review Information; Play Console → App content → App
    access → "All or some functionality is restricted" → add instructions):
 

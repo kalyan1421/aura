@@ -12,6 +12,7 @@ import 'package:aura/src/core/sync/outbox_repository.dart';
 import 'package:aura/src/core/sync/pull_service.dart';
 import 'package:aura/src/features/progress/progress_repository.dart';
 import 'package:aura_domain/aura_domain.dart' show LocalDay;
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
@@ -273,31 +274,117 @@ void main() {
     expect(queries['check_ins']!.containsKey('updated_at'), isFalse);
   });
 
-  test('W02: commitment days pulled from another phone; null clears them', () async {
-    tables['habits'] = [
-      {
-        ...tables['habits']!.single,
-        'committed_from': '2026-10-09',
-        'paused_through': '2026-10-14',
-        'updated_at': '2026-10-09T07:00:00+00:00',
-      },
-    ];
-    await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
-    var habit = await db.select(db.habits).getSingle();
-    expect(habit.committedFrom, '2026-10-09');
-    expect(habit.pausedThrough, '2026-10-14');
+  test(
+    'W02: commitment days pulled from another phone; null clears them',
+    () async {
+      tables['habits'] = [
+        {
+          ...tables['habits']!.single,
+          'committed_from': '2026-10-09',
+          'paused_through': '2026-10-14',
+          'updated_at': '2026-10-09T07:00:00+00:00',
+        },
+      ];
+      await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
+      var habit = await db.select(db.habits).getSingle();
+      expect(habit.committedFrom, '2026-10-09');
+      expect(habit.pausedThrough, '2026-10-14');
 
-    tables['habits'] = [
-      {
-        ...tables['habits']!.single,
-        'committed_from': null,
-        'paused_through': null,
-        'updated_at': '2026-10-10T07:00:00+00:00',
-      },
+      tables['habits'] = [
+        {
+          ...tables['habits']!.single,
+          'committed_from': null,
+          'paused_through': null,
+          'updated_at': '2026-10-10T07:00:00+00:00',
+        },
+      ];
+      await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
+      habit = await db.select(db.habits).getSingle();
+      expect(habit.committedFrom, isNull);
+      expect(habit.pausedThrough, isNull);
+    },
+  );
+
+  test('U07 constellations: kept elsewhere arrive, let go elsewhere is erased '
+      'here, an unsent let-go here wins, and the cursor moves on', () async {
+    Map<String, Object?> loom(String id, String updated, {bool gone = false}) =>
+        {
+          'id': id,
+          'stars': gone
+              ? null
+              : [
+                  [0.2, 0.2],
+                  [0.8, 0.25],
+                  [0.5, 0.8],
+                ],
+          'links': gone
+              ? null
+              : [
+                  [0, 1],
+                ],
+          'meaning': gone ? null : 'noticed',
+          'local_day': '2026-10-09',
+          'device_ts': '2026-10-09T08:00:00Z',
+          'deleted_at': gone ? updated : null,
+          'updated_at': updated,
+        };
+    tables['loom_constellations'] = [
+      loom('k1', '2026-10-09T08:00:01+00:00'),
+      loom('k2', '2026-10-09T08:10:00+00:00'),
     ];
     await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
-    habit = await db.select(db.habits).getSingle();
-    expect(habit.committedFrom, isNull);
-    expect(habit.pausedThrough, isNull);
+    var rows = {
+      for (final r in await db.select(db.loomConstellations).get()) r.id: r,
+    };
+    expect(rows.keys, {'k1', 'k2'});
+    expect(jsonDecode(rows['k1']!.stars!), [
+      [0.2, 0.2],
+      [0.8, 0.25],
+      [0.5, 0.8],
+    ]);
+    expect(rows['k1']!.meaning, 'noticed');
+    expect(rows['k1']!.synced, isTrue);
+
+    // This phone lets k2 go (not sent yet); elsewhere k1 was let go.
+    await (db.update(
+      db.loomConstellations,
+    )..where((t) => t.id.equals('k2'))).write(
+      LoomConstellationsCompanion(
+        stars: const Value(null),
+        links: const Value(null),
+        meaning: const Value(null),
+        deletedAt: Value(DateTime.utc(2026, 10, 9, 9)),
+      ),
+    );
+    await OutboxRepository(db, const Ids()).enqueue(
+      entity: Entities.loomConstellation,
+      op: Ops.delete,
+      entityId: 'k2',
+      deviceTs: DateTime.utc(2026, 10, 9, 9),
+      localDay: const LocalDay(2026, 10, 9),
+      payload: {'id': 'k2'},
+      tz: 'Asia/Kolkata',
+    );
+    tables['loom_constellations'] = [
+      loom('k1', '2026-10-09T09:30:00+00:00', gone: true),
+      loom('k2', '2026-10-09T09:31:00+00:00'),
+    ];
+    await pull.pullDelta(client: client, userId: 'user-1', api: _Api());
+    expect(
+      queries['loom_constellations']!['updated_at'],
+      'gte.2026-10-09T08:10:00+00:00',
+    );
+    rows = {
+      for (final r in await db.select(db.loomConstellations).get()) r.id: r,
+    };
+    expect(rows['k1']!.deletedAt, isNotNull);
+    expect(
+      [rows['k1']!.stars, rows['k1']!.links, rows['k1']!.meaning],
+      [null, null, null],
+    );
+    expect(
+      rows['k2']!.deletedAt,
+      isNotNull,
+    ); // its own let-go still waits to go
   });
 }

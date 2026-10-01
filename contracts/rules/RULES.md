@@ -268,3 +268,26 @@ keepsake or share milestone, and nothing here is pushed or shared. A world objec
   device only (never pushed, wiped with the account's local data). **Replay is cosmetic:** losing `seen` only means the next look is
   a new baseline; a moment awards nothing, changes nothing and is never tied to how the person feels.
 
+
+## 14. Orbit Loom constellations (`constellations.json`, U07)
+
+A constellation is a small shape the person makes in Orbit Loom and keeps in the Reflection sky: a few stars, the lines
+between them, and optionally one neutral meaning. **It is cosmetic:** keeping one never awards or removes Starlight,
+glow days, streaks, rest days, keepsakes or share milestones, and there is no correct pattern, score, timer or
+"better" shape. How it looks never depends on mood or any check-in. Sync entity `loom_constellation`, table `loom_constellations` (`contracts/api/v1.md`).
+
+- **Shape.** `stars` is a list of `[x, y]` points in the unit sky (`0 ≤ x, y ≤ 1`, `x` left→right, `y` top→bottom; the
+  app rounds to 3 decimals). `links` is a list of `[a, b]` star indices (an unordered pair: `[a, b]` and `[b, a]` are the
+  same line). `meaning` is `null` or one of `noticed` ("Something I noticed"), `carrying` ("Something I'm carrying"),
+  `ahead` ("Something ahead"), `thankful` ("Something I'm thankful for"), `just_because` ("Just because"). All
+  meanings are equal: none is suggested, ranked or rewarded, and none is required. No free text in v1.
+- **`problem`** — `constellationProblem({stars, links, meaning})`: `null` when valid, else the **first** problem in this
+  order: fewer than `3` stars → `too_few_stars`; more than `7` → `too_many_stars`; a coordinate that is not a finite
+  number in `[0, 1]` → `star_outside_sky`; two stars closer than `0.05` (straight-line distance, with a `1e-9` tolerance so a gap of exactly `0.05` is fine
+  in floating point) → `stars_too_close`;
+  more than `12` links → `too_many_links`; a link that is not two different whole-number indices of existing stars →
+  `bad_link`; the same unordered pair twice → `duplicate_link`; a meaning outside the list → `unknown_meaning`. Zero
+  links is valid (a scatter of stars is a constellation too).
+- **Keeping.** At most `5` constellations are kept per Aura day (the server's `too_many_constellations`); a deleted one
+  frees its place. Keeping is idempotent on the constellation id; the person can let one go (a soft delete, like
+  other tombstones). Nothing else ever changes one after it is kept.

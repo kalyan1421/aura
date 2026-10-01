@@ -3287,7 +3287,7 @@ class AppLocalizationsTe extends AppLocalizations {
 
   @override
   String get universe_reflectionBody =>
-      'ఒక వ్యక్తిగత చెక్-ఇన్‌తో మీ భావాలను గమనించండి. మీ భావాలు మీ సంరక్షణ ప్రదేశంలోనే ఉంటాయి.';
+      'ప్రైవేట్ చెక్-ఇన్‌తో మీ భావాలను గమనించండి, లేదా Orbit Loomలో కొన్ని నక్షత్రాలతో మీ సొంత ఆకారం అల్లండి.';
 
   @override
   String get universe_observatoryBody =>
@@ -5599,6 +5599,152 @@ class AppLocalizationsTe extends AppLocalizations {
   String universe_changeSprout(String name) {
     return '$name కోసం కొత్త మొక్క';
   }
+
+  @override
+  String get loom_title => 'Orbit Loom';
+
+  @override
+  String get loom_intro =>
+      'కొన్ని నక్షత్రాలు పెట్టి, మీకు నచ్చినట్టు కలపండి. సరైన ఆకారం అంటూ ఏదీ లేదు, తొందర కూడా లేదు.';
+
+  @override
+  String get loom_modeTap => 'టాప్';
+
+  @override
+  String get loom_modeDrag => 'లాగండి';
+
+  @override
+  String get loom_hintTap =>
+      'నక్షత్రం పెట్టడానికి ఆకాశాన్ని టాప్ చేయండి. రెండు నక్షత్రాలను కలపడానికి వాటిని టాప్ చేయండి; మళ్లీ టాప్ చేస్తే విడిపోతాయి.';
+
+  @override
+  String get loom_hintDrag =>
+      'రెండు నక్షత్రాలను కలపడానికి ఒకదాని నుండి మరొకదానికి లాగండి. కదపడానికి నక్షత్రాన్ని లాగండి.';
+
+  @override
+  String get loom_addStar => 'ఒక నక్షత్రం చేర్చండి';
+
+  @override
+  String get loom_scatter => 'నా కోసం చల్లండి';
+
+  @override
+  String get loom_joinForMe => 'నా కోసం కలపండి';
+
+  @override
+  String get loom_undo => 'రద్దు చేయండి';
+
+  @override
+  String get loom_clear => 'మళ్లీ మొదలుపెట్టండి';
+
+  @override
+  String get loom_full =>
+      'ఈ ఆకాశంలో ఏడు నక్షత్రాలు పడతాయి. వాటిని కలపండి, కదపండి, లేదా దీన్ని ఉంచుకోండి.';
+
+  @override
+  String loom_skyLabel(int stars, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars నక్షత్రాలు',
+      one: '1 నక్షత్రం',
+      zero: 'ఇంకా నక్షత్రాలు లేవు',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines గీతలు',
+      one: '1 గీత',
+      zero: 'గీతలు లేవు',
+    );
+    return 'మీ ఆకాశం: $_temp0, $_temp1';
+  }
+
+  @override
+  String loom_starLabel(int index, int count, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines వాటితో కలిసింది',
+      one: '1 దానితో కలిసింది',
+      zero: 'దేనితోనూ కలవలేదు',
+    );
+    return '$countలో $indexవ నక్షత్రం, $_temp0';
+  }
+
+  @override
+  String get loom_starChosen =>
+      'ఎంచుకున్నారు. కలపడానికి లేదా విడదీయడానికి మరో నక్షత్రాన్ని ఎంచుకోండి.';
+
+  @override
+  String get loom_meaningTitle => 'మీకు నచ్చితే, ఒక అర్థం';
+
+  @override
+  String get loom_meaning_noticed => 'నేను గమనించినది';
+
+  @override
+  String get loom_meaning_carrying => 'నేను మోస్తున్నది';
+
+  @override
+  String get loom_meaning_ahead => 'ముందున్నది';
+
+  @override
+  String get loom_meaning_thankful => 'నేను కృతజ్ఞతగా ఉన్నది';
+
+  @override
+  String get loom_meaning_just_because => 'ఊరికే';
+
+  @override
+  String get loom_keep => 'నా ఆకాశంలో ఉంచండి';
+
+  @override
+  String get loom_keepNeedsStars =>
+      'ఒక ఆకారాన్ని ఉంచడానికి కనీసం మూడు నక్షత్రాలు పెట్టండి.';
+
+  @override
+  String get loom_dayFull =>
+      'ఈ రోజు మీ ఆకాశం ఐదు ఉంచింది. ఆడుతూనే ఉండొచ్చు; రేపు ఇంకా చోటు ఉంటుంది.';
+
+  @override
+  String get loom_kept => 'మీ ఆకాశంలో ఉంచాం';
+
+  @override
+  String get loom_close => 'Orbit Loom నుండి బయటకు';
+
+  @override
+  String get universe_weaveStars => 'నక్షత్రాలు అల్లండి';
+
+  @override
+  String get universe_constellationsTitle => 'మీ నక్షత్ర మండలాలు';
+
+  @override
+  String universe_constellationLabel(String meaning, int stars) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars నక్షత్రాలు',
+      one: '1 నక్షత్రం',
+    );
+    return '$meaning, $_temp0';
+  }
+
+  @override
+  String get universe_constellationPlain => 'ఒక నక్షత్ర మండలం';
+
+  @override
+  String get universe_letGo => 'వదిలేయండి';
+
+  @override
+  String get universe_letGoTitle => 'ఈ నక్షత్ర మండలాన్ని వదిలేయాలా?';
+
+  @override
+  String get universe_letGoBody =>
+      'మీరు సైన్ ఇన్ అయిన ప్రతి పరికరంలో ఇది మీ ఆకాశం నుండి వెళ్లిపోతుంది.';
+
+  @override
+  String get universe_letGoKeep => 'ఉంచండి';
+
+  @override
+  String get export_hConstellations => 'నక్షత్ర మండలాలు (Orbit Loom)';
 }
 
 /// The translations for Telugu, using the Latin script (`te_Latn`).
@@ -8916,7 +9062,7 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
 
   @override
   String get universe_reflectionBody =>
-      'Oka vyakthigatha check-in tho mee bhaavaalanu gamaninchandi. Mee bhaavaalu mee care space lone untaayi.';
+      'Private check-in tho mee bhaavaalanu gamaninchandi, leda Orbit Loom lo konni nakshatraalato mee sonta aakaaram allandi.';
 
   @override
   String get universe_observatoryBody =>
@@ -11255,4 +11401,150 @@ class AppLocalizationsTeLatn extends AppLocalizationsTe {
   String universe_changeSprout(String name) {
     return '$name kosam kotta mokka';
   }
+
+  @override
+  String get loom_title => 'Orbit Loom';
+
+  @override
+  String get loom_intro =>
+      'Konni nakshatraalu petti, meeku nachchinattu kalapandi. Saraina aakaaram antu edi ledu, tondara kooda ledu.';
+
+  @override
+  String get loom_modeTap => 'Tap';
+
+  @override
+  String get loom_modeDrag => 'Laagandi';
+
+  @override
+  String get loom_hintTap =>
+      'Nakshatram pettadaaniki aakaashaanni tap cheyandi. Rendu nakshatraalanu kalapadaaniki vaatini tap cheyandi; malli tap cheste vidipotaayi.';
+
+  @override
+  String get loom_hintDrag =>
+      'Rendu nakshatraalanu kalapadaaniki okadaani nundi marokadaaniki laagandi. Kadapadaaniki nakshatraanni laagandi.';
+
+  @override
+  String get loom_addStar => 'Oka nakshatram cherchandi';
+
+  @override
+  String get loom_scatter => 'Naa kosam challandi';
+
+  @override
+  String get loom_joinForMe => 'Naa kosam kalapandi';
+
+  @override
+  String get loom_undo => 'Raddu cheyandi';
+
+  @override
+  String get loom_clear => 'Malli modalupettandi';
+
+  @override
+  String get loom_full =>
+      'Ee aakaashamlo edu nakshatraalu padataayi. Vaatini kalapandi, kadapandi, leda deenni unchukondi.';
+
+  @override
+  String loom_skyLabel(int stars, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars nakshatraalu',
+      one: '1 nakshatram',
+      zero: 'inkaa nakshatraalu levu',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines geetalu',
+      one: '1 geeta',
+      zero: 'geetalu levu',
+    );
+    return 'Mee aakaasham: $_temp0, $_temp1';
+  }
+
+  @override
+  String loom_starLabel(int index, int count, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines vaatito kalisindi',
+      one: '1 daanito kalisindi',
+      zero: 'denitonu kalavaledu',
+    );
+    return '$count lo ${index}va nakshatram, $_temp0';
+  }
+
+  @override
+  String get loom_starChosen =>
+      'Enchukunnaaru. Kalapadaaniki leda vidadeeyadaaniki maro nakshatraanni enchukondi.';
+
+  @override
+  String get loom_meaningTitle => 'Meeku nachchite, oka artham';
+
+  @override
+  String get loom_meaning_noticed => 'Nenu gamaninchinadi';
+
+  @override
+  String get loom_meaning_carrying => 'Nenu mostunnadi';
+
+  @override
+  String get loom_meaning_ahead => 'Mundunnadi';
+
+  @override
+  String get loom_meaning_thankful => 'Nenu krutagnataga unnadi';
+
+  @override
+  String get loom_meaning_just_because => 'Oorike';
+
+  @override
+  String get loom_keep => 'Naa aakaashamlo unchandi';
+
+  @override
+  String get loom_keepNeedsStars =>
+      'Oka aakaaraanni unchadaaniki kaneesam moodu nakshatraalu pettandi.';
+
+  @override
+  String get loom_dayFull =>
+      'Ee roju mee aakaasham aidu unchindi. Aadutoone undochu; repu inkaa chotu untundi.';
+
+  @override
+  String get loom_kept => 'Mee aakaashamlo unchaam';
+
+  @override
+  String get loom_close => 'Orbit Loom nundi bayataku';
+
+  @override
+  String get universe_weaveStars => 'Nakshatraalu allandi';
+
+  @override
+  String get universe_constellationsTitle => 'Mee nakshatra mandalaalu';
+
+  @override
+  String universe_constellationLabel(String meaning, int stars) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars nakshatraalu',
+      one: '1 nakshatram',
+    );
+    return '$meaning, $_temp0';
+  }
+
+  @override
+  String get universe_constellationPlain => 'Oka nakshatra mandalam';
+
+  @override
+  String get universe_letGo => 'Vadileyandi';
+
+  @override
+  String get universe_letGoTitle => 'Ee nakshatra mandalaanni vadileyaalaa?';
+
+  @override
+  String get universe_letGoBody =>
+      'Meeru sign in ayina prati parikaramlo idi mee aakaasham nundi vellipotundi.';
+
+  @override
+  String get universe_letGoKeep => 'Unchandi';
+
+  @override
+  String get export_hConstellations => 'Nakshatra mandalaalu (Orbit Loom)';
 }

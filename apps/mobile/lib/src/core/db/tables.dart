@@ -280,3 +280,28 @@ class CapsuleMedia extends Table {
   @override
   Set<Column<Object>> get primaryKey => {capsuleId, slot};
 }
+
+/// U07 Orbit Loom: the constellations kept in the Reflection sky (schema
+/// v7). Cosmetic (RULES.md section 14): the shape as kept (`[[x, y], ...]`
+/// and `[[a, b], ...]` JSON) and an optional neutral meaning key. Letting one
+/// go sets [deletedAt] and erases the shape, as the server does; the row stays
+/// so the delete can be pushed and a later pull cannot bring it back.
+@DataClassName('LoomConstellationRow')
+class LoomConstellations extends Table {
+  TextColumn get id => text()();
+  TextColumn get stars => text().nullable()();
+  TextColumn get links => text().nullable()();
+  TextColumn get meaning => text().nullable()();
+
+  /// The Aura day it was kept (the per-day limit).
+  TextColumn get localDay => text()();
+  DateTimeColumn get deviceTs => dateTime()();
+  TextColumn get tz => text().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
+
+  /// The server holds it (pushed and applied, or pulled).
+  BoolColumn get synced => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}

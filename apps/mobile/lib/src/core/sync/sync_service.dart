@@ -76,6 +76,7 @@ class SyncService implements SyncTrigger {
     required this._onUnder13,
     this._reconcileHabits,
     this._onCommitmentRejected,
+    this._onConstellationRejected,
     this._onDeletionPending,
     this._media,
     this._capsules,
@@ -115,6 +116,11 @@ class SyncService implements SyncTrigger {
   /// showing stakes the server does not hold (and keeps the ones it does).
   final Future<void> Function(String habitId, String reason)?
   _onCommitmentRejected;
+
+  /// U07: the server refused to keep an Orbit Loom constellation (a sixth
+  /// that day from another phone, or a shape it will not hold). It holds
+  /// nothing, so the phone drops its copy too.
+  final Future<void> Function(String constellationId)? _onConstellationRejected;
 
   final AuthRepository _auth;
   final AuraApi? _api;
@@ -562,6 +568,10 @@ class SyncService implements SyncTrigger {
           }
           if (row.entity == Entities.capsule) {
             await _capsules?.onRejected(row, r.reason ?? 'rejected');
+          }
+          if (row.entity == Entities.loomConstellation &&
+              row.op == Ops.upsert) {
+            await _onConstellationRejected?.call(row.entityId);
           }
         }
       }

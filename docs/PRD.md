@@ -1670,6 +1670,7 @@ erDiagram
   PROFILE ||--o{ STARDUST_LEDGER : "cosmetics currency"
   PROFILE ||--o{ GIFT : sends
   PROFILE ||--o{ SANCTUARY_SESSION : "content-free"
+  PROFILE ||--o{ LOOM_CONSTELLATION : "cosmetic"
   PROFILE ||--o{ KEEPSAKE : "earned only"
   QUIET_SESSION ||--o{ QUIET_MEMBER : "count only"
   PROFILE ||--o{ QUIET_MEMBER : joins
@@ -1688,6 +1689,7 @@ erDiagram
 | | `avatar_state`, `streak_state` | stage, total Starlight, hue, rings, glow, constellation stars, `is_resting`, equipped cosmetics / glow streak, lifetime glow days, rest-day bank | **Derived by NestJS from the ledgers** (DS-5); the client renders `AuraAvatarState` optimistically offline. |
 | | `capsules` | `unlock_type` (`date` / `mood`), `unlock_at`, `trigger_mood_id` / `trigger_quadrant`, `cooldown_until`, `sealed_at`, `opened_at`, `payload_ct`, `media_paths[]` | Encrypted payload and media (DS-1). Unlocks scheduled as BullMQ jobs. |
 | | `sanctuary_sessions` | `id` (client UUID), `user_id`, `activity` (breathe / grounding / stillness / savour / sounds / night_wind_down), `variant`, `duration_s`, `local_day`, `device_ts` | F15. **Content-free**: no text, audio or mood. Written via sync push; feeds the "Sanctuary minutes" keepsake. Included in the account purge `[ASSUMPTION]`. |
+| | `loom_constellations` | `id` (client UUID), `user_id`, `stars` (3–7 `[x, y]` points in the unit sky), `links` (star-index pairs), `meaning` (optional: noticed / carrying / ahead / thankful / just_because), `local_day`, `device_ts`, `deleted_at`, `updated_at` | U07 Orbit Loom. **Cosmetic**: no free text or mood; never touches the ledger. Written via sync push (RULES.md §14: ≤ 5 kept per Aura day); a soft delete erases the shape. Exported by the app; included in the account purge. |
 | | `keepsakes` | `user_id`, `keepsake_key`, `earned_at` | F13. **Derived by NestJS** from existing records (like `avatar_state`); never sold or removed; no link to rooms, pseudonyms or content. |
 | Social | `rooms` | `quadrant`, `mood_ids[]`, `language_pool` (`en` / `te` / `hi`), `tz_region`, `theme`, `capacity` (24), `opened_at`, `closes_at`, `memory_until`, `status`; from B `lantern_level`, `intention_key`, `intention_holds` | **One mixed-age pool (D2).** Partition key: `language_pool × quadrant × tz_region`. Lantern and intention fields are room totals only (F5), purged with the room. |
 | | `room_members` | `room_id`, `user_id`, `member_id`, `pseudonym`, `mood_at_join`, `joined_at`, `left_at` | Pseudonyms unique per room (DS-2). `mood_at_join` is shown as a chip (DS-3). `user_id` is never returned to clients. |

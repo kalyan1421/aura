@@ -5252,7 +5252,7 @@ abstract class AppLocalizations {
   /// Personal universe: reflectionBody copy or accessible control label.
   ///
   /// In en, this message translates to:
-  /// **'Notice how you feel with a private check-in. Your feelings stay in your care space.'**
+  /// **'Notice how you feel with a private check-in, or weave a few stars into a shape of your own in Orbit Loom.'**
   String get universe_reflectionBody;
 
   /// Personal universe: observatoryBody copy or accessible control label.
@@ -8926,6 +8926,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A new plant for {name}'**
   String universe_changeSprout(String name);
+
+  /// Title of the small constellation game. A proper name: keep it short; may stay in English.
+  ///
+  /// In en, this message translates to:
+  /// **'Orbit Loom'**
+  String get loom_title;
+
+  /// Intro line at the top of the game. Must say there is no right answer and no time limit.
+  ///
+  /// In en, this message translates to:
+  /// **'Place a few stars and join them however you like. There\'s no right shape and no hurry.'**
+  String get loom_intro;
+
+  /// Mode switch: tap the sky to place stars and tap two stars to join them.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap'**
+  String get loom_modeTap;
+
+  /// Mode switch: drag between stars to join them and drag a star to move it.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag'**
+  String get loom_modeDrag;
+
+  /// Hint under the sky in tap mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the sky to place a star. Tap two stars to join them, or tap them again to unjoin.'**
+  String get loom_hintTap;
+
+  /// Hint under the sky in drag mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag from one star to another to join them. Drag a star to move it.'**
+  String get loom_hintDrag;
+
+  /// Button that places one star in a free spot, so no precise tapping is needed.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a star'**
+  String get loom_addStar;
+
+  /// Button that places a few stars at once, spread out nicely.
+  ///
+  /// In en, this message translates to:
+  /// **'Scatter for me'**
+  String get loom_scatter;
+
+  /// Button that draws neat lines joining every star.
+  ///
+  /// In en, this message translates to:
+  /// **'Join for me'**
+  String get loom_joinForMe;
+
+  /// Undo the last change in the sky.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get loom_undo;
+
+  /// Clears the sky to begin a new shape.
+  ///
+  /// In en, this message translates to:
+  /// **'Start again'**
+  String get loom_clear;
+
+  /// Shown when the seventh star is placed. Friendly, not a warning.
+  ///
+  /// In en, this message translates to:
+  /// **'This sky holds seven stars. Join them, move them, or keep it.'**
+  String get loom_full;
+
+  /// Screen-reader summary of the sky canvas.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky: {stars, plural, =0{no stars yet} one{1 star} other{{stars} stars}}, {lines, plural, =0{no lines} one{1 line} other{{lines} lines}}'**
+  String loom_skyLabel(int stars, int lines);
+
+  /// Screen-reader label of one star. Activating it chooses it; activating a second star joins or unjoins the two.
+  ///
+  /// In en, this message translates to:
+  /// **'Star {index} of {count}, joined to {lines, plural, =0{no others} one{1 other} other{{lines} others}}'**
+  String loom_starLabel(int index, int count, int lines);
+
+  /// Screen-reader hint after choosing a star in tap mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen. Choose another star to join or unjoin them.'**
+  String get loom_starChosen;
+
+  /// Heading of the optional meaning chips. Choosing none is fine.
+  ///
+  /// In en, this message translates to:
+  /// **'A meaning, if you like'**
+  String get loom_meaningTitle;
+
+  /// Optional neutral meaning of a constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Something I noticed'**
+  String get loom_meaning_noticed;
+
+  /// Optional neutral meaning of a constellation. Heavy things are as welcome as light ones.
+  ///
+  /// In en, this message translates to:
+  /// **'Something I\'m carrying'**
+  String get loom_meaning_carrying;
+
+  /// Optional neutral meaning of a constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Something ahead'**
+  String get loom_meaning_ahead;
+
+  /// Optional neutral meaning of a constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Something I\'m thankful for'**
+  String get loom_meaning_thankful;
+
+  /// Optional neutral meaning of a constellation: no reason needed.
+  ///
+  /// In en, this message translates to:
+  /// **'Just because'**
+  String get loom_meaning_just_because;
+
+  /// Button that keeps the constellation in the Reflection sky. Nothing is awarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it in my sky'**
+  String get loom_keep;
+
+  /// Shown under the disabled keep button until there are three stars.
+  ///
+  /// In en, this message translates to:
+  /// **'Place at least three stars to keep a shape.'**
+  String get loom_keepNeedsStars;
+
+  /// Shown instead of the keep button after five kept today. Calm; playing is still welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Your sky kept five today. You can keep playing; tomorrow there\'s room for more.'**
+  String get loom_dayFull;
+
+  /// Brief confirmation after keeping a constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept in your sky'**
+  String get loom_kept;
+
+  /// Tooltip of the close button. Leaving is always fine; nothing is lost that matters.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave Orbit Loom'**
+  String get loom_close;
+
+  /// Reflection card button that opens Orbit Loom.
+  ///
+  /// In en, this message translates to:
+  /// **'Weave stars'**
+  String get universe_weaveStars;
+
+  /// Heading of the kept constellations in the Reflection card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your constellations'**
+  String get universe_constellationsTitle;
+
+  /// Screen-reader and visible label of one kept constellation. {meaning} is a meaning or the word for 'A constellation'.
+  ///
+  /// In en, this message translates to:
+  /// **'{meaning}, {stars, plural, one{1 star} other{{stars} stars}}'**
+  String universe_constellationLabel(String meaning, int stars);
+
+  /// Label of a kept constellation that has no meaning chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'A constellation'**
+  String get universe_constellationPlain;
+
+  /// Action that removes one kept constellation from every device.
+  ///
+  /// In en, this message translates to:
+  /// **'Let it go'**
+  String get universe_letGo;
+
+  /// Confirm dialog title before removing a kept constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Let this constellation go?'**
+  String get universe_letGoTitle;
+
+  /// Confirm dialog body before removing a kept constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves your sky on every device where you\'re signed in.'**
+  String get universe_letGoBody;
+
+  /// Confirm dialog button that cancels removing a constellation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get universe_letGoKeep;
+
+  /// HTML export: heading of the kept Orbit Loom constellations.
+  ///
+  /// In en, this message translates to:
+  /// **'Constellations (Orbit Loom)'**
+  String get export_hConstellations;
 }
 
 class _AppLocalizationsDelegate

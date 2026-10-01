@@ -3278,7 +3278,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get universe_reflectionBody =>
-      'एक निजी चेक-इन से अपनी भावनाएँ समझें। आपकी भावनाएँ आपकी देखभाल की जगह में रहती हैं।';
+      'निजी चेक-इन से देखें कि आप कैसा महसूस कर रहे हैं, या Orbit Loom में कुछ तारों से अपना एक आकार बुनें।';
 
   @override
   String get universe_observatoryBody =>
@@ -5573,6 +5573,151 @@ class AppLocalizationsHi extends AppLocalizations {
   String universe_changeSprout(String name) {
     return '$name के लिए नया पौधा';
   }
+
+  @override
+  String get loom_title => 'Orbit Loom';
+
+  @override
+  String get loom_intro =>
+      'कुछ तारे रखिए और जैसे मन हो, उन्हें जोड़िए। कोई सही आकार नहीं है, कोई जल्दी नहीं।';
+
+  @override
+  String get loom_modeTap => 'टैप';
+
+  @override
+  String get loom_modeDrag => 'खींचें';
+
+  @override
+  String get loom_hintTap =>
+      'तारा रखने के लिए आसमान पर टैप करें। दो तारों को जोड़ने के लिए उन्हें टैप करें; दोबारा टैप करने पर वे अलग हो जाते हैं।';
+
+  @override
+  String get loom_hintDrag =>
+      'दो तारों को जोड़ने के लिए एक से दूसरे तक खींचें। किसी तारे को हिलाने के लिए उसे खींचें।';
+
+  @override
+  String get loom_addStar => 'एक तारा जोड़ें';
+
+  @override
+  String get loom_scatter => 'मेरे लिए बिखेर दें';
+
+  @override
+  String get loom_joinForMe => 'मेरे लिए जोड़ दें';
+
+  @override
+  String get loom_undo => 'पहले जैसा करें';
+
+  @override
+  String get loom_clear => 'फिर से शुरू करें';
+
+  @override
+  String get loom_full =>
+      'इस आसमान में सात तारे आते हैं। उन्हें जोड़िए, हिलाइए, या इसे रख लीजिए।';
+
+  @override
+  String loom_skyLabel(int stars, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars तारे',
+      one: '1 तारा',
+      zero: 'अभी कोई तारा नहीं',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines रेखाएँ',
+      one: '1 रेखा',
+      zero: 'कोई रेखा नहीं',
+    );
+    return 'आपका आसमान: $_temp0, $_temp1';
+  }
+
+  @override
+  String loom_starLabel(int index, int count, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines से जुड़ा',
+      one: '1 से जुड़ा',
+      zero: 'किसी से नहीं जुड़ा',
+    );
+    return '$count में से तारा $index, $_temp0';
+  }
+
+  @override
+  String get loom_starChosen =>
+      'चुन लिया। जोड़ने या अलग करने के लिए दूसरा तारा चुनें।';
+
+  @override
+  String get loom_meaningTitle => 'मन हो तो, एक अर्थ';
+
+  @override
+  String get loom_meaning_noticed => 'कुछ जो मैंने देखा';
+
+  @override
+  String get loom_meaning_carrying => 'कुछ जो मेरे मन पर है';
+
+  @override
+  String get loom_meaning_ahead => 'कुछ जो आगे है';
+
+  @override
+  String get loom_meaning_thankful => 'कुछ जिसके लिए मैं आभारी हूँ';
+
+  @override
+  String get loom_meaning_just_because => 'बस यूँ ही';
+
+  @override
+  String get loom_keep => 'मेरे आसमान में रखें';
+
+  @override
+  String get loom_keepNeedsStars => 'आकार रखने के लिए कम से कम तीन तारे रखें।';
+
+  @override
+  String get loom_dayFull =>
+      'आज आपके आसमान ने पाँच रख लिए। आप खेलते रह सकते हैं; कल और जगह होगी।';
+
+  @override
+  String get loom_kept => 'आपके आसमान में रख दिया';
+
+  @override
+  String get loom_close => 'Orbit Loom से बाहर';
+
+  @override
+  String get universe_weaveStars => 'तारे बुनें';
+
+  @override
+  String get universe_constellationsTitle => 'आपके तारामंडल';
+
+  @override
+  String universe_constellationLabel(String meaning, int stars) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars तारे',
+      one: '1 तारा',
+    );
+    return '$meaning, $_temp0';
+  }
+
+  @override
+  String get universe_constellationPlain => 'एक तारामंडल';
+
+  @override
+  String get universe_letGo => 'जाने दें';
+
+  @override
+  String get universe_letGoTitle => 'इस तारामंडल को जाने दें?';
+
+  @override
+  String get universe_letGoBody =>
+      'यह उन सभी डिवाइस पर आपके आसमान से चला जाएगा जहाँ आप साइन इन हैं।';
+
+  @override
+  String get universe_letGoKeep => 'रहने दें';
+
+  @override
+  String get export_hConstellations => 'तारामंडल (Orbit Loom)';
 }
 
 /// The translations for Hindi, using the Latin script (`hi_Latn`).
@@ -8887,7 +9032,7 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
 
   @override
   String get universe_reflectionBody =>
-      'Ek private check-in se apni feelings samjhein. Aapki feelings aapki care space mein rehti hain.';
+      'Niji check-in se dekhein ki aap kaisa mehsoos kar rahe hain, ya Orbit Loom mein kuch taaron se apna ek aakaar bunein.';
 
   @override
   String get universe_observatoryBody =>
@@ -11209,4 +11354,150 @@ class AppLocalizationsHiLatn extends AppLocalizationsHi {
   String universe_changeSprout(String name) {
     return '$name ke liye naya paudha';
   }
+
+  @override
+  String get loom_title => 'Orbit Loom';
+
+  @override
+  String get loom_intro =>
+      'Kuch taare rakhiye aur jaise mann ho, unhein jodiye. Koi sahi aakaar nahi hai, koi jaldi nahi.';
+
+  @override
+  String get loom_modeTap => 'Tap';
+
+  @override
+  String get loom_modeDrag => 'Kheenchein';
+
+  @override
+  String get loom_hintTap =>
+      'Taara rakhne ke liye aasmaan par tap karein. Do taaron ko jodne ke liye unhein tap karein; dobaara tap karne par ve alag ho jaate hain.';
+
+  @override
+  String get loom_hintDrag =>
+      'Do taaron ko jodne ke liye ek se doosre tak kheenchein. Kisi taare ko hilaane ke liye use kheenchein.';
+
+  @override
+  String get loom_addStar => 'Ek taara jodein';
+
+  @override
+  String get loom_scatter => 'Mere liye bikher dein';
+
+  @override
+  String get loom_joinForMe => 'Mere liye jod dein';
+
+  @override
+  String get loom_undo => 'Pehle jaisa karein';
+
+  @override
+  String get loom_clear => 'Phir se shuru karein';
+
+  @override
+  String get loom_full =>
+      'Is aasmaan mein saat taare aate hain. Unhein jodiye, hilaaiye, ya ise rakh lijiye.';
+
+  @override
+  String loom_skyLabel(int stars, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars taare',
+      one: '1 taara',
+      zero: 'abhi koi taara nahi',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines rekhaayein',
+      one: '1 rekha',
+      zero: 'koi rekha nahi',
+    );
+    return 'Aapka aasmaan: $_temp0, $_temp1';
+  }
+
+  @override
+  String loom_starLabel(int index, int count, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines se juda',
+      one: '1 se juda',
+      zero: 'kisi se nahi juda',
+    );
+    return '$count mein se taara $index, $_temp0';
+  }
+
+  @override
+  String get loom_starChosen =>
+      'Chun liya. Jodne ya alag karne ke liye doosra taara chunein.';
+
+  @override
+  String get loom_meaningTitle => 'Mann ho to, ek arth';
+
+  @override
+  String get loom_meaning_noticed => 'Kuch jo maine dekha';
+
+  @override
+  String get loom_meaning_carrying => 'Kuch jo mere mann par hai';
+
+  @override
+  String get loom_meaning_ahead => 'Kuch jo aage hai';
+
+  @override
+  String get loom_meaning_thankful => 'Kuch jiske liye main aabhaari hoon';
+
+  @override
+  String get loom_meaning_just_because => 'Bas yoon hi';
+
+  @override
+  String get loom_keep => 'Mere aasmaan mein rakhein';
+
+  @override
+  String get loom_keepNeedsStars =>
+      'Aakaar rakhne ke liye kam se kam teen taare rakhein.';
+
+  @override
+  String get loom_dayFull =>
+      'Aaj aapke aasmaan ne paanch rakh liye. Aap khelte reh sakte hain; kal aur jagah hogi.';
+
+  @override
+  String get loom_kept => 'Aapke aasmaan mein rakh diya';
+
+  @override
+  String get loom_close => 'Orbit Loom se baahar';
+
+  @override
+  String get universe_weaveStars => 'Taare bunein';
+
+  @override
+  String get universe_constellationsTitle => 'Aapke taaramandal';
+
+  @override
+  String universe_constellationLabel(String meaning, int stars) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars taare',
+      one: '1 taara',
+    );
+    return '$meaning, $_temp0';
+  }
+
+  @override
+  String get universe_constellationPlain => 'Ek taaramandal';
+
+  @override
+  String get universe_letGo => 'Jaane dein';
+
+  @override
+  String get universe_letGoTitle => 'Is taaramandal ko jaane dein?';
+
+  @override
+  String get universe_letGoBody =>
+      'Yeh un sabhi device par aapke aasmaan se chala jaayega jahaan aap sign in hain.';
+
+  @override
+  String get universe_letGoKeep => 'Rehne dein';
+
+  @override
+  String get export_hConstellations => 'Taaramandal (Orbit Loom)';
 }

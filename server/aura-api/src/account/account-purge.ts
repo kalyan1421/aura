@@ -61,6 +61,8 @@ export const PERSONAL_TABLES = [
   'notification_schedule',
   'notification_activity',
   'gesture_push_log',
+  // U07: cosmetic Orbit Loom constellations, kept or let go (migration 20261005000038).
+  'loom_constellations',
   // F12 (migration 20261005000020): the store account token, the derived entitlement, owned cosmetics, the sky choice
   // and the Stardust ledger. Store purchase records (subscriptions, purchases) and gifts are NOT deleted: they are
   // de-identified below (ACCOUNT_REFERENCE_CLEANUP) and kept as purchase / tax records "only as law requires" [LEGAL]

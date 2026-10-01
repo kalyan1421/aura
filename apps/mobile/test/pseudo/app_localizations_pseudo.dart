@@ -3178,4 +3178,80 @@ class AppLocalizationsPseudo extends AppLocalizationsEn {
   @override
   String universe_changeSprout(String name) =>
       pseudo(super.universe_changeSprout(name));
+  @override
+  String get loom_title => pseudo(super.loom_title);
+  @override
+  String get loom_intro => pseudo(super.loom_intro);
+  @override
+  String get loom_modeTap => pseudo(super.loom_modeTap);
+  @override
+  String get loom_modeDrag => pseudo(super.loom_modeDrag);
+  @override
+  String get loom_hintTap => pseudo(super.loom_hintTap);
+  @override
+  String get loom_hintDrag => pseudo(super.loom_hintDrag);
+  @override
+  String get loom_addStar => pseudo(super.loom_addStar);
+  @override
+  String get loom_scatter => pseudo(super.loom_scatter);
+  @override
+  String get loom_joinForMe => pseudo(super.loom_joinForMe);
+  @override
+  String get loom_undo => pseudo(super.loom_undo);
+  @override
+  String get loom_clear => pseudo(super.loom_clear);
+  @override
+  String get loom_full => pseudo(super.loom_full);
+  @override
+  String loom_skyLabel(int stars, int lines) =>
+      pseudo(super.loom_skyLabel(stars, lines));
+  @override
+  String loom_starLabel(int index, int count, int lines) =>
+      pseudo(super.loom_starLabel(index, count, lines));
+  @override
+  String get loom_starChosen => pseudo(super.loom_starChosen);
+  @override
+  String get loom_meaningTitle => pseudo(super.loom_meaningTitle);
+  @override
+  String get loom_meaning_noticed => pseudo(super.loom_meaning_noticed);
+  @override
+  String get loom_meaning_carrying => pseudo(super.loom_meaning_carrying);
+  @override
+  String get loom_meaning_ahead => pseudo(super.loom_meaning_ahead);
+  @override
+  String get loom_meaning_thankful => pseudo(super.loom_meaning_thankful);
+  @override
+  String get loom_meaning_just_because =>
+      pseudo(super.loom_meaning_just_because);
+  @override
+  String get loom_keep => pseudo(super.loom_keep);
+  @override
+  String get loom_keepNeedsStars => pseudo(super.loom_keepNeedsStars);
+  @override
+  String get loom_dayFull => pseudo(super.loom_dayFull);
+  @override
+  String get loom_kept => pseudo(super.loom_kept);
+  @override
+  String get loom_close => pseudo(super.loom_close);
+  @override
+  String get universe_weaveStars => pseudo(super.universe_weaveStars);
+  @override
+  String get universe_constellationsTitle =>
+      pseudo(super.universe_constellationsTitle);
+  @override
+  String universe_constellationLabel(String meaning, int stars) =>
+      pseudo(super.universe_constellationLabel(meaning, stars));
+  @override
+  String get universe_constellationPlain =>
+      pseudo(super.universe_constellationPlain);
+  @override
+  String get universe_letGo => pseudo(super.universe_letGo);
+  @override
+  String get universe_letGoTitle => pseudo(super.universe_letGoTitle);
+  @override
+  String get universe_letGoBody => pseudo(super.universe_letGoBody);
+  @override
+  String get universe_letGoKeep => pseudo(super.universe_letGoKeep);
+  @override
+  String get export_hConstellations => pseudo(super.export_hConstellations);
 }

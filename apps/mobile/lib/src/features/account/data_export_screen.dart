@@ -1,3 +1,4 @@
+import 'package:aura_domain/aura_domain.dart' show ConstellationMeaning;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,7 @@ import '../../core/widgets/busy_button_label.dart';
 import '../../core/widgets/cosmic_background.dart';
 import '../../core/widgets/help_app_bar.dart';
 import '../../core/widgets/inline_notice.dart';
+import '../orbit_loom/orbit_loom_screen.dart' show ConstellationMeaningCopy;
 import '../plus/plus_format.dart' show plusDate;
 import 'data_export.dart';
 
@@ -46,6 +48,12 @@ class _DataExportScreenState extends ConsumerState<DataExportScreen> {
       nothing: l.export_nothing,
       commitmentSince: l.export_hCommitment,
       pausedUntil: l.export_hPausedUntil,
+      constellations: l.export_hConstellations,
+      constellation: (meaning, stars) => l.universe_constellationLabel(
+        ConstellationMeaning.fromKey(meaning)?.label(l) ??
+            l.universe_constellationPlain,
+        stars,
+      ),
     );
     final box = _button.currentContext?.findRenderObject() as RenderBox?;
     final origin = box == null

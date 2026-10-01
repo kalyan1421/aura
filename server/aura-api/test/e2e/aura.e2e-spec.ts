@@ -963,6 +963,9 @@ describe('Aura API (e2e, live local Supabase + Redis)', () => {
       // user-timed push and a gestures-received log row (notification_activity comes from the sync push's trigger).
       const session = { id: uuidv7(), entity: 'sanctuary_session', op: 'upsert', deviceTs: now(), localDay: localDate(new Date(), 'Asia/Kolkata'), tz: 'Asia/Kolkata', payload: { id: uuidv7(), activity: 'breathe', variant: 'calm', durationS: 64 } };
       expect((await pushAs(u, [session]).expect(200)).body.results[0].status).toBe('applied');
+      // U07 (migration 20261005000038): an Orbit Loom constellation, through the sync push.
+      const loom = { ...session, id: uuidv7(), entity: 'loom_constellation', payload: { id: uuidv7(), stars: [[0.2, 0.2], [0.8, 0.25], [0.5, 0.8]], links: [[0, 1]], meaning: null } };
+      expect((await pushAs(u, [loom]).expect(200)).body.results[0].status).toBe('applied');
       await db.query(`insert into public.notification_schedule (user_id, kind, next_at, tz) values ($1, 'lantern_hour', now() + interval '1 hour', 'Asia/Kolkata')`, [u.id]);
       await db.query('insert into public.gesture_push_log (user_id, room_id, local_day) values ($1, $2, current_date)', [u.id, matched.body.room.roomId]);
       // F7 Breath Ripples (migration 20261005000021): "Breathe together" in the room opens an invite and a waiting

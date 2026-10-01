@@ -4204,7 +4204,7 @@
   "@universe_poolBody": {
     "description": "Personal universe: poolBody copy or accessible control label."
   },
-  "universe_reflectionBody": "Notice how you feel with a private check-in. Your feelings stay in your care space.",
+  "universe_reflectionBody": "Notice how you feel with a private check-in, or weave a few stars into a shape of your own in Orbit Loom.",
   "@universe_reflectionBody": {
     "description": "Personal universe: reflectionBody copy or accessible control label."
   },
@@ -7145,5 +7145,172 @@
         "type": "String"
       }
     }
+  },
+  "loom_title": "Orbit Loom",
+  "@loom_title": {
+    "description": "Title of the small constellation game. A proper name: keep it short; may stay in English."
+  },
+  "loom_intro": "Place a few stars and join them however you like. There's no right shape and no hurry.",
+  "@loom_intro": {
+    "description": "Intro line at the top of the game. Must say there is no right answer and no time limit."
+  },
+  "loom_modeTap": "Tap",
+  "@loom_modeTap": {
+    "description": "Mode switch: tap the sky to place stars and tap two stars to join them."
+  },
+  "loom_modeDrag": "Drag",
+  "@loom_modeDrag": {
+    "description": "Mode switch: drag between stars to join them and drag a star to move it."
+  },
+  "loom_hintTap": "Tap the sky to place a star. Tap two stars to join them, or tap them again to unjoin.",
+  "@loom_hintTap": {
+    "description": "Hint under the sky in tap mode."
+  },
+  "loom_hintDrag": "Drag from one star to another to join them. Drag a star to move it.",
+  "@loom_hintDrag": {
+    "description": "Hint under the sky in drag mode."
+  },
+  "loom_addStar": "Add a star",
+  "@loom_addStar": {
+    "description": "Button that places one star in a free spot, so no precise tapping is needed."
+  },
+  "loom_scatter": "Scatter for me",
+  "@loom_scatter": {
+    "description": "Button that places a few stars at once, spread out nicely."
+  },
+  "loom_joinForMe": "Join for me",
+  "@loom_joinForMe": {
+    "description": "Button that draws neat lines joining every star."
+  },
+  "loom_undo": "Undo",
+  "@loom_undo": {
+    "description": "Undo the last change in the sky."
+  },
+  "loom_clear": "Start again",
+  "@loom_clear": {
+    "description": "Clears the sky to begin a new shape."
+  },
+  "loom_full": "This sky holds seven stars. Join them, move them, or keep it.",
+  "@loom_full": {
+    "description": "Shown when the seventh star is placed. Friendly, not a warning."
+  },
+  "loom_skyLabel": "Your sky: {stars, plural, =0{no stars yet} one{1 star} other{{stars} stars}}, {lines, plural, =0{no lines} one{1 line} other{{lines} lines}}",
+  "@loom_skyLabel": {
+    "description": "Screen-reader summary of the sky canvas.",
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "loom_starLabel": "Star {index} of {count}, joined to {lines, plural, =0{no others} one{1 other} other{{lines} others}}",
+  "@loom_starLabel": {
+    "description": "Screen-reader label of one star. Activating it chooses it; activating a second star joins or unjoins the two.",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      },
+      "lines": {
+        "type": "int"
+      }
+    }
+  },
+  "loom_starChosen": "Chosen. Choose another star to join or unjoin them.",
+  "@loom_starChosen": {
+    "description": "Screen-reader hint after choosing a star in tap mode."
+  },
+  "loom_meaningTitle": "A meaning, if you like",
+  "@loom_meaningTitle": {
+    "description": "Heading of the optional meaning chips. Choosing none is fine."
+  },
+  "loom_meaning_noticed": "Something I noticed",
+  "@loom_meaning_noticed": {
+    "description": "Optional neutral meaning of a constellation."
+  },
+  "loom_meaning_carrying": "Something I'm carrying",
+  "@loom_meaning_carrying": {
+    "description": "Optional neutral meaning of a constellation. Heavy things are as welcome as light ones."
+  },
+  "loom_meaning_ahead": "Something ahead",
+  "@loom_meaning_ahead": {
+    "description": "Optional neutral meaning of a constellation."
+  },
+  "loom_meaning_thankful": "Something I'm thankful for",
+  "@loom_meaning_thankful": {
+    "description": "Optional neutral meaning of a constellation."
+  },
+  "loom_meaning_just_because": "Just because",
+  "@loom_meaning_just_because": {
+    "description": "Optional neutral meaning of a constellation: no reason needed."
+  },
+  "loom_keep": "Keep it in my sky",
+  "@loom_keep": {
+    "description": "Button that keeps the constellation in the Reflection sky. Nothing is awarded."
+  },
+  "loom_keepNeedsStars": "Place at least three stars to keep a shape.",
+  "@loom_keepNeedsStars": {
+    "description": "Shown under the disabled keep button until there are three stars."
+  },
+  "loom_dayFull": "Your sky kept five today. You can keep playing; tomorrow there's room for more.",
+  "@loom_dayFull": {
+    "description": "Shown instead of the keep button after five kept today. Calm; playing is still welcome."
+  },
+  "loom_kept": "Kept in your sky",
+  "@loom_kept": {
+    "description": "Brief confirmation after keeping a constellation."
+  },
+  "loom_close": "Leave Orbit Loom",
+  "@loom_close": {
+    "description": "Tooltip of the close button. Leaving is always fine; nothing is lost that matters."
+  },
+  "universe_weaveStars": "Weave stars",
+  "@universe_weaveStars": {
+    "description": "Reflection card button that opens Orbit Loom."
+  },
+  "universe_constellationsTitle": "Your constellations",
+  "@universe_constellationsTitle": {
+    "description": "Heading of the kept constellations in the Reflection card."
+  },
+  "universe_constellationLabel": "{meaning}, {stars, plural, one{1 star} other{{stars} stars}}",
+  "@universe_constellationLabel": {
+    "description": "Screen-reader and visible label of one kept constellation. {meaning} is a meaning or the word for 'A constellation'.",
+    "placeholders": {
+      "meaning": {
+        "type": "String"
+      },
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "universe_constellationPlain": "A constellation",
+  "@universe_constellationPlain": {
+    "description": "Label of a kept constellation that has no meaning chosen."
+  },
+  "universe_letGo": "Let it go",
+  "@universe_letGo": {
+    "description": "Action that removes one kept constellation from every device."
+  },
+  "universe_letGoTitle": "Let this constellation go?",
+  "@universe_letGoTitle": {
+    "description": "Confirm dialog title before removing a kept constellation."
+  },
+  "universe_letGoBody": "It leaves your sky on every device where you're signed in.",
+  "@universe_letGoBody": {
+    "description": "Confirm dialog body before removing a kept constellation."
+  },
+  "universe_letGoKeep": "Keep it",
+  "@universe_letGoKeep": {
+    "description": "Confirm dialog button that cancels removing a constellation."
+  },
+  "export_hConstellations": "Constellations (Orbit Loom)",
+  "@export_hConstellations": {
+    "description": "HTML export: heading of the kept Orbit Loom constellations."
   }
 }

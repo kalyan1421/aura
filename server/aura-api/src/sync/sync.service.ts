@@ -18,6 +18,7 @@ import { NotificationPrefsSyncHandler } from '../notifications/notification-pref
 import { PoolWaitlistSyncHandler } from '../notifications/pool-waitlist';
 import { ProfileService } from '../profile/profile.service';
 import { SanctuarySessionSyncHandler } from '../sanctuary/sanctuary-sessions';
+import { LoomConstellationSyncHandler } from '../constellations/loom-constellations';
 import type { Snapshot } from '../progression/snapshot';
 import { ProgressionService } from '../progression/progression.service';
 import { auraDay, awardFor, daysBetween, isEligible, MAX_FUTURE_SKEW_MS, type StarlightEvent } from '../rules';
@@ -125,6 +126,8 @@ export class SyncService {
     @Inject(PoolWaitlistSyncHandler) private readonly poolWaitlist?: PoolWaitlistSyncHandler,
     /** F15 entity `sanctuary_session` (content-free session records), from SanctuaryModule. Same injection rule. */
     @Inject(SanctuarySessionSyncHandler) private readonly sanctuarySessions?: SanctuarySessionSyncHandler,
+    /** U07 entity `loom_constellation` (cosmetic Orbit Loom shapes), from ConstellationsModule. Same injection rule. */
+    @Inject(LoomConstellationSyncHandler) private readonly loomConstellations?: LoomConstellationSyncHandler,
   ) {}
 
   async push(userId: string, body: unknown, now = new Date()): Promise<PushResponse> {
@@ -263,6 +266,10 @@ export class SyncService {
       case 'sanctuary_session:delete':
         if (!this.sanctuarySessions) return reject('unknown_entity');
         return this.sanctuarySessions.apply(ctx, m); // op `upsert` only (`delete` → unknown_op)
+      case 'loom_constellation:upsert':
+      case 'loom_constellation:delete':
+        if (!this.loomConstellations) return reject('unknown_entity');
+        return this.loomConstellations.apply(ctx, m);
       default:
         return reject('unknown_op'); // a valid op the entity doesn't support (e.g. capsule:upsert, check_in:seal)
     }

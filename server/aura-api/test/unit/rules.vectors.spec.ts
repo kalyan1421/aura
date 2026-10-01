@@ -6,6 +6,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import {
   auraDay,
+  constellationProblem,
   constellationStars,
   foldStreak,
   hueFor,
@@ -106,6 +107,11 @@ const runners: Record<string, Runner> = {
       return expect(worldChanges(c.seen as Record<string, WorldLook> | null, c.current as (WorldLook & { key: string })[])).toEqual(c.expect);
     }
     throw new Error(`world.json: unknown kind ${String(c.kind)}`);
+  },
+  // RULES.md §14 (U07 Orbit Loom constellations; cosmetic).
+  'constellations.json': (c) => {
+    if (c.kind === 'problem') return expect(constellationProblem(c.stars, c.links, c.meaning)).toBe(c.expect);
+    throw new Error(`constellations.json: unknown kind ${String(c.kind)}`);
   },
   'nebula.json': (c) => expect(isResting(c.lastActiveDay, c.currentAuraDay)).toBe(c.expect),
   // RULES.md §9 (F4). One file, three pure rules told apart by `kind`.

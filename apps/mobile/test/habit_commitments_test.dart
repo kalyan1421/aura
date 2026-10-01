@@ -209,7 +209,7 @@ void main() {
     );
     addTearDown(old.close);
     final h = await old.select(old.habits).getSingle(); // opens + migrates
-    expect(old.schemaVersion, 6);
+    expect(old.schemaVersion, 7);
     expect(h.name, 'Read');
     expect(h.committedFrom, isNull);
     expect(h.pausedThrough, isNull);

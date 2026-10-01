@@ -16,13 +16,14 @@ part 'database.g.dart';
     KeyValues,
     Capsules,
     CapsuleMedia,
+    LoomConstellations,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -70,6 +71,10 @@ class AppDatabase extends _$AppDatabase {
         // v6: W02 habit commitments (opt-in world decay, RULES.md section 13).
         await m.addColumn(habits, habits.committedFrom);
         await m.addColumn(habits, habits.pausedThrough);
+      }
+      if (from < 7) {
+        // v7: U07 Orbit Loom constellations (RULES.md section 14).
+        await m.createTable(loomConstellations);
       }
     },
     beforeOpen: (details) async {

@@ -22,6 +22,7 @@ export const ENTITIES = [
   'notification_prefs',
   'room_pool_waitlist',
   'sanctuary_session', // F15: one content-free record per finished Sanctuary activity (src/sanctuary)
+  'loom_constellation', // U07: a cosmetic Orbit Loom constellation (src/constellations)
 ] as const;
 export type Entity = (typeof ENTITIES)[number];
 /**

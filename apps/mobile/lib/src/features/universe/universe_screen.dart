@@ -16,6 +16,9 @@ import '../../core/theme/aura_tokens.dart';
 import '../../core/widgets/help_app_bar.dart';
 import '../capsules/capsules_list_screen.dart';
 import '../habits/habits_section.dart';
+import '../orbit_loom/constellation_repository.dart';
+import '../orbit_loom/orbit_loom_screen.dart';
+import '../orbit_loom/reflection_sky.dart';
 import '../progress/progress_view.dart';
 import '../sanctuary/sanctuary_activities.dart';
 import '../health/health_providers.dart';
@@ -374,6 +377,18 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
     }
   }
 
+  /// U07: Orbit Loom, from the Reflection corner. Nothing is awarded; a
+  /// kept constellation appears in the sky above the landmark.
+  Future<void> _weave() async {
+    _walk.value = 1;
+    if (_playing) _momentPlay.value = 1;
+    final kept = await openOrbitLoom(context);
+    if (kept != true || !mounted) return;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).loom_kept)),
+    );
+  }
+
   void _open() {
     _walk.value = 1;
     if (_playing) _momentPlay.value = 1;
@@ -418,6 +433,9 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
         ? [for (final p in _moment!.plants) p.change]
         : const <WorldPlantChange>[];
     final changing = {for (final c in changes) c.slot};
+    // U07: constellations kept in Orbit Loom, newest first.
+    final kept = ref.watch(keptConstellationsProvider).value ?? const [];
+    final loomSky = skyShapes(kept);
     return Scaffold(
       appBar: helpAppBar(context, title: l.universe_title),
       body: SafeArea(
@@ -524,18 +542,44 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                               _momentPlay,
                               _follow,
                             ]),
-                            builder: (context, _) => UniverseSceneHost(
-                              mesh: _mesh!,
-                              camera: _view,
-                              companion: _position,
-                              pose: _pose,
-                              changes: changes,
-                              changeProgress: _momentPlay.value,
-                              selected: _selected,
-                              sky: sky,
-                              onOrbit: (h, v) =>
-                                  setState(() => _camera = _camera.orbit(h, v)),
-                              onSelect: _select,
+                            builder: (context, _) => Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: UniverseSceneHost(
+                                    mesh: _mesh!,
+                                    camera: _view,
+                                    companion: _position,
+                                    pose: _pose,
+                                    changes: changes,
+                                    changeProgress: _momentPlay.value,
+                                    selected: _selected,
+                                    sky: sky,
+                                    onOrbit: (h, v) => setState(
+                                      () => _camera = _camera.orbit(h, v),
+                                    ),
+                                    onSelect: _select,
+                                  ),
+                                ),
+                                // U07: kept constellations over the Reflection
+                                // landmark, with the scene's own camera.
+                                if (loomSky.isNotEmpty)
+                                  Positioned.fill(
+                                    child: IgnorePointer(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(28),
+                                        child: CustomPaint(
+                                          key: const ValueKey(
+                                            'universe-reflection-sky',
+                                          ),
+                                          painter: ReflectionSkyPainter(
+                                            camera: _view,
+                                            shapes: loomSky,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
@@ -638,6 +682,11 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                             const SizedBox(height: 12),
                             _GrovePlants(habits: habits),
                           ],
+                          if (_selected == UniverseDestination.reflection &&
+                              kept.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            KeptConstellations(kept: kept),
+                          ],
                           const SizedBox(height: 16),
                           FilledButton.icon(
                             key: const ValueKey('universe-care-action'),
@@ -645,6 +694,18 @@ class _UniverseScreenState extends ConsumerState<UniverseScreen>
                             icon: Icon(_selected.icon),
                             label: Text(_selected.action(l)),
                           ),
+                          if (_selected == UniverseDestination.reflection) ...[
+                            const SizedBox(height: 8),
+                            OutlinedButton.icon(
+                              key: const ValueKey('universe-weave'),
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(48, 48),
+                              ),
+                              onPressed: _weave,
+                              icon: const Icon(Icons.auto_awesome_outlined),
+                              label: Text(l.universe_weaveStars),
+                            ),
+                          ],
                         ],
                       ),
                     ),

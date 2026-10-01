@@ -58,6 +58,7 @@ class PullService {
     final checkIns = await _all(client, 'check_ins', _checkInColumns);
     final habits = await _all(client, 'habits', _habitColumns);
     final logs = await _all(client, 'habit_logs', _logColumns);
+    final looms = await _all(client, 'loom_constellations', _loomColumns);
     final tombstones = await client
         .from('sync_tombstones')
         .select('deleted_at')
@@ -153,6 +154,9 @@ class PullService {
               mode: InsertMode.insertOrIgnore,
             );
       }
+      for (final r in looms) {
+        await _mergeLoom(r);
+      }
     });
 
     await mergePresetHabits(habits);
@@ -177,6 +181,7 @@ class PullService {
           habits: _maxTs(habits, 'updated_at'),
           habitLogs: _maxTs(logs, 'server_ts'),
           tombstones: _maxTs(tombstones, 'deleted_at'),
+          loomConstellations: _maxTs(looms, 'updated_at'),
           at: DateTime.now().toUtc(),
         ),
       );
@@ -193,6 +198,11 @@ class PullService {
       'id,kind,preset_key,name,active,created_at,updated_at,'
       'committed_from,paused_through';
   static const String _logColumns = 'id,habit_id,local_day,device_ts,server_ts';
+
+  /// U07 Orbit Loom: soft-deleted like capsules (the shape erased), so the
+  /// delta reads `updated_at` and needs no tombstone table.
+  static const String _loomColumns =
+      'id,stars,links,meaning,local_day,device_ts,deleted_at,updated_at';
 
   /// Server tombstones are kept this long (server `SYNC_TOMBSTONE_RETENTION_DAYS`
   /// is 400); a phone whose last pull is older re-reads everything instead.
@@ -236,6 +246,13 @@ class PullService {
       _logColumns,
       'server_ts',
       cursor.habitLogs,
+    );
+    final looms = await _since(
+      client,
+      'loom_constellations',
+      _loomColumns,
+      'updated_at',
+      cursor.loomConstellations,
     );
     final tombstones = await _since(
       client,
@@ -287,7 +304,15 @@ class PullService {
       for (final t in tombstones) {
         await _applyTombstone(t['entity'] as String, t['entity_id'] as String);
       }
+      for (final r in looms) {
+        await _mergeLoom(r);
+      }
       if (full) {
+        // Synced constellations the server no longer has (purged) go too.
+        final kept = {for (final r in looms) r['id'] as String};
+        await (_db.delete(
+          _db.loomConstellations,
+        )..where((t) => t.synced.equals(true) & t.id.isNotIn(kept))).go();
         await _prune(
           checkIns: {for (final c in checkIns) c['id'] as String},
           habits: {for (final h in habits) h['id'] as String},
@@ -305,9 +330,39 @@ class PullService {
         habits: _maxTs(habits, 'updated_at') ?? cursor.habits,
         habitLogs: _maxTs(logs, 'server_ts') ?? cursor.habitLogs,
         tombstones: _maxTs(tombstones, 'deleted_at') ?? cursor.tombstones,
+        loomConstellations:
+            _maxTs(looms, 'updated_at') ?? cursor.loomConstellations,
         at: at,
       ),
     );
+  }
+
+  /// A constellation kept or let go on the server (U07). This phone's own
+  /// unsent keep or let-go wins until it is sent; a server let-go always
+  /// erases the shape here too.
+  Future<void> _mergeLoom(Map<String, dynamic> r) async {
+    final id = r['id'] as String;
+    if (await _outbox.hasPending(id)) return;
+    final deleted = r['deleted_at'] != null;
+    String? json(Object? v) => v == null ? null : jsonEncode(v);
+    await _db
+        .into(_db.loomConstellations)
+        .insertOnConflictUpdate(
+          LoomConstellationsCompanion.insert(
+            id: id,
+            stars: Value(deleted ? null : json(r['stars'])),
+            links: Value(deleted ? null : json(r['links'])),
+            meaning: Value(deleted ? null : r['meaning'] as String?),
+            localDay: r['local_day'] as String,
+            deviceTs: DateTime.parse(r['device_ts'] as String).toUtc(),
+            deletedAt: Value(
+              deleted
+                  ? DateTime.parse(r['deleted_at'] as String).toUtc()
+                  : null,
+            ),
+            synced: const Value(true),
+          ),
+        );
   }
 
   /// A check-in changed (or added) on the server. This phone's own unsent
@@ -572,15 +627,15 @@ class PullService {
           // and goes out again explicitly.
           final start = LocalDay.tryParse(d.committedFrom);
           if (start != null && s['committed_from'] == null) {
-            await (_db.update(_db.habits)
-                  ..where((t) => t.id.equals(serverId)))
-                .write(
-                  HabitsCompanion(
-                    committedFrom: Value(d.committedFrom),
-                    pausedThrough: Value(d.pausedThrough),
-                    synced: const Value(false),
-                  ),
-                );
+            await (_db.update(
+              _db.habits,
+            )..where((t) => t.id.equals(serverId))).write(
+              HabitsCompanion(
+                committedFrom: Value(d.committedFrom),
+                pausedThrough: Value(d.pausedThrough),
+                synced: const Value(false),
+              ),
+            );
             await _outbox.enqueue(
               entity: Entities.habit,
               op: Ops.upsert,
@@ -723,6 +778,7 @@ class PullCursor {
     this.habits,
     this.habitLogs,
     this.tombstones,
+    this.loomConstellations,
   });
 
   factory PullCursor.fromJson(Map<String, dynamic> j) => PullCursor(
@@ -732,6 +788,7 @@ class PullCursor {
     habits: j['habits'] as String?,
     habitLogs: j['habitLogs'] as String?,
     tombstones: j['tombstones'] as String?,
+    loomConstellations: j['loomConstellations'] as String?,
   );
 
   final String userId;
@@ -741,6 +798,9 @@ class PullCursor {
   final String? habitLogs;
   final String? tombstones;
 
+  /// U07 (added later: a missing value reads everything once, which is safe).
+  final String? loomConstellations;
+
   Map<String, Object?> toJson() => {
     'userId': userId,
     'at': at.toIso8601String(),
@@ -748,5 +808,6 @@ class PullCursor {
     'habits': habits,
     'habitLogs': habitLogs,
     'tombstones': tombstones,
+    'loomConstellations': loomConstellations,
   };
 }

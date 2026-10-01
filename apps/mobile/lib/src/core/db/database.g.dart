@@ -5352,6 +5352,565 @@ class CapsuleMediaCompanion extends UpdateCompanion<CapsuleMediaRow> {
   }
 }
 
+class $LoomConstellationsTable extends LoomConstellations
+    with TableInfo<$LoomConstellationsTable, LoomConstellationRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LoomConstellationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _starsMeta = const VerificationMeta('stars');
+  @override
+  late final GeneratedColumn<String> stars = GeneratedColumn<String>(
+    'stars',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _linksMeta = const VerificationMeta('links');
+  @override
+  late final GeneratedColumn<String> links = GeneratedColumn<String>(
+    'links',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _meaningMeta = const VerificationMeta(
+    'meaning',
+  );
+  @override
+  late final GeneratedColumn<String> meaning = GeneratedColumn<String>(
+    'meaning',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _localDayMeta = const VerificationMeta(
+    'localDay',
+  );
+  @override
+  late final GeneratedColumn<String> localDay = GeneratedColumn<String>(
+    'local_day',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deviceTsMeta = const VerificationMeta(
+    'deviceTs',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deviceTs = GeneratedColumn<DateTime>(
+    'device_ts',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tzMeta = const VerificationMeta('tz');
+  @override
+  late final GeneratedColumn<String> tz = GeneratedColumn<String>(
+    'tz',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+    'synced',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synced" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    stars,
+    links,
+    meaning,
+    localDay,
+    deviceTs,
+    tz,
+    deletedAt,
+    synced,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'loom_constellations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LoomConstellationRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('stars')) {
+      context.handle(
+        _starsMeta,
+        stars.isAcceptableOrUnknown(data['stars']!, _starsMeta),
+      );
+    }
+    if (data.containsKey('links')) {
+      context.handle(
+        _linksMeta,
+        links.isAcceptableOrUnknown(data['links']!, _linksMeta),
+      );
+    }
+    if (data.containsKey('meaning')) {
+      context.handle(
+        _meaningMeta,
+        meaning.isAcceptableOrUnknown(data['meaning']!, _meaningMeta),
+      );
+    }
+    if (data.containsKey('local_day')) {
+      context.handle(
+        _localDayMeta,
+        localDay.isAcceptableOrUnknown(data['local_day']!, _localDayMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_localDayMeta);
+    }
+    if (data.containsKey('device_ts')) {
+      context.handle(
+        _deviceTsMeta,
+        deviceTs.isAcceptableOrUnknown(data['device_ts']!, _deviceTsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceTsMeta);
+    }
+    if (data.containsKey('tz')) {
+      context.handle(_tzMeta, tz.isAcceptableOrUnknown(data['tz']!, _tzMeta));
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('synced')) {
+      context.handle(
+        _syncedMeta,
+        synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LoomConstellationRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LoomConstellationRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      stars: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stars'],
+      ),
+      links: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}links'],
+      ),
+      meaning: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}meaning'],
+      ),
+      localDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_day'],
+      )!,
+      deviceTs: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}device_ts'],
+      )!,
+      tz: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tz'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      synced: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synced'],
+      )!,
+    );
+  }
+
+  @override
+  $LoomConstellationsTable createAlias(String alias) {
+    return $LoomConstellationsTable(attachedDatabase, alias);
+  }
+}
+
+class LoomConstellationRow extends DataClass
+    implements Insertable<LoomConstellationRow> {
+  final String id;
+  final String? stars;
+  final String? links;
+  final String? meaning;
+
+  /// The Aura day it was kept (the per-day limit).
+  final String localDay;
+  final DateTime deviceTs;
+  final String? tz;
+  final DateTime? deletedAt;
+
+  /// The server holds it (pushed and applied, or pulled).
+  final bool synced;
+  const LoomConstellationRow({
+    required this.id,
+    this.stars,
+    this.links,
+    this.meaning,
+    required this.localDay,
+    required this.deviceTs,
+    this.tz,
+    this.deletedAt,
+    required this.synced,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || stars != null) {
+      map['stars'] = Variable<String>(stars);
+    }
+    if (!nullToAbsent || links != null) {
+      map['links'] = Variable<String>(links);
+    }
+    if (!nullToAbsent || meaning != null) {
+      map['meaning'] = Variable<String>(meaning);
+    }
+    map['local_day'] = Variable<String>(localDay);
+    map['device_ts'] = Variable<DateTime>(deviceTs);
+    if (!nullToAbsent || tz != null) {
+      map['tz'] = Variable<String>(tz);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['synced'] = Variable<bool>(synced);
+    return map;
+  }
+
+  LoomConstellationsCompanion toCompanion(bool nullToAbsent) {
+    return LoomConstellationsCompanion(
+      id: Value(id),
+      stars: stars == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stars),
+      links: links == null && nullToAbsent
+          ? const Value.absent()
+          : Value(links),
+      meaning: meaning == null && nullToAbsent
+          ? const Value.absent()
+          : Value(meaning),
+      localDay: Value(localDay),
+      deviceTs: Value(deviceTs),
+      tz: tz == null && nullToAbsent ? const Value.absent() : Value(tz),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      synced: Value(synced),
+    );
+  }
+
+  factory LoomConstellationRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LoomConstellationRow(
+      id: serializer.fromJson<String>(json['id']),
+      stars: serializer.fromJson<String?>(json['stars']),
+      links: serializer.fromJson<String?>(json['links']),
+      meaning: serializer.fromJson<String?>(json['meaning']),
+      localDay: serializer.fromJson<String>(json['localDay']),
+      deviceTs: serializer.fromJson<DateTime>(json['deviceTs']),
+      tz: serializer.fromJson<String?>(json['tz']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      synced: serializer.fromJson<bool>(json['synced']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'stars': serializer.toJson<String?>(stars),
+      'links': serializer.toJson<String?>(links),
+      'meaning': serializer.toJson<String?>(meaning),
+      'localDay': serializer.toJson<String>(localDay),
+      'deviceTs': serializer.toJson<DateTime>(deviceTs),
+      'tz': serializer.toJson<String?>(tz),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'synced': serializer.toJson<bool>(synced),
+    };
+  }
+
+  LoomConstellationRow copyWith({
+    String? id,
+    Value<String?> stars = const Value.absent(),
+    Value<String?> links = const Value.absent(),
+    Value<String?> meaning = const Value.absent(),
+    String? localDay,
+    DateTime? deviceTs,
+    Value<String?> tz = const Value.absent(),
+    Value<DateTime?> deletedAt = const Value.absent(),
+    bool? synced,
+  }) => LoomConstellationRow(
+    id: id ?? this.id,
+    stars: stars.present ? stars.value : this.stars,
+    links: links.present ? links.value : this.links,
+    meaning: meaning.present ? meaning.value : this.meaning,
+    localDay: localDay ?? this.localDay,
+    deviceTs: deviceTs ?? this.deviceTs,
+    tz: tz.present ? tz.value : this.tz,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    synced: synced ?? this.synced,
+  );
+  LoomConstellationRow copyWithCompanion(LoomConstellationsCompanion data) {
+    return LoomConstellationRow(
+      id: data.id.present ? data.id.value : this.id,
+      stars: data.stars.present ? data.stars.value : this.stars,
+      links: data.links.present ? data.links.value : this.links,
+      meaning: data.meaning.present ? data.meaning.value : this.meaning,
+      localDay: data.localDay.present ? data.localDay.value : this.localDay,
+      deviceTs: data.deviceTs.present ? data.deviceTs.value : this.deviceTs,
+      tz: data.tz.present ? data.tz.value : this.tz,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      synced: data.synced.present ? data.synced.value : this.synced,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LoomConstellationRow(')
+          ..write('id: $id, ')
+          ..write('stars: $stars, ')
+          ..write('links: $links, ')
+          ..write('meaning: $meaning, ')
+          ..write('localDay: $localDay, ')
+          ..write('deviceTs: $deviceTs, ')
+          ..write('tz: $tz, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('synced: $synced')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    stars,
+    links,
+    meaning,
+    localDay,
+    deviceTs,
+    tz,
+    deletedAt,
+    synced,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LoomConstellationRow &&
+          other.id == this.id &&
+          other.stars == this.stars &&
+          other.links == this.links &&
+          other.meaning == this.meaning &&
+          other.localDay == this.localDay &&
+          other.deviceTs == this.deviceTs &&
+          other.tz == this.tz &&
+          other.deletedAt == this.deletedAt &&
+          other.synced == this.synced);
+}
+
+class LoomConstellationsCompanion
+    extends UpdateCompanion<LoomConstellationRow> {
+  final Value<String> id;
+  final Value<String?> stars;
+  final Value<String?> links;
+  final Value<String?> meaning;
+  final Value<String> localDay;
+  final Value<DateTime> deviceTs;
+  final Value<String?> tz;
+  final Value<DateTime?> deletedAt;
+  final Value<bool> synced;
+  final Value<int> rowid;
+  const LoomConstellationsCompanion({
+    this.id = const Value.absent(),
+    this.stars = const Value.absent(),
+    this.links = const Value.absent(),
+    this.meaning = const Value.absent(),
+    this.localDay = const Value.absent(),
+    this.deviceTs = const Value.absent(),
+    this.tz = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LoomConstellationsCompanion.insert({
+    required String id,
+    this.stars = const Value.absent(),
+    this.links = const Value.absent(),
+    this.meaning = const Value.absent(),
+    required String localDay,
+    required DateTime deviceTs,
+    this.tz = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       localDay = Value(localDay),
+       deviceTs = Value(deviceTs);
+  static Insertable<LoomConstellationRow> custom({
+    Expression<String>? id,
+    Expression<String>? stars,
+    Expression<String>? links,
+    Expression<String>? meaning,
+    Expression<String>? localDay,
+    Expression<DateTime>? deviceTs,
+    Expression<String>? tz,
+    Expression<DateTime>? deletedAt,
+    Expression<bool>? synced,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (stars != null) 'stars': stars,
+      if (links != null) 'links': links,
+      if (meaning != null) 'meaning': meaning,
+      if (localDay != null) 'local_day': localDay,
+      if (deviceTs != null) 'device_ts': deviceTs,
+      if (tz != null) 'tz': tz,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (synced != null) 'synced': synced,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LoomConstellationsCompanion copyWith({
+    Value<String>? id,
+    Value<String?>? stars,
+    Value<String?>? links,
+    Value<String?>? meaning,
+    Value<String>? localDay,
+    Value<DateTime>? deviceTs,
+    Value<String?>? tz,
+    Value<DateTime?>? deletedAt,
+    Value<bool>? synced,
+    Value<int>? rowid,
+  }) {
+    return LoomConstellationsCompanion(
+      id: id ?? this.id,
+      stars: stars ?? this.stars,
+      links: links ?? this.links,
+      meaning: meaning ?? this.meaning,
+      localDay: localDay ?? this.localDay,
+      deviceTs: deviceTs ?? this.deviceTs,
+      tz: tz ?? this.tz,
+      deletedAt: deletedAt ?? this.deletedAt,
+      synced: synced ?? this.synced,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (stars.present) {
+      map['stars'] = Variable<String>(stars.value);
+    }
+    if (links.present) {
+      map['links'] = Variable<String>(links.value);
+    }
+    if (meaning.present) {
+      map['meaning'] = Variable<String>(meaning.value);
+    }
+    if (localDay.present) {
+      map['local_day'] = Variable<String>(localDay.value);
+    }
+    if (deviceTs.present) {
+      map['device_ts'] = Variable<DateTime>(deviceTs.value);
+    }
+    if (tz.present) {
+      map['tz'] = Variable<String>(tz.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LoomConstellationsCompanion(')
+          ..write('id: $id, ')
+          ..write('stars: $stars, ')
+          ..write('links: $links, ')
+          ..write('meaning: $meaning, ')
+          ..write('localDay: $localDay, ')
+          ..write('deviceTs: $deviceTs, ')
+          ..write('tz: $tz, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('synced: $synced, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5363,6 +5922,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $KeyValuesTable keyValues = $KeyValuesTable(this);
   late final $CapsulesTable capsules = $CapsulesTable(this);
   late final $CapsuleMediaTable capsuleMedia = $CapsuleMediaTable(this);
+  late final $LoomConstellationsTable loomConstellations =
+      $LoomConstellationsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5376,6 +5937,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     keyValues,
     capsules,
     capsuleMedia,
+    loomConstellations,
   ];
   @override
   DriftDatabaseOptions get options =>
@@ -7951,6 +8513,306 @@ typedef $$CapsuleMediaTableProcessedTableManager =
       CapsuleMediaRow,
       PrefetchHooks Function()
     >;
+typedef $$LoomConstellationsTableCreateCompanionBuilder =
+    LoomConstellationsCompanion Function({
+      required String id,
+      Value<String?> stars,
+      Value<String?> links,
+      Value<String?> meaning,
+      required String localDay,
+      required DateTime deviceTs,
+      Value<String?> tz,
+      Value<DateTime?> deletedAt,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+typedef $$LoomConstellationsTableUpdateCompanionBuilder =
+    LoomConstellationsCompanion Function({
+      Value<String> id,
+      Value<String?> stars,
+      Value<String?> links,
+      Value<String?> meaning,
+      Value<String> localDay,
+      Value<DateTime> deviceTs,
+      Value<String?> tz,
+      Value<DateTime?> deletedAt,
+      Value<bool> synced,
+      Value<int> rowid,
+    });
+
+class $$LoomConstellationsTableFilterComposer
+    extends Composer<_$AppDatabase, $LoomConstellationsTable> {
+  $$LoomConstellationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get stars => $composableBuilder(
+    column: $table.stars,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get links => $composableBuilder(
+    column: $table.links,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get meaning => $composableBuilder(
+    column: $table.meaning,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localDay => $composableBuilder(
+    column: $table.localDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deviceTs => $composableBuilder(
+    column: $table.deviceTs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tz => $composableBuilder(
+    column: $table.tz,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LoomConstellationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LoomConstellationsTable> {
+  $$LoomConstellationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get stars => $composableBuilder(
+    column: $table.stars,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get links => $composableBuilder(
+    column: $table.links,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get meaning => $composableBuilder(
+    column: $table.meaning,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localDay => $composableBuilder(
+    column: $table.localDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deviceTs => $composableBuilder(
+    column: $table.deviceTs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tz => $composableBuilder(
+    column: $table.tz,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+    column: $table.synced,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LoomConstellationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LoomConstellationsTable> {
+  $$LoomConstellationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get stars =>
+      $composableBuilder(column: $table.stars, builder: (column) => column);
+
+  GeneratedColumn<String> get links =>
+      $composableBuilder(column: $table.links, builder: (column) => column);
+
+  GeneratedColumn<String> get meaning =>
+      $composableBuilder(column: $table.meaning, builder: (column) => column);
+
+  GeneratedColumn<String> get localDay =>
+      $composableBuilder(column: $table.localDay, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deviceTs =>
+      $composableBuilder(column: $table.deviceTs, builder: (column) => column);
+
+  GeneratedColumn<String> get tz =>
+      $composableBuilder(column: $table.tz, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+}
+
+class $$LoomConstellationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LoomConstellationsTable,
+          LoomConstellationRow,
+          $$LoomConstellationsTableFilterComposer,
+          $$LoomConstellationsTableOrderingComposer,
+          $$LoomConstellationsTableAnnotationComposer,
+          $$LoomConstellationsTableCreateCompanionBuilder,
+          $$LoomConstellationsTableUpdateCompanionBuilder,
+          (
+            LoomConstellationRow,
+            BaseReferences<
+              _$AppDatabase,
+              $LoomConstellationsTable,
+              LoomConstellationRow
+            >,
+          ),
+          LoomConstellationRow,
+          PrefetchHooks Function()
+        > {
+  $$LoomConstellationsTableTableManager(
+    _$AppDatabase db,
+    $LoomConstellationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LoomConstellationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LoomConstellationsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LoomConstellationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String?> stars = const Value.absent(),
+                Value<String?> links = const Value.absent(),
+                Value<String?> meaning = const Value.absent(),
+                Value<String> localDay = const Value.absent(),
+                Value<DateTime> deviceTs = const Value.absent(),
+                Value<String?> tz = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LoomConstellationsCompanion(
+                id: id,
+                stars: stars,
+                links: links,
+                meaning: meaning,
+                localDay: localDay,
+                deviceTs: deviceTs,
+                tz: tz,
+                deletedAt: deletedAt,
+                synced: synced,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<String?> stars = const Value.absent(),
+                Value<String?> links = const Value.absent(),
+                Value<String?> meaning = const Value.absent(),
+                required String localDay,
+                required DateTime deviceTs,
+                Value<String?> tz = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
+                Value<bool> synced = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LoomConstellationsCompanion.insert(
+                id: id,
+                stars: stars,
+                links: links,
+                meaning: meaning,
+                localDay: localDay,
+                deviceTs: deviceTs,
+                tz: tz,
+                deletedAt: deletedAt,
+                synced: synced,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$LoomConstellationsTable, LoomConstellationRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $LoomConstellationsTable,
+                    LoomConstellationRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LoomConstellationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LoomConstellationsTable,
+      LoomConstellationRow,
+      $$LoomConstellationsTableFilterComposer,
+      $$LoomConstellationsTableOrderingComposer,
+      $$LoomConstellationsTableAnnotationComposer,
+      $$LoomConstellationsTableCreateCompanionBuilder,
+      $$LoomConstellationsTableUpdateCompanionBuilder,
+      (
+        LoomConstellationRow,
+        BaseReferences<
+          _$AppDatabase,
+          $LoomConstellationsTable,
+          LoomConstellationRow
+        >,
+      ),
+      LoomConstellationRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7971,4 +8833,6 @@ class $AppDatabaseManager {
       $$CapsulesTableTableManager(_db, _db.capsules);
   $$CapsuleMediaTableTableManager get capsuleMedia =>
       $$CapsuleMediaTableTableManager(_db, _db.capsuleMedia);
+  $$LoomConstellationsTableTableManager get loomConstellations =>
+      $$LoomConstellationsTableTableManager(_db, _db.loomConstellations);
 }

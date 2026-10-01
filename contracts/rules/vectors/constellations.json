@@ -1,0 +1,791 @@
+{
+  "cases": [
+    {
+      "kind": "problem",
+      "name": "a triangle with every line is valid",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ]
+      ],
+      "meaning": null,
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "stars with no lines are a constellation too",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "seven stars, a meaning",
+      "stars": [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.3,
+          0.1
+        ],
+        [
+          0.5,
+          0.1
+        ],
+        [
+          0.7,
+          0.1
+        ],
+        [
+          0.9,
+          0.1
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.9
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      "meaning": "noticed",
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "every meaning is allowed",
+      "stars": [
+        [
+          0.1,
+          0.5
+        ],
+        [
+          0.3,
+          0.2
+        ],
+        [
+          0.5,
+          0.45
+        ],
+        [
+          0.7,
+          0.15
+        ],
+        [
+          0.9,
+          0.6
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "carrying",
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "ahead",
+      "stars": [
+        [
+          0.1,
+          0.5
+        ],
+        [
+          0.3,
+          0.2
+        ],
+        [
+          0.5,
+          0.45
+        ],
+        [
+          0.7,
+          0.15
+        ],
+        [
+          0.9,
+          0.6
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "ahead",
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "thankful",
+      "stars": [
+        [
+          0.1,
+          0.5
+        ],
+        [
+          0.3,
+          0.2
+        ],
+        [
+          0.5,
+          0.45
+        ],
+        [
+          0.7,
+          0.15
+        ],
+        [
+          0.9,
+          0.6
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "thankful",
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "just because",
+      "stars": [
+        [
+          0.1,
+          0.5
+        ],
+        [
+          0.3,
+          0.2
+        ],
+        [
+          0.5,
+          0.45
+        ],
+        [
+          0.7,
+          0.15
+        ],
+        [
+          0.9,
+          0.6
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "just_because",
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "the corners of the sky are inside it",
+      "stars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "links": [
+        [
+          0,
+          3
+        ]
+      ],
+      "meaning": null,
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "exactly the gap apart is fine",
+      "stars": [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.15,
+          0.1
+        ],
+        [
+          0.9,
+          0.9
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": null
+    },
+    {
+      "kind": "problem",
+      "name": "two stars are too few",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": null,
+      "expect": "too_few_stars"
+    },
+    {
+      "kind": "problem",
+      "name": "no stars",
+      "stars": [],
+      "links": [],
+      "meaning": null,
+      "expect": "too_few_stars"
+    },
+    {
+      "kind": "problem",
+      "name": "eight stars are too many",
+      "stars": [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.3,
+          0.1
+        ],
+        [
+          0.5,
+          0.1
+        ],
+        [
+          0.7,
+          0.1
+        ],
+        [
+          0.9,
+          0.1
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.9
+        ],
+        [
+          0.9,
+          0.9
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": "too_many_stars"
+    },
+    {
+      "kind": "problem",
+      "name": "a star past the edge",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          1.01,
+          0.5
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": "star_outside_sky"
+    },
+    {
+      "kind": "problem",
+      "name": "a negative coordinate",
+      "stars": [
+        [
+          0.2,
+          -0.001
+        ],
+        [
+          0.8,
+          0.5
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": "star_outside_sky"
+    },
+    {
+      "kind": "problem",
+      "name": "two stars almost on top of each other",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.23,
+          0.23
+        ],
+        [
+          0.8,
+          0.8
+        ]
+      ],
+      "links": [],
+      "meaning": null,
+      "expect": "stars_too_close"
+    },
+    {
+      "kind": "problem",
+      "name": "too close is checked before the lines",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          0
+        ]
+      ],
+      "meaning": null,
+      "expect": "stars_too_close"
+    },
+    {
+      "kind": "problem",
+      "name": "thirteen lines are too many",
+      "stars": [
+        [
+          0.1,
+          0.1
+        ],
+        [
+          0.3,
+          0.1
+        ],
+        [
+          0.5,
+          0.1
+        ],
+        [
+          0.7,
+          0.1
+        ],
+        [
+          0.9,
+          0.1
+        ],
+        [
+          0.5,
+          0.5
+        ],
+        [
+          0.5,
+          0.9
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          0,
+          5
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "meaning": null,
+      "expect": "too_many_links"
+    },
+    {
+      "kind": "problem",
+      "name": "a line from a star to itself",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          1,
+          1
+        ]
+      ],
+      "meaning": null,
+      "expect": "bad_link"
+    },
+    {
+      "kind": "problem",
+      "name": "a line to a star that is not there",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          3
+        ]
+      ],
+      "meaning": null,
+      "expect": "bad_link"
+    },
+    {
+      "kind": "problem",
+      "name": "a negative index",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          -1,
+          0
+        ]
+      ],
+      "meaning": null,
+      "expect": "bad_link"
+    },
+    {
+      "kind": "problem",
+      "name": "a fractional index",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0.5,
+          1
+        ]
+      ],
+      "meaning": null,
+      "expect": "bad_link"
+    },
+    {
+      "kind": "problem",
+      "name": "the same line twice",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": null,
+      "expect": "duplicate_link"
+    },
+    {
+      "kind": "problem",
+      "name": "the same line both ways",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "meaning": null,
+      "expect": "duplicate_link"
+    },
+    {
+      "kind": "problem",
+      "name": "a meaning outside the list",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "sad",
+      "expect": "unknown_meaning"
+    },
+    {
+      "kind": "problem",
+      "name": "an empty meaning is not \"no meaning\"",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ],
+        [
+          0.8,
+          0.25
+        ],
+        [
+          0.5,
+          0.8
+        ]
+      ],
+      "links": [
+        [
+          0,
+          1
+        ]
+      ],
+      "meaning": "",
+      "expect": "unknown_meaning"
+    },
+    {
+      "kind": "problem",
+      "name": "stars come first: too few beats a bad meaning",
+      "stars": [
+        [
+          0.2,
+          0.2
+        ]
+      ],
+      "links": [],
+      "meaning": "sad",
+      "expect": "too_few_stars"
+    }
+  ]
+}

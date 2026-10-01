@@ -14,6 +14,7 @@ import '../features/avatar/moments_controller.dart';
 import '../features/capsules/capsule_providers.dart';
 import '../features/checkin/checkin_repository.dart';
 import '../features/habits/habit_repository.dart';
+import '../features/orbit_loom/constellation_repository.dart';
 import '../features/onboarding/gate_controller.dart';
 import '../features/profile/profile_service.dart';
 import '../features/progress/progress_repository.dart';
@@ -352,6 +353,8 @@ SyncController syncController(Ref ref) {
     onCommitmentRejected: (habitId, reason) => ref
         .read(habitRepositoryProvider)
         .clearRejectedCommitment(habitId, reason),
+    onConstellationRejected: (id) =>
+        ref.read(constellationRepositoryProvider).dropRejected(id),
     onUnder13: () async {
       await ref.read(gateControllerProvider.notifier).blockUnder13();
       await auth.signOut();

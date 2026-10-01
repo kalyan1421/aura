@@ -36,6 +36,7 @@ class ExportBundle {
     required this.habits,
     required this.habitLogs,
     required this.capsules,
+    this.constellations = const [],
     this.server,
   });
 
@@ -45,6 +46,9 @@ class ExportBundle {
   final List<Map<String, Object?>> habits;
   final List<Map<String, Object?>> habitLogs;
   final List<Map<String, Object?>> capsules;
+
+  /// U07 Orbit Loom constellations kept in the Reflection sky.
+  final List<Map<String, Object?>> constellations;
 
   /// `GET /v1/account/export`, or `null` for a phone-only copy.
   final Map<String, dynamic>? server;
@@ -57,6 +61,7 @@ class ExportBundle {
     'habits': habits,
     'habitLogs': habitLogs,
     'capsules': capsules,
+    'constellations': constellations,
     'account': ?server,
   };
 }
@@ -78,6 +83,8 @@ class ExportLabels {
     required this.nothing,
     required this.commitmentSince,
     required this.pausedUntil,
+    required this.constellations,
+    required this.constellation,
   });
 
   final String title;
@@ -98,6 +105,11 @@ class ExportLabels {
   /// (W02); each takes an ISO day.
   final String Function(String day) commitmentSince;
   final String Function(String day) pausedUntil;
+
+  /// U07: the heading, and one kept constellation's line from its meaning key
+  /// (or `null`) and its number of stars.
+  final String constellations;
+  final String Function(String? meaning, int stars) constellation;
 }
 
 // ---- collecting ---------------------------------------------------------------
@@ -129,6 +141,11 @@ Future<ExportBundle> collectExport({
   final capsuleRows =
       (await capsules.allRows()).where((r) => r.deletedAt == null).toList()
         ..sort((a, b) => a.sealedAt.compareTo(b.sealedAt));
+  final looms =
+      await (db.select(db.loomConstellations)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.deviceTs)]))
+          .get();
 
   final habitNames = <String, String>{
     for (final h in habits)
@@ -199,6 +216,16 @@ Future<ExportBundle> collectExport({
       for (final g in logs) {'habit': habitNames[g.habitId], 'day': g.localDay},
     ],
     capsules: outCapsules,
+    constellations: [
+      for (final r in looms)
+        {
+          'day': r.localDay,
+          'at': _day(r.deviceTs),
+          'stars': r.stars == null ? null : jsonDecode(r.stars!),
+          'lines': r.links == null ? null : jsonDecode(r.links!),
+          'meaning': r.meaning,
+        },
+    ],
     server: server,
   );
 }
@@ -314,6 +341,12 @@ String exportHtml(ExportBundle b, ExportLabels l) {
           '<span class="muted">· ${_esc(l.sealed)}${c['unlockDate'] != null ? ' · ${_esc(c['unlockDate'])}' : ''}</span>',
         if (c['text'] != null) '<br>${_esc(c['text'])}',
       ].join(' '),
+  ]);
+
+  section(l.constellations, [
+    for (final c in b.constellations)
+      '<strong>${_esc(c['day'])}</strong> · '
+          '${_esc(l.constellation(c['meaning'] as String?, (c['stars'] as List?)?.length ?? 0))}',
   ]);
 
   final s = b.server;

@@ -34,6 +34,10 @@ const _allowlist = <String, String>{
       'arrow walks left on screen), so its four arrows keep fixed sides in '
       'right-to-left layouts too. The pad and arrows as a group still follow '
       'reading order.',
+  'lib/src/features/orbit_loom/orbit_loom_screen.dart':
+      'Orbit Loom\'s star buttons sit on the x the LoomSkyPainter draws each '
+      'star at (a picture in the unit sky, not reading order). The controls '
+      'around the sky still follow reading order.',
 };
 
 const _fixedAlignments = {

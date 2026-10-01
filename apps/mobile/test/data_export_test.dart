@@ -35,10 +35,36 @@ final _labels = ExportLabels(
   nothing: 'Nothing here yet.',
   commitmentSince: (d) => 'Commitment since $d',
   pausedUntil: (d) => 'paused until $d',
+  constellations: 'Constellations',
+  constellation: (meaning, stars) =>
+      '${meaning ?? 'A constellation'}, $stars stars',
 );
 
 Future<void> _seed(AppDatabase db) async {
   final at = testNow.subtract(const Duration(hours: 2));
+  // U07: one kept constellation and one let go (left out, like deleted rows).
+  await db
+      .into(db.loomConstellations)
+      .insert(
+        LoomConstellationsCompanion.insert(
+          id: 'k1',
+          stars: const Value('[[0.2,0.2],[0.8,0.25],[0.5,0.8]]'),
+          links: const Value('[[0,1]]'),
+          meaning: const Value('thankful'),
+          localDay: '2026-10-08',
+          deviceTs: at,
+        ),
+      );
+  await db
+      .into(db.loomConstellations)
+      .insert(
+        LoomConstellationsCompanion.insert(
+          id: 'k-gone',
+          localDay: '2026-10-07',
+          deviceTs: at,
+          deletedAt: Value(at),
+        ),
+      );
   await db
       .into(db.checkIns)
       .insert(
@@ -178,8 +204,28 @@ void main() {
     expect(sealed.containsKey('text'), isFalse);
     final opened = b.capsules.firstWhere((c) => c['opened'] == true);
     expect(opened['text'], 'Breathe first.');
+    expect(b.constellations, [
+      {
+        'day': '2026-10-08',
+        'at': testNow.subtract(const Duration(hours: 2)).toIso8601String(),
+        'stars': [
+          [0.2, 0.2],
+          [0.8, 0.25],
+          [0.5, 0.8],
+        ],
+        'lines': [
+          [0, 1],
+        ],
+        'meaning': 'thankful',
+      },
+    ]);
 
     final json = exportJson(b);
+    expect(jsonDecode(json)['constellations'], hasLength(1));
+    expect(
+      exportHtml(b, _labels),
+      contains('<strong>2026-10-08</strong> · thankful, 3 stars'),
+    );
     expect(json, isNot(contains('secret words')));
     expect(json, isNot(contains('deleted words')));
     expect(jsonDecode(json)['account']['profile']['birthDate'], '1999-02-14');

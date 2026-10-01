@@ -3281,7 +3281,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get universe_reflectionBody =>
-      'Notice how you feel with a private check-in. Your feelings stay in your care space.';
+      'Notice how you feel with a private check-in, or weave a few stars into a shape of your own in Orbit Loom.';
 
   @override
   String get universe_observatoryBody =>
@@ -5570,4 +5570,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String universe_changeSprout(String name) {
     return 'A new plant for $name';
   }
+
+  @override
+  String get loom_title => 'Orbit Loom';
+
+  @override
+  String get loom_intro =>
+      'Place a few stars and join them however you like. There\'s no right shape and no hurry.';
+
+  @override
+  String get loom_modeTap => 'Tap';
+
+  @override
+  String get loom_modeDrag => 'Drag';
+
+  @override
+  String get loom_hintTap =>
+      'Tap the sky to place a star. Tap two stars to join them, or tap them again to unjoin.';
+
+  @override
+  String get loom_hintDrag =>
+      'Drag from one star to another to join them. Drag a star to move it.';
+
+  @override
+  String get loom_addStar => 'Add a star';
+
+  @override
+  String get loom_scatter => 'Scatter for me';
+
+  @override
+  String get loom_joinForMe => 'Join for me';
+
+  @override
+  String get loom_undo => 'Undo';
+
+  @override
+  String get loom_clear => 'Start again';
+
+  @override
+  String get loom_full =>
+      'This sky holds seven stars. Join them, move them, or keep it.';
+
+  @override
+  String loom_skyLabel(int stars, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars stars',
+      one: '1 star',
+      zero: 'no stars yet',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines lines',
+      one: '1 line',
+      zero: 'no lines',
+    );
+    return 'Your sky: $_temp0, $_temp1';
+  }
+
+  @override
+  String loom_starLabel(int index, int count, int lines) {
+    String _temp0 = intl.Intl.pluralLogic(
+      lines,
+      locale: localeName,
+      other: '$lines others',
+      one: '1 other',
+      zero: 'no others',
+    );
+    return 'Star $index of $count, joined to $_temp0';
+  }
+
+  @override
+  String get loom_starChosen =>
+      'Chosen. Choose another star to join or unjoin them.';
+
+  @override
+  String get loom_meaningTitle => 'A meaning, if you like';
+
+  @override
+  String get loom_meaning_noticed => 'Something I noticed';
+
+  @override
+  String get loom_meaning_carrying => 'Something I\'m carrying';
+
+  @override
+  String get loom_meaning_ahead => 'Something ahead';
+
+  @override
+  String get loom_meaning_thankful => 'Something I\'m thankful for';
+
+  @override
+  String get loom_meaning_just_because => 'Just because';
+
+  @override
+  String get loom_keep => 'Keep it in my sky';
+
+  @override
+  String get loom_keepNeedsStars =>
+      'Place at least three stars to keep a shape.';
+
+  @override
+  String get loom_dayFull =>
+      'Your sky kept five today. You can keep playing; tomorrow there\'s room for more.';
+
+  @override
+  String get loom_kept => 'Kept in your sky';
+
+  @override
+  String get loom_close => 'Leave Orbit Loom';
+
+  @override
+  String get universe_weaveStars => 'Weave stars';
+
+  @override
+  String get universe_constellationsTitle => 'Your constellations';
+
+  @override
+  String universe_constellationLabel(String meaning, int stars) {
+    String _temp0 = intl.Intl.pluralLogic(
+      stars,
+      locale: localeName,
+      other: '$stars stars',
+      one: '1 star',
+    );
+    return '$meaning, $_temp0';
+  }
+
+  @override
+  String get universe_constellationPlain => 'A constellation';
+
+  @override
+  String get universe_letGo => 'Let it go';
+
+  @override
+  String get universe_letGoTitle => 'Let this constellation go?';
+
+  @override
+  String get universe_letGoBody =>
+      'It leaves your sky on every device where you\'re signed in.';
+
+  @override
+  String get universe_letGoKeep => 'Keep it';
+
+  @override
+  String get export_hConstellations => 'Constellations (Orbit Loom)';
 }
