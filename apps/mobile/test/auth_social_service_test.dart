@@ -5,9 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'auth_social_fakes.dart';
 
 /// SocialSignInService: the native credential goes to Supabase with the raw
-/// nonce, Google's SDK session is always dropped afterwards, Apple on
-/// Android is browser OAuth, and a provider this build doesn't offer is
-/// never started.
+/// nonce, Google's SDK session is always dropped afterwards, and a provider
+/// this build doesn't offer is never started.
 
 void main() {
   test('Google: ID token, access token and the raw nonce go to Supabase; '
@@ -18,7 +17,6 @@ void main() {
       config: iosSocial,
       exchange: exchange,
       google: google,
-      apple: FakeApple(),
     );
 
     expect(
@@ -82,56 +80,12 @@ void main() {
     expect(exchange.idTokens, isEmpty);
   });
 
-  test(
-    'Apple on iOS: native, raw nonce to Supabase, no access token',
-    () async {
-      final exchange = FakeExchange();
-      final apple = FakeApple();
-      final service = SocialSignInService(
-        config: iosSocial,
-        exchange: exchange,
-        google: FakeGoogle(),
-        apple: apple,
-      );
-
-      expect(
-        await service.signIn(SocialProvider.apple),
-        SocialSignInResult.signedIn,
-      );
-      expect(apple.calls, 1);
-      expect(exchange.idTokens, [
-        (SocialProvider.apple, 'apple-id-token', null, 'raw-nonce-a'),
-      ]);
-      expect(exchange.browser, isEmpty);
-    },
-  );
-
-  test('Apple on Android: browser OAuth; the session comes back through '
-      'aura://auth-callback', () async {
-    final exchange = FakeExchange();
-    final service = SocialSignInService(
-      config: const SocialSignInConfig(
-        platform: SocialPlatform.android,
-        googleWebClientId: webClientId,
-        appleBrowser: true,
-      ),
-      exchange: exchange,
-      google: FakeGoogle(),
-    );
-
-    expect(
-      await service.signIn(SocialProvider.apple),
-      SocialSignInResult.browserOpened,
-    );
-    expect(exchange.browser, [SocialProvider.apple]);
-    expect(exchange.idTokens, isEmpty);
-  });
-
   test('a provider this build does not offer is never started', () async {
     final exchange = FakeExchange();
     final google = FakeGoogle();
     final service = SocialSignInService(
-      // iOS release rules: Google without Apple is not offered (4.8).
+      // iOS release rules: Google is not offered without Sign in with Apple
+      // (4.8), and Aura has none.
       config: const SocialSignInConfig(
         platform: SocialPlatform.ios,
         googleWebClientId: webClientId,

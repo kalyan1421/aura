@@ -30,7 +30,7 @@ enum AuthFailureKind {
 }
 
 /// Social sign-in providers (see `SocialSignInConfig` for when each shows).
-enum SocialProvider { apple, google }
+enum SocialProvider { google }
 
 class AuthFailure implements Exception {
   const AuthFailure(this.kind);
@@ -59,7 +59,7 @@ abstract interface class AuthRepository {
   Future<void> signOut();
 }
 
-/// Turns an Apple / Google credential into a Supabase session. Kept apart
+/// Turns a Google credential into a Supabase session. Kept apart
 /// from [AuthRepository] so builds (and fakes) without social sign-in need
 /// nothing new.
 abstract interface class SocialSessionExchange {
@@ -72,11 +72,6 @@ abstract interface class SocialSessionExchange {
     String? accessToken,
     String? nonce,
   });
-
-  /// Browser OAuth (Apple on Android). Returns once the browser opened; the
-  /// session arrives later through `aura://auth-callback`. Throws
-  /// [AuthFailure].
-  Future<void> signInWithBrowser(SocialProvider provider);
 }
 
 /// A session minted by `POST /v1/auth/review-sign-in`.
@@ -272,25 +267,7 @@ class SupabaseAuthRepository implements AuthRepository, SocialSessionExchange {
     }
   }
 
-  @override
-  Future<void> signInWithBrowser(SocialProvider provider) async {
-    final bool opened;
-    try {
-      opened = await _auth.signInWithOAuth(
-        _oauth(provider),
-        redirectTo: Env.authRedirect,
-        scopes: 'email',
-      );
-    } on sb.AuthException catch (e) {
-      throw AuthFailure(idTokenFailureKind(e));
-    } catch (_) {
-      throw const AuthFailure(AuthFailureKind.other);
-    }
-    if (!opened) throw const AuthFailure(AuthFailureKind.other);
-  }
-
   static sb.OAuthProvider _oauth(SocialProvider p) => switch (p) {
-    SocialProvider.apple => sb.OAuthProvider.apple,
     SocialProvider.google => sb.OAuthProvider.google,
   };
 

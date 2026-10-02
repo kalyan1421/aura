@@ -39,16 +39,6 @@ abstract final class Env {
     'AURA_GOOGLE_IOS_CLIENT_ID',
   );
 
-  /// Sign in with Apple is set up: the App ID has the capability and the
-  /// Supabase Apple provider lists the bundle id. Native on iOS.
-  static const bool appleSignIn = bool.fromEnvironment('AURA_APPLE_SIGNIN');
-
-  /// Sign in with Apple on Android, through Supabase browser OAuth. Needs the
-  /// Services ID, its key and an HTTPS callback in Supabase (hosted only).
-  static const bool appleSignInAndroid = bool.fromEnvironment(
-    'AURA_APPLE_SIGNIN_ANDROID',
-  );
-
   /// Hindi and Hinglish (Milestone B): fully translated, but hidden from the
   /// pickers (and never chosen from a Hindi device language) until the crisis
   /// lexicon has reviewed hi / hi-Latn terms — without them, text written in

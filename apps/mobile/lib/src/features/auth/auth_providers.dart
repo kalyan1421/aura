@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:aura_domain/aura_domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,11 +32,6 @@ SocialSignInService? socialSignIn(Ref ref) {
               fetchAccessToken: ios,
             )
           : null,
-      apple: ios ? const PluginAppleSignIn() : null,
-      // App Review 5.1.1(v): the server keeps Apple's token so deleting the
-      // account can revoke it. In the background; failures are ignored.
-      onAppleAuthorizationCode: (code) =>
-          unawaited(linkAppleAuthorization(ref.read(auraApiProvider), code)),
     );
   }
   return null;

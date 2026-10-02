@@ -6,16 +6,15 @@ import 'package:cryptography/cryptography.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/env/env.dart';
-import '../../core/net/aura_api.dart';
 import 'auth_repository.dart';
 
-/// Native Sign in with Apple / Google (F8 REQ-ACC-01): the provider's own
-/// sheet returns an ID token, and Supabase exchanges it for a session
-/// (`signInWithIdToken`). Email scope only: Aura reads nothing else from the
-/// credential. Setup: docs/setup/social-sign-in.md.
+/// Native Google sign-in (F8 REQ-ACC-01): Google's own sheet returns an ID
+/// token, and Supabase exchanges it for a session (`signInWithIdToken`).
+/// Email scope only: Aura reads nothing else from the credential. Aura ships
+/// no Sign in with Apple (v1 is email code + Google on Android), so iOS
+/// offers no social button. Setup: docs/setup/social-sign-in.md.
 ///
 /// Tokens, nonces and emails are never logged; failures log only a type.
 
@@ -30,17 +29,16 @@ SocialPlatform currentSocialPlatform() {
   };
 }
 
-/// Which social buttons this build offers, in order. A button shows only
-/// when its provider is configured, so there is never a dead button.
+/// Which social buttons this build offers. A button shows only when its
+/// provider is configured, so there is never a dead button.
 ///
-/// - **Apple**: native on iOS ([appleNative], `AURA_APPLE_SIGNIN`); Supabase
-///   browser OAuth on Android ([appleBrowser], `AURA_APPLE_SIGNIN_ANDROID`).
 /// - **Google**: needs the Web client id (`AURA_GOOGLE_WEB_CLIENT_ID`), plus
 ///   the iOS client id on iOS (`AURA_GOOGLE_IOS_CLIENT_ID`).
-/// - **App Store 4.8**: on iOS, Google is offered only alongside Apple. Debug
-///   builds relax this so Google can be tried before Apple is set up
-///   ([enforceAppStoreRules]); anything that can reach review follows it.
-/// - `AURA_SOCIAL_SIGNIN=false` ([enabled]) hides both.
+/// - **App Store 4.8**: an iOS app that offers a third-party login must also
+///   offer Sign in with Apple, and Aura doesn't, so on iOS Google is never
+///   offered in a release build. Debug builds relax this
+///   ([enforceAppStoreRules]) so Google can be tried on a simulator.
+/// - `AURA_SOCIAL_SIGNIN=false` ([enabled]) hides it everywhere.
 @immutable
 class SocialSignInConfig {
   const SocialSignInConfig({
@@ -48,8 +46,6 @@ class SocialSignInConfig {
     this.enabled = true,
     this.googleWebClientId = '',
     this.googleIosClientId = '',
-    this.appleNative = false,
-    this.appleBrowser = false,
     this.enforceAppStoreRules = true,
   });
 
@@ -58,8 +54,6 @@ class SocialSignInConfig {
     enabled: Env.socialSignIn,
     googleWebClientId: Env.googleWebClientId.trim(),
     googleIosClientId: Env.googleIosClientId.trim(),
-    appleNative: Env.appleSignIn,
-    appleBrowser: Env.appleSignInAndroid,
     enforceAppStoreRules: !kDebugMode,
   );
 
@@ -67,20 +61,10 @@ class SocialSignInConfig {
   final bool enabled;
   final String googleWebClientId;
   final String googleIosClientId;
-  final bool appleNative;
-  final bool appleBrowser;
   final bool enforceAppStoreRules;
 
   static bool _isClientId(String id) =>
       id.endsWith('.apps.googleusercontent.com');
-
-  bool get showApple =>
-      enabled &&
-      switch (platform) {
-        SocialPlatform.ios => appleNative,
-        SocialPlatform.android => appleBrowser,
-        SocialPlatform.other => false,
-      };
 
   /// Google's client ids are present for this platform.
   bool get googleConfigured =>
@@ -94,18 +78,9 @@ class SocialSignInConfig {
   bool get showGoogle =>
       enabled &&
       googleConfigured &&
-      (platform != SocialPlatform.ios || showApple || !enforceAppStoreRules);
+      (platform != SocialPlatform.ios || !enforceAppStoreRules);
 
-  /// Apple first on iOS (4.8, equal prominence); Google first on Android.
-  List<SocialProvider> get providers => [
-    if (platform == SocialPlatform.ios) ...[
-      if (showApple) SocialProvider.apple,
-      if (showGoogle) SocialProvider.google,
-    ] else ...[
-      if (showGoogle) SocialProvider.google,
-      if (showApple) SocialProvider.apple,
-    ],
-  ];
+  List<SocialProvider> get providers => [if (showGoogle) SocialProvider.google];
 }
 
 /// What a native sheet hands back. [rawNonce] goes to Supabase, which checks
@@ -116,17 +91,11 @@ class SocialCredential {
     required this.idToken,
     this.accessToken,
     this.rawNonce,
-    this.authorizationCode,
   });
 
   final String idToken;
   final String? accessToken;
   final String? rawNonce;
-
-  /// Sign in with Apple only: the one-time code (valid 5 minutes) the server
-  /// exchanges for a refresh token, so deleting the account can revoke it
-  /// (App Review 5.1.1(v); `POST /v1/account/apple-auth`). Never logged.
-  final String? authorizationCode;
 
   @override
   String toString() => 'SocialCredential(<redacted>)';
@@ -141,11 +110,6 @@ abstract interface class NativeGoogleSignIn {
   /// Aura keeps none, so a shared phone never offers the last person's
   /// account. Never throws.
   Future<void> forget();
-}
-
-/// Sign in with Apple's native sheet (iOS). Throws [AuthFailure].
-abstract interface class NativeAppleSignIn {
-  Future<SocialCredential> signIn();
 }
 
 // ---- nonces ------------------------------------------------------------------
@@ -299,65 +263,11 @@ bool _looksMisconfigured(String text) =>
 bool _looksOffline(String text) =>
     text.contains('network') || text.contains('[7]');
 
-// ---- Apple ---------------------------------------------------------------------
-
-class PluginAppleSignIn implements NativeAppleSignIn {
-  const PluginAppleSignIn();
-
-  @override
-  Future<SocialCredential> signIn() async {
-    final raw = randomNonce();
-    try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        // Email only: never the name (REQ-ACC-01).
-        scopes: const [AppleIDAuthorizationScopes.email],
-        nonce: await sha256Hex(raw),
-      );
-      final idToken = credential.identityToken;
-      if (idToken == null || idToken.isEmpty) {
-        throw const AuthFailure(AuthFailureKind.other);
-      }
-      return SocialCredential(
-        idToken: idToken,
-        rawNonce: raw,
-        authorizationCode: credential.authorizationCode,
-      );
-    } on AuthFailure {
-      rethrow;
-    } on Object catch (e) {
-      final kind = appleFailureKind(e);
-      debugPrint('auth: apple ${e.runtimeType} → ${kind.name}');
-      throw AuthFailure(kind);
-    }
-  }
-}
-
-/// sign_in_with_apple failures → what the person is told. `unknown`
-/// (ASAuthorizationError 1000) is almost always a missing capability /
-/// provisioning profile, or no Apple Account on the device.
-AuthFailureKind appleFailureKind(Object e) {
-  if (e is SignInWithAppleAuthorizationException) {
-    return switch (e.code) {
-      AuthorizationErrorCode.canceled => AuthFailureKind.cancelled,
-      AuthorizationErrorCode.unknown => AuthFailureKind.notConfigured,
-      _ => AuthFailureKind.other,
-    };
-  }
-  if (e is SignInWithAppleNotSupportedException) {
-    return AuthFailureKind.notConfigured;
-  }
-  return AuthFailureKind.other;
-}
-
 // ---- orchestration ---------------------------------------------------------------
 
 enum SocialSignInResult {
   /// The Supabase session exists now.
   signedIn,
-
-  /// A browser took over (Apple on Android); the session arrives through
-  /// `aura://auth-callback`.
-  browserOpened,
 }
 
 class SocialSignInService {
@@ -365,19 +275,11 @@ class SocialSignInService {
     required this.config,
     required this._exchange,
     this.google,
-    this.apple,
-    this.onAppleAuthorizationCode,
   });
 
   final SocialSignInConfig config;
   final SocialSessionExchange _exchange;
   final NativeGoogleSignIn? google;
-  final NativeAppleSignIn? apple;
-
-  /// Told Apple's one-time authorization code once the Supabase session
-  /// exists (native Apple only). Fire-and-forget: sign-in never waits for it
-  /// and its failures never surface ([linkAppleAuthorization]).
-  final void Function(String authorizationCode)? onAppleAuthorizationCode;
 
   List<SocialProvider> get providers => config.providers;
 
@@ -402,49 +304,6 @@ class SocialSignInService {
         } finally {
           await g.forget();
         }
-      case SocialProvider.apple:
-        if (config.platform != SocialPlatform.ios) {
-          await _exchange.signInWithBrowser(SocialProvider.apple);
-          return SocialSignInResult.browserOpened;
-        }
-        final a = apple;
-        if (a == null) throw const AuthFailure(AuthFailureKind.notConfigured);
-        final c = await a.signIn();
-        await _exchange.signInWithIdToken(
-          provider: SocialProvider.apple,
-          idToken: c.idToken,
-          nonce: c.rawNonce,
-        );
-        final code = c.authorizationCode;
-        if (code != null && code.isNotEmpty) {
-          try {
-            onAppleAuthorizationCode?.call(code);
-          } on Object catch (e) {
-            debugPrint('auth: apple code ${e.runtimeType}');
-          }
-        }
-        return SocialSignInResult.signedIn;
     }
-  }
-}
-
-/// Sends Apple's one-time authorization code to `POST /v1/account/apple-auth`
-/// so the server can revoke the Apple token when the account is deleted
-/// (App Review 5.1.1(v)). Best effort and silent: without an API, when the
-/// server has no Apple key (`503 apple_unavailable`), offline, or on any other
-/// answer, sign-in carries on unchanged. Logs only an error code, never the
-/// authorization code.
-Future<void> linkAppleAuthorization(
-  AuraApi? api,
-  String authorizationCode, {
-  Duration timeout = const Duration(seconds: 15),
-}) async {
-  if (api == null) return;
-  try {
-    await api.postAppleAuth(authorizationCode).timeout(timeout);
-  } on ApiException catch (e) {
-    debugPrint('auth: apple link not stored (${e.code})');
-  } on Object catch (e) {
-    debugPrint('auth: apple link not stored (${e.runtimeType})');
   }
 }

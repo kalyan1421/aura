@@ -331,23 +331,6 @@ class AuraApi {
     }
   }
 
-  /// `POST /v1/account/apple-auth` → 204: the one-time Sign in with Apple
-  /// authorization code, so the server can revoke the Apple token when the
-  /// account is deleted (App Review 5.1.1(v)). `503 apple_unavailable` when
-  /// the server has no Apple key; callers ignore every failure. The code is
-  /// never logged.
-  Future<void> postAppleAuth(String authorizationCode) async {
-    try {
-      await _dio.post<void>(
-        '/v1/account/apple-auth',
-        data: {'authorizationCode': authorizationCode},
-        options: await _auth(),
-      );
-    } on DioException catch (e) {
-      throw _map(e);
-    }
-  }
-
   // ---- media: voice notes (F1 · DS-1, contracts/api/v1.md) ------------------
 
   /// `POST /v1/media/upload-url`. [bytes] is the exact ciphertext length

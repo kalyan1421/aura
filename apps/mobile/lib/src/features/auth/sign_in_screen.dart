@@ -199,9 +199,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
-  /// Apple / Google. Native sheets return with a Supabase session and finish
-  /// here; Apple on Android opens the browser and finishes through
-  /// `aura://auth-callback` (the listener above).
+  /// Google: the native sheet returns with a Supabase session and finishes
+  /// here.
   Future<void> _social(SocialProvider provider) async {
     if (_working) return;
     final service = ref.read(socialSignInProvider);
@@ -304,12 +303,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final busy = _socialBusy == provider;
     final onPressed = _working ? null : () => _social(provider);
     return switch (provider) {
-      SocialProvider.apple => AppleSignInButton(
-        key: const ValueKey('signin-apple'),
-        label: l.signin_apple,
-        busy: busy,
-        onPressed: onPressed,
-      ),
       SocialProvider.google => GoogleSignInButton(
         key: const ValueKey('signin-google'),
         label: l.signin_google,

@@ -293,7 +293,6 @@ void main() {
           config: iosSocial,
           exchange: auth,
           google: FakeGoogle(),
-          apple: FakeApple(),
         ),
       ),
       ageSignalSourceProvider.overrideWithValue(FakeAgeSource()),
@@ -319,7 +318,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      await _tap(tester, find.byKey(const ValueKey('signin-apple')));
+      await _tap(tester, find.byKey(const ValueKey('signin-google')));
       await settleIo(tester);
       await _transition(tester);
 
@@ -361,7 +360,7 @@ void main() {
         UncontrolledProviderScope(container: c, child: const AuraApp()),
       );
       await tester.pump(const Duration(milliseconds: 500));
-      await _tap(tester, find.byKey(const ValueKey('signin-apple')));
+      await _tap(tester, find.byKey(const ValueKey('signin-google')));
       await settleIo(tester);
       expect(_screen, findsNothing);
       expect(

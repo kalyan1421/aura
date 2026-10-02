@@ -3,11 +3,11 @@ import 'package:aura/src/features/auth/social_sign_in.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 /// Social sign-in configuration (F8 REQ-ACC-01): a button shows only when its
-/// provider is configured, App Store 4.8 on iOS, and every failure maps to
+/// provider is configured, App Store 4.8 on iOS (Aura has no Sign in with
+/// Apple, so no Google on iOS in a release build), and every failure maps to
 /// calm copy (never the raw error).
 
 const _web = '111-web.apps.googleusercontent.com';
@@ -16,28 +16,22 @@ const _ios = '111-ios.apps.googleusercontent.com';
 SocialSignInConfig _iosConfig({
   String web = _web,
   String ios = _ios,
-  bool apple = false,
   bool enabled = true,
   bool enforce = true,
 }) => SocialSignInConfig(
   platform: SocialPlatform.ios,
   googleWebClientId: web,
   googleIosClientId: ios,
-  appleNative: apple,
   enabled: enabled,
   enforceAppStoreRules: enforce,
 );
 
-SocialSignInConfig _androidConfig({
-  String web = _web,
-  bool appleBrowser = false,
-  bool enabled = true,
-}) => SocialSignInConfig(
-  platform: SocialPlatform.android,
-  googleWebClientId: web,
-  appleBrowser: appleBrowser,
-  enabled: enabled,
-);
+SocialSignInConfig _androidConfig({String web = _web, bool enabled = true}) =>
+    SocialSignInConfig(
+      platform: SocialPlatform.android,
+      googleWebClientId: web,
+      enabled: enabled,
+    );
 
 void main() {
   group('which buttons show', () {
@@ -48,33 +42,22 @@ void main() {
       expect(noneAndroid.providers, isEmpty);
     });
 
-    test('iOS: Apple and Google → Apple first, then Google', () {
-      expect(_iosConfig(apple: true).providers, [
-        SocialProvider.apple,
-        SocialProvider.google,
-      ]);
-    });
+    test(
+      'iOS release: no social button at all (4.8, no Sign in with Apple)',
+      () {
+        final googleOnly = _iosConfig();
+        expect(googleOnly.googleConfigured, isTrue);
+        expect(googleOnly.providers, isEmpty);
+      },
+    );
 
-    test('iOS: Apple alone is fine; Google alone is not (App Store 4.8)', () {
-      expect(_iosConfig(web: '', ios: '', apple: true).providers, [
-        SocialProvider.apple,
-      ]);
-      final googleOnly = _iosConfig();
-      expect(googleOnly.googleConfigured, isTrue);
-      expect(googleOnly.providers, isEmpty);
-    });
-
-    test('iOS debug builds may try Google before Apple is set up', () {
+    test('iOS debug builds may still try Google on a simulator', () {
       expect(_iosConfig(enforce: false).providers, [SocialProvider.google]);
     });
 
-    test('iOS: Google needs both the iOS and the Web client id', () {
-      expect(_iosConfig(ios: '', apple: true).providers, [
-        SocialProvider.apple,
-      ]);
-      expect(_iosConfig(web: '', apple: true).providers, [
-        SocialProvider.apple,
-      ]);
+    test('iOS debug: Google needs both the iOS and the Web client id', () {
+      expect(_iosConfig(ios: '', enforce: false).providers, isEmpty);
+      expect(_iosConfig(web: '', enforce: false).providers, isEmpty);
     });
 
     test(
@@ -83,40 +66,27 @@ void main() {
         expect(
           _iosConfig(
             ios: 'com.googleusercontent.apps.111-ios',
-            apple: true,
+            enforce: false,
           ).providers,
-          [SocialProvider.apple],
+          isEmpty,
         );
       },
     );
 
-    test('Android: Google needs only the Web client id; Apple only with '
-        'its browser flow configured', () {
+    test('Android: Google needs only the Web client id', () {
       expect(_androidConfig().providers, [SocialProvider.google]);
-      expect(_androidConfig(appleBrowser: true).providers, [
-        SocialProvider.google,
-        SocialProvider.apple,
-      ]);
       expect(_androidConfig(web: '').providers, isEmpty);
-      expect(_androidConfig(web: '', appleBrowser: true).providers, [
-        SocialProvider.apple,
-      ]);
     });
 
     test('AURA_SOCIAL_SIGNIN=false hides everything', () {
-      expect(_iosConfig(apple: true, enabled: false).providers, isEmpty);
-      expect(
-        _androidConfig(appleBrowser: true, enabled: false).providers,
-        isEmpty,
-      );
+      expect(_iosConfig(enforce: false, enabled: false).providers, isEmpty);
+      expect(_androidConfig(enabled: false).providers, isEmpty);
     });
 
     test('other platforms never show social sign-in', () {
       const other = SocialSignInConfig(
         platform: SocialPlatform.other,
         googleWebClientId: _web,
-        appleNative: true,
-        appleBrowser: true,
       );
       expect(other.providers, isEmpty);
     });
@@ -238,32 +208,6 @@ void main() {
         AuthFailureKind.other,
       );
       expect(googleFailureKind(StateError('x')), AuthFailureKind.other);
-    });
-  });
-
-  group('Apple errors', () {
-    test('cancel says nothing; 1000 (capability / no Apple Account) → not '
-        'ready; others → generic', () {
-      SignInWithAppleAuthorizationException a(AuthorizationErrorCode c) =>
-          SignInWithAppleAuthorizationException(code: c, message: '');
-      expect(
-        appleFailureKind(a(AuthorizationErrorCode.canceled)),
-        AuthFailureKind.cancelled,
-      );
-      expect(
-        appleFailureKind(a(AuthorizationErrorCode.unknown)),
-        AuthFailureKind.notConfigured,
-      );
-      expect(
-        appleFailureKind(a(AuthorizationErrorCode.failed)),
-        AuthFailureKind.other,
-      );
-      expect(
-        appleFailureKind(
-          const SignInWithAppleNotSupportedException(message: ''),
-        ),
-        AuthFailureKind.notConfigured,
-      );
     });
   });
 

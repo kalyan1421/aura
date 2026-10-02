@@ -114,7 +114,7 @@ final class SocialSignInProvider
   }
 }
 
-String _$socialSignInHash() => r'4548277342851d39cda6d3643fbfc0b1b174b2d7';
+String _$socialSignInHash() => r'6c3d22644436e09c8f5ed3f80a8d72e4e1c3ba72';
 
 /// Apple Declared Age Range / Play Age Signals (REQ-ACC-04).
 

@@ -2,74 +2,17 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart'
-    show AppleLogoPainter;
 
 import '../../../l10n/app_localizations.dart';
 import '../../core/theme/aura_tokens.dart';
 
-/// Branded sign-in buttons. Their colours are Apple's and Google's, not Aura
-/// tokens, and must not be restyled (Apple HIG "Sign in with Apple";
-/// developers.google.com/identity/branding-guidelines).
+/// Branded sign-in button. Its colours are Google's, not Aura tokens, and
+/// must not be restyled (developers.google.com/identity/branding-guidelines).
 ///
-/// Both are 56 dp tall like the primary "Email me a code" button (HIG: never
-/// smaller than other sign-in buttons), pill-shaped like every Aura button
-/// (both brands allow matching the app's corner radius), full width, and
-/// grow with the text size (200%, Telugu) instead of clipping.
+/// 56 dp tall like the primary "Email me a code" button, pill-shaped like every
+/// Aura button (Google allows matching the app's corner radius), full width,
+/// and grows with the text size (200%, Telugu) instead of clipping.
 const double socialButtonHeight = 56;
-
-/// "Continue with Apple", HIG white style (the one for dark backgrounds):
-/// white fill, black logo and title. The title is 43% of the button height,
-/// the system's proportion; the logo matches the title and scales with it.
-class AppleSignInButton extends StatelessWidget {
-  const AppleSignInButton({
-    super.key,
-    required this.label,
-    required this.onPressed,
-    this.busy = false,
-  });
-
-  final String label;
-  final VoidCallback? onPressed;
-  final bool busy;
-
-  static const double _titleRatio = 0.43;
-
-  @override
-  Widget build(BuildContext context) {
-    final base = Theme.of(context).textTheme.labelLarge ?? const TextStyle();
-    final fontSize = (socialButtonHeight * _titleRatio).roundToDouble();
-    final logo = _scaled(context, fontSize);
-    return _BrandButton(
-      fill: Colors.white,
-      foreground: Colors.black,
-      paddingStart: 16,
-      paddingEnd: 16,
-      onPressed: onPressed,
-      busy: busy,
-      logo: SizedBox(
-        // The artwork's own aspect ratio (AppleLogoPainter).
-        width: logo * 25 / 31,
-        height: logo,
-        child: const CustomPaint(
-          painter: AppleLogoPainter(color: Colors.black),
-        ),
-      ),
-      gap: logo * 0.3,
-      label: Text(
-        label,
-        textAlign: TextAlign.center,
-        style: base.copyWith(
-          fontSize: fontSize,
-          height: 1.2,
-          fontWeight: FontWeight.w500,
-          letterSpacing: -0.3,
-          color: Colors.black,
-        ),
-      ),
-    );
-  }
-}
 
 /// "Continue with Google", Google's dark theme: fill #131314, 1 px #8E918F
 /// stroke inside, label #E3E3E3, the standard colour "G" (never

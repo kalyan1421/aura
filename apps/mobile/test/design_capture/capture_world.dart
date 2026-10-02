@@ -743,14 +743,13 @@ Entitlement trialEnding() => plusAccount(
   ],
 );
 
-/// Social sign-in configured as on iOS (Apple + Google), signed out.
+/// Social sign-in configured (Google), signed out.
 List<Override> socialOverrides(social.FakeSocialAuth auth) => [
   socialSignInProvider.overrideWithValue(
     SocialSignInService(
       config: social.iosSocial,
       exchange: auth,
       google: social.FakeGoogle(),
-      apple: social.FakeApple(),
     ),
   ),
   ageSignalSourceProvider.overrideWithValue(social.FakeAgeSource()),

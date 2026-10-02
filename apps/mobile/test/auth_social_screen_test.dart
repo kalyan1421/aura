@@ -22,18 +22,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart'
-    show AppleLogoPainter;
 
 import 'auth_social_fakes.dart';
 import 'helpers.dart';
 
-/// Native Sign in with Apple / Google on the sign-in screen (F8 REQ-ACC-01,
-/// REQ-ACC-04): buttons only when configured (Apple with Google on iOS),
-/// official marks, the same completion path as email, calm errors, and the
+/// Native Google sign-in on the sign-in screen (F8 REQ-ACC-01, REQ-ACC-04):
+/// the button only when configured (never on iOS in a release build: no Sign
+/// in with Apple), the official mark, the same completion path as email, calm errors, and the
 /// platform age signal checked before any auth call.
 
-final _apple = find.byKey(const ValueKey('signin-apple'));
 final _google = find.byKey(const ValueKey('signin-google'));
 final _email = find.byKey(const ValueKey('signin-email'));
 final _send = find.byKey(const ValueKey('signin-send'));
@@ -48,7 +45,6 @@ List<Override> _social({
   required FakeSocialAuth auth,
   required SocialSignInConfig config,
   FakeGoogle? google,
-  FakeApple? apple,
   FakeAgeSource? age,
   FakeAccount? account,
 }) => [
@@ -58,7 +54,6 @@ List<Override> _social({
       config: config,
       exchange: auth,
       google: google ?? FakeGoogle(),
-      apple: apple ?? FakeApple(),
     ),
   ),
   ageSignalSourceProvider.overrideWithValue(age ?? FakeAgeSource()),
@@ -70,7 +65,6 @@ Future<ProviderContainer> _onboarding(
   required FakeSocialAuth auth,
   SocialSignInConfig config = iosSocial,
   FakeGoogle? google,
-  FakeApple? apple,
   FakeAgeSource? age,
   FakeAccount? account,
   AppDatabase? db,
@@ -87,7 +81,6 @@ Future<ProviderContainer> _onboarding(
         auth: auth,
         config: config,
         google: google,
-        apple: apple,
         age: age,
         account: account,
       ),
@@ -115,29 +108,18 @@ Future<void> _tap(WidgetTester tester, Finder f) async {
 
 void main() {
   group('which buttons show', () {
-    testWidgets('iOS, both configured: Apple then Google, official marks, '
-        'Google in its dark theme — never a Material stand-in', (tester) async {
+    testWidgets('Google shows with its official mark in its dark theme, '
+        'never a Material stand-in', (tester) async {
       await _onboarding(tester, auth: FakeSocialAuth());
 
-      expect(_apple, findsOneWidget);
       expect(_google, findsOneWidget);
-      expect(
-        tester.getTopLeft(_apple).dy,
-        lessThan(tester.getTopLeft(_google).dy),
-      );
-      expect(find.text('Continue with Apple'), findsOneWidget);
       expect(find.text('Continue with Google'), findsOneWidget);
+      expect(find.text('Continue with Apple'), findsNothing);
       expect(find.text('or'), findsOneWidget);
 
       expect(
         find.byWidgetPredicate(
           (w) => w is CustomPaint && w.painter is GoogleGMarkPainter,
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is CustomPaint && w.painter is AppleLogoPainter,
         ),
         findsOneWidget,
       );
@@ -147,9 +129,7 @@ void main() {
         find.descendant(of: button, matching: find.byType(Material)).first,
       );
       expect(fill(_google).color, GoogleSignInButton.fill);
-      expect(fill(_apple).color, Colors.white);
-      // No smaller than the email button (Apple HIG).
-      expect(tester.getSize(_apple).height, greaterThanOrEqualTo(56));
+      // No smaller than the email button.
       expect(tester.getSize(_google).height, greaterThanOrEqualTo(56));
       await _unmount(tester);
     });
@@ -158,10 +138,7 @@ void main() {
         'decorative)', (tester) async {
       final semantics = tester.ensureSemantics();
       await _onboarding(tester, auth: FakeSocialAuth());
-      for (final (button, title) in [
-        (_apple, 'Continue with Apple'),
-        (_google, 'Continue with Google'),
-      ]) {
+      for (final (button, title) in [(_google, 'Continue with Google')]) {
         expect(
           tester.getSemantics(button),
           isSemantics(
@@ -182,14 +159,13 @@ void main() {
         auth: FakeSocialAuth(),
         config: const SocialSignInConfig(platform: SocialPlatform.ios),
       );
-      expect(_apple, findsNothing);
       expect(_google, findsNothing);
       expect(find.text('or'), findsNothing);
       await _unmount(tester);
     });
 
-    testWidgets('iOS: Google configured without Apple is not offered '
-        '(App Store 4.8)', (tester) async {
+    testWidgets('iOS release: Google is not offered without Sign in with '
+        'Apple (App Store 4.8), and Aura has none', (tester) async {
       await _onboarding(
         tester,
         auth: FakeSocialAuth(),
@@ -200,14 +176,12 @@ void main() {
         ),
       );
       expect(_google, findsNothing);
-      expect(_apple, findsNothing);
       await _unmount(tester);
     });
 
     testWidgets('Android: Google alone', (tester) async {
       await _onboarding(tester, auth: FakeSocialAuth(), config: androidSocial);
       expect(_google, findsOneWidget);
-      expect(_apple, findsNothing);
       await _unmount(tester);
     });
   });
@@ -248,12 +222,12 @@ void main() {
       await _unmount(tester);
     });
 
-    testWidgets('Apple (standalone) pops back to where sign-in opened', (
+    testWidgets('Google (standalone) pops back to where sign-in opened', (
       tester,
     ) async {
       _phone(tester);
       final auth = FakeSocialAuth();
-      final apple = FakeApple();
+      final google = FakeGoogle();
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -276,7 +250,7 @@ void main() {
         ProviderScope(
           overrides: [
             ...testOverrides(db: memoryDb(), auth: auth),
-            ..._social(auth: auth, config: iosSocial, apple: apple),
+            ..._social(auth: auth, config: iosSocial, google: google),
           ],
           child: MaterialApp.router(
             theme: buildAuraTheme(const Locale('en')),
@@ -292,13 +266,13 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('origin')));
       await tester.pumpAndSettle();
 
-      await _tap(tester, _apple);
+      await _tap(tester, _google);
       await settleIo(tester);
       await tester.pumpAndSettle();
 
-      expect(apple.calls, 1);
-      expect(auth.idTokens.single.$1, SocialProvider.apple);
-      expect(auth.idTokens.single.$4, 'raw-nonce-a');
+      expect(google.calls, 1);
+      expect(auth.idTokens.single.$1, SocialProvider.google);
+      expect(auth.idTokens.single.$4, 'raw-nonce-g');
       expect(find.byType(SignInScreen), findsNothing);
       expect(find.byKey(const ValueKey('origin')), findsOneWidget);
       await _unmount(tester);
@@ -312,7 +286,6 @@ void main() {
       await _tap(tester, _google);
       await tester.pump();
       expect(find.byKey(const ValueKey('social-busy')), findsOneWidget);
-      expect(tester.widget<AppleSignInButton>(_apple).onPressed, isNull);
       expect(tester.widget<GoogleSignInButton>(_google).onPressed, isNull);
       expect(tester.widget<FilledButton>(_send).onPressed, isNull);
 
@@ -336,7 +309,6 @@ void main() {
 
       expect(find.byType(InlineNotice), findsNothing);
       expect(tester.widget<GoogleSignInButton>(_google).onPressed, isNotNull);
-      expect(tester.widget<AppleSignInButton>(_apple).onPressed, isNotNull);
       expect(c.read(gateControllerProvider).stage, OnboardingStage.signIn);
       await _unmount(tester);
     });
@@ -461,7 +433,6 @@ void main() {
       await settleIo(tester);
 
       // Every sign-in option is still offered.
-      expect(_apple, findsOneWidget);
       expect(_google, findsOneWidget);
       expect(_email, findsOneWidget);
 

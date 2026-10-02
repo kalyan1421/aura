@@ -11,15 +11,17 @@ import 'package:aura/src/features/auth/social_sign_in.dart';
 const webClientId = '111-web.apps.googleusercontent.com';
 const iosClientId = '111-ios.apps.googleusercontent.com';
 
-/// iOS with Apple and Google set up (App Store 4.8 satisfied).
+/// iOS with Google set up, with the App Store 4.8 rule relaxed the way debug
+/// builds do. A release build never shows Google on iOS (Aura has no Sign in
+/// with Apple), see the config test.
 const iosSocial = SocialSignInConfig(
   platform: SocialPlatform.ios,
   googleWebClientId: webClientId,
   googleIosClientId: iosClientId,
-  appleNative: true,
+  enforceAppStoreRules: false,
 );
 
-/// Android with Google set up (Apple's browser flow isn't).
+/// Android with Google set up.
 const androidSocial = SocialSignInConfig(
   platform: SocialPlatform.android,
   googleWebClientId: webClientId,
@@ -33,7 +35,6 @@ const socialUser = AuthUser(
 /// Records what reaches Supabase.
 class FakeExchange implements SocialSessionExchange {
   final List<(SocialProvider, String, String?, String?)> idTokens = [];
-  final List<SocialProvider> browser = [];
   AuthFailure? fail;
 
   @override
@@ -47,13 +48,6 @@ class FakeExchange implements SocialSessionExchange {
     final f = fail;
     if (f != null) throw f;
     onSignedIn();
-  }
-
-  @override
-  Future<void> signInWithBrowser(SocialProvider provider) async {
-    browser.add(provider);
-    final f = fail;
-    if (f != null) throw f;
   }
 
   void onSignedIn() {}
@@ -121,22 +115,6 @@ class FakeGoogle implements NativeGoogleSignIn {
 
   @override
   Future<void> forget() async => forgets++;
-}
-
-class FakeApple implements NativeAppleSignIn {
-  int calls = 0;
-  AuthFailure? fail;
-
-  @override
-  Future<SocialCredential> signIn() async {
-    calls++;
-    final f = fail;
-    if (f != null) throw f;
-    return const SocialCredential(
-      idToken: 'apple-id-token',
-      rawNonce: 'raw-nonce-a',
-    );
-  }
 }
 
 /// A platform age signal; [gate] holds the answer back until completed.

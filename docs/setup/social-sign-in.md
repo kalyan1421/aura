@@ -1,5 +1,13 @@
 # Social sign-in setup: Sign in with Apple and Google
 
+> **Update 2 Oct 2026: Aura v1 ships without Sign in with Apple.** The Apple button, the `sign_in_with_apple`
+> plugin, the iOS `com.apple.developer.applesignin` entitlement and the `AURA_APPLE_SIGNIN*` flags are removed from
+> the app. Sign-in is the email code everywhere, plus Google on Android. Because App Store 4.8 only lets an iOS app
+> offer Google when it also offers Sign in with Apple, **iOS release builds show no social button**. The Apple
+> sections below describe the old design and apply only if Apple sign-in is added back; with it comes the key and the
+> four `APPLE_*` server values. The server's `POST /v1/account/apple-auth` and token revocation stay in place but
+> dormant (no client calls them).
+
 **For:** AK. **Scope:** F8 REQ-ACC-01 (Apple, Google, email link; email scope only) and REQ-ACC-04 (platform age signals).
 **Code:** `apps/mobile/lib/src/features/auth/` · `supabase/config.toml` (`[auth.external.apple]`, `[auth.external.google]`) · `supabase/migrations/20261005000011_strip_oauth_profile.sql`.
 
