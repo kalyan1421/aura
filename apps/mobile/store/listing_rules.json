@@ -12,7 +12,8 @@
     "android": {
       "title": 30,
       "short_description": 80,
-      "full_description": 4000
+      "full_description": 4000,
+      "release_notes": 500
     },
     "extras": {
       "promotional_text": 170,
