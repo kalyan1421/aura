@@ -77,6 +77,20 @@ void main() {
   late FakeCues cues;
   late RecordingSessionLog log;
 
+  /// The recorded sounds are on the phone by default: everyone in a shared sound must hear the same file, so
+  /// the card asks for the download first (see 'offers the download first' below).
+  const recorded = {
+    'rain',
+    'ocean',
+    'wind',
+    'night_insects',
+    'monsoon_roof',
+    'stream',
+    'fireplace',
+    'distant_thunder',
+  };
+  var downloaded = <String>{...recorded};
+
   Future<void> openRoom(
     WidgetTester tester, {
     WindDownView? view,
@@ -101,7 +115,9 @@ void main() {
         windDownApiProvider.overrideWithValue(api),
         quietCuesProvider.overrideWithValue(cues),
         soundsBackendProvider.overrideWithValue(backend),
-        stemStoreProvider.overrideWithValue(FakeStemStore()),
+        stemStoreProvider.overrideWithValue(
+          FakeStemStore(downloaded: downloaded),
+        ),
         soundsSessionLogProvider.overrideWithValue(log),
         plusActiveProvider.overrideWithValue(false),
         if (!flagOn)
@@ -239,6 +255,21 @@ void main() {
       expect(find.text('Breathe out'), findsOneWidget);
       expect(cues.breaths, isNotEmpty);
       await close(tester);
+    });
+
+    testWidgets('offers the download first when the recordings are not on the '
+        'phone yet: no play button, so nobody hears a different sound', (
+      tester,
+    ) async {
+      downloaded = <String>{};
+      await openScreen(tester);
+      expect(
+        find.byKey(const ValueKey('shared-sound-download')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey('shared-sound-play')), findsNothing);
+      await close(tester);
+      downloaded = <String>{...recorded};
     });
 
     testWidgets('the shared track starts at now − t0 after a tap, and it '
