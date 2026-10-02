@@ -85,6 +85,9 @@ android {
 
     buildTypes {
         release {
+            // Keep rules for what is created by reflection (proguard-rules.pro): without them the
+            // shrunk release build crashes at startup.
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = when {
                 releaseSigningProblem == null -> signingConfigs.getByName("release")
                 allowDebugSignedRelease -> signingConfigs.getByName("debug")
