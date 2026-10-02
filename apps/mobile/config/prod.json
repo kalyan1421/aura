@@ -4,5 +4,6 @@
   "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNka3R2dGFmbHFpZm56YXRybXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAzNTUxOTMsImV4cCI6MjEwNTkzMTE5M30.Hqed7NdadOD06TiVyCDXIMwfDCIEAoDtosyekQQ706Q",
   "AURA_GOOGLE_WEB_CLIENT_ID": "956426842892-3dhg064sa12jffrodogss57rnf95emqv.apps.googleusercontent.com",
   "AURA_GOOGLE_IOS_CLIENT_ID": "956426842892-cajbosmt05vucd0l3831bqsk2993b9ts.apps.googleusercontent.com",
-  "AURA_BUNDLE_PUBLIC_KEYS": "Bo9FoDZBEkGA4zW16tzQ36Riq/m1T9RnznY66tk/AJU="
+  "AURA_BUNDLE_PUBLIC_KEYS": "Bo9FoDZBEkGA4zW16tzQ36Riq/m1T9RnznY66tk/AJU=",
+  "AURA_SOUNDS_BASE_URL": "https://aura-akvega.web.app/sounds/"
 }

@@ -24,16 +24,16 @@ Bump the file name's version (`rain.v2.m4a`) whenever a stem's audio changes; th
 | brown_noise | free | procedural | Generated on the device (`procedural_synth.dart`, `brown_noise`) | Aura's own code | 2026-09-24 | No third-party audio. |
 | singing_bowl | free | procedural | Generated on the device (`singing_bowl`: struck-bowl partials timed in code) | Aura's own code | 2026-09-24 | No third-party audio. A recorded strike sample may replace it later (log it here first). |
 | chimes | free | procedural | Generated on the device (`chimes`: pentatonic tubes timed in code) | Aura's own code | 2026-09-24 | No third-party audio. |
-| rain | free | file (pending) | — | — | — | **Pending sourcing.** Until then the app plays the generated `rain` stand-in. |
-| ocean | free | file (pending) | — | — | — | **Pending sourcing.** Generated `ocean` stand-in plays meanwhile. |
-| wind | free | file (pending) | — | — | — | **Pending sourcing.** Generated `wind` stand-in plays meanwhile. |
-| night_insects | free | file (pending) | — | — | — | **Pending sourcing.** Generated `crickets` stand-in plays meanwhile. |
+| rain | free | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `5379bf21ed296fd8…`, 1,945,690 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| ocean | free | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `1d8f7d717f002cea…`, 1,945,916 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| wind | free | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `656395e63f740153…`, 1,947,670 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| night_insects | free | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `8a2abac5b97e9dfc…`, 2,049,183 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
 | pink_noise | plus | procedural | Generated on the device (`pink_noise`) | Aura's own code | 2026-09-24 | No third-party audio. |
 | deep_bell | plus | procedural | Generated on the device (`deep_bell`) | Aura's own code | 2026-09-24 | No third-party audio. |
-| monsoon_roof | plus | file (pending) | — | — | — | **Pending sourcing.** Hidden in the app until available. |
-| stream | plus | file (pending) | — | — | — | **Pending sourcing.** Hidden in the app until available. |
-| fireplace | plus | file (pending) | — | — | — | **Pending sourcing.** Hidden in the app until available. |
-| distant_thunder | plus | file (pending) | — | — | — | **Pending sourcing.** Hidden in the app until available. |
+| monsoon_roof | plus | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `07bbcfb0a6d8711a…`, 1,954,465 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| stream | plus | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `db202e78546d95dd…`, 1,957,121 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| fireplace | plus | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `42b962d60f3bbe39…`, 1,963,864 bytes, -23.0 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
+| distant_thunder | plus | file | Synthesised by `tool/sounds/render_stems.py` (seeded; no third-party audio) | Aura-original | 2026-10-02 | sha256 `3b9276f9798fcec0…`, 1,954,526 bytes, -27.5 LUFS. Regenerating re-encodes, so the manifest hash is the one that counts. |
 
 ## Candidate sources to check (not yet vetted)
 

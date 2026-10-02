@@ -101,8 +101,8 @@ void main() {
     await end(tester);
   });
 
-  testWidgets('the free base set is listed; pending recordings are hidden; '
-      'Plus extras show locked', (tester) async {
+  testWidgets('the free base set and the Plus extras are all listed, the '
+      'extras locked', (tester) async {
     await pump(tester);
     for (final id in [
       'rain',
@@ -123,9 +123,9 @@ void main() {
       'fireplace',
       'distant_thunder',
     ]) {
-      expect(toggle(id), findsNothing, reason: id);
+      expect(toggle(id), findsOneWidget, reason: id);
     }
-    expect(find.text('Aura Plus'), findsNWidgets(2));
+    expect(find.text('Aura Plus'), findsWidgets);
     await end(tester);
   });
 
@@ -296,9 +296,10 @@ void main() {
       await end(tester);
     });
 
-    testWidgets('no recordings to download: no download card', (tester) async {
+    testWidgets('recordings exist but none is downloaded yet: the download '
+        'card is offered, with nothing to remove', (tester) async {
       await pump(tester);
-      expect(find.text('Recorded sounds'), findsNothing);
+      expect(find.text('Recorded sounds'), findsOneWidget);
       expect(
         find.byKey(const ValueKey('sounds-remove-downloads')),
         findsNothing,

@@ -71,17 +71,23 @@ void main() {
       expect(m.listed.where((s) => s.isPlus), isNotEmpty);
     });
 
-    test('pending recordings without a stand-in stay hidden', () {
+    test('every recorded stem is available with a size, hash and licence '
+        '(tool/sounds/render_stems.py); none is pending or hidden', () {
       final m = StemManifest.bundled;
       for (final s in m.stems) {
-        if (s.status == StemStatus.pendingSourcing &&
-            s.fallbackGenerator == null) {
-          expect(s.listed, isFalse, reason: s.id);
+        expect(s.status, StemStatus.available, reason: s.id);
+        expect(s.listed, isTrue, reason: s.id);
+        if (s.kind == StemKind.file) {
+          expect(s.hasRecording, isTrue, reason: s.id);
+          expect(s.file!.bytes, greaterThan(1000000), reason: s.id);
+          expect(s.file!.sha256, matches(RegExp(r'^[0-9a-f]{64}$')));
+          expect(s.licence, isNotNull, reason: s.id);
         }
       }
-      expect(m.byId('monsoon_roof')!.listed, isFalse);
-      expect(m.byId('rain')!.listed, isTrue); // generated stand-in
-      expect(m.byId('rain')!.hasRecording, isFalse);
+      expect(m.byId('monsoon_roof')!.listed, isTrue);
+      expect(m.byId('rain')!.hasRecording, isTrue);
+      // The generated stand-in still plays until the recording is downloaded.
+      expect(m.byId('rain')!.fallbackGenerator, isNotNull);
     });
 
     test('brown noise plays with no download (fresh install)', () {

@@ -10,12 +10,12 @@
       "role": "bed",
       "kind": "file",
       "file": "base/rain.v1.m4a",
-      "bytes": null,
+      "bytes": 1945690,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing",
+      "sha256": "5379bf21ed296fd8c428956d7ccba3d8dee384fb8d62ea5e2cab43c300e054c8",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available",
       "fallback_generator": "rain"
     },
     {
@@ -25,12 +25,12 @@
       "role": "bed",
       "kind": "file",
       "file": "base/ocean.v1.m4a",
-      "bytes": null,
+      "bytes": 1945916,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing",
+      "sha256": "1d8f7d717f002cea1fb85914b3fd95abbb7dd4c683ea79e257e282cd6149d981",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available",
       "fallback_generator": "ocean"
     },
     {
@@ -40,12 +40,12 @@
       "role": "bed",
       "kind": "file",
       "file": "base/wind.v1.m4a",
-      "bytes": null,
+      "bytes": 1947670,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing",
+      "sha256": "656395e63f74015306e98b4d27cbae2147a0175ed12e4effa3d231e2439967b0",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available",
       "fallback_generator": "wind"
     },
     {
@@ -55,12 +55,12 @@
       "role": "bed",
       "kind": "file",
       "file": "base/night_insects.v1.m4a",
-      "bytes": null,
+      "bytes": 2049183,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing",
+      "sha256": "8a2abac5b97e9dfc45003d8857a3adffec0adaf23690e7be3eb76fe3d927ea24",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available",
       "fallback_generator": "crickets"
     },
     {
@@ -120,12 +120,12 @@
       "role": "bed",
       "kind": "file",
       "file": "plus/monsoon_roof.v1.m4a",
-      "bytes": null,
+      "bytes": 1954465,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing"
+      "sha256": "07bbcfb0a6d8711a28383a4dbe918e4df835c9782d0d1a8aa2d2ea92a6acd073",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available"
     },
     {
       "id": "stream",
@@ -134,12 +134,12 @@
       "role": "bed",
       "kind": "file",
       "file": "plus/stream.v1.m4a",
-      "bytes": null,
+      "bytes": 1957121,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing"
+      "sha256": "db202e78546d95dd9a251f8b3a26536f294b1293ce16fde095bab64b1ae34456",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available"
     },
     {
       "id": "fireplace",
@@ -148,12 +148,12 @@
       "role": "bed",
       "kind": "file",
       "file": "plus/fireplace.v1.m4a",
-      "bytes": null,
+      "bytes": 1963864,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing"
+      "sha256": "42b962d60f3bbe3949c811364a8cf91fdc76ed37fc97805da52aab8e21e9da2a",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available"
     },
     {
       "id": "distant_thunder",
@@ -162,12 +162,12 @@
       "role": "accent",
       "kind": "file",
       "file": "plus/distant_thunder.v1.m4a",
-      "bytes": null,
+      "bytes": 1954526,
       "bytes_estimate": 2000000,
-      "sha256": null,
-      "licence": null,
-      "source_url": null,
-      "status": "pending_sourcing"
+      "sha256": "3b9276f9798fcec0359592e54fc1011e342e65beb53fcc3240330c8d07e2db42",
+      "licence": "Aura-original: synthesised by tool/sounds/render_stems.py",
+      "source_url": "https://github.com/kalyan1421/aura/blob/main/tool/sounds/render_stems.py",
+      "status": "available"
     }
   ]
 }
