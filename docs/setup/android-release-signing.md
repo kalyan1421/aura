@@ -89,6 +89,25 @@ Check the signature: `keytool -printcert -jarfile build/app/outputs/bundle/relea
 CI is parked. When it comes back: store the keystore as a base64 secret, write it and `key.properties` in the job, and
 never print either. The build already fails closed without them.
 
+## 5a. Always run the release build on a device or emulator before uploading
+
+A release build is shrunk by R8; a debug build is not. Anything created by reflection can be stripped, and then the
+app dies in release only. This already happened once: **WorkManager's Room database crashed every launch** of version
+code 3 (`NoSuchMethodException: androidx.work.impl.WorkDatabase_Impl.<init>`), found by running the release APK on an
+emulator. The keep rules live in `apps/mobile/android/app/proguard-rules.pro` (WorkManager/Room and
+flutter_local_notifications' Gson models). After any dependency change:
+
+```sh
+cd apps/mobile
+flutter build apk --release --target-platform android-arm64 --obfuscate --split-debug-info=build/symbols-apk \
+  --dart-define-from-file=config/public.json --dart-define-from-file=config/prod.json
+adb install -r build/app/outputs/flutter-apk/app-release.apk
+adb shell monkey -p com.akvega.aura -c android.intent.category.LAUNCHER 1
+adb logcat -d -b crash          # must print nothing
+```
+
+Play never accepts the same version code twice: bump the `+N` in `pubspec.yaml` for every upload.
+
 ## 5. Verify locally
 
 ```sh
