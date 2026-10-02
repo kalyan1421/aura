@@ -42,6 +42,11 @@ class FakeSoundsBackend implements SoundsBackend {
   int releases = 0;
   final List<FakeLayer> layers = [];
   final List<(bool, bool)> media = [];
+
+  /// Like the real backend, whose media session is built inside [prepare]: a media state published
+  /// before [prepare] finished has nowhere to go and is dropped. Off by default (older tests record all).
+  bool dropMediaBeforePrepare = false;
+  bool _prepared = false;
   SoundsTransport? transport;
   final StreamController<SoundsInterruption> _events =
       StreamController.broadcast();
@@ -62,7 +67,10 @@ class FakeSoundsBackend implements SoundsBackend {
   void emit(SoundsInterruption e) => _events.add(e);
 
   @override
-  Future<void> prepare() async => prepares++;
+  Future<void> prepare() async {
+    prepares++;
+    _prepared = true;
+  }
 
   @override
   Future<SoundsLayer> openLayer(String path, {required int seed}) async {
@@ -78,8 +86,10 @@ class FakeSoundsBackend implements SoundsBackend {
   void bindTransport(SoundsTransport t) => transport = t;
 
   @override
-  void updateMediaState({required bool active, required bool playing}) =>
-      media.add((active, playing));
+  void updateMediaState({required bool active, required bool playing}) {
+    if (dropMediaBeforePrepare && !_prepared) return;
+    media.add((active, playing));
+  }
 
   @override
   Future<void> release() async => releases++;

@@ -90,6 +90,20 @@ void main() {
     await end(tester, c);
   });
 
+  testWidgets('the first play after launch still publishes the media session '
+      '(foreground service + lock-screen controls)', (tester) async {
+    final c = make();
+    // The real media session is built inside prepare(), which runs after the tap's first publish.
+    backend.dropMediaBeforePrepare = true;
+    ctl(c).toggle('brown_noise');
+    await tester.pump();
+    // Without the republish after prepare() this stays empty: the sound plays but Android never gets a
+    // foreground service, so it may silence it once the screen locks (found on a release emulator run).
+    expect(backend.media, isNotEmpty);
+    expect(backend.media.last, (true, true));
+    await end(tester, c);
+  });
+
   testWidgets('up to four at once, each with its own volume', (tester) async {
     final c = make();
     for (final id in ['rain', 'ocean', 'wind', 'chimes']) {

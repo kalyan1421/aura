@@ -503,6 +503,11 @@ class SoundsController extends Notifier<SoundsState>
     try {
       await _backend.prepare();
       _interruptions ??= _backend.interruptions.listen(_onInterruption);
+      // The media session (Android: the foreground service and lock-screen controls) is built inside
+      // prepare(), after _begin() published the state, so that first publish had nowhere to go. Publish
+      // again now, or the first sound after launch plays with no foreground service and Android may
+      // silence it once the screen locks. Found by running a release build on an emulator.
+      _publishMedia();
     } on Object catch (e) {
       debugPrint('sounds: prepare failed (${e.runtimeType})');
     }

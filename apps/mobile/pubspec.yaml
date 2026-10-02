@@ -4,7 +4,7 @@ description: >-
   check-in app. Offline-first: every personal write lands in the encrypted
   local Drift store + outbox first, then syncs to NestJS (POST /v1/sync/push).
 publish_to: 'none'
-version: 1.0.0+4
+version: 1.0.0+5
 resolution: workspace
 
 environment:
