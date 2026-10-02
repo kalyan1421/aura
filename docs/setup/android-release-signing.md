@@ -106,6 +106,20 @@ adb shell monkey -p com.akvega.aura -c android.intent.category.LAUNCHER 1
 adb logcat -d -b crash          # must print nothing
 ```
 
+Also **play a sound in Sanctuary → Sounds, press Home and pull down the notification shade**: an "Aura · Sounds" media
+card with Pause must be there (`adb shell dumpsys media_session` shows `active=true`, `state=PLAYING`). Three Android-only
+release bugs have been found this way, none visible in debug builds:
+
+1. **Launch crash**: R8 stripped WorkManager's Room database (`proguard-rules.pro`).
+2. **No media notification**: the resource shrinker deleted the `audio_service_*` button icons, which the plugin looks
+   up by name, so it threw "You must specify an icon resource id to build a CustomAction" and never started the
+   foreground service (`res/raw/keep.xml` keeps them, and `ic_stat_aura`, the icon every notification names in Dart).
+3. **First play had no controls**: the media state was published before `prepare()` built the session
+   (`sounds_controller.dart` `_prepare`).
+
+To check what survived shrinking use `aapt2 dump resources app-release.apk | grep drawable/audio_service`: file
+names inside the APK are shortened, so grepping `unzip -l` proves nothing.
+
 Play never accepts the same version code twice: bump the `+N` in `pubspec.yaml` for every upload.
 
 ## 5. Verify locally

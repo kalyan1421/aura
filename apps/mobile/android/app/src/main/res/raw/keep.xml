@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Resources that are looked up BY NAME at runtime, which Android's resource shrinker (release builds) cannot
+  see and so deletes:
+  - audio_service_*: the play / pause / stop button icons of the Sounds media notification. audio_service
+    resolves them with getIdentifier; without them it throws "You must specify an icon resource id to build
+    a CustomAction", the media session never activates and there is no foreground service or lock-screen
+    control (just_audio_backend.dart).
+  - ic_stat_aura: the small notification icon, named in Dart for the Sounds notification and for every
+    local notification (daily reminder, capsule unlock; capsule_notifications.dart).
+  Found by running the release build on an emulator; debug builds do not shrink resources.
+-->
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/audio_service_*,@drawable/ic_stat_aura" />
